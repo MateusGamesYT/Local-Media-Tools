@@ -1,0 +1,80 @@
+package com.localmediatools.tools
+
+import com.localmediatools.core.OutputArea
+
+enum class ToolSection(val title: String, val subtitle: String) {
+    VIDEO("Video", "Cut, repackage and shrink videos"),
+    IMAGES("Images", "Compress, combine and brand photos"),
+    GIF("GIF", "Create and slim down animations"),
+    DOCUMENTS("Documents", "PDF pages, scans and merges"),
+    UTILITIES("Utilities", "Format conversion and audio"),
+}
+
+enum class ToolId(
+    val section: ToolSection,
+    val title: String,
+    val shortDescription: String,
+    val longDescription: String,
+    val area: OutputArea,
+) {
+    SPLIT_VIDEO(ToolSection.VIDEO, "Split videos", "Cut into equal-length parts without re-encoding",
+        "Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.",
+        OutputArea.SPLITS),
+    OPTIMIZE_VIDEO(ToolSection.VIDEO, "Lossless video optimizer", "Repackage for fast start; quality untouched",
+        "Copies the existing video and audio streams bit-for-bit into a clean MP4 with the index at the front (plays and uploads faster). This is not compression: quality is identical and the size changes only slightly.",
+        OutputArea.OPTIMIZED_VIDEO),
+    COMPRESS_VIDEO(ToolSection.VIDEO, "Video compressor", "Re-encode to smaller H.264 MP4 files",
+        "Re-encodes videos to H.264 + AAC MP4 at the quality you choose. Lower quality gives smaller files.",
+        OutputArea.COMPRESSED_VIDEO),
+    REMOVE_AUDIO(ToolSection.VIDEO, "Remove video audio", "Silent copies with the video untouched",
+        "Creates copies of your videos without the sound track. The picture is copied as-is, with no quality loss.",
+        OutputArea.NO_AUDIO),
+
+    COMPRESS_IMAGES(ToolSection.IMAGES, "Image compressor", "JPEG or WebP with quality and size limits",
+        "Re-encodes photos as JPEG or WebP at the quality you choose, optionally limiting the width. Aspect ratio and orientation are always preserved.",
+        OutputArea.COMPRESSED_IMAGES),
+    OPTIMIZE_IMAGES(ToolSection.IMAGES, "Lossless image optimizer", "Pixel-identical PNG or lossless WebP",
+        "Stores every pixel exactly as it is in an efficiently compressed lossless file. Savings depend on the source and are not guaranteed.",
+        OutputArea.COMPRESSED_IMAGES),
+    MERGE_IMAGES(ToolSection.IMAGES, "Merge images", "Stack, line up or pack images into one PNG",
+        "Combines two or more images into a single PNG without scaling or cropping any of them.",
+        OutputArea.MERGED),
+    STITCH(ToolSection.IMAGES, "Multi-shot stitcher", "Join overlapping photos into a panorama",
+        "Finds where your overlapping photos meet, aligns them and blends them into one high-resolution lossless PNG.",
+        OutputArea.STITCHED),
+    WATERMARK(ToolSection.IMAGES, "Bulk watermark", "Text or logo on every photo in a batch",
+        "Adds a text and/or logo watermark to every image, with independent placement for each image shape.",
+        OutputArea.WATERMARKED),
+
+    VIDEO_TO_GIF(ToolSection.GIF, "Video → GIF", "Animated GIFs with adaptive colours",
+        "Turns videos into animated GIFs with an adaptive colour palette and accurate frame timing.",
+        OutputArea.CONVERTED_GIF),
+    COMPRESS_GIF(ToolSection.GIF, "GIF compressor", "Smaller GIFs: size, frame rate, colours",
+        "Shrinks existing GIFs by reducing their dimensions, frame rate and colour palette.",
+        OutputArea.GIFS),
+    OPTIMIZE_GIF(ToolSection.GIF, "GIF optimizer", "Re-pack GIFs while keeping every pixel",
+        "Re-encodes GIFs more efficiently while keeping every displayed pixel identical.",
+        OutputArea.GIFS),
+
+    PDF_TO_IMAGES(ToolSection.DOCUMENTS, "PDF → images", "Every page as a PNG or JPEG",
+        "Renders each page of a PDF to an image exactly as it looks on screen.",
+        OutputArea.PDF_IMAGES),
+    IMAGES_TO_PDF(ToolSection.DOCUMENTS, "Images → PDF", "One A4 page per image, in your order",
+        "Builds an A4 PDF with one image per page, in the order you choose.",
+        OutputArea.PDF),
+    MERGE_PDFS(ToolSection.DOCUMENTS, "Merge PDFs", "Combine PDFs, keeping text and links",
+        "Joins PDFs into one document, keeping their original text, vector graphics, links and page sizes.",
+        OutputArea.PDF),
+    PDF_SCANNER(ToolSection.DOCUMENTS, "PDF scanner", "Camera or gallery pages into a PDF",
+        "Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.",
+        OutputArea.PDF),
+
+    CONVERT_IMAGES(ToolSection.UTILITIES, "Convert images", "PNG, JPEG or WebP from most formats",
+        "Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.",
+        OutputArea.CONVERTED),
+    EXTRACT_AUDIO(ToolSection.UTILITIES, "Extract audio", "Save a video's AAC sound as M4A",
+        "Copies the AAC sound track of each video into an M4A audio file without re-encoding.",
+        OutputArea.EXTRACTED_AUDIO);
+
+    val outputPath: String get() = area.displayPath
+}
