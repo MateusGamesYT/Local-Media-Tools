@@ -26,6 +26,8 @@ object Errors {
             t is MediaCodec.CodecException -> "This device's video codec failed while processing the file" +
                 (if (t.isRecoverable || t.isTransient) " (temporary codec problem — try again)." else ".")
             t is com.localmediatools.codec.gif.GifFormatException -> msg
+            t is com.localmediatools.stitch.core.StitchException -> msg
+            t is com.localmediatools.codec.image.SoftDecodeException -> msg
             t is com.localmediatools.codec.gif.GifUnrepresentableException -> msg
             t is com.localmediatools.codec.mp4.Mp4FormatException -> "The video file is damaged or incomplete: $msg"
             t is IllegalStateException && msg.contains("Failed to add the track", true) ->
