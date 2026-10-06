@@ -57,7 +57,7 @@ class CountingStream(out: OutputStream) : FilterOutputStream(out) {
  */
 object ImagePipeline {
 
-    class Result(val bytes: Long, val width: Int, val height: Int, val usedStreaming: Boolean)
+    class Result(val bytes: Long, val width: Int, val height: Int, val usedStreaming: Boolean, val flattenedTransparency: Boolean)
 
     fun render(
         ctx: JobContext,
@@ -83,8 +83,9 @@ object ImagePipeline {
         val counting = CountingStream(pending.openStream().buffered(1 shl 16))
         try {
             val streaming = fullNeed > budget
+            var flattened = false
             if (!streaming) {
-                renderFull(ctx, src, outW, outH, sample, spec, overlay, exactPixels, counting)
+                flattened = renderFull(ctx, src, outW, outH, sample, spec, overlay, exactPixels, counting)
             } else {
                 if (!spec.format.streamable) {
                     throw UserFacingException("This image is too large to encode as ${spec.format.label} with the memory available (${src.width}×${src.height}). Choose PNG or JPEG, or set a smaller width.")
@@ -97,7 +98,7 @@ object ImagePipeline {
             }
             counting.flush()
             counting.close()
-            return Result(counting.count, outW, outH, streaming)
+            return Result(counting.count, outW, outH, streaming, flattened)
         } catch (t: Throwable) {
             try { counting.close() } catch (_: Exception) { }
             throw t
@@ -110,10 +111,11 @@ object ImagePipeline {
         return s
     }
 
+    /** Returns true when transparent pixels had to be flattened onto the background (JPEG). */
     private fun renderFull(
         ctx: JobContext, src: ImageSource, outW: Int, outH: Int, sample: Int, spec: EncodeSpec,
         overlay: Overlay?, exactPixels: Boolean, out: OutputStream,
-    ) {
+    ): Boolean {
         ctx.throttle()
         var bmp = src.decode(sample, unpremultiplied = exactPixels, keepColorSpace = exactPixels)
         ctx.throttle()
@@ -129,12 +131,14 @@ object ImagePipeline {
             overlay.draw(Canvas(bmp), 0, outW, outH)
         }
         ctx.throttle()
+        val flattened = spec.format == ImageOutFormat.JPEG && BitmapOps.hasTransparency(bmp)
         try {
             encodeBitmap(bmp, spec, out)
         } finally {
             bmp.recycle()
         }
         ctx.throttle()
+        return flattened
     }
 
     /** Encodes a finished bitmap with the platform encoders (or the exact PNG writer). */

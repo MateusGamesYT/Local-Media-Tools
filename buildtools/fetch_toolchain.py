@@ -120,6 +120,7 @@ for g, a, v in [
     ("org.apache.pdfbox", "pdfbox", "2.0.32"),
     ("org.apache.pdfbox", "fontbox", "2.0.32"),
     ("commons-logging", "commons-logging", "1.2"),
+    ("org.openpnp", "opencv", "4.9.0-0"),
 ]:
     url, name = mvn(g, a, v)
     add(f"test/{name}", url)

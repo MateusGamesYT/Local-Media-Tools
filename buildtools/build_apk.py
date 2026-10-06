@@ -34,7 +34,7 @@ TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]
 
 # Packages of pure-Kotlin engine code that must not depend on Android (unit tested on the JVM).
-PURE_DIRS = ["com/localmediatools/codec"]
+PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core"]
 
 LIBS = [
     "kotlin-stdlib-2.3.21.jar",
