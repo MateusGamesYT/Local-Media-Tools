@@ -7,6 +7,7 @@ Pipeline:  aapt2 compile/link  ->  javac (R)  ->  kotlinc  ->  bytecode sanitize
 Usage:
   python3 buildtools/build_apk.py            # release-style build (signed with the sideload key)
   python3 buildtools/build_apk.py --test     # also compile + run the JVM unit tests first
+  python3 buildtools/build_apk.py --robo-test  # build, then run the Robolectric (Android framework) tests
 """
 import hashlib
 import os
@@ -24,6 +25,7 @@ BUILD = os.path.join(ROOT, "build")
 APP = os.path.join(ROOT, "app")
 SRC = os.path.join(APP, "src", "main")
 TEST_SRC = os.path.join(APP, "src", "test", "kotlin")
+ROBO_SRC = os.path.join(APP, "src", "roboTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
@@ -378,11 +380,59 @@ def run_tests():
     run(["java", "-Xmx2g", "-cp", os.pathsep.join([out, resources, stdlib] + junit), "org.junit.runner.JUnitCore"] + sorted(tests))
 
 
+def run_robo_tests():
+    """Runs app/src/roboTest against the compiled app classes inside Robolectric (Android 15 runtime,
+    native graphics). Needs the extra toolchain from `fetch_toolchain.py --robolectric`."""
+    robo = jars(os.path.join(TC, "robolectric")) + jars(os.path.join(TC, "robolectric-extra"))
+    sdk_dir = os.path.join(TC, "robolectric-sdk")
+    if not robo or not os.path.isdir(sdk_dir):
+        sys.exit("Robolectric toolchain missing: run python3 buildtools/fetch_toolchain.py --robolectric")
+    out = os.path.join(BUILD, "robotest-classes")
+    if os.path.exists(out):
+        shutil.rmtree(out)
+    os.makedirs(out)
+    rcls = os.path.join(BUILD, "classes-r")
+    kt = os.path.join(BUILD, "classes-kt")
+    libjars = jars(os.path.join(BUILD, "libs", "jars"))
+    srcs = sources(ROBO_SRC)
+    log(f"compiling Robolectric tests ({len(srcs)} files)")
+    run(kotlinc_cmd() + KOTLIN_FLAGS + ["-classpath", os.pathsep.join([ANDROID_JAR, rcls, kt] + libjars + robo), "-d", out] + srcs)
+    cfg = os.path.join(out, "com", "android", "tools")
+    os.makedirs(cfg, exist_ok=True)
+    with open(os.path.join(cfg, "test_config.properties"), "w") as f:
+        f.write(f"android_merged_manifest={os.path.join(SRC, 'AndroidManifest.xml')}\n")
+        f.write(f"android_merged_assets={os.path.join(BUILD, 'assets')}\n")
+        f.write(f"android_resource_apk={os.path.join(BUILD, 'base.apk')}\n")
+        f.write("android_custom_package=com.localmediatools.app\n")
+    with open(os.path.join(out, "robolectric.properties"), "w") as f:
+        f.write(f"sdk={TARGET_SDK}\ngraphicsMode=NATIVE\nlooperMode=PAUSED\napplication=com.localmediatools.app.LmtApp\n")
+    tests = []
+    for dirpath, _, files in os.walk(out):
+        for fn in files:
+            if fn.endswith("Test.class") and "$" not in fn:
+                rel = os.path.relpath(os.path.join(dirpath, fn), out)
+                tests.append(rel[:-6].replace(os.sep, "."))
+    only = [a.split("=", 1)[1] for a in sys.argv if a.startswith("--only=")]
+    if only:
+        tests = [t for t in tests if any(o in t for o in only)]
+    log(f"running {len(tests)} Robolectric test classes")
+    resources = os.path.join(APP, "src", "test", "resources")
+    run(["java", "-Xmx3g", "-Drobolectric.offline=true", f"-Drobolectric.dependency.dir={sdk_dir}",
+         "-Drobolectric.logging.enabled=false", "-Djava.awt.headless=true",
+         "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED",
+         "--add-opens=java.base/java.util=ALL-UNNAMED", "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
+         "-cp", os.pathsep.join([out, resources, rcls, kt] + libjars + robo + [ANDROID_JAR]),
+         "org.junit.runner.JUnitCore"] + sorted(tests))
+
+
 def main():
     if not os.path.exists(ANDROID_JAR):
         sys.exit("toolchain missing: run python3 buildtools/fetch_toolchain.py first")
     os.makedirs(BUILD, exist_ok=True)
     ensure_sanitizer()
+    if "--robo-test-only" in sys.argv:  # reuse the last build's classes
+        run_robo_tests()
+        return
     if "--test" in sys.argv or "--test-only" in sys.argv:
         run_tests()
         if "--test-only" in sys.argv:
@@ -391,6 +441,8 @@ def main():
     compile_resources()
     compile_code()
     package()
+    if "--robo-test" in sys.argv:
+        run_robo_tests()
 
 
 if __name__ == "__main__":

@@ -177,7 +177,8 @@ class StitchJob(
             }
             val workSide = if (ctx.workload.level < 0.4) 1200 else 1500
             val options = StitchOptions(mode = mode, useAi = assist != null, cropToRectangle = crop, workMaxSide = workSide,
-                maxOutputPixels = minOf(250_000_000L, budget * 6), memoryBudget = budget)
+                maxOutputPixels = minOf(250_000_000L, budget * 6), memoryBudget = budget,
+                aiOffered = TfliteEmbedder.availability(ctx.app).first)
             val monitor = object : StitchMonitor {
                 override fun stage(text: String, fraction: Double) {
                     ctx.status(text)

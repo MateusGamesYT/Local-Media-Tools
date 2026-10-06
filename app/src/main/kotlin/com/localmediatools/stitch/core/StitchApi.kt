@@ -45,6 +45,8 @@ data class StitchOptions(
     val maxOutputPixels: Long = 200_000_000L,
     /** Bytes available for decoded pixels during rendering. */
     val memoryBudget: Long = 256L * 1024 * 1024,
+    /** Whether this device offers AI assistance at all (only then is it suggested in errors). */
+    val aiOffered: Boolean = false,
 )
 
 class StitchException(message: String) : Exception(message)

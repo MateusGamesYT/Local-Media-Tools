@@ -108,6 +108,12 @@ object MediaProbe {
         } catch (e: Exception) {
             // Some providers don't support queries; fall back to the URI.
         }
+        if (size < 0) {
+            // Providers that don't report a size: ask the file descriptor (needed for "never larger" checks).
+            size = try {
+                resolver.openFileDescriptor(uri, "r")?.use { it.statSize } ?: -1L
+            } catch (e: Exception) { -1L }
+        }
         val mime = try { resolver.getType(uri) } catch (e: Exception) { null }
         val head = ByteArray(512)
         var n = 0

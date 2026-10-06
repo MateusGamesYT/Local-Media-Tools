@@ -12,6 +12,8 @@ Sources:
   * apksigner / apksig        - Ubuntu archive packages
   * Kotlin compiler + libs    - Maven Central (Google Cloud mirror)
   * MobileNet-V3 embedder     - MediaPipe model bucket (on-device AI alignment assist)
+
+With --robolectric it also fetches the optional Robolectric test runtime (needs `mvn`).
 """
 import hashlib
 import io
@@ -179,6 +181,44 @@ def extract_member(data, kind, member):
     raise ValueError(kind)
 
 
+ROBO_SDK = "15-robolectric-13954326-i7"
+
+
+def fetch_robolectric():
+    """Optional extras for `build_apk.py --robo-test`: Robolectric + its Android 15 runtime jar.
+    Needs Maven (`mvn`) on PATH. androidx.test is only on Google's Maven (often blocked), so the few
+    androidx.test classes Robolectric references are replaced by small stubs compiled here."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    robo_dir = os.path.join(here, "robolectric")
+    out = os.path.join(TC, "robolectric")
+    if not os.path.isdir(out) or not os.listdir(out):
+        print("fetch Robolectric (maven)", flush=True)
+        subprocess.run(["mvn", "-q", "-B", "-s", os.path.join(robo_dir, "settings.xml"), "-f", os.path.join(robo_dir, "pom.xml"),
+                        f"-Dmaven.repo.local={os.path.join(TC, 'm2')}", "dependency:copy-dependencies",
+                        f"-DoutputDirectory={out}"], check=True)
+    sdk = os.path.join(TC, "robolectric-sdk", f"android-all-instrumented-{ROBO_SDK}.jar")
+    if not os.path.exists(sdk):
+        url, _ = mvn("org.robolectric", "android-all-instrumented", ROBO_SDK)
+        print(f"fetch {os.path.basename(sdk)}", flush=True)
+        data = download(url)
+        os.makedirs(os.path.dirname(sdk), exist_ok=True)
+        with open(sdk, "wb") as f:
+            f.write(data)
+    stubs = os.path.join(TC, "robolectric-extra", "androidx-test-stubs.jar")
+    if not os.path.exists(stubs):
+        print("compile androidx.test stubs", flush=True)
+        with tempfile.TemporaryDirectory() as tmp:
+            srcs = []
+            for dp, _, fs in os.walk(os.path.join(robo_dir, "stubs")):
+                srcs += [os.path.join(dp, f) for f in fs if f.endswith(".java")]
+            cp = os.pathsep.join([os.path.join(TC, "android", "android.jar")] +
+                                 [os.path.join(out, j) for j in sorted(os.listdir(out)) if j.endswith(".jar")])
+            subprocess.run(["javac", "-nowarn", "--release", "11", "-cp", cp, "-d", tmp] + srcs, check=True)
+            os.makedirs(os.path.dirname(stubs), exist_ok=True)
+            subprocess.run(["jar", "cf", stubs, "-C", tmp, "."], check=True)
+    print("Robolectric ready")
+
+
 def main():
     pins = load_pins()
     computed = {}
@@ -218,6 +258,8 @@ def main():
                 f.write(f"{computed[k]}  {k}\n")
         print(f"wrote {PINS}")
     print("toolchain ready:", TC)
+    if "--robolectric" in sys.argv:
+        fetch_robolectric()
 
 
 if __name__ == "__main__":

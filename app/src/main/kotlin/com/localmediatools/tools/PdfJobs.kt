@@ -40,7 +40,13 @@ import java.util.Locale
 
 private fun timestampName(prefix: String) = "$prefix ${SimpleDateFormat("yyyy-MM-dd HH.mm", Locale.US).format(Date())}"
 
+/** Checks a written PDF opens and has the expected page count (replaceable in tests). */
+object PdfVerifier {
+    @Volatile var impl: ((android.content.Context, android.net.Uri, Int) -> Unit)? = null
+}
+
 private fun verifyPdf(ctx: JobContext, uri: android.net.Uri, expectPages: Int) {
+    PdfVerifier.impl?.let { return it(ctx.app, uri, expectPages) }
     val pfd = ctx.app.contentResolver.openFileDescriptor(uri, "r") ?: throw UserFacingException("The written PDF could not be read back.")
     pfd.use {
         val r = try { PdfRenderer(it) } catch (e: Exception) { throw UserFacingException("The written PDF failed verification, so it was discarded.", e) }

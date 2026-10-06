@@ -25,22 +25,22 @@ import java.util.concurrent.atomic.AtomicInteger
  * Everything a running job needs: cancellation, progress reporting, results, workload-aware
  * throttling and a worker dispatcher whose threads follow the workload's priority.
  */
-class JobContext internal constructor(
+class JobContext(
     val app: Context,
     val job: ExportJob,
     private val listener: Listener,
 ) {
-    internal interface Listener {
+    interface Listener {
         fun onProgress(ctx: JobContext)
         fun onResult(ctx: JobContext, result: ItemResult)
     }
 
-    @Volatile var cancelled = false; internal set
+    @Volatile var cancelled = false
     @Volatile var statusText: String = "Starting…"; private set
     @Volatile var currentName: String? = null; private set
     private val partial = ConcurrentHashMap<Int, Double>()
     private val doneUnits = AtomicInteger(0)
-    internal val results = java.util.Collections.synchronizedList(ArrayList<ItemResult>())
+    val results: MutableList<ItemResult> = java.util.Collections.synchronizedList(ArrayList<ItemResult>())
 
     val workload: WorkloadProfile get() = Workload.profile()
 
@@ -80,7 +80,10 @@ class JobContext internal constructor(
         listener.onResult(this, r)
     }
 
-    fun memoryBudget(sharedBy: Int = 1): Long = MemoryBudget.bitmapBytes(app, workload, sharedBy)
+    /** Test hook: fixed memory budget instead of one derived from free RAM. */
+    @Volatile var budgetOverride: Long? = null
+
+    fun memoryBudget(sharedBy: Int = 1): Long = budgetOverride?.let { it / sharedBy.coerceAtLeast(1) } ?: MemoryBudget.bitmapBytes(app, workload, sharedBy)
 
     // ------------------------------------------------------------------ throttling
     private class ThrottleState { var workStart = System.nanoTime() }

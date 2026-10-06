@@ -283,13 +283,15 @@ class MergePreview(ctx: Context) : View(ctx) {
 // =========================================================================== Stitcher
 class StitchScreen(a: MainActivity) : ToolScreen(a, ToolId.STITCH) {
     override fun buildOptions(container: LinearLayout) {
+        // AI assistance is only offered when this phone has the resources for it (RAM, 64-bit, cores, model).
         val (available, reason) = TfliteEmbedder.availability(ctx)
-        val ai = ToggleRow(ctx, "AI Assisted Alignment", reason, ImagePrefs.stitchAi && available) { ImagePrefs.stitchAi = it }
-        ai.setAvailable(available)
-        if (!available) ImagePrefs.stitchAi = false
-        container.addView(ai)
-        container.addView(UI.note(ctx, "Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.", UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(6) })
-        section(container, "Scene type", "Auto detects how your photos were taken")
+        if (available) {
+            container.addView(ToggleRow(ctx, "AI Assisted Alignment", reason, ImagePrefs.stitchAi) { ImagePrefs.stitchAi = it })
+            container.addView(UI.note(ctx, "Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.", UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(6) })
+        } else {
+            ImagePrefs.stitchAi = false
+        }
+        section(container, "Scene type", "Auto detects how your photos were taken", top = if (available) 16 else 4)
         container.addView(ChoiceGroup(ctx, SceneMode.entries, { when (it) { SceneMode.AUTO -> "Auto"; SceneMode.FLAT -> "Flat surface"; SceneMode.PANORAMA -> "Panorama" } }, ImagePrefs.stitchMode) { ImagePrefs.stitchMode = it }, lp().apply { topMargin = ctx.dp(10) })
         container.addView(UI.text(ctx, "Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid.", TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
         container.addView(ToggleRow(ctx, "Crop to clean edges", "Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)", ImagePrefs.stitchCrop) { ImagePrefs.stitchCrop = it }, lp().apply { topMargin = ctx.dp(10) })

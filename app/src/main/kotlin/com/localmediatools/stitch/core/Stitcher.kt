@@ -51,7 +51,7 @@ class Stitcher(
             }
             if (links.isEmpty()) {
                 throw StitchException("No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content." +
-                    if (assist == null) " Turning on AI Assisted Alignment may help with low-texture scenes." else "")
+                    if (assist == null && options.aiOffered) " Turning on AI Assisted Alignment may help with low-texture scenes." else "")
             }
             // 3. Graph.
             val aligner = GlobalAligner((0 until n).map { work[it]!! }, (0 until n).map { images.fullSize(it) }, DoubleArray(n) { images.focal35mm(it) }, monitor)

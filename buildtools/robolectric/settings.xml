@@ -1,0 +1,5 @@
+<settings>
+  <mirrors>
+    <mirror><id>gcs</id><mirrorOf>*</mirrorOf><url>https://maven-central.storage-download.googleapis.com/maven2</url></mirror>
+  </mirrors>
+</settings>

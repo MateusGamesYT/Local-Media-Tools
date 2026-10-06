@@ -168,7 +168,7 @@ class ImageSource private constructor(
     }
 
     /** True when region decoding or an in-budget full decode makes [decodeRegion] usable. */
-    fun canServeRegions(budgetBytes: Long) = supportsRegions || bytesFor(1) <= budgetBytes
+    fun canServeRegions(budgetBytes: Long) = supportsRegions || bytesFor(1) * (if (orientation.isIdentity) 1 else 2) <= budgetBytes
 
     /** Oriented preview whose longer side is at most [maxSide]. */
     fun preview(maxSide: Int): Bitmap {

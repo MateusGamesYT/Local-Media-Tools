@@ -37,26 +37,38 @@ enum class OutputArea(val collection: Collection, val relativePath: String) {
 
 data class OutputFile(val uri: Uri, val displayName: String, val mime: String, val size: Long, val area: OutputArea)
 
+/** An output being written. Invisible to other apps until [commit]; [abort] removes it. */
+abstract class PendingOutput {
+    abstract val uri: Uri
+    abstract val requestedName: String
+    abstract val mime: String
+    abstract val area: OutputArea
+    abstract fun openStream(): OutputStream
+    abstract fun openFd(mode: String = "rw"): ParcelFileDescriptor
+    abstract fun commit(): OutputFile
+    abstract fun abort()
+}
+
 /**
  * A MediaStore entry that stays hidden (IS_PENDING) until [commit]. If processing fails the entry is
  * deleted with [abort], so a failed export never leaves a broken or partial file behind.
  */
-class PendingOutput internal constructor(
+class MediaStorePendingOutput internal constructor(
     private val ctx: Context,
-    val uri: Uri,
-    val requestedName: String,
-    val mime: String,
-    val area: OutputArea,
-) {
+    override val uri: Uri,
+    override val requestedName: String,
+    override val mime: String,
+    override val area: OutputArea,
+) : PendingOutput() {
     private var done = false
 
-    fun openStream(): OutputStream = ctx.contentResolver.openOutputStream(uri, "w")
+    override fun openStream(): OutputStream = ctx.contentResolver.openOutputStream(uri, "w")
         ?: throw java.io.IOException("Could not open the output file for writing")
 
-    fun openFd(mode: String = "rw"): ParcelFileDescriptor = ctx.contentResolver.openFileDescriptor(uri, mode)
+    override fun openFd(mode: String): ParcelFileDescriptor = ctx.contentResolver.openFileDescriptor(uri, mode)
         ?: throw java.io.IOException("Could not open the output file for writing")
 
-    fun commit(): OutputFile {
+    override fun commit(): OutputFile {
         check(!done)
         val values = ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }
         ctx.contentResolver.update(uri, values, null, null)
@@ -75,7 +87,7 @@ class PendingOutput internal constructor(
         return OutputFile(uri, name, mime, size, area)
     }
 
-    fun abort() {
+    override fun abort() {
         if (done) return
         done = true
         try { ctx.contentResolver.delete(uri, null, null) } catch (_: Exception) { }
@@ -83,7 +95,11 @@ class PendingOutput internal constructor(
 }
 
 object OutputStore {
+    /** Replaces MediaStore (used by automated tests to write into a temporary folder). */
+    @Volatile var factory: ((Context, OutputArea, String, String) -> PendingOutput)? = null
+
     fun create(ctx: Context, area: OutputArea, displayName: String, mime: String): PendingOutput {
+        factory?.let { return it(ctx, area, Format.safeFileName(displayName), mime) }
         val resolver = ctx.contentResolver
         val name = Format.safeFileName(displayName)
         fun values(path: String) = ContentValues().apply {
@@ -110,7 +126,7 @@ object OutputStore {
             }
         }
         uri ?: throw java.io.IOException("The system media store refused to create \"$name\"")
-        return PendingOutput(ctx, uri, name, mime, area)
+        return MediaStorePendingOutput(ctx, uri, name, mime, area)
     }
 
     /** Free bytes on shared storage, or -1 if unknown. */

@@ -93,7 +93,8 @@ class HomeScreen(activity: MainActivity) : Screen(activity) {
                 for ((k, t) in pair.withIndex()) {
                     row.addView(toolCard(t), lp(0, MATCH, 1f).apply { if (k == 0) rightMargin = ctx.dp(6) else leftMargin = ctx.dp(6) })
                 }
-                if (pair.size == 1) row.addView(View(ctx), lp(0, WRAP, 1f).apply { leftMargin = ctx.dp(6) })
+                // The filler must also be MATCH_PARENT: a WRAP child makes LinearLayout collapse the row to 0 height.
+                if (pair.size == 1) row.addView(View(ctx), lp(0, MATCH, 1f).apply { leftMargin = ctx.dp(6) })
                 col.addView(row, lp().apply { bottomMargin = ctx.dp(12) })
             }
         }
