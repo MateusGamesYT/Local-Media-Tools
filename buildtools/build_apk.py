@@ -374,7 +374,8 @@ def run_tests():
                 rel = os.path.relpath(os.path.join(dirpath, fn), out)
                 tests.append(rel[:-6].replace(os.sep, "."))
     log(f"running {len(tests)} test classes")
-    run(["java", "-Xmx2g", "-cp", os.pathsep.join([out, stdlib] + junit), "org.junit.runner.JUnitCore"] + sorted(tests))
+    resources = os.path.join(APP, "src", "test", "resources")
+    run(["java", "-Xmx2g", "-cp", os.pathsep.join([out, resources, stdlib] + junit), "org.junit.runner.JUnitCore"] + sorted(tests))
 
 
 def main():
