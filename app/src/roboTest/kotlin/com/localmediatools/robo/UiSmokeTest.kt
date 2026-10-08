@@ -15,7 +15,8 @@ import com.localmediatools.export.ExportManager
 import com.localmediatools.export.JobStatus
 import com.localmediatools.tools.ToolId
 import com.localmediatools.ui.HistoryScreen
-import com.localmediatools.ui.HomeScreen
+import com.localmediatools.ui.MainShell
+import com.localmediatools.ui.editor.EditorScreen
 import com.localmediatools.ui.ResultsScreen
 import com.localmediatools.ui.Selection
 import com.localmediatools.ui.SelectionReviewScreen
@@ -100,6 +101,7 @@ class UiSmokeTest {
             }
             PickKind.PDFS -> listOf(Robo.item(app, Robo.write(inDir, "${t.name}_1.pdf", "%PDF-1.4\n%%EOF\n".toByteArray())),
                 Robo.item(app, Robo.write(inDir, "${t.name}_2.pdf", "%PDF-1.4\n%%EOF\n".toByteArray())))
+            PickKind.MEDIA -> listOf(img("${t.name}_a.png", 120, 80, Color.RED), Robo.item(app, Robo.write(inDir, "${t.name}.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))))
             else -> listOf(Robo.item(app, Robo.write(inDir, "${t.name}.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))))
         }
     }
@@ -107,18 +109,34 @@ class UiSmokeTest {
     @Test fun everyToolScreenOpensFromHomeAndRenders() {
         val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
         idle()
-        assertTrue(visibleTop(a) is HomeScreen)
+        assertTrue(visibleTop(a) is MainShell)
         render(a)
         // Every tool card must actually be visible (regression: a lone card in a row collapsed to 0 px).
         for (t in ToolId.entries) {
             val card = findDesc(a) { it.startsWith(t.title + ".") }!!
-            assertTrue("${t.title} card is visible (${card.width}×${card.height})", card.height > a.resources.displayMetrics.density * 100 && card.width > 100)
+            assertTrue("${t.title} card is visible (${card.width}×${card.height})", card.height > a.resources.displayMetrics.density * 56 && card.width > 100)
         }
+        val editorTools = setOf(ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT)
         for (t in ToolId.entries) {
             val card = findDesc(a) { it.startsWith(t.title + ".") }
             assertNotNull("home card for ${t.title}", card)
             card!!.performClick()
             idle()
+            if (t in editorTools) {
+                // Editing tools ask the system photo picker for one photo; answer it like the picker would.
+                val started = shadowOf(a).nextStartedActivityForResult
+                assertNotNull("$t starts the photo picker", started)
+                val photo = sampleItems(ToolId.COMPRESS_IMAGES).first()
+                shadowOf(a).receiveResult(started.intent, android.app.Activity.RESULT_OK, android.content.Intent().setData(photo.uri))
+                val deadline = System.currentTimeMillis() + 20_000
+                while (System.currentTimeMillis() < deadline && ((visibleTop(a) as? EditorScreen)?.renders ?: 0) == 0) { idle(50); Thread.sleep(20) }
+                val ed = visibleTop(a) as EditorScreen
+                assertTrue("$t editor rendered", ed.renders > 0)
+                for (m in com.localmediatools.ui.editor.EditorMode.entries) { ed.setMode(m); idle(300); render(a) }
+                @Suppress("DEPRECATION") a.onBackPressed(); idle()
+                assertTrue("back to home after $t", visibleTop(a) is MainShell)
+                continue
+            }
             val top = visibleTop(a)
             assertTrue("$t opened", top is ToolScreen && top.tool == t)
             render(a)
@@ -149,7 +167,7 @@ class UiSmokeTest {
                     assertTrue("placement steps: $steps", steps == 3)
                     assertTrue(visibleTop(a) is ToolScreen)
                 }
-                if (t != ToolId.STITCH) assertTrue("${t.title}: ready text ${texts(a).filter { "ready" in it || "Select" in it || "Add" in it }}", texts(a).any { "ready" in it })
+                if (t != ToolId.STITCH && t != ToolId.TRIM_VIDEO) assertTrue("${t.title}: ready text ${texts(a).filter { "ready" in it || "Select" in it || "Add" in it }}", texts(a).any { "ready" in it })
                 a.navigator.push(SelectionReviewScreen(a, Selection.of(t)))
                 idle(); render(a)
                 @Suppress("DEPRECATION") a.onBackPressed(); idle()
@@ -157,7 +175,7 @@ class UiSmokeTest {
             }
             @Suppress("DEPRECATION") a.onBackPressed()
             idle()
-            assertTrue("back to home after $t", visibleTop(a) is HomeScreen)
+            assertTrue("back to home after $t", visibleTop(a) is MainShell)
         }
     }
 
@@ -166,6 +184,16 @@ class UiSmokeTest {
         idle()
         a.navigator.push(HistoryScreen(a)); idle(); render(a)
         @Suppress("DEPRECATION") a.onBackPressed(); idle()
+        val shell = visibleTop(a) as MainShell
+        for (tab in listOf(1, 2, 0)) { shell.show(tab); idle(); render(a) }
+        shell.show(2); idle()
+        findDesc(a) { it.startsWith("Open-source licences") }?.performClick() ?: a.navigator.push(com.localmediatools.ui.LicensesScreen(a))
+        idle(); render(a)
+        assertTrue(texts(a).any { it.contains("MIT License") })
+        @Suppress("DEPRECATION") a.onBackPressed(); idle()
+        // Back from a secondary tab returns to Tools first.
+        @Suppress("DEPRECATION") a.onBackPressed(); idle()
+        assertEquals(0, shell.tab)
         WorkloadDialog.show(a); idle()
         assertNotNull(org.robolectric.shadows.ShadowDialog.getLatestDialog())
         org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss()

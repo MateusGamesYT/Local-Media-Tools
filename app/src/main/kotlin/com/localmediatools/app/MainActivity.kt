@@ -17,7 +17,7 @@ import android.view.WindowInsets
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.localmediatools.core.CaptureProvider
-import com.localmediatools.ui.HomeScreen
+import com.localmediatools.ui.MainShell
 import com.localmediatools.ui.Navigator
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.PickKind
@@ -59,7 +59,7 @@ class MainActivity : Activity() {
         }
         setContentView(root)
         navigator = Navigator(root)
-        navigator.root(HomeScreen(this))
+        navigator.root(MainShell(this))
         handleIntent(intent)
     }
 
@@ -126,14 +126,17 @@ class MainActivity : Activity() {
     /** System photo picker (images/videos), falling back to the documents UI. */
     fun pickMedia(kind: PickKind, multiple: Boolean = true, cb: (List<Uri>) -> Unit) {
         val type = kind.galleryType ?: return pickDocuments(kind, multiple, cb)
+        val both = type == "*/*"
         val intent = if (photoPickerAvailable()) {
             Intent(MediaStore.ACTION_PICK_IMAGES).apply {
-                this.type = type
+                // No type = photos and videos.
+                if (!both) this.type = type
                 if (multiple) putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, MediaStore.getPickImagesMaxLimit())
             }
         } else {
             Intent(Intent.ACTION_GET_CONTENT).apply {
                 this.type = type
+                if (both) putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
                 addCategory(Intent.CATEGORY_OPENABLE)
                 putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple)
             }

@@ -23,7 +23,7 @@ import java.io.File
 import java.io.RandomAccessFile
 
 /** Remux helper: tries suitable containers in order until the device's muxer accepts the tracks. */
-private fun remuxToOutput(
+internal fun remuxToOutput(
     ctx: JobContext, item: MediaItem, area: OutputArea, baseName: String, tracks: List<TrackInfo>,
     startUs: Long, endUs: Long, rotation: Int, progress: (Double) -> Unit,
 ): OutputFile {
@@ -46,7 +46,7 @@ private fun remuxToOutput(
     throw last ?: UserFacingException("No suitable container for these tracks.")
 }
 
-private fun avTracks(info: VideoInfo): List<TrackInfo> {
+internal fun avTracks(info: VideoInfo): List<TrackInfo> {
     val v = info.video ?: throw UserFacingException("This file has no video track.")
     return listOf(v) + info.audio
 }

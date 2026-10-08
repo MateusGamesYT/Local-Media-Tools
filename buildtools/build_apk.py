@@ -29,8 +29,8 @@ ROBO_SRC = os.path.join(APP, "src", "roboTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
-VERSION_CODE = 1
-VERSION_NAME = "1.0.0"
+VERSION_CODE = 2
+VERSION_NAME = "1.1.0"
 MIN_SDK = 29
 TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]
@@ -223,7 +223,7 @@ def compile_resources():
          "--manifest", os.path.join(SRC, "AndroidManifest.xml"), "--java", gen,
          "--min-sdk-version", str(MIN_SDK), "--target-sdk-version", str(TARGET_SDK),
          "--version-code", str(VERSION_CODE), "--version-name", VERSION_NAME,
-         "-A", assets, "-0", "tflite", "--no-version-vectors", out])
+         "-A", assets, "-0", "tflite", "-0", "ttf", "--no-version-vectors", out])
 
 
 def compile_code():

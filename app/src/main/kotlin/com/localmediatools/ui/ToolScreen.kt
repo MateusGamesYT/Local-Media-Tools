@@ -104,7 +104,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
     private fun hero(): View {
         val c = UI.card(ctx)
         val row = UI.horizontal(ctx, Gravity.TOP)
-        row.addView(UI.iconTile(ctx, Icons.tool(tool), accent, 52, 28))
+        row.addView(UI.toolTile(ctx, tool, 52, 28))
         row.addView(UI.text(ctx, tool.longDescription, TextStyle.BODY_2).apply { setPadding(ctx.dp(14), 0, 0, 0) }, lp(0, WRAP, 1f))
         c.addView(row)
         val chips = FlowLayout(ctx)

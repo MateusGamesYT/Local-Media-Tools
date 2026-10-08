@@ -3,11 +3,12 @@ package com.localmediatools.tools
 import com.localmediatools.core.OutputArea
 
 enum class ToolSection(val title: String, val subtitle: String) {
-    VIDEO("Video", "Cut, repackage and shrink videos"),
-    IMAGES("Images", "Compress, combine and brand photos"),
+    EDIT("Edit & AI", "Retouch a photo with on-device AI"),
+    IMAGES("Images", "Compress, convert, combine and brand photos"),
+    VIDEO("Video", "Trim, cut, repackage and shrink videos"),
     GIF("GIF", "Create and slim down animations"),
-    DOCUMENTS("Documents", "PDF pages, scans and merges"),
-    UTILITIES("Utilities", "Format conversion and audio"),
+    DOCUMENTS("PDF", "Pages, scans and merges"),
+    PRIVACY("Privacy & audio", "Clean metadata and extract sound"),
 }
 
 enum class ToolId(
@@ -16,10 +17,25 @@ enum class ToolId(
     val shortDescription: String,
     val longDescription: String,
     val area: OutputArea,
+    /** Tools that save images and videos to different places. */
+    val videoArea: OutputArea? = null,
 ) {
+    PHOTO_EDITOR(ToolSection.EDIT, "Photo editor", "Crop, straighten, light, colour and looks",
+        "Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched.",
+        OutputArea.EDITED),
+    MAGIC_ERASER(ToolSection.EDIT, "Magic eraser", "Brush away people and objects with AI",
+        "Brush over what you don't want and an AI model running on this phone fills the gap with matching background. Nothing is uploaded.",
+        OutputArea.EDITED),
+    BLUR_REDACT(ToolSection.EDIT, "Blur & pixelate", "Hide faces, plates and private details",
+        "Paint over faces, number plates, addresses or screens to blur or pixelate them before you share a photo.",
+        OutputArea.EDITED),
+
     SPLIT_VIDEO(ToolSection.VIDEO, "Split videos", "Cut into equal-length parts without re-encoding",
         "Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.",
         OutputArea.SPLITS),
+    TRIM_VIDEO(ToolSection.VIDEO, "Trim & rotate video", "Cut the start and end, fix sideways videos",
+        "Keeps only the part you choose and can turn the video by 90° steps. Streams are copied, not re-encoded, so quality is untouched; the start snaps to the nearest earlier keyframe.",
+        OutputArea.TRIMMED),
     OPTIMIZE_VIDEO(ToolSection.VIDEO, "Lossless video optimizer", "Repackage for fast start; quality untouched",
         "Copies the existing video and audio streams bit-for-bit into a clean MP4 with the index at the front (plays and uploads faster). This is not compression: quality is identical and the size changes only slightly.",
         OutputArea.OPTIMIZED_VIDEO),
@@ -36,6 +52,9 @@ enum class ToolId(
     OPTIMIZE_IMAGES(ToolSection.IMAGES, "Lossless image optimizer", "Pixel-identical PNG or lossless WebP",
         "Stores every pixel exactly as it is in an efficiently compressed lossless file. Savings depend on the source and are not guaranteed.",
         OutputArea.COMPRESSED_IMAGES),
+    CONVERT_IMAGES(ToolSection.IMAGES, "Convert images", "PNG, JPEG or WebP from most formats",
+        "Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.",
+        OutputArea.CONVERTED),
     MERGE_IMAGES(ToolSection.IMAGES, "Merge images", "Stack, line up or pack images into one PNG",
         "Combines two or more images into a single PNG without scaling or cropping any of them.",
         OutputArea.MERGED),
@@ -65,16 +84,19 @@ enum class ToolId(
     MERGE_PDFS(ToolSection.DOCUMENTS, "Merge PDFs", "Combine PDFs, keeping text and links",
         "Joins PDFs into one document, keeping their original text, vector graphics, links and page sizes.",
         OutputArea.PDF),
+    EXTRACT_PDF_PAGES(ToolSection.DOCUMENTS, "Extract PDF pages", "Pick pages into a new PDF or separate files",
+        "Choose page numbers or ranges (like 1-3, 7, 10-) and save them as one new PDF or one PDF per page. Pages are copied as they are: text, links and quality are kept.",
+        OutputArea.PDF),
     PDF_SCANNER(ToolSection.DOCUMENTS, "PDF scanner", "Camera or gallery pages into a PDF",
         "Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.",
         OutputArea.PDF),
 
-    CONVERT_IMAGES(ToolSection.UTILITIES, "Convert images", "PNG, JPEG or WebP from most formats",
-        "Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.",
-        OutputArea.CONVERTED),
-    EXTRACT_AUDIO(ToolSection.UTILITIES, "Extract audio", "Save a video's AAC sound as M4A",
+    REMOVE_METADATA(ToolSection.PRIVACY, "Remove metadata", "Strip location, camera and date info",
+        "Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.",
+        OutputArea.CLEAN_IMAGES, OutputArea.CLEAN_VIDEO),
+    EXTRACT_AUDIO(ToolSection.PRIVACY, "Extract audio", "Save a video's AAC sound as M4A",
         "Copies the AAC sound track of each video into an M4A audio file without re-encoding.",
         OutputArea.EXTRACTED_AUDIO);
 
-    val outputPath: String get() = area.displayPath
+    val outputPath: String get() = videoArea?.let { "${area.displayPath}\n${it.displayPath}" } ?: area.displayPath
 }

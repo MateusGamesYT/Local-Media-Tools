@@ -29,16 +29,21 @@ enum class PickKind(val mimes: Array<String>, val noun: String, val galleryType:
     VIDEOS(arrayOf("video/*"), "videos", "video/*"),
     GIFS(arrayOf("image/gif"), "GIFs", "image/gif"),
     PDFS(arrayOf("application/pdf"), "PDFs", null),
+    MEDIA(arrayOf("image/*", "video/*"), "photos or videos", "*/*"),
 }
 
 /** Which files each tool accepts and how selection behaves. */
 object ToolRules {
     fun pickKind(t: ToolId): PickKind = when (t) {
-        ToolId.SPLIT_VIDEO, ToolId.OPTIMIZE_VIDEO, ToolId.COMPRESS_VIDEO, ToolId.REMOVE_AUDIO, ToolId.VIDEO_TO_GIF, ToolId.EXTRACT_AUDIO -> PickKind.VIDEOS
+        ToolId.SPLIT_VIDEO, ToolId.TRIM_VIDEO, ToolId.OPTIMIZE_VIDEO, ToolId.COMPRESS_VIDEO, ToolId.REMOVE_AUDIO, ToolId.VIDEO_TO_GIF, ToolId.EXTRACT_AUDIO -> PickKind.VIDEOS
         ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> PickKind.GIFS
-        ToolId.PDF_TO_IMAGES, ToolId.MERGE_PDFS -> PickKind.PDFS
+        ToolId.PDF_TO_IMAGES, ToolId.MERGE_PDFS, ToolId.EXTRACT_PDF_PAGES -> PickKind.PDFS
+        ToolId.REMOVE_METADATA -> PickKind.MEDIA
         else -> PickKind.IMAGES
     }
+
+    /** Tools that work on one file at a time. */
+    fun single(t: ToolId) = t == ToolId.TRIM_VIDEO
 
     fun minItems(t: ToolId) = when (t) { ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.MERGE_PDFS -> 2; else -> 1 }
 
@@ -51,6 +56,7 @@ object ToolRules {
             PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else "Not a video file"
             PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else "Not a GIF file"
             PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else "Not a PDF file"
+            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO) null else "Not a photo or video"
             PickKind.IMAGES -> when {
                 item.kind == MediaKind.IMAGE -> null
                 item.kind == MediaKind.GIF -> if (t == ToolId.OPTIMIZE_IMAGES) "Use the GIF optimizer for GIFs" else null
@@ -123,7 +129,7 @@ class SelectionPanel(
 
     init {
         orientation = VERTICAL
-        background = Shapes.rounded(context, Palette.SURFACE, 20f, Palette.STROKE)
+        background = Shapes.rounded(context, Palette.SURFACE, 22f, Palette.STROKE)
         setPadding(dp(16), dp(16), dp(16), dp(16))
         val head = UI.horizontal(context)
         head.addView(StepBadge(context, 1))
@@ -136,9 +142,14 @@ class SelectionPanel(
             gravity = Gravity.CENTER
             background = Shapes.clickable(context, Palette.SURFACE_2, 16f, Palette.STROKE)
             setPadding(dp(16), dp(22), dp(16), dp(22))
-            addView(UI.iconView(context, if (kind == PickKind.VIDEOS) R.drawable.ic_video else if (kind == PickKind.PDFS) R.drawable.ic_file else R.drawable.ic_gallery, Palette.ACCENT, 30))
-            addView(UI.text(context, "Choose ${kind.noun}", TextStyle.SUBTITLE).apply { setPadding(0, dp(10), 0, dp(2)) })
-            addView(UI.text(context, if (ToolRules.orderMatters(selection.tool)) "They'll be used in the order you select them" else "Select as many as you like", TextStyle.CAPTION))
+            addView(UI.iconView(context, when (kind) { PickKind.VIDEOS -> R.drawable.ic_video; PickKind.PDFS -> R.drawable.ic_file; else -> R.drawable.ic_gallery }, Palette.ACCENT, 30))
+            val one = ToolRules.single(selection.tool)
+            addView(UI.text(context, if (one) "Choose a ${kind.noun.removeSuffix("s")}" else "Choose ${kind.noun}", TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, dp(10), 0, dp(2)) })
+            addView(UI.text(context, when {
+                one -> "One at a time"
+                ToolRules.orderMatters(selection.tool) -> "They'll be used in the order you select them"
+                else -> "Select as many as you like"
+            }, TextStyle.CAPTION).apply { gravity = Gravity.CENTER })
             isClickable = true; isFocusable = true
             contentDescription = "Choose ${kind.noun}"
             setOnClickListener { if (kind.galleryType != null) pickGallery() else pickFiles() }
@@ -153,7 +164,7 @@ class SelectionPanel(
 
         if (kind.galleryType != null) actions.addView(UI.secondaryButton(context, "Gallery", R.drawable.ic_gallery) { pickGallery() })
         actions.addView(UI.secondaryButton(context, "Files", R.drawable.ic_file) { pickFiles() })
-        actions.addView(UI.secondaryButton(context, "Folder", R.drawable.ic_folder) { pickFolder() })
+        if (!ToolRules.single(selection.tool)) actions.addView(UI.secondaryButton(context, "Folder", R.drawable.ic_folder) { pickFolder() })
         reviewBtn = UI.secondaryButton(context, if (ToolRules.orderMatters(selection.tool)) "Review & order" else "Review", R.drawable.ic_reorder) {
             screen.push(SelectionReviewScreen(screen.activity, selection))
         }
@@ -167,8 +178,13 @@ class SelectionPanel(
 
     fun detach() = selection.unlisten(listener)
 
-    private fun pickGallery() = screen.activity.pickMedia(kind) { uris -> selection.addUris(screen.activity, uris) }
-    private fun pickFiles() = screen.activity.pickDocuments(kind) { uris -> selection.addUris(screen.activity, uris) }
+    private val single get() = ToolRules.single(selection.tool)
+    private fun picked(uris: List<android.net.Uri>) {
+        if (single) { if (uris.isNotEmpty()) { selection.clear(); selection.addUris(screen.activity, uris.take(1)) } }
+        else selection.addUris(screen.activity, uris)
+    }
+    private fun pickGallery() = screen.activity.pickMedia(kind, multiple = !single) { picked(it) }
+    private fun pickFiles() = screen.activity.pickDocuments(kind, multiple = !single) { picked(it) }
     private fun pickFolder() = screen.activity.pickFolder(kind) { uris -> selection.addUris(screen.activity, uris) }
 
     fun refresh() {

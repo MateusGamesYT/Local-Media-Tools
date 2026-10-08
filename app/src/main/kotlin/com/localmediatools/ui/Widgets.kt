@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.text.Editable
@@ -50,7 +51,7 @@ object UI {
     }
 
     fun card(ctx: Context, padDp: Int = 16, color: Int = Palette.SURFACE): LinearLayout = vertical(ctx, padDp, padDp).apply {
-        background = Shapes.rounded(ctx, color, 20f, Palette.STROKE)
+        background = Shapes.rounded(ctx, color, 22f, Palette.STROKE)
     }
 
     fun spacer(ctx: Context, hDp: Int = 0, wDp: Int = 0): View = View(ctx).apply {
@@ -72,9 +73,24 @@ object UI {
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
 
-    /** Coloured square tile holding an icon (tool cards, headers). */
+    /** Squircle with a vivid gradient and a white glyph (tool tiles, headers). */
+    fun gradientTile(ctx: Context, res: Int, colors: IntArray, sizeDp: Int = 44, iconDp: Int = 24): FrameLayout = FrameLayout(ctx).apply {
+        background = Shapes.gradient(ctx, colors, sizeDp * 0.3f)
+        layoutParams = LinearLayout.LayoutParams(ctx.dp(sizeDp), ctx.dp(sizeDp))
+        elevation = ctx.dp(2).toFloat()
+        addView(ImageView(ctx).apply {
+            setImageDrawable(ctx.icon(res, Color.WHITE))
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, FrameLayout.LayoutParams(ctx.dp(iconDp), ctx.dp(iconDp), Gravity.CENTER))
+    }
+
+    /** Tool icon in its section's gradient. */
+    fun toolTile(ctx: Context, t: com.localmediatools.tools.ToolId, sizeDp: Int = 44, iconDp: Int = 24) =
+        gradientTile(ctx, Icons.tool(t), Palette.sectionGradient(t.section), sizeDp, iconDp)
+
+    /** Softly tinted square tile holding an icon (secondary contexts). */
     fun iconTile(ctx: Context, res: Int, accent: Int, sizeDp: Int = 44, iconDp: Int = 24): FrameLayout = FrameLayout(ctx).apply {
-        background = Shapes.rounded(ctx, Palette.withAlpha(accent, 0x2E), (sizeDp * 0.32f))
+        background = Shapes.rounded(ctx, Palette.withAlpha(accent, 0x2A), (sizeDp * 0.3f))
         layoutParams = LinearLayout.LayoutParams(ctx.dp(sizeDp), ctx.dp(sizeDp))
         addView(ImageView(ctx).apply {
             setImageDrawable(ctx.icon(res, accent))
@@ -148,14 +164,14 @@ class ButtonView(ctx: Context, label: String, private val kind: Kind, iconRes: I
         val ctx = context
         when (kind) {
             Kind.PRIMARY -> {
-                background = if (isEnabled) Shapes.clickable(ctx, Palette.ACCENT, 16f, ripple = 0x44000000) else Shapes.rounded(ctx, Palette.SURFACE_3, 16f)
+                background = if (isEnabled) Shapes.clickableGradient(ctx, Palette.BRAND, 18f) else Shapes.rounded(ctx, Palette.SURFACE_3, 18f)
                 textView.setTextColor(if (isEnabled) Palette.ON_ACCENT else Palette.TEXT_3)
                 iconView?.drawable?.setTint(if (isEnabled) Palette.ON_ACCENT else Palette.TEXT_3)
             }
             Kind.SECONDARY -> {
-                background = Shapes.clickable(ctx, Palette.SURFACE_2, 14f, Palette.STROKE)
+                background = Shapes.clickable(ctx, Palette.SURFACE_2, 16f, Palette.STROKE_2)
                 textView.setTextColor(if (isEnabled) Palette.TEXT else Palette.TEXT_3)
-                iconView?.drawable?.setTint(if (isEnabled) Palette.ACCENT else Palette.TEXT_3)
+                iconView?.drawable?.setTint(if (isEnabled) Palette.TEXT else Palette.TEXT_3)
             }
             Kind.GHOST -> {
                 background = Shapes.clickable(ctx, 0, 14f)
@@ -244,7 +260,7 @@ class ChoiceGroup<T>(
         for ((i, tv) in views.withIndex()) {
             val sel = options[i] == selected
             val en = enabledMap[i] != false
-            tv.background = if (sel) Shapes.clickable(context, Palette.ACCENT_DARK, 100f, Palette.ACCENT) else Shapes.clickable(context, Palette.SURFACE_2, 100f, Palette.STROKE)
+            tv.background = if (sel) Shapes.clickable(context, Palette.ACCENT_DARK, 100f, Palette.ACCENT) else Shapes.clickable(context, Palette.SURFACE_2, 100f, Palette.STROKE_2)
             tv.setTextColor(if (!en) Palette.TEXT_3 else if (sel) Palette.TEXT else Palette.TEXT_2)
             tv.alpha = if (en) 1f else 0.5f
             tv.isSelected = sel
@@ -393,6 +409,19 @@ class TextField(ctx: Context, title: String, hint: String, initial: String, nume
 class ProgressBarView(ctx: Context, private val color: Int = Palette.ACCENT) : View(ctx) {
     private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = Palette.SURFACE_3 }
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+    private var gradientFor = -1
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        updateShader()
+    }
+
+    /** The default accent progress uses the brand gradient; status colours stay solid. */
+    private fun updateShader() {
+        fill.shader = if (fill.color == Palette.ACCENT && width > 0) android.graphics.LinearGradient(0f, 0f, width.toFloat(), 0f,
+            Palette.BRAND[0], Palette.BRAND[1], android.graphics.Shader.TileMode.CLAMP) else null
+        gradientFor = fill.color
+    }
     private var shown = 0f
     private var anim: ValueAnimator? = null
     private val rect = RectF()
@@ -407,6 +436,7 @@ class ProgressBarView(ctx: Context, private val color: Int = Palette.ACCENT) : V
 
     fun setProgress(f: Float, color: Int = this.fill.color) {
         fill.color = color
+        if (gradientFor != color) updateShader()
         val target = f.coerceIn(0f, 1f)
         contentDescription = "${(target * 100).roundToInt()} percent"
         anim?.cancel()

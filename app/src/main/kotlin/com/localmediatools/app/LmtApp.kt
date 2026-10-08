@@ -10,6 +10,8 @@ class LmtApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        com.localmediatools.ui.Fonts.init(this)
+        com.localmediatools.edit.PatchStore.cleanupAll(this)
         Workload.init(this)
         ExportNotifications.createChannels(this)
         ExportManager.init(this)

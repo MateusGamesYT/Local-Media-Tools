@@ -168,9 +168,9 @@ class ExportStatusCard(private val screen: Screen, private val tool: ToolId?) : 
 
 /** Global workload control: continuous slider plus presets. */
 object WorkloadDialog {
-    fun show(activity: MainActivity) {
-        val ctx = activity
-        val root = UI.vertical(ctx, 20, 8)
+    /** Presets, slider and explanation; changes apply immediately (also to running exports). */
+    fun content(ctx: android.content.Context, withNote: Boolean = true): LinearLayout {
+        val root = UI.vertical(ctx)
         val explain = UI.text(ctx, "", TextStyle.CAPTION)
         var slider: SliderField? = null
         val presets = ChoiceGroup(ctx, Workload.Preset.entries, { "${it.label} ${it.percent}%" }, Workload.presetFor(Workload.percent.value)) { p ->
@@ -186,9 +186,14 @@ object WorkloadDialog {
         root.addView(presets, lp().apply { topMargin = ctx.dp(4) })
         root.addView(slider, lp().apply { topMargin = ctx.dp(14) })
         root.addView(explain, lp().apply { topMargin = ctx.dp(8) })
-        root.addView(UI.note(ctx, "This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        if (withNote) root.addView(UI.note(ctx, "This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
         update(Workload.percent.value)
-        val scroll = ScrollView(ctx).apply { addView(root) }
+        return root
+    }
+
+    fun show(activity: MainActivity) {
+        val root = content(activity).apply { setPadding(activity.dp(20), activity.dp(8), activity.dp(20), activity.dp(8)) }
+        val scroll = ScrollView(activity).apply { addView(root) }
         AlertDialog.Builder(activity)
             .setTitle("Export workload")
             .setView(scroll)
@@ -244,7 +249,7 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
         val c = UI.card(ctx)
         val color = when (s.status) { JobStatus.SUCCEEDED -> Palette.SUCCESS; JobStatus.PARTIAL -> Palette.WARNING; JobStatus.FAILED -> Palette.DANGER; else -> Palette.ACCENT }
         val row = UI.horizontal(ctx)
-        row.addView(UI.iconTile(ctx, Icons.tool(s.tool), Palette.section(s.tool.section), 44, 24))
+        row.addView(UI.toolTile(ctx, s.tool, 44, 24))
         row.addView(UI.vertical(ctx).apply {
             setPadding(ctx.dp(12), 0, 0, 0)
             addView(UI.text(ctx, s.title, TextStyle.SUBTITLE))
@@ -308,28 +313,43 @@ class HistoryScreen(activity: MainActivity) : Screen(activity) {
         return root
     }
 
-    private fun render(s: ExportManager.State) {
+    private fun render(s: ExportManager.State) = HistoryList.render(this, body, s)
+}
+
+/** The list of exports (running, queued, finished), shared by the history screen and the Activity tab. */
+object HistoryList {
+    fun render(screen: Screen, body: LinearLayout, s: ExportManager.State, emptyText: String = "No exports yet. Results of every export appear here.") {
+        val ctx = screen.ctx
         body.removeAllViews()
         val all = listOfNotNull(s.active) + s.queued + s.history
         if (all.isEmpty()) {
-            body.addView(UI.text(ctx, "No exports yet. Results of every export appear here.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(24) })
+            body.addView(UI.vertical(ctx).apply {
+                gravity = Gravity.CENTER_HORIZONTAL
+                setPadding(ctx.dp(24), ctx.dp(36), ctx.dp(24), ctx.dp(36))
+                background = Shapes.rounded(ctx, Palette.SURFACE, 22f, Palette.STROKE)
+                addView(UI.iconTile(ctx, R.drawable.ic_activity, Palette.ACCENT, 52, 26))
+                addView(UI.text(ctx, "Nothing here yet", TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(14), 0, 0) })
+                addView(UI.text(ctx, emptyText, TextStyle.BODY_2).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(6), 0, 0) })
+            }, lp().apply { topMargin = ctx.dp(8) })
             return
         }
         for (snap in all) {
             val row = UI.horizontal(ctx)
-            row.background = Shapes.clickable(ctx, Palette.SURFACE, 18f, Palette.STROKE)
+            row.background = Shapes.clickable(ctx, Palette.SURFACE, 20f, Palette.STROKE)
             row.setPadding(ctx.dp(14), ctx.dp(12), ctx.dp(10), ctx.dp(12))
-            row.addView(UI.iconTile(ctx, Icons.tool(snap.tool), Palette.section(snap.tool.section), 40, 22))
+            row.addView(UI.toolTile(ctx, snap.tool, 40, 22))
             val color = when (snap.status) { JobStatus.SUCCEEDED -> Palette.SUCCESS; JobStatus.PARTIAL -> Palette.WARNING; JobStatus.FAILED -> Palette.DANGER; JobStatus.RUNNING, JobStatus.QUEUED -> Palette.ACCENT; else -> Palette.TEXT_3 }
             row.addView(UI.vertical(ctx).apply {
                 setPadding(ctx.dp(12), 0, ctx.dp(6), 0)
                 addView(UI.text(ctx, snap.title, TextStyle.BODY).apply { maxLines = 2 })
-                addView(UI.text(ctx, snap.summary(), TextStyle.CAPTION, color).apply { setPadding(0, ctx.dp(3), 0, 0) })
+                val running = snap.status == JobStatus.RUNNING
+                addView(UI.text(ctx, if (running) "${(snap.fraction * 100).toInt()}% · ${snap.statusText}" else snap.summary(), TextStyle.CAPTION, color).apply { setPadding(0, ctx.dp(3), 0, 0) })
+                if (snap.finishedAt > 0) addView(UI.text(ctx, DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(snap.finishedAt)), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(2), 0, 0) })
             }, lp(0, WRAP, 1f))
             row.addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_3, 18))
             row.isClickable = true
             row.contentDescription = "${snap.title}. ${snap.summary()}"
-            row.setOnClickListener { push(ResultsScreen(activity, snap.id)) }
+            row.setOnClickListener { screen.push(ResultsScreen(screen.activity, snap.id)) }
             body.addView(row, lp().apply { bottomMargin = ctx.dp(10) })
         }
     }

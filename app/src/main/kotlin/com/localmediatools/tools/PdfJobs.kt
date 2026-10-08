@@ -45,7 +45,7 @@ object PdfVerifier {
     @Volatile var impl: ((android.content.Context, android.net.Uri, Int) -> Unit)? = null
 }
 
-private fun verifyPdf(ctx: JobContext, uri: android.net.Uri, expectPages: Int) {
+internal fun verifyPdf(ctx: JobContext, uri: android.net.Uri, expectPages: Int) {
     PdfVerifier.impl?.let { return it(ctx.app, uri, expectPages) }
     val pfd = ctx.app.contentResolver.openFileDescriptor(uri, "r") ?: throw UserFacingException("The written PDF could not be read back.")
     pfd.use {
