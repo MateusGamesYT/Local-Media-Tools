@@ -3,7 +3,7 @@ package com.localmediatools.tools
 import com.localmediatools.core.OutputArea
 
 enum class ToolSection(val title: String, val subtitle: String) {
-    EDIT("Edit & AI", "Retouch a photo with on-device AI"),
+    EDIT("Edit & AI", "Retouch, cut out and anonymise with on-device AI"),
     IMAGES("Images", "Compress, convert, combine and brand photos"),
     VIDEO("Video", "Trim, cut, repackage and shrink videos"),
     GIF("GIF", "Create and slim down animations"),
@@ -29,6 +29,15 @@ enum class ToolId(
     BLUR_REDACT(ToolSection.EDIT, "Blur & pixelate", "Hide faces, plates and private details",
         "Paint over faces, number plates, addresses or screens to blur or pixelate them before you share a photo.",
         OutputArea.EDITED),
+    BACKGROUND_REMOVER(ToolSection.EDIT, "Background remover", "Cut out the subject as a transparent PNG",
+        "An AI model on this phone finds the main subject (people, pets, products, objects) and removes everything behind it. Save as a transparent PNG or on a plain colour.",
+        OutputArea.CUTOUTS),
+    AUTO_ENHANCE(ToolSection.EDIT, "Auto enhance", "One tap: light, colour and detail by AI",
+        "On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.",
+        OutputArea.ENHANCED),
+    FACE_BLUR(ToolSection.EDIT, "Blur faces", "Find faces in photos and videos, pick who to hide",
+        "On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.",
+        OutputArea.BLURRED_IMAGES, OutputArea.BLURRED_VIDEO),
 
     SPLIT_VIDEO(ToolSection.VIDEO, "Split videos", "Cut into equal-length parts without re-encoding",
         "Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.",
@@ -42,6 +51,12 @@ enum class ToolId(
     COMPRESS_VIDEO(ToolSection.VIDEO, "Video compressor", "Re-encode to smaller H.264 MP4 files",
         "Re-encodes videos to H.264 + AAC MP4 at the quality you choose. Lower quality gives smaller files.",
         OutputArea.COMPRESSED_VIDEO),
+    MERGE_VIDEOS(ToolSection.VIDEO, "Merge videos", "Join clips into one video, in your order",
+        "Joins videos end to end. Clips recorded with the same settings are joined without re-encoding (no quality loss); others are converted to a common size and format first.",
+        OutputArea.MERGED_VIDEO),
+    VIDEO_SPEED(ToolSection.VIDEO, "Speed & timelapse", "Slow motion, fast forward, timelapses",
+        "Plays videos from 0.25× to 60× speed. The sound keeps its natural pitch, or can be muted; long recordings become smooth timelapses.",
+        OutputArea.SPEED_VIDEO),
     REMOVE_AUDIO(ToolSection.VIDEO, "Remove video audio", "Silent copies with the video untouched",
         "Creates copies of your videos without the sound track. The picture is copied as-is, with no quality loss.",
         OutputArea.NO_AUDIO),
@@ -64,6 +79,9 @@ enum class ToolId(
     WATERMARK(ToolSection.IMAGES, "Bulk watermark", "Text or logo on every photo in a batch",
         "Adds a text and/or logo watermark to every image, with independent placement for each image shape.",
         OutputArea.WATERMARKED),
+    DUPLICATES(ToolSection.IMAGES, "Duplicate finder", "Find copies and similar shots, free space",
+        "Scans your photos on this phone for identical copies, re-saved duplicates and near-identical shots, suggests the best one to keep and moves the rest to the trash when you confirm.",
+        OutputArea.CLEAN_IMAGES),
 
     VIDEO_TO_GIF(ToolSection.GIF, "Video → GIF", "Animated GIFs with adaptive colours",
         "Turns videos into animated GIFs with an adaptive colour palette and accurate frame timing.",

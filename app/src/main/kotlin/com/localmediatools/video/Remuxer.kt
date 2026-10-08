@@ -41,7 +41,12 @@ class RemuxStats(val samples: Long, val bytes: Long, val firstUs: Long, val last
  * Nothing is decoded or re-encoded, so quality is untouched. Samples from all tracks are
  * interleaved by timestamp so the muxer never has to buffer large amounts of data.
  */
-class Remuxer(private val ctx: Context, private val uri: Uri) {
+class Remuxer(
+    private val ctx: Context,
+    private val uri: Uri,
+    /** Plays the result this many times faster by rescaling timestamps (for video-only copies). */
+    private val speed: Double = 1.0,
+) {
 
     fun interface Opener { fun open(): FileDescriptor }
 
@@ -97,7 +102,7 @@ class Remuxer(private val ctx: Context, private val uri: Uri) {
                 if (pts < startUs) { r.advance(); continue }
                 val size = r.read()
                 if (size < 0) { r.done = true; continue }
-                info.set(0, size, pts - startUs, if (sync) MediaCodec.BUFFER_FLAG_KEY_FRAME else 0)
+                info.set(0, size, if (speed == 1.0) pts - startUs else ((pts - startUs) / speed).toLong(), if (sync) MediaCodec.BUFFER_FLAG_KEY_FRAME else 0)
                 muxer.writeSampleData(r.muxerIndex, r.buffer, info)
                 r.written++
                 samples++; bytes += size

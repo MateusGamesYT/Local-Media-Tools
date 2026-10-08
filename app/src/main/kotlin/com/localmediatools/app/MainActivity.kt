@@ -216,6 +216,41 @@ class MainActivity : Activity() {
         }
     }
 
+    /** Starts a system confirmation (e.g. moving photos to the trash); [cb] gets the result code. */
+    fun launchIntentSender(sender: android.content.IntentSender, cb: (Int) -> Unit) {
+        val code = nextRequest++
+        pending[code] = { rc, _ -> cb(rc) }
+        try {
+            @Suppress("DEPRECATION")
+            startIntentSenderForResult(sender, code, null, 0, 0, 0)
+        } catch (e: Exception) {
+            pending.remove(code)
+            Toast.makeText(this, "This action isn't available on this phone.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // ------------------------------------------------------------------ photo library permission
+    private var photoAccessThen: ((Boolean) -> Unit)? = null
+
+    fun hasPhotoAccess(): Boolean = when {
+        Build.VERSION.SDK_INT >= 34 -> checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED
+        Build.VERSION.SDK_INT >= 33 -> checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+        else -> checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    /** Asks for read access to the photo library (the duplicate finder needs it); [then] gets whether access was given. */
+    fun ensurePhotoAccess(then: (Boolean) -> Unit) {
+        if (hasPhotoAccess() && Build.VERSION.SDK_INT < 34) { then(true); return }
+        photoAccessThen = then
+        val perms = when {
+            Build.VERSION.SDK_INT >= 34 -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+            Build.VERSION.SDK_INT >= 33 -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            else -> arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        requestPermissions(perms, 10)
+    }
+
     // ------------------------------------------------------------------ notifications permission
     fun ensureNotificationPermission(then: () -> Unit) {
         if (Build.VERSION.SDK_INT < 33 || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) { then(); return }
@@ -231,6 +266,10 @@ class MainActivity : Activity() {
         if (requestCode == 9) {
             permissionThen?.invoke()
             permissionThen = null
+        }
+        if (requestCode == 10) {
+            photoAccessThen?.invoke(hasPhotoAccess())
+            photoAccessThen = null
         }
     }
 

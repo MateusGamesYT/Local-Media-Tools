@@ -282,6 +282,12 @@ class ScannerScreen(a: MainActivity) : ToolScreen(a, ToolId.PDF_SCANNER) {
 object ToolScreens {
     fun create(a: MainActivity, t: ToolId): ToolScreen = when (t) {
         ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT -> throw IllegalArgumentException("${t.title} opens the photo editor (see ToolLauncher)")
+        ToolId.DUPLICATES -> throw IllegalArgumentException("${t.title} has its own screen (see ToolLauncher)")
+        ToolId.BACKGROUND_REMOVER -> BackgroundRemoverScreen(a)
+        ToolId.AUTO_ENHANCE -> AutoEnhanceScreen(a)
+        ToolId.FACE_BLUR -> FaceBlurScreen(a)
+        ToolId.MERGE_VIDEOS -> MergeVideosScreen(a)
+        ToolId.VIDEO_SPEED -> SpeedScreen(a)
         ToolId.TRIM_VIDEO -> TrimScreen(a)
         ToolId.EXTRACT_PDF_PAGES -> ExtractPagesScreen(a)
         ToolId.REMOVE_METADATA -> RemoveMetadataScreen(a)

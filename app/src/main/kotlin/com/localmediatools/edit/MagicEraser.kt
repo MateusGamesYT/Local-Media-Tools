@@ -151,6 +151,20 @@ object Inpainters {
 
 /** Turns brush strokes into retouch patches (full resolution, feathered edges). */
 object Retouch {
+    /** Downscale to [tw]×[th] by repeated halving (box filter), then a final bilinear step. */
+    private fun shrink(src: Bitmap, tw: Int, th: Int): Bitmap {
+        var cur = src
+        while (cur.width / 2 >= tw && cur.height / 2 >= th && cur.width >= 2 && cur.height >= 2) {
+            val next = Bitmap.createScaledBitmap(cur, cur.width / 2, cur.height / 2, true)
+            if (cur !== src) cur.recycle()
+            cur = next
+        }
+        if (cur.width == tw && cur.height == th) return if (cur === src) Bitmap.createBitmap(src) else cur
+        val out = Bitmap.createScaledBitmap(cur, tw, th, true)
+        if (cur !== src) cur.recycle()
+        return out
+    }
+
     /** Rough memory need per pixel of a retouched area (bitmaps, masks and pixel arrays). */
     private const val BYTES_PER_PIXEL = 22L
 
@@ -243,14 +257,16 @@ object Retouch {
 
     /**
      * Blurs ([PatchKind.BLUR]) or pixelates ([PatchKind.PIXELATE]) what the strokes cover, e.g. faces,
-     * number plates or addresses. [strength] is 0..1.
+     * number plates or addresses. [strength] is 0..1. With [featurePx] (e.g. a face's size) the
+     * effect scales with the feature instead of the photo, so large faces are hidden as well.
      */
-    fun obscure(rs: RetouchedSource, strokes: List<Stroke>, kind: PatchKind, strength: Float, store: PatchStore, budget: Long): RetouchPatch {
+    fun obscure(rs: RetouchedSource, strokes: List<Stroke>, kind: PatchKind, strength: Float, store: PatchStore, budget: Long, featurePx: Float = 0f): RetouchPatch {
         val w = rs.width; val h = rs.height
         val minSide = min(w, h).toFloat()
         val st = strength.coerceIn(0.05f, 1f)
         if (kind == PatchKind.PIXELATE) {
-            val block = max(4, (minSide * (0.008f + 0.035f * st)).roundToInt())
+            val block = if (featurePx > 0) max(4, (featurePx / (16f - 10f * st)).roundToInt())
+                else max(4, (minSide * (0.008f + 0.035f * st)).roundToInt())
             val b = Stroke.bounds(strokes, 1f)
             // Align to the block grid of the whole photo so neighbouring strokes match up.
             val area = Rect((floor(b.left / block) * block).toInt().coerceAtLeast(0), (floor(b.top / block) * block).toInt().coerceAtLeast(0),
@@ -265,16 +281,18 @@ object Retouch {
             bmp.setPixels(px.mapIndexed { i, c -> ((alpha[i].toInt() and 255) shl 24) or (c and 0x00FFFFFF) }.toIntArray(), 0, aw, 0, 0, aw, ah)
             return store.save(kind, area.left, area.top, bmp)
         }
-        val radius = minSide * (0.006f + 0.03f * st)
+        val radius = if (featurePx > 0) max(3f, featurePx / 2 * (0.15f + 0.3f * st)) else minSide * (0.006f + 0.03f * st)
         val f = max(1f, radius / 4f)
         val area = clampRect(Stroke.bounds(strokes, radius * 2 + f * 2), w, h)
         if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) throw UserFacingException("That area is too large for the memory available. Do it in smaller parts.")
         val aw = area.width(); val ah = area.height()
         val bmp = rs.decode(area, 1, budget)
         // Blur by shrinking and enlarging again (cheap and strong), smoothed by a second pass.
+        // Shrinking halves the size step by step: each step averages 2×2 pixels, so fine detail
+        // (stripes, text) can't alias into blotches.
         val k = max(1f, radius / 2f)
-        val small = Bitmap.createScaledBitmap(bmp, max(1, (aw / k).roundToInt()), max(1, (ah / k).roundToInt()), true)
-        val smaller = Bitmap.createScaledBitmap(small, max(1, small.width / 2), max(1, small.height / 2), true)
+        val small = shrink(bmp, max(1, (aw / k).roundToInt()), max(1, (ah / k).roundToInt()))
+        val smaller = shrink(small, max(1, small.width / 2), max(1, small.height / 2))
         val back = Bitmap.createBitmap(aw, ah, Bitmap.Config.ARGB_8888)
         Canvas(back).drawBitmap(smaller, null, Rect(0, 0, aw, ah), Paint(Paint.FILTER_BITMAP_FLAG))
         small.recycle(); smaller.recycle(); bmp.recycle()

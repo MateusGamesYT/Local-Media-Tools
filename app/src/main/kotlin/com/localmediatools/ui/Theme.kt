@@ -36,6 +36,9 @@ object Palette {
     val BRAND = intArrayOf(0xFF7C5CFF.toInt(), 0xFF3D7BFF.toInt())
     /** On-device AI features. */
     val AI = intArrayOf(0xFFB15CFF.toInt(), 0xFFFF5C93.toInt())
+    /** Secondary feature-card gradients. */
+    val TEAL = intArrayOf(0xFF22C3A6.toInt(), 0xFF2D7DD2.toInt())
+    val SUNSET = intArrayOf(0xFFFF8A4C.toInt(), 0xFFE5487A.toInt())
 
     fun section(s: ToolSection): Int = when (s) {
         ToolSection.EDIT -> 0xFFC084FC.toInt()
@@ -70,6 +73,12 @@ object Icons {
         ToolId.PHOTO_EDITOR -> R.drawable.ic_tool_editor
         ToolId.MAGIC_ERASER -> R.drawable.ic_tool_eraser
         ToolId.BLUR_REDACT -> R.drawable.ic_tool_redact
+        ToolId.BACKGROUND_REMOVER -> R.drawable.ic_tool_cutout
+        ToolId.AUTO_ENHANCE -> R.drawable.ic_tool_enhance
+        ToolId.FACE_BLUR -> R.drawable.ic_tool_faceblur
+        ToolId.DUPLICATES -> R.drawable.ic_tool_duplicates
+        ToolId.MERGE_VIDEOS -> R.drawable.ic_tool_video_merge
+        ToolId.VIDEO_SPEED -> R.drawable.ic_tool_speed
         ToolId.SPLIT_VIDEO -> R.drawable.ic_tool_split
         ToolId.TRIM_VIDEO -> R.drawable.ic_tool_trim
         ToolId.OPTIMIZE_VIDEO -> R.drawable.ic_tool_video_optimize

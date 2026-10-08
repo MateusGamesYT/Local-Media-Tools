@@ -55,9 +55,10 @@ class UiSmokeTest {
         shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         inDir = File(app.cacheDir, "ui-in").apply { deleteRecursively(); mkdirs() }
         outputs = FileOutputs(File(app.cacheDir, "ui-out").apply { deleteRecursively() }).also { it.install() }
+        com.localmediatools.vision.FaceScanner.override = { Robo.fakeFaces(it) }
     }
 
-    @After fun tearDown() = outputs.uninstall()
+    @After fun tearDown() { outputs.uninstall(); com.localmediatools.vision.FaceScanner.override = null }
 
     private fun idle(ms: Long = 400) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))
 
@@ -102,7 +103,7 @@ class UiSmokeTest {
             PickKind.PDFS -> listOf(Robo.item(app, Robo.write(inDir, "${t.name}_1.pdf", "%PDF-1.4\n%%EOF\n".toByteArray())),
                 Robo.item(app, Robo.write(inDir, "${t.name}_2.pdf", "%PDF-1.4\n%%EOF\n".toByteArray())))
             PickKind.MEDIA -> listOf(img("${t.name}_a.png", 120, 80, Color.RED), Robo.item(app, Robo.write(inDir, "${t.name}.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))))
-            else -> listOf(Robo.item(app, Robo.write(inDir, "${t.name}.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))))
+            else -> (1..ToolRules.minItems(t)).map { k -> Robo.item(app, Robo.write(inDir, "${t.name}_$k.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))) }
         }
     }
 
@@ -137,6 +138,14 @@ class UiSmokeTest {
                 assertTrue("back to home after $t", visibleTop(a) is MainShell)
                 continue
             }
+            if (t == ToolId.DUPLICATES) {
+                assertTrue(visibleTop(a) is com.localmediatools.ui.DuplicatesScreen)
+                render(a)
+                assertTrue(texts(a).any { it == "Scan my photos" })
+                @Suppress("DEPRECATION") a.onBackPressed(); idle()
+                assertTrue("back to home after $t", visibleTop(a) is MainShell)
+                continue
+            }
             val top = visibleTop(a)
             assertTrue("$t opened", top is ToolScreen && top.tool == t)
             render(a)
@@ -151,6 +160,13 @@ class UiSmokeTest {
                 Selection.of(t).add(sampleItems(t))
                 idle(1500)
                 render(a)
+                if (t == ToolId.FACE_BLUR) {
+                    // Faces are found automatically; both stand-in people are pre-selected for hiding.
+                    val deadline = System.currentTimeMillis() + 20_000
+                    while (System.currentTimeMillis() < deadline && texts(a).none { it.startsWith("Found") }) { idle(50); Thread.sleep(20); render(a) }
+                    assertTrue(texts(a).joinToString("|"), texts(a).any { it.startsWith("Found 2 different people") })
+                    assertTrue(texts(a).count { it == "Hidden" } == 2)
+                }
                 if (t == ToolId.WATERMARK) {
                     assertTrue(texts(a).any { it.startsWith("Add watermark text") })
                     com.localmediatools.ui.tools.WatermarkState.text = "© Villa Real"

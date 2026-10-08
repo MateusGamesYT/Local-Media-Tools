@@ -60,6 +60,24 @@ class FileOutputs(val dir: File) {
 }
 
 object Robo {
+    /** Face-scan stand-in: two people (a coloured disc each) seen in every given file. */
+    fun fakeFaces(items: List<MediaItem>): com.localmediatools.vision.FaceScanResult {
+        val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
+        val tracks = ArrayList<com.localmediatools.vision.core.FaceTrack>()
+        for ((k, item) in items.withIndex()) for (p in 0 until 2) {
+            val t = com.localmediatools.vision.core.FaceTrack(p, k, still = item.kind != com.localmediatools.core.MediaKind.VIDEO)
+            val f = FloatArray(128) { if (it % 2 == p) 1f else 0f }
+            t.samples.add(com.localmediatools.vision.core.FaceSample(0, 0.2f + 0.4f * p, 0.3f, 0.2f, 0.25f, 0.9f, com.localmediatools.vision.core.FaceEngine.normalize(f)))
+            if (!t.still) t.samples.add(com.localmediatools.vision.core.FaceSample(500_000, 0.2f + 0.4f * p, 0.3f, 0.2f, 0.25f, 0.9f, com.localmediatools.vision.core.FaceEngine.normalize(f.copyOf())))
+            tracks.add(t)
+            thumbs[t] = Bitmap.createBitmap(96, 96, Bitmap.Config.ARGB_8888).apply {
+                eraseColor(0xFF2A2F3A.toInt())
+                android.graphics.Canvas(this).drawCircle(48f, 52f, 30f, android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { color = if (p == 0) 0xFFE0A47A.toInt() else 0xFF8D5A3B.toInt() })
+            }
+        }
+        return com.localmediatools.vision.FaceScanResult(items, com.localmediatools.vision.core.FaceTracker.cluster(tracks), thumbs, emptyList())
+    }
+
     /** App-wide UI state lives in singletons that survive between tests in one Robolectric sandbox. */
     fun resetUiState() {
         for (t in com.localmediatools.tools.ToolId.entries) com.localmediatools.ui.Selection.of(t).clear()

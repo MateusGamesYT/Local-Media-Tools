@@ -113,6 +113,7 @@ class ScreenshotTest {
             shot(a, dir, "2${t.ordinal.toString().padStart(2, '0')}_${t.name.lowercase()}")
             @Suppress("DEPRECATION") a.onBackPressed(); idle()
         }
+        newToolShots(a, app, inDir, dir)
         com.localmediatools.ui.WorkloadDialog.show(a); idle()
         val d = org.robolectric.shadows.ShadowDialog.getLatestDialog()
         val dv = d.window!!.decorView
@@ -124,6 +125,99 @@ class ScreenshotTest {
         dv.draw(Canvas(bmp))
         File(dir, "99_workload.png").outputStream().use { Bitmap.createScaledBitmap(bmp, w / 2, bmp.height / 2, true).compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
+
+    /** A simple cartoon face for the stand-in face thumbnails. */
+    private fun avatar(skin: Int, hair: Int): Bitmap {
+        val b = Bitmap.createBitmap(160, 160, Bitmap.Config.ARGB_8888)
+        b.eraseColor(0xFF3A4152.toInt())
+        val c = Canvas(b); val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+        p.color = hair; c.drawCircle(80f, 70f, 52f, p)
+        p.color = skin; c.drawOval(38f, 44f, 122f, 140f, p)
+        p.color = 0xFF2B2B2B.toInt(); c.drawCircle(64f, 86f, 5f, p); c.drawCircle(96f, 86f, 5f, p)
+        p.style = android.graphics.Paint.Style.STROKE; p.strokeWidth = 4f; c.drawArc(62f, 98f, 98f, 122f, 20f, 140f, false, p)
+        return b
+    }
+
+    private fun newToolShots(a: MainActivity, app: android.app.Application, inDir: File, dir: File) {
+        // Background remover: a "product" photo; the model is replaced by the known subject shape.
+        val prod = Bitmap.createBitmap(900, 900, Bitmap.Config.ARGB_8888)
+        run {
+            val c = Canvas(prod); val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+            p.shader = android.graphics.LinearGradient(0f, 0f, 900f, 900f, 0xFFD9CBB8.toInt(), 0xFF9E8F7E.toInt(), android.graphics.Shader.TileMode.CLAMP)
+            c.drawRect(0f, 0f, 900f, 900f, p); p.shader = null
+            p.color = 0xFFE4572E.toInt(); c.drawRoundRect(300f, 330f, 600f, 760f, 40f, 40f, p)
+            p.color = 0xFFF2F2F2.toInt(); c.drawOval(300f, 290f, 600f, 370f, p)
+            p.style = android.graphics.Paint.Style.STROKE; p.strokeWidth = 34f; p.color = 0xFFE4572E.toInt(); c.drawArc(540f, 420f, 700f, 640f, -80f, 160f, false, p)
+        }
+        com.localmediatools.vision.VisionOps.maskOverride = { b ->
+            val w = b.width; val h = b.height
+            FloatArray(w * h) { i -> val x = (i % w) * 900f / w; val y = (i / w) * 900f / h
+                val top = ((x - 450f) / 150f).let { it * it } + ((y - 330f) / 40f).let { it * it } <= 1f
+                val body = x in 300f..600f && y in 330f..760f
+                val ring = ((x - 620f) / 80f).let { it * it } + ((y - 530f) / 110f).let { it * it }
+                if (top || body || (ring in 0.72f..1.3f && x > 600f)) 1f else 0f }
+        }
+        Selection.of(ToolId.BACKGROUND_REMOVER).add(listOf(Robo.item(app, Robo.write(inDir, "mug.jpg", Robo.encode(prod, Bitmap.CompressFormat.JPEG, 92)))))
+        open(a, ToolId.BACKGROUND_REMOVER, dir, "30_background_remover") { a.navigator.top!!.view.let { v -> all(v).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Preview of") } } }
+        com.localmediatools.vision.VisionOps.maskOverride = null
+
+        Selection.of(ToolId.AUTO_ENHANCE).add(listOf(photo(app, inDir)))
+        open(a, ToolId.AUTO_ENHANCE, dir, "31_auto_enhance") { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Landscape:") || it.text.startsWith("General:") } }
+
+        // Face blur: two people found in a photo and a video (stand-in for the face models).
+        val faces = listOf(avatar(0xFFF1C27D.toInt(), 0xFF4A3426.toInt()), avatar(0xFFC68642.toInt(), 0xFF1E1E1E.toInt()), avatar(0xFFFFDBAC.toInt(), 0xFFB5651D.toInt()))
+        com.localmediatools.vision.FaceScanner.override = { items ->
+            val fake = Robo.fakeFaces(items)
+            val people = fake.people
+            val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
+            for ((k, p) in people.withIndex()) for (t in p.tracks) thumbs[t] = faces[k % faces.size]
+            com.localmediatools.vision.FaceScanResult(items, people, thumbs, emptyList())
+        }
+        val vid = Robo.item(app, Robo.write(inDir, "party.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64)))
+        Selection.of(ToolId.FACE_BLUR).add(listOf(photo(app, inDir), vid))
+        open(a, ToolId.FACE_BLUR, dir, "32_face_blur") { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Found") } }
+        com.localmediatools.vision.FaceScanner.override = null
+
+        // Duplicate finder with a finished scan.
+        fun gp(id: Long, name: String, color: Int, w: Int, h: Int, size: Long): com.localmediatools.vision.GalleryPhoto {
+            val b = Bitmap.createBitmap(w / 10, h / 10, Bitmap.Config.ARGB_8888)
+            val c = Canvas(b); b.eraseColor(color)
+            c.drawCircle(b.width * 0.6f, b.height * 0.4f, b.width * 0.18f, android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { this.color = 0xFFFFE08A.toInt() })
+            val f = Robo.write(inDir, name, Robo.encode(b, Bitmap.CompressFormat.PNG))
+            return com.localmediatools.vision.GalleryPhoto(id, android.net.Uri.fromFile(f), name, size, w, h, null, 0, "Camera")
+        }
+        val g1 = listOf(gp(1, "IMG_2041.jpg", 0xFF4F7CAC.toInt(), 4000, 3000, 3_400_000), gp(2, "IMG_2041(1).jpg", 0xFF4F7CAC.toInt(), 4000, 3000, 3_400_000))
+        val g2 = listOf(gp(3, "beach.jpg", 0xFF2A9D8F.toInt(), 4032, 3024, 4_100_000), gp(4, "beach_whatsapp.jpg", 0xFF2A9D8F.toInt(), 1600, 1200, 310_000))
+        val g3 = listOf(gp(5, "IMG_3001.jpg", 0xFFE76F51.toInt(), 4000, 3000, 3_900_000), gp(6, "IMG_3002.jpg", 0xFFE98A6F.toInt(), 4000, 3000, 3_800_000), gp(7, "IMG_3003.jpg", 0xFFD9604A.toInt(), 4000, 3000, 3_950_000))
+        com.localmediatools.vision.DuplicateScanner.show(com.localmediatools.vision.DupScanState.Done(listOf(
+            com.localmediatools.vision.DupResultGroup(com.localmediatools.vision.core.DupKind.IDENTICAL, g1, g1[0]),
+            com.localmediatools.vision.DupResultGroup(com.localmediatools.vision.core.DupKind.NEAR_DUPLICATE, g2, g2[0]),
+            com.localmediatools.vision.DupResultGroup(com.localmediatools.vision.core.DupKind.SIMILAR, g3, g3[2])), 2412, true))
+        a.navigator.push(com.localmediatools.ui.DuplicatesScreen(a)); idle(1500)
+        val t0 = System.currentTimeMillis(); while (System.currentTimeMillis() - t0 < 3000) { idle(50); Thread.sleep(20) }
+        shotWindowFull(a, dir, "33_duplicates")
+        @Suppress("DEPRECATION") a.onBackPressed(); idle()
+        com.localmediatools.vision.DuplicateScanner.show(com.localmediatools.vision.DupScanState.Idle)
+
+        val clips = (1..3).map { Robo.item(app, Robo.write(inDir, "clip_$it.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))) }
+        Selection.of(ToolId.MERGE_VIDEOS).add(clips)
+        open(a, ToolId.MERGE_VIDEOS, dir, "34_merge_videos") { true }
+        Selection.of(ToolId.VIDEO_SPEED).add(clips.take(1))
+        open(a, ToolId.VIDEO_SPEED, dir, "35_video_speed") { true }
+    }
+
+    private fun open(a: MainActivity, t: ToolId, dir: File, name: String, ready: () -> Boolean) {
+        a.navigator.push(ToolScreens.create(a, t))
+        idle(1500)
+        val deadline = System.currentTimeMillis() + 20_000
+        while (System.currentTimeMillis() < deadline && !ready()) { idle(50); Thread.sleep(20) }
+        idle(300)
+        shot(a, dir, name)
+        @Suppress("DEPRECATION") a.onBackPressed(); idle()
+    }
+
+    /** Full-length shot including the sticky bottom bar. */
+    private fun shotWindowFull(a: MainActivity, dir: File, name: String) = shot(a, dir, name)
 
     private fun layoutRoot(a: MainActivity) {
         val root = a.window.decorView

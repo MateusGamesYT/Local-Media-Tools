@@ -25,7 +25,7 @@ import java.io.RandomAccessFile
 /** Remux helper: tries suitable containers in order until the device's muxer accepts the tracks. */
 internal fun remuxToOutput(
     ctx: JobContext, item: MediaItem, area: OutputArea, baseName: String, tracks: List<TrackInfo>,
-    startUs: Long, endUs: Long, rotation: Int, progress: (Double) -> Unit,
+    startUs: Long, endUs: Long, rotation: Int, speed: Double = 1.0, progress: (Double) -> Unit,
 ): OutputFile {
     val candidates = Container.candidates(tracks.map { it.mime })
     var last: Exception? = null
@@ -33,7 +33,7 @@ internal fun remuxToOutput(
         try {
             val (out, _) = Outputs.produce(ctx, area, "$baseName.${c.ext}", c.mime) { pending ->
                 pending.openFd("rw").use { pfd ->
-                    Remuxer(ctx.app, item.uri).copy(pfd.fileDescriptor, c, tracks, startUs, endUs, rotation, { ctx.throttle() }, progress)
+                    Remuxer(ctx.app, item.uri, speed).copy(pfd.fileDescriptor, c, tracks, startUs, endUs, rotation, { ctx.throttle() }, progress)
                 }
                 Outputs.verifyMedia(ctx.app, pending.uri, tracks.any { it.isVideo }, tracks.any { it.isAudio })
             }

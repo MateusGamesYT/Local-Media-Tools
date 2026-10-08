@@ -38,6 +38,7 @@ object ToolLauncher {
             ToolId.BLUR_REDACT -> EditorMode.BLUR
             else -> null
         }
+        if (t == ToolId.DUPLICATES) { activity.navigator.push(DuplicatesScreen(activity)); return }
         if (mode == null) { activity.navigator.push(ToolScreens.create(activity, t)); return }
         activity.pickMedia(PickKind.IMAGES, multiple = false) { uris -> uris.firstOrNull()?.let { openEditor(activity, it, t, mode) } }
     }
@@ -56,6 +57,12 @@ object ToolLauncher {
         ToolId.MAGIC_ERASER to "remove object person people erase delete clean ai inpaint",
         ToolId.PHOTO_EDITOR to "crop rotate straighten brightness contrast exposure saturation filter look edit adjust colour color warmth",
         ToolId.BLUR_REDACT to "censor hide face plate privacy mosaic anonymize redact",
+        ToolId.BACKGROUND_REMOVER to "cut out cutout remove background transparent png sticker subject product ai",
+        ToolId.AUTO_ENHANCE to "auto fix improve brighten colour color one tap magic ai enhance",
+        ToolId.FACE_BLUR to "face faces blur pixelate hide anonymize people video privacy censor ai",
+        ToolId.DUPLICATES to "duplicate similar same copies clean storage space free gallery burst",
+        ToolId.MERGE_VIDEOS to "join combine concatenate clips append video",
+        ToolId.VIDEO_SPEED to "fast slow motion timelapse time lapse speed up hyperlapse",
         ToolId.TRIM_VIDEO to "cut shorten clip rotate sideways",
         ToolId.SPLIT_VIDEO to "cut parts segments whatsapp status",
         ToolId.COMPRESS_VIDEO to "shrink smaller reduce size mp4 h264",
@@ -183,10 +190,13 @@ class HomeTab(private val shell: MainShell) {
         // "Edit & AI" block: two big cards plus a wide one (shown instead of that section in the full list).
         val block = UI.vertical(ctx)
         block.addView(sectionHeader(ctx, ToolSection.EDIT.title, ToolSection.EDIT.subtitle, Palette.section(ToolSection.EDIT)), lp().apply { bottomMargin = ctx.dp(12) })
-        val fr = UI.horizontal(ctx, Gravity.TOP)
-        fr.addView(FeatureCard(ctx, ToolId.MAGIC_ERASER, Palette.AI, "AI") { ToolLauncher.open(shell.activity, ToolId.MAGIC_ERASER) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { rightMargin = ctx.dp(6) })
-        fr.addView(FeatureCard(ctx, ToolId.PHOTO_EDITOR, Palette.BRAND, "NEW") { ToolLauncher.open(shell.activity, ToolId.PHOTO_EDITOR) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { leftMargin = ctx.dp(6) })
-        block.addView(fr)
+        fun cards(a: Triple<ToolId, IntArray, String?>, b: Triple<ToolId, IntArray, String?>): View = UI.horizontal(ctx, Gravity.TOP).apply {
+            addView(FeatureCard(ctx, a.first, a.second, a.third) { ToolLauncher.open(shell.activity, a.first) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { rightMargin = ctx.dp(6) })
+            addView(FeatureCard(ctx, b.first, b.second, b.third) { ToolLauncher.open(shell.activity, b.first) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { leftMargin = ctx.dp(6) })
+        }
+        block.addView(cards(Triple(ToolId.MAGIC_ERASER, Palette.AI, "AI"), Triple(ToolId.BACKGROUND_REMOVER, Palette.BRAND, "NEW")))
+        block.addView(cards(Triple(ToolId.FACE_BLUR, Palette.TEAL, "NEW"), Triple(ToolId.AUTO_ENHANCE, Palette.SUNSET, "NEW")), lp().apply { topMargin = ctx.dp(12) })
+        block.addView(wideTile(ToolId.PHOTO_EDITOR), lp().apply { topMargin = ctx.dp(12) })
         block.addView(wideTile(ToolId.BLUR_REDACT), lp().apply { topMargin = ctx.dp(12) })
         featured = block
         col.addView(block, lp().apply { topMargin = ctx.dp(26) })
@@ -316,7 +326,7 @@ class SettingsTab(private val shell: MainShell) {
         val about = group(col, "About")
         val version = try { ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName } catch (_: Exception) { "" }
         about.addView(listRow(ctx, R.drawable.ic_info, Palette.ACCENT, "Local Media Tools $version", "${ToolId.entries.size} tools · Android ${android.os.Build.VERSION.RELEASE}"))
-        about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, PDFBox, TensorFlow Lite, MI-GAN, Inter…") { shell.push(LicensesScreen(shell.activity)) })
+        about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, TensorFlow Lite, MI-GAN, YuNet, SFace, U²-Net…") { shell.push(LicensesScreen(shell.activity)) })
         return scroll
     }
 
@@ -346,7 +356,11 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("PdfBox-Android 2.0.27", "Apache License 2.0", "Merging PDFs and extracting pages."),
             Triple("TensorFlow Lite 2.16", "Apache License 2.0", "Runs the on-device AI models."),
             Triple("MI-GAN (Picsart AI Research)", "MIT License", "Magic eraser model, converted to TensorFlow Lite."),
-            Triple("MobileNet-V3 image embedder (MediaPipe)", "Apache License 2.0", "Stitcher alignment assist."),
+            Triple("MobileNet-V3 image embedder (MediaPipe)", "Apache License 2.0", "Stitcher alignment assist and similar-photo detection."),
+            Triple("YuNet face detector (OpenCV Zoo)", "MIT License", "Finding faces for face blur and auto enhance."),
+            Triple("SFace face recognition (OpenCV Zoo)", "Apache License 2.0", "Recognising the same person across frames and files."),
+            Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", "Background remover."),
+            Triple("EfficientNet-Lite0 (MediaPipe)", "Apache License 2.0", "Recognising the kind of scene for auto enhance."),
             Triple("Kotlin & kotlinx.coroutines", "Apache License 2.0", "Language runtime."),
             Triple("Inter typeface", "SIL Open Font License 1.1", "App typography."),
         )
@@ -357,7 +371,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
                 addView(UI.text(ctx, what, TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
-        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/Inter-OFL.txt")) {
+        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/SFace-Apache-2.0.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt", "licenses/Inter-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })
             body.addView(UI.text(ctx, text, TextStyle.CAPTION).apply { setTextIsSelectable(true) })

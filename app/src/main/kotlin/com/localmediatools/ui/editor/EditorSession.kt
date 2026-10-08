@@ -147,6 +147,29 @@ class EditorSession(val app: Context, val item: MediaItem) : Closeable {
         return patch
     }
 
+    /** One-tap enhancement: settings from the on-device models (they replace the current adjustments, stay editable). */
+    fun autoEnhance(): com.localmediatools.vision.core.EnhanceResult = com.localmediatools.vision.VisionOps.enhance(app, proxy, 1f)
+
+    /**
+     * Finds the faces in the photo and blurs or pixelates each one at full resolution, as one
+     * history step. Returns how many faces were hidden.
+     */
+    fun obscureFaces(kind: PatchKind, strength: Float): Int {
+        val faces = com.localmediatools.vision.VisionOps.photoFaces(app, proxy, embed = false)
+        if (faces.isEmpty()) return 0
+        val regions = faces.map { com.localmediatools.vision.core.BlurRegion(it.x + it.w / 2, it.y + it.h / 2 - it.h * 0.08f, it.w / 2 * 1.45f, it.h / 2 * 1.45f * 1.12f) }
+        val added = ArrayList<RetouchPatch>()
+        for (r in regions) {
+            val cx = r.cx * srcW; val cy = r.cy * srcH; val rx = r.rx * srcW; val ry = r.ry * srcH
+            val stroke = if (ry >= rx) Stroke(floatArrayOf(cx, cy - (ry - rx), cx, cy + (ry - rx)), rx)
+                else Stroke(floatArrayOf(cx - (rx - ry), cy, cx + (rx - ry), cy), ry)
+            val rs = RetouchedSource(source, store, state.patches + added)
+            added.add(Retouch.obscure(rs, listOf(stroke), kind, strength, store, budget(), 2 * minOf(rx, ry) / 1.45f))
+        }
+        commit(state.copy(patches = state.patches + added))
+        return added.size
+    }
+
     override fun close() {
         try { inpainter?.close() } catch (_: Exception) { }
         try { if (::source.isInitialized) source.close() } catch (_: Exception) { }

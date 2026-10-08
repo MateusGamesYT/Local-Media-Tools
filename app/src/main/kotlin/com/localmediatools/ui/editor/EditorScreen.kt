@@ -386,8 +386,13 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         show(s.adjust[adjustKey])
         row.addView(slider, lp(0, WRAP, 1f))
         row.addView(value, LinearLayout.LayoutParams(ctx.dp(48), WRAP))
-        col.addView(row, lp().apply { topMargin = ctx.dp(14) })
-        col.addView(UI.text(ctx, "Double-tap the slider to reset · a dot marks changed settings", TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER }, lp().apply { topMargin = ctx.dp(4) })
+        col.addView(row, lp().apply { topMargin = ctx.dp(10) })
+        val auto = UI.horizontal(ctx)
+        auto.addView(pill(R.drawable.ic_sparkle, "Auto enhance") { runAutoEnhance() })
+        auto.addView(badge(ctx, "AI"), LinearLayout.LayoutParams(WRAP, WRAP).apply { leftMargin = ctx.dp(8) })
+        autoNote = UI.text(ctx, autoNoteText ?: "Double-tap a slider to reset", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(ctx.dp(10), 0, 0, 0); maxLines = 2 }
+        auto.addView(autoNote, lp(0, WRAP, 1f))
+        col.addView(auto, lp().apply { topMargin = ctx.dp(6) })
     }
 
     private fun filterPanel(col: LinearLayout) {
@@ -466,8 +471,55 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         brushSizeRow(col)
     }
 
+    private var autoNote: TextView? = null
+    private var autoNoteText: String? = null
+
+    private fun runAutoEnhance() {
+        busy("Enhancing…")
+        scope.launch {
+            try {
+                val r = withContext(session.worker) { session.autoEnhance() }
+                val cur = session.current
+                autoNoteText = "${r.scene.label}: ${r.notes.joinToString(", ").ifBlank { "already well balanced" }}"
+                commit(cur.copy(adjust = r.adjust))
+                buildPanel(keepScroll = true)
+                requestRender(full = true)
+            } catch (e: Throwable) {
+                Toast.makeText(ctx, Errors.describe(e), Toast.LENGTH_LONG).show()
+            } finally { busy(null) }
+        }
+    }
+
+    private fun obscureAllFaces() {
+        busy("Finding faces…")
+        scope.launch {
+            try {
+                val n = withContext(session.worker) { session.obscureFaces(blurKind, blurStrength) }
+                refreshUndo()
+                requestRender(full = true)
+                Toast.makeText(ctx, if (n == 0) "No faces were found in this photo." else "${if (blurKind == PatchKind.PIXELATE) "Pixelated" else "Blurred"} $n ${if (n == 1) "face" else "faces"} · undo to bring them back", Toast.LENGTH_LONG).show()
+            } catch (e: Throwable) {
+                Toast.makeText(ctx, Errors.describe(e), Toast.LENGTH_LONG).show()
+            } finally { busy(null) }
+        }
+    }
+
+    /** Compact action pill for the editor's bottom panel. */
+    private fun pill(icon: Int, label: String, onClick: () -> Unit): View = UI.horizontal(ctx).apply {
+        background = Shapes.clickable(ctx, Palette.SURFACE_2, 100f, Palette.STROKE_2)
+        setPadding(ctx.dp(12), ctx.dp(8), ctx.dp(14), ctx.dp(8))
+        addView(UI.iconView(ctx, icon, Palette.ACCENT, 16))
+        addView(UI.text(ctx, label, TextStyle.BODY).apply { setPadding(ctx.dp(6), 0, 0, 0) })
+        isClickable = true; isFocusable = true
+        contentDescription = label
+        setOnClickListener { onClick() }
+    }
+
     private fun blurPanel(col: LinearLayout) {
-        col.addView(ChoiceGroup(ctx, listOf(PatchKind.BLUR, PatchKind.PIXELATE), { it.label }, blurKind) { blurKind = it })
+        val top = UI.horizontal(ctx)
+        top.addView(ChoiceGroup(ctx, listOf(PatchKind.BLUR, PatchKind.PIXELATE), { it.label }, blurKind) { blurKind = it }, lp(0, WRAP, 1f))
+        top.addView(pill(R.drawable.ic_tool_faceblur, "Hide all faces") { obscureAllFaces() })
+        col.addView(top)
         val r = UI.horizontal(ctx)
         r.addView(UI.text(ctx, "Strength", TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
         val strength = BipolarSlider(ctx, 100f) { v, _ -> blurStrength = (v / 100f).coerceAtLeast(0.05f) }
