@@ -23,6 +23,7 @@ import com.localmediatools.tools.ToolId
 import com.localmediatools.tools.ToolSection
 import com.localmediatools.ui.editor.EditorMode
 import com.localmediatools.ui.editor.EditorScreen
+import com.localmediatools.ui.gallery.GalleryTab
 import com.localmediatools.ui.tools.ToolScreens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -88,11 +89,12 @@ object ToolLauncher {
     }
 }
 
-/** App root: Tools / Activity / Settings with a floating bottom bar. Tool screens open on top of it. */
+/** App root: Tools / Gallery / Activity / Settings with a floating bottom bar. Tool screens open on top of it. */
 class MainShell(activity: MainActivity) : Screen(activity) {
     private lateinit var content: FrameLayout
     private lateinit var nav: BottomNav
     private val tabViews = HashMap<Int, View>()
+    private var gallery: GalleryTab? = null
     var tab = 0; private set
 
     override fun createView(): View {
@@ -101,12 +103,13 @@ class MainShell(activity: MainActivity) : Screen(activity) {
         root.addView(content, FrameLayout.LayoutParams(MATCH, MATCH))
         nav = BottomNav(ctx, listOf(
             Triple("Tools", R.drawable.ic_grid, "Tools"),
+            Triple("Gallery", R.drawable.ic_gallery, "Gallery"),
             Triple("Activity", R.drawable.ic_activity, "Activity"),
             Triple("Settings", R.drawable.ic_settings, "Settings"),
         )) { show(it) }
         root.addView(nav, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM).apply { setMargins(ctx.dp(20), 0, ctx.dp(20), ctx.dp(14)) })
         show(0)
-        scope.launch { ExportManager.state.collect { nav.setBadge(1, it.busy) } }
+        scope.launch { ExportManager.state.collect { nav.setBadge(TAB_ACTIVITY, it.busy) } }
         return root
     }
 
@@ -116,8 +119,9 @@ class MainShell(activity: MainActivity) : Screen(activity) {
         content.removeAllViews()
         val v = tabViews.getOrPut(i) {
             when (i) {
-                1 -> ActivityTab(this).build()
-                2 -> SettingsTab(this).build()
+                TAB_GALLERY -> GalleryTab(this).also { gallery = it }.build()
+                TAB_ACTIVITY -> ActivityTab(this).build()
+                TAB_SETTINGS -> SettingsTab(this).build()
                 else -> HomeTab(this).build()
             }
         }
@@ -125,11 +129,25 @@ class MainShell(activity: MainActivity) : Screen(activity) {
         content.addView(v, FrameLayout.LayoutParams(MATCH, MATCH))
         v.alpha = 0f
         v.animate().alpha(1f).setDuration(160).start()
+        if (i == TAB_GALLERY) gallery?.onShow()
+    }
+
+    override fun onShow() {
+        // Back from a pushed screen, or from the system's permission settings.
+        if (tab == TAB_GALLERY) gallery?.onShow()
     }
 
     override fun onBack(): Boolean {
+        if (tab == TAB_GALLERY && gallery?.onBack() == true) return true
         if (tab != 0) { show(0); return true }
         return false
+    }
+
+    companion object {
+        const val TAB_TOOLS = 0
+        const val TAB_GALLERY = 1
+        const val TAB_ACTIVITY = 2
+        const val TAB_SETTINGS = 3
     }
 }
 
@@ -314,6 +332,14 @@ class SettingsTab(private val shell: MainShell) {
         ai.addView(listRow(ctx, R.drawable.ic_sparkle, Palette.section(ToolSection.IMAGES), "Stitcher alignment assist",
             if (stitchOk) "MobileNet-V3 · runs on this phone · ready" else stitchWhy))
 
+        val gal = group(col, "Gallery")
+        gal.addView(UI.vertical(ctx, 14, 4).apply {
+            addView(ToggleRow(ctx, "Organise in the background", "Finds people and things in new photos on this phone so you can search them. Pauses on low battery or when the phone is hot.",
+                !com.localmediatools.gallery.GalleryIndex.isPausedByUser(ctx)) { on -> com.localmediatools.gallery.GalleryIndex.setPaused(ctx, !on) })
+        })
+        gal.addView(listRow(ctx, R.drawable.ic_sparkle, Palette.ACCENT, "Recognition models",
+            "EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and SFace (faces) · all on this phone"))
+
         val storage = group(col, "Storage")
         val folders = OutputArea.entries.map { it.displayPath.substringBefore("/LocalMediaTools") }.distinct().joinToString(", ")
         storage.addView(listRow(ctx, R.drawable.ic_folder, Palette.section(ToolSection.DOCUMENTS), "Where results go", "LocalMediaTools folders in $folders"))
@@ -331,7 +357,7 @@ class SettingsTab(private val shell: MainShell) {
         val about = group(col, "About")
         val version = try { ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName } catch (_: Exception) { "" }
         about.addView(listRow(ctx, R.drawable.ic_info, Palette.ACCENT, "Local Media Tools $version", "${ToolId.toolCount} tools · Android ${android.os.Build.VERSION.RELEASE}"))
-        about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, TensorFlow Lite, MI-GAN, YuNet, SFace, U²-Net…") { shell.push(LicensesScreen(shell.activity)) })
+        about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, TensorFlow Lite, MI-GAN, YuNet, SFace, EfficientDet, EfficientNetV2…") { shell.push(LicensesScreen(shell.activity)) })
         return scroll
     }
 
@@ -344,7 +370,7 @@ class SettingsTab(private val shell: MainShell) {
                 if (ExportManager.state.value.busy) return@setPositiveButton
                 ctx.cacheDir.listFiles()?.forEach { it.deleteRecursively() }
                 Toast.makeText(ctx, "Temporary files cleared", Toast.LENGTH_SHORT).show()
-                shell.show(2)
+                shell.show(MainShell.TAB_SETTINGS)
             }
             .setNegativeButton("Cancel", null).show()
     }
@@ -365,7 +391,10 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("YuNet face detector (OpenCV Zoo)", "MIT License", "Finding faces for face blur and auto enhance."),
             Triple("SFace face recognition (OpenCV Zoo)", "Apache License 2.0", "Recognising the same person across frames and files."),
             Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", "Background remover."),
-            Triple("EfficientNet-Lite0 (MediaPipe)", "Apache License 2.0", "Recognising the kind of scene for auto enhance."),
+            Triple("EfficientDet-Lite2 (MediaPipe)", "Apache License 2.0", "Finding people, animals, vehicles and objects in the gallery."),
+            Triple("EfficientNetV2-B3, ImageNet-21k (Google AutoML)", "Apache License 2.0", "Recognising scenes and kinds of things in the gallery and for auto enhance."),
+            Triple("WordNet 3.0 (Princeton University)", "WordNet License", "Grouping the classifier's classes into searchable categories."),
+            Triple("Open Images V7 annotations (Google)", "CC BY 4.0", "Human-verified labels used to calibrate and train the category recognisers."),
             Triple("Kotlin & kotlinx.coroutines", "Apache License 2.0", "Language runtime."),
             Triple("Inter typeface", "SIL Open Font License 1.1", "App typography."),
         )
@@ -376,7 +405,8 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
                 addView(UI.text(ctx, what, TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
-        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/SFace-Apache-2.0.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt", "licenses/Inter-OFL.txt")) {
+        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/SFace-Apache-2.0.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
+                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })
             body.addView(UI.text(ctx, text, TextStyle.CAPTION).apply { setTextIsSelectable(true) })

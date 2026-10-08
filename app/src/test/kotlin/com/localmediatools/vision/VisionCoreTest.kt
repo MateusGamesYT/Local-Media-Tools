@@ -181,10 +181,11 @@ class VisionCoreTest {
     }
 
     @Test fun sceneMapping() {
-        assertEquals(SceneKind.FOOD, SceneMapper.scene(listOf(Triple(967, "espresso", 0.84f), Triple(968, "cup", 0.09f))).first)
-        assertEquals(SceneKind.ANIMAL, SceneMapper.scene(listOf(Triple(285, "Egyptian cat", 0.79f))).first)
-        assertEquals(SceneKind.LANDSCAPE, SceneMapper.scene(listOf(Triple(978, "seashore", 0.2f), Triple(975, "lakeside", 0.15f))).first)
-        assertEquals(SceneKind.GENERAL, SceneMapper.scene(listOf(Triple(422, "barbell", 0.06f))).first)
+        assertEquals(SceneKind.FOOD, SceneMapper.fromCategories(mapOf("coffee" to 0.84f, "people" to 0.3f)).first)
+        assertEquals(SceneKind.ANIMAL, SceneMapper.fromCategories(mapOf("cat" to 0.79f)).first)
+        assertEquals(SceneKind.LANDSCAPE, SceneMapper.fromCategories(mapOf("beach" to 0.6f, "sea" to 0.55f)).first)
+        assertEquals(SceneKind.NIGHT, SceneMapper.fromCategories(mapOf("city" to 0.7f, "night" to 0.68f)).first)
+        assertEquals(SceneKind.GENERAL, SceneMapper.fromCategories(mapOf("dog" to 0.3f)).first)
     }
 
     private fun info(i: Int, hash: Long, emb: FloatArray?, t: Long? = null, digest: String? = null, w: Int = 4000, sharp: Double = 1.0, bytes: Long = 1000) =

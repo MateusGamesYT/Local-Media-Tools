@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ScrollView
 import com.localmediatools.app.MainActivity
 import com.localmediatools.tools.ToolId
+import com.localmediatools.ui.MainShell
 import com.localmediatools.ui.Selection
 import com.localmediatools.ui.tools.ToolScreens
 import org.junit.Assume.assumeTrue
@@ -77,8 +78,8 @@ class ScreenshotTest {
         idle()
         shot(a, dir, "00_home")
         val shell = a.navigator.top as com.localmediatools.ui.MainShell
-        shell.show(1); idle(); shot(a, dir, "01_activity")
-        shell.show(2); idle(); shot(a, dir, "02_settings")
+        shell.show(MainShell.TAB_ACTIVITY); idle(); shot(a, dir, "01_activity")
+        shell.show(MainShell.TAB_SETTINGS); idle(); shot(a, dir, "02_settings")
         shell.show(0); idle()
         val inDir = File(app.cacheDir, "shot-in").apply { mkdirs() }
         val land = photo(app, inDir)
@@ -124,6 +125,56 @@ class ScreenshotTest {
         bmp.eraseColor(0xFF000000.toInt())
         dv.draw(Canvas(bmp))
         File(dir, "99_workload.png").outputStream().use { Bitmap.createScaledBitmap(bmp, w / 2, bmp.height / 2, true).compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test fun galleryScreenshots() {
+        val dirName = System.getenv("LMT_SHOTS")
+        assumeTrue(dirName != null)
+        val dir = File(dirName!!).apply { mkdirs() }
+        val app = RuntimeEnvironment.getApplication()
+        Robo.resetUiState()
+        FakeGallery.install(app)
+        try {
+            val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
+            idle()
+            val shell = a.navigator.top as MainShell
+            shell.show(MainShell.TAB_GALLERY)
+            waitFor { com.localmediatools.gallery.GalleryIndex.state.value.phase == com.localmediatools.gallery.GalleryIndex.Phase.DONE }
+            idle(800)
+            FakeGallery.learnOwners(app)
+            val db = com.localmediatools.gallery.GalleryDb.get(app)
+            fun groupOf(owner: Int) = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == owner } }
+            com.localmediatools.ui.gallery.FaceSheet.nameGroup(a, groupOf(0), "Sophie", emptyList()) {}
+            waitFor { db.people().any { it.name == "Sophie" } }
+            com.localmediatools.ui.gallery.FaceSheet.nameGroup(a, groupOf(1), "John", db.people().filter { it.named }) {}
+            waitFor { db.people().any { it.name == "John" } }
+            idle(1200)
+            fun texts() = all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().map { it.text.toString() }
+            fun tab(label: String, ready: String) {
+                all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().first { it.text == label }.performClick()
+                waitFor { texts().any { it.startsWith(ready) } }; idle(800)
+            }
+            tab("Photos", "Today"); shot(a, dir, "40_gallery_photos")
+            tab("People", "Sophie"); shot(a, dir, "41_gallery_people")
+            tab("Things", "Dogs"); shot(a, dir, "42_gallery_things")
+            a.navigator.push(com.localmediatools.ui.gallery.SearchScreen(a, "Sophie at the beach")); idle(500)
+            waitFor { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.endsWith("results") } }
+            idle(800); shot(a, dir, "43_gallery_search")
+            a.navigator.pop(); idle()
+            a.navigator.push(com.localmediatools.ui.gallery.ViewerScreen(a, listOf(db.mediaById(4)!!), 0)); idle(800)
+            waitFor { all(a.navigator.top!!.view).any { it.contentDescription == "Show faces" } }
+            all(a.navigator.top!!.view).first { it.contentDescription == "Show faces" }.performClick(); idle(800)
+            shot(a, dir, "44_gallery_viewer_faces")
+            a.navigator.pop(); idle()
+            val sophie = db.people().single { it.name == "Sophie" }
+            a.navigator.push(com.localmediatools.ui.gallery.PersonScreen(a, sophie.id))
+            waitFor { texts().contains("Sophie") }; idle(1000)
+            shot(a, dir, "45_gallery_person")
+            a.navigator.pop(); idle()
+            a.navigator.push(com.localmediatools.ui.gallery.FacesScreen(a))
+            waitFor { texts().contains("Sophie") }; idle(1000)
+            shot(a, dir, "46_gallery_all_faces")
+        } finally { FakeGallery.uninstall() }
     }
 
     /** A simple cartoon face for the stand-in face thumbnails. */

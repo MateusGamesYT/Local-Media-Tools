@@ -1,0 +1,12 @@
+Open Images Dataset V7 — annotations
+https://storage.googleapis.com/openimages/web/index.html
+
+The gallery's category thresholds were calibrated, and its small scene recognisers (linear
+probes) were trained, using human-verified image-level labels from Open Images. The annotations
+are licensed by Google LLC under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+No images from the dataset are included in this app.
+
+Kuznetsova, A., Rom, H., Alldrin, N., Uijlings, J., Krasin, I., Pont-Tuset, J., Kamali, S.,
+Popov, S., Malloci, M., Kolesnikov, A., Duerig, T., Ferrari, V. "The Open Images Dataset V4:
+Unified image classification, object detection, and visual relationship detection at scale."
+IJCV, 2020.

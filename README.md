@@ -2,8 +2,9 @@
 
 # Local Media Tools (Android)
 
-A private, fully on-device media toolbox: **30 tools** for photos, video, GIF, PDF and audio,
-including on-device AI for **face blurring in photos and videos**, **background removal**,
+A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
+photos and lets you search them in plain words, and **30 tools** for photos, video, GIF, PDF and
+audio, including on-device AI for **face blurring in photos and videos**, **background removal**,
 **one-tap enhancement**, a **magic eraser** and a **duplicate finder**. Nothing is uploaded (the
 app has no internet permission), originals are never modified, and every result is written to a
 hidden file that is only published after it has been completely written and checked.
@@ -11,9 +12,13 @@ hidden file that is only published after it has been completely written and chec
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.3.0.apk`](release/LocalMediaTools-1.3.0.apk)
+**Install:** [`release/LocalMediaTools-1.4.0.apk`](release/LocalMediaTools-1.4.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
+
+| Gallery | Search | Faces with names | People | Things | A person | All faces |
+|---|---|---|---|---|---|---|
+| ![](docs/screenshots/gallery-photos.png) | ![](docs/screenshots/gallery-search.png) | ![](docs/screenshots/gallery-viewer.png) | ![](docs/screenshots/gallery-people.png) | ![](docs/screenshots/gallery-things.png) | ![](docs/screenshots/gallery-person.png) | ![](docs/screenshots/gallery-faces.png) |
 
 | Tool stack | Setting up a step | Choosing the next tool |
 |---|---|---|
@@ -27,7 +32,47 @@ It installs over earlier versions (same signing key).
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.3: tool stacks
+## What's new in 1.4: Gallery
+
+- **Your photos and videos, organised on the phone** — a new Gallery tab shows everything by day
+  (**Photos**), by folder (**Albums**), by person (**People**) and by what is in them (**Things**).
+  The viewer shares, opens the photo editor, runs any tool on the photo, and deletes through
+  Android's own confirmation. Works with "allow selected photos only", too.
+- **Search in plain words** — names (*Sophie*; *John and Sophie* finds photos with both), things
+  and places (*dog*, *beach*, *pizza*, *sunset*, *documents*), albums (*WhatsApp Images*), dates
+  (*June 2023*, *last month*, *2024*) and kinds (*videos*, *screenshots*), freely combined: *Sophie
+  at the beach 2024*. Small typos are forgiven and shown (*Jonh* → John).
+- **People** — [YuNet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet)
+  finds faces, [SFace](https://github.com/opencv/opencv_zoo/tree/main/models/face_recognition_sface)
+  recognises them, and faces of the same person are grouped automatically. The grouping is
+  deliberately strict, so different people don't end up together: tuned on several hundred real
+  faces of 16 people, it made no wrong merges in two of three trials (0.4 % in the third) while
+  keeping most of each person's faces together (87 % by the usual B-cubed measure). Name a group once and new photos of that
+  person join it. In the viewer, faces are outlined with names; tap one to name it, pick someone
+  else, or say *this isn't Sophie* (remembered for good). Merge two groups, hide someone, review all
+  of a person's faces, accept or reject *Also Sophie?* suggestions, and see **all faces** found,
+  including small or blurry ones that are never grouped on their own.
+- **Things** — 86 categories (people, animals, vehicles, food and drink, nature and places,
+  rooms, sports, documents and more), recognised by two on-device models:
+  [EfficientDet-Lite2](https://ai.google.dev/edge/mediapipe/solutions/vision/object_detector) finds objects,
+  and [EfficientNetV2-B3](https://github.com/google/automl/tree/master/efficientnetv2) pre-trained
+  on ImageNet-21k recognises 21,843 kinds of things and scenes, grouped into categories with
+  WordNet, plus small recognisers trained for scenes it has no class for (sunsets, night,
+  waterfalls, pools, weddings…). Videos are looked at in several frames.
+- **Calibrated, not guessed** — every category's thresholds were set on 13,455 Open Images photos
+  with human-verified labels, aiming at 90 % precision (a photo tagged *dog* shows a dog at least
+  9 times in 10), with cross-validated results; 71 of the 86 categories reach at least
+  85 % this way (median 90 %), the others 78–84 %. Categories that couldn't be recognised reliably were left out (shoes, hats,
+  computers, churches, Christmas…). Per-category numbers: [docs/gallery-calibration.md](docs/gallery-calibration.md).
+- **Runs quietly in the background** — at low priority with a quiet notification, pausing when the
+  battery is below 15 % (unless charging) or the phone is hot; can be paused in Settings. New photos
+  are picked up while the app is open (and each time it starts); deleted ones leave the index. The
+  index stays on this phone.
+- **Fallback** — on a phone where the AI models can't run, the gallery still works: Android's
+  built-in face finder is used and faces are only grouped when near-identical, so people are named
+  by hand. Auto enhance now uses the gallery's scene recogniser too.
+
+## What was new in 1.3: tool stacks
 
 - **Tool stack** (home screen, or **Then run another tool** at the bottom of any tool) — pick files
   once, add tools in order and run them with one tap. Each step works on the results of the step
@@ -148,9 +193,11 @@ python3 buildtools/build_apk.py --robo-test          # + Android-framework tests
 
 The on-device models are committed in `app/src/main/assets/models/` with their licences in
 `app/src/main/assets/licenses/` (also shown in Settings → Open-source licences): YuNet (MIT) and
-SFace (Apache-2.0) from the OpenCV Zoo, U²-Net-p (Apache-2.0, via rembg, MIT) and EfficientNet-Lite0
-(Apache-2.0, MediaPipe). The ONNX models run through OpenCV's DNN module, the TFLite ones through
-TensorFlow Lite. The eraser model (`migan_512_fp16.tflite`, 14 MB) is committed too;
+SFace (Apache-2.0) from the OpenCV Zoo, U²-Net-p (Apache-2.0, via rembg, MIT), EfficientDet-Lite2
+(Apache-2.0, MediaPipe) and EfficientNetV2-B3 ImageNet-21k (Apache-2.0, Google AutoML). The ONNX
+models run through OpenCV's DNN module, the TFLite ones through TensorFlow Lite. How the gallery's
+recognition files were made and calibrated (EfficientNetV2 with int8 weights, its 4-bit output
+layer, the probes and the category table) is in [`buildtools/gallery/`](buildtools/gallery/README.md). The eraser model (`migan_512_fp16.tflite`, 14 MB) is committed too;
 `buildtools/models/convert_migan.py` reproduces it byte for byte from the published MI-GAN weights
 (TorchScript → ONNX → TFLite float16 with TensorFlow 2.16.1, matching the app's TFLite runtime) and
 checks it against PyTorch. Google's Maven repository wasn't reachable from the build environment,
@@ -162,22 +209,32 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 61 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 74 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
-  and videos, cut-out masks, scene recognition, auto enhance, duplicate grouping) and the sound
-  pipeline (resampling, channel mixing, pitch-preserving speed changes).
-* `app/src/roboTest` — 42 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
+  channel mixing, pitch-preserving speed changes) and the gallery core: detector decoding against
+  the model's anchors, people grouping (no mixed groups, names and "not this person" respected,
+  blurry faces only joining clear matches), search parsing (names, typos, dates, albums, kinds),
+  score fusion, and the shipped 4-bit scene layer and category table reproducing the calibration's
+  scores on real photos' features.
+* `app/src/roboTest` — 46 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
   removal keeping photos upright; page extraction; background removal, auto enhance and photo face
   blurring end to end (with stand-ins for the native models); tool stacks (real tools chained end to
   end, temporary in-between files, files passing steps that can't use them, merging, failures,
-  and building and running a stack in the UI); and a pass that opens every tool from the home
-  screen. `LMT_SHOTS=<dir>` also renders the screenshots above.
+  and building and running a stack in the UI); the gallery on a stand-in photo library (indexing,
+  grouping people, naming, search with typos, face names in the viewer, "not this person"
+  surviving regrouping, removed photos leaving the index, pausing, and every gallery screen); and a
+  pass that opens every tool from the home screen. `LMT_SHOTS=<dir>` also renders the screenshots
+  above.
 
 Not covered by automated tests (no emulator here): MediaCodec/MediaExtractor video paths (including
 the GPU face blur, merging and speed changes), PdfRenderer, BitmapRegionDecoder, the camera intent,
-the photo-library scan and trash request, and the native OpenCV/TFLite code on a device (the models
-themselves are tested on the JVM with OpenCV's desktop build, and the eraser model against PyTorch).
+the photo-library scan and trash request, MediaStore and the background indexing service on a real
+phone, and the native OpenCV/TFLite code on a device (the face and cut-out models are tested on the
+JVM with OpenCV's desktop build, the eraser model against PyTorch, and the gallery's TFLite models
+were measured with the same TensorFlow Lite version in Python, the app's Kotlin code then being
+checked against those measurements).

@@ -7,8 +7,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROCESSING" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- Only for the duplicate finder, which scans the photo library when the user starts it. -->
+    <!-- The gallery and the duplicate finder read the photo and video library (only on this phone). -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
@@ -49,6 +50,11 @@
 
         <service
             android:name="com.localmediatools.export.ExportService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync|mediaProcessing" />
+
+        <service
+            android:name="com.localmediatools.gallery.GalleryIndexService"
             android:exported="false"
             android:foregroundServiceType="dataSync|mediaProcessing" />
 

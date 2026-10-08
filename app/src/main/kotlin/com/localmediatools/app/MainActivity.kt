@@ -61,6 +61,8 @@ class MainActivity : Activity() {
         navigator = Navigator(root)
         navigator.root(MainShell(this))
         handleIntent(intent)
+        // Someone who has used the gallery gets new photos organised without opening it first.
+        if (hasMediaAccess() && getDatabasePath("gallery.db").exists()) com.localmediatools.gallery.GalleryIndex.start(this)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -73,6 +75,11 @@ class MainActivity : Activity() {
         if (id > 0) {
             i?.removeExtra(EXTRA_SHOW_JOB)
             navigator.push(ResultsScreen(this, id))
+        }
+        if (i?.getBooleanExtra(EXTRA_OPEN_GALLERY, false) == true) {
+            i.removeExtra(EXTRA_OPEN_GALLERY)
+            while (navigator.depth > 1) navigator.pop()
+            (navigator.top as? MainShell)?.show(MainShell.TAB_GALLERY)
         }
     }
 
@@ -251,6 +258,31 @@ class MainActivity : Activity() {
         requestPermissions(perms, 10)
     }
 
+    /** Photos and videos (the gallery shows both). With "selected photos" access only those are visible. */
+    fun hasMediaAccess(): Boolean = when {
+        Build.VERSION.SDK_INT >= 34 -> checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED
+        Build.VERSION.SDK_INT >= 33 -> checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+        else -> checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    /** True when the user allowed only some photos (Android 14+). */
+    fun hasPartialMediaAccess(): Boolean = Build.VERSION.SDK_INT >= 34 &&
+        checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED &&
+        checkSelfPermission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED
+
+    /** Asks for read access to photos and videos for the gallery; [then] gets whether any access was given. */
+    fun ensureMediaAccess(then: (Boolean) -> Unit) {
+        photoAccessThen = { then(hasMediaAccess()) }
+        val perms = when {
+            Build.VERSION.SDK_INT >= 34 -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+            Build.VERSION.SDK_INT >= 33 -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+            else -> arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        requestPermissions(perms, 10)
+    }
+
     // ------------------------------------------------------------------ notifications permission
     fun ensureNotificationPermission(then: () -> Unit) {
         if (Build.VERSION.SDK_INT < 33 || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) { then(); return }
@@ -275,6 +307,7 @@ class MainActivity : Activity() {
 
     companion object {
         const val EXTRA_SHOW_JOB = "show_job"
+        const val EXTRA_OPEN_GALLERY = "open_gallery"
         @Suppress("unused") private fun cacheFile(a: Activity, n: String) = File(a.cacheDir, n)
     }
 }

@@ -14,6 +14,7 @@ class LmtApp : Application() {
         com.localmediatools.edit.PatchStore.cleanupAll(this)
         Workload.init(this)
         ExportNotifications.createChannels(this)
+        com.localmediatools.gallery.GalleryIndexService.createChannel(this)
         ExportManager.init(this)
         Thread { OutputStore.cleanupStalePending(this) }.apply { isDaemon = true }.start()
     }

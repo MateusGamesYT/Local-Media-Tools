@@ -1,5 +1,6 @@
 package com.localmediatools.vision.core
 
+import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
@@ -58,6 +59,30 @@ class FaceEngine(yunetPath: String, sfacePath: String?, private val minScore: Fl
         } finally { row.release(); aligned.release(); feat.release() }
     }
 
+    /**
+     * Embedding averaged with the mirrored face (more stable across head turns; this is how the
+     * gallery's people grouping was calibrated). L2-normalised; null without the recognition model.
+     */
+    fun embedTta(bgr: Mat, face: Face): FloatArray? = synchronized(this) {
+        val rec = recognizer ?: return null
+        val row = Mat(1, 15, CvType.CV_32F); row.put(0, 0, face.row)
+        val aligned = Mat(); val flipped = Mat(); val feat = Mat(); val feat2 = Mat()
+        try {
+            rec.alignCrop(bgr, row, aligned)
+            rec.feature(aligned, feat)
+            Core.flip(aligned, flipped, 1)
+            rec.feature(flipped, feat2)
+            val a = normalize(floats(feat)); val b = normalize(floats(feat2))
+            normalize(FloatArray(a.size) { a[it] + b[it] })
+        } finally { row.release(); aligned.release(); flipped.release(); feat.release(); feat2.release() }
+    }
+
+    private fun floats(m: Mat): FloatArray {
+        val f = FloatArray(m.total().toInt())
+        val f32 = Mat(); m.convertTo(f32, CvType.CV_32F); f32.get(0, 0, f); f32.release()
+        return f
+    }
+
     override fun close() {}
 
     companion object {
@@ -77,5 +102,13 @@ class FaceEngine(yunetPath: String, sfacePath: String?, private val minScore: Fl
 
         /** Recommended SFace cosine threshold for "same person". */
         const val SAME_PERSON = 0.40f
+
+        /** Eye distance in pixels and how far the head is turned (0 = frontal) from YuNet's landmarks. */
+        fun eyesAndYaw(row: FloatArray): Pair<Float, Float> {
+            val rx = row[4]; val ry = row[5]; val lx = row[6]; val ly = row[7]; val nx = row[8]
+            val ed = sqrt((lx - rx) * (lx - rx) + (ly - ry) * (ly - ry))
+            val yaw = kotlin.math.abs(nx - (rx + lx) / 2) / ed.coerceAtLeast(1e-3f)
+            return ed to yaw
+        }
     }
 }

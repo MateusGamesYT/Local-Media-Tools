@@ -209,8 +209,8 @@ class UiSmokeTest {
         a.navigator.push(HistoryScreen(a)); idle(); render(a)
         @Suppress("DEPRECATION") a.onBackPressed(); idle()
         val shell = visibleTop(a) as MainShell
-        for (tab in listOf(1, 2, 0)) { shell.show(tab); idle(); render(a) }
-        shell.show(2); idle()
+        for (tab in listOf(MainShell.TAB_GALLERY, MainShell.TAB_ACTIVITY, MainShell.TAB_SETTINGS, MainShell.TAB_TOOLS)) { shell.show(tab); idle(); render(a) }
+        shell.show(MainShell.TAB_SETTINGS); idle()
         findDesc(a) { it.startsWith("Open-source licences") }?.performClick() ?: a.navigator.push(com.localmediatools.ui.LicensesScreen(a))
         idle(); render(a)
         assertTrue(texts(a).any { it.contains("MIT License") })

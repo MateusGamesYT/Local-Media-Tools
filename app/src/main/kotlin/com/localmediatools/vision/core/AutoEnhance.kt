@@ -13,44 +13,29 @@ enum class SceneKind(val label: String) {
     CITY("City & buildings"), DOCUMENT("Document"), NIGHT("Night"), GENERAL("General"),
 }
 
-/** Maps image-classifier labels (ImageNet) to the scene kinds auto-enhance cares about. */
+/** Maps the gallery's recognised categories to the scene kinds auto-enhance cares about. */
 object SceneMapper {
-    private val landscape = setOf("alp", "cliff", "coral reef", "geyser", "lakeside", "promontory", "sandbar", "seashore", "valley", "volcano",
-        "breakwater", "dam", "boathouse", "dock", "canoe", "paddle", "lifeboat", "yawl", "catamaran", "trimaran", "schooner", "speedboat",
-        "mountain tent", "ski", "dogsled", "snowmobile", "bubble", "parachute", "balloon")
-    private val city = setOf("church", "mosque", "palace", "castle", "monastery", "triumphal arch", "bell cote", "dome", "library", "cinema",
-        "steel arch bridge", "suspension bridge", "viaduct", "pier", "planetarium", "water tower", "tile roof", "patio", "barn", "greenhouse",
-        "street sign", "traffic light", "trolleybus", "streetcar", "cab", "limousine", "obelisk", "stupa", "fountain", "picket fence", "prison",
-        "restaurant", "grocery store", "bakery", "shoe shop", "toyshop", "bookshop", "tobacco shop", "barbershop", "butcher shop", "confectionery")
-    private val food = setOf("guacamole", "consomme", "hot pot", "trifle", "ice cream", "ice lolly", "French loaf", "bagel", "pretzel",
-        "cheeseburger", "hotdog", "mashed potato", "head cabbage", "broccoli", "cauliflower", "zucchini", "spaghetti squash", "acorn squash",
-        "butternut squash", "cucumber", "artichoke", "bell pepper", "cardoon", "mushroom", "Granny Smith", "strawberry", "orange", "lemon",
-        "fig", "pineapple", "banana", "jackfruit", "custard apple", "pomegranate", "carbonara", "chocolate sauce", "dough", "meat loaf",
-        "pizza", "potpie", "burrito", "red wine", "espresso", "cup", "eggnog", "plate", "wok", "frying pan", "Dutch oven", "soup bowl",
-        "coffee mug", "beer glass", "wine bottle", "beer bottle", "goblet", "cocktail shaker")
-    private val plant = setOf("daisy", "yellow lady's slipper", "corn", "acorn", "hip", "buckeye", "coral fungus", "agaric", "gyromitra",
-        "stinkhorn", "earthstar", "hen-of-the-woods", "bolete", "ear", "pot", "vase", "rapeseed")
-    private val document = setOf("web site", "menu", "book jacket", "comic book", "crossword puzzle", "envelope", "packet", "binder",
-        "notebook", "monitor", "screen", "television", "scoreboard", "slide rule", "rule", "paper towel", "toilet tissue", "letter opener",
-        "fountain pen", "ballpoint", "pencil box", "carton", "jigsaw puzzle")
+    private val kinds: Map<SceneKind, Set<String>> = mapOf(
+        SceneKind.LANDSCAPE to setOf("beach", "sea", "mountain", "lake", "river", "waterfall", "forest", "desert", "snow", "sky", "sunset", "grass", "rock"),
+        SceneKind.FOOD to setOf("food", "pizza", "cake", "burger", "sushi", "fruit", "coffee", "drink", "wine", "beer", "cocktail"),
+        SceneKind.ANIMAL to setOf("animal", "dog", "cat", "bird", "horse", "fish", "butterfly", "cow", "sheep", "goat", "pig", "elephant",
+            "zebra", "giraffe", "monkey", "lion", "tiger", "rabbit", "reptile"),
+        SceneKind.PLANT to setOf("flower"),
+        SceneKind.CITY to setOf("city", "street", "bridge", "castle"),
+        SceneKind.DOCUMENT to setOf("document"),
+        SceneKind.NIGHT to setOf("night"),
+    )
 
-    /** [top] is (label index, label, probability), best first. ImageNet indices 0–397 are animals. */
-    fun scene(top: List<Triple<Int, String, Float>>): Pair<SceneKind, Float> {
-        val score = HashMap<SceneKind, Float>()
-        for ((idx, label, p) in top) {
-            val k = when {
-                idx in 0..397 -> SceneKind.ANIMAL
-                label in landscape -> SceneKind.LANDSCAPE
-                label in city -> SceneKind.CITY
-                label in food -> SceneKind.FOOD
-                label in plant -> SceneKind.PLANT
-                label in document -> SceneKind.DOCUMENT
-                else -> null
-            } ?: continue
-            score[k] = (score[k] ?: 0f) + p
+    /** [scores] are category → fused score (0.5 = recognised). The strongest recognised kind wins. */
+    fun fromCategories(scores: Map<String, Float>): Pair<SceneKind, Float> {
+        var best = SceneKind.GENERAL; var bs = 0f
+        for ((kind, keys) in kinds) {
+            val s = keys.maxOfOrNull { scores[it] ?: 0f } ?: 0f
+            // Night beats landscape when both hold (a city or beach at night is enhanced as night).
+            val boost = if (kind == SceneKind.NIGHT) 0.05f else 0f
+            if (s + boost > bs) { bs = s + boost; best = kind }
         }
-        val best = score.maxByOrNull { it.value } ?: return SceneKind.GENERAL to 0f
-        return if (best.value >= 0.25f) best.key to best.value else SceneKind.GENERAL to best.value
+        return if (bs >= 0.5f) best to minOf(1f, bs) else SceneKind.GENERAL to bs
     }
 }
 

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import com.localmediatools.gallery.ObjectTagger
 import com.localmediatools.stitch.OpenCvLoader
 import com.localmediatools.vision.core.AutoEnhance
 import com.localmediatools.vision.core.EnhanceResult
@@ -18,29 +19,22 @@ import com.localmediatools.vision.core.SceneMapper
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
-import org.tensorflow.lite.Interpreter
 import java.io.File
-import java.io.FileInputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.channels.FileChannel
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
- * The on-device vision models: face detection (YuNet) and recognition (SFace), subject cut-out
- * (U²-Net-p) and scene recognition (EfficientNet-Lite0). They are loaded once and kept while the
- * app runs; everything runs on this phone.
+ * The on-device vision models: face detection (YuNet) and recognition (SFace) and subject cut-out
+ * (U²-Net-p); scenes are recognised by the gallery's [ObjectTagger]. They are loaded once and kept
+ * while the app runs; everything runs on this phone.
  */
 object VisionModels {
     const val YUNET = "face_detection_yunet_2023mar.onnx"
     const val SFACE = "face_recognition_sface_2021dec_int8.onnx"
     const val U2NET = "u2netp.onnx"
-    private const val SCENE = "models/efficientnet_lite0_int8.tflite"
 
     private var faces: FaceEngine? = null
     private var matting: Matting? = null
-    private var scene: SceneClassifier? = null
 
     /**
      * OpenCV reads models from files, so assets are copied to app storage once per app version
@@ -68,41 +62,6 @@ object VisionModels {
         matting?.let { return it }
         OpenCvLoader.ensure()
         return Matting(file(ctx, U2NET).path).also { matting = it }
-    }
-
-    @Synchronized fun scene(ctx: Context): SceneClassifier {
-        scene?.let { return it }
-        return SceneClassifier.create(ctx, SCENE).also { scene = it }
-    }
-}
-
-/** ImageNet classifier used to recognise the kind of scene for auto-enhance. */
-class SceneClassifier private constructor(private val interpreter: Interpreter, private val labels: List<String>) {
-    private val input = ByteBuffer.allocateDirect(224 * 224 * 3).order(ByteOrder.nativeOrder())
-    private val output = Array(1) { ByteArray(1000) }
-
-    /** The best labels as (index, label, probability). */
-    fun classify(bmp: Bitmap, top: Int = 5): List<Triple<Int, String, Float>> = synchronized(this) {
-        val small = Bitmap.createScaledBitmap(bmp, 224, 224, true)
-        val px = IntArray(224 * 224)
-        small.getPixels(px, 0, 224, 0, 0, 224, 224)
-        if (small !== bmp) small.recycle()
-        input.rewind()
-        for (c in px) { input.put(((c shr 16) and 255).toByte()); input.put(((c shr 8) and 255).toByte()); input.put((c and 255).toByte()) }
-        input.rewind()
-        interpreter.run(input, output)
-        val probs = FloatArray(1000) { (output[0][it].toInt() and 255) / 256f }
-        probs.indices.sortedByDescending { probs[it] }.take(top).map { Triple(it, labels.getOrElse(it) { "?" }, probs[it]) }
-    }
-
-    companion object {
-        fun create(ctx: Context, asset: String): SceneClassifier {
-            val afd = ctx.assets.openFd(asset)
-            val buf = FileInputStream(afd.fileDescriptor).channel.use { ch -> ch.map(FileChannel.MapMode.READ_ONLY, afd.startOffset, afd.declaredLength) }
-            afd.close()
-            val labels = ctx.assets.open("models/imagenet_labels.txt").bufferedReader().readLines()
-            return SceneClassifier(Interpreter(buf, Interpreter.Options().setNumThreads(2)), labels)
-        }
     }
 }
 
@@ -174,7 +133,7 @@ object VisionOps {
      */
     fun enhance(ctx: Context, bmp: Bitmap, strength: Float): EnhanceResult {
         val faces = try { photoFaces(ctx, bmp, 800, embed = false).map { FaceBox(it.x, it.y, it.w, it.h) } } catch (_: Throwable) { emptyList() }
-        val scene = try { SceneMapper.scene(VisionModels.scene(ctx).classify(bmp)).first } catch (_: Throwable) { SceneKind.GENERAL }
+        val scene = try { SceneMapper.fromCategories(ObjectTagger.create(ctx).tag(bmp)).first } catch (_: Throwable) { SceneKind.GENERAL }
         val small = fit(bmp, 384)
         val px = IntArray(small.width * small.height)
         small.getPixels(px, 0, small.width, 0, 0, small.width, small.height)

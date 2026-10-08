@@ -29,14 +29,14 @@ ROBO_SRC = os.path.join(APP, "src", "roboTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
-VERSION_CODE = 4
-VERSION_NAME = "1.3.0"
+VERSION_CODE = 5
+VERSION_NAME = "1.4.0"
 MIN_SDK = 29
 TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]
 
 # Packages of pure-Kotlin engine code that must not depend on Android (unit tested on the JVM).
-PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core", "com/localmediatools/vision/core"]
+PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core", "com/localmediatools/vision/core", "com/localmediatools/gallery/core"]
 
 LIBS = [
     "kotlin-stdlib-2.3.21.jar",
