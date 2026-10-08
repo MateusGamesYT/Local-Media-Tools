@@ -68,9 +68,19 @@ class FacesScreen(activity: MainActivity, private val personId: Long? = null) : 
     }
 
     @OptIn(FlowPreview::class)
-    private fun observe() = scope.launch { GalleryIndex.changes.debounce(400).collect { load() } }
+    private val watch = IndexWatch(this) { load() }
+    private var loadJob: kotlinx.coroutines.Job? = null
 
-    private fun load() = scope.launch {
+    private fun observe() = watch.start()
+
+    override fun onShow() { watch.shown() }
+
+    private fun load() {
+        loadJob?.cancel()
+        loadJob = scope.launch { loadNow() }
+    }
+
+    private suspend fun loadNow() {
         val f = filter
         val (list, n) = withContext(Dispatchers.IO) {
             val db = GalleryDb.get(ctx)

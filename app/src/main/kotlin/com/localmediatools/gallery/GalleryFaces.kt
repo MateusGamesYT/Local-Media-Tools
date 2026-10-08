@@ -21,7 +21,11 @@ class FoundFace(
     val yaw: Float,
     val emb: FloatArray?,
     val kind: FaceKind = FaceKind.SFACE,
+    /** For videos: the frame (ms) the face was seen in. */
+    val frameMs: Long = 0,
 ) {
+    fun atFrame(ms: Long) = FoundFace(x, y, w, h, score, eyePx, yaw, emb, kind, ms)
+
     private val params get() = ClusterParams.of(kind)
     val good get() = emb != null && params.isGood(score, yaw, eyePx)
     val quality get() = params.quality(score, yaw, eyePx)

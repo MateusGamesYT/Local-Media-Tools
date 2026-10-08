@@ -58,11 +58,27 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
     }
 
     @OptIn(FlowPreview::class)
-    private fun observe() = scope.launch { GalleryIndex.changes.debounce(400).collect { load() } }
+    private val watch = IndexWatch(this) { load() }
+    private var loadJob: kotlinx.coroutines.Job? = null
+    /** This person no longer exists (merged or regrouped away) while another screen was on top. */
+    private var gone = false
+
+    private fun observe() = watch.start()
+
+    override fun onShow() {
+        // Close only when this screen is the visible one, never whatever happens to be on top.
+        if (gone) { pop(); return }
+        watch.shown()
+    }
 
     private class Data(val person: GPerson?, val cover: GFace?, val items: List<GMedia>, val similar: List<Pair<GPerson, GFace?>>)
 
-    private fun load() = scope.launch {
+    private fun load() {
+        loadJob?.cancel()
+        loadJob = scope.launch { loadNow() }
+    }
+
+    private suspend fun loadNow() {
         val d = withContext(Dispatchers.IO) {
             val db = GalleryDb.get(ctx)
             val p = db.person(personId)
@@ -70,7 +86,10 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
             else Data(p, GalleryRepo.coverFace(ctx, p), GalleryRepo.person(ctx, personId), if (p.named) similarGroups(db, p) else emptyList())
         }
         val p = d.person
-        if (p == null) { pop(); return@launch }
+        if (p == null) {
+            if (activity.navigator.top === this) pop() else gone = true
+            return
+        }
         person = p
         topBar.removeAllViews()
         topBar.addView(TopBar(this@PersonScreen, p.name ?: "Unnamed person", UI.iconButton(ctx, R.drawable.ic_more, "Options") { menu() }))

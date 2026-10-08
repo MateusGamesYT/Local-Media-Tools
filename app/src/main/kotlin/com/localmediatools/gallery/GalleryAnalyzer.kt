@@ -55,7 +55,8 @@ class GalleryAnalyzer private constructor(
                 val frame = mmr.getScaledFrameAtTime(t, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, GalleryFaces.DETECT_SIDE, GalleryFaces.DETECT_SIDE) ?: continue
                 try {
                     val f = findFaces(null, frame)
-                    all.addAll(f)
+                    // Remember the frame, so the face's picture can be cut from that same frame later.
+                    all.addAll(f.map { it.atFrame(t / 1000) })
                     for ((k, v) in tagsFor(frame, f)) tags[k] = max(tags[k] ?: 0f, v)
                 } finally { frame.recycle() }
             }
@@ -77,19 +78,17 @@ class GalleryAnalyzer private constructor(
         return out
     }
 
+    // Errors here fail the item (it is tried again on a later run) rather than being saved as
+    // "nothing found", which would be final.
     private fun findFaces(src: ImageSource?, work: Bitmap): List<FoundFace> {
-        faces?.let { return try { GalleryFaces.analyze(it, src, work) } catch (_: Throwable) { emptyList() } }
-        basicFaces?.let { return try { it.analyze(work) } catch (_: Throwable) { emptyList() } }
+        faces?.let { return GalleryFaces.analyze(it, src, work) }
+        basicFaces?.let { return it.analyze(work) }
         return emptyList()
     }
 
     private fun tagsFor(work: Bitmap, found: List<FoundFace>): Map<String, Float> {
-        val tags = HashMap<String, Float>()
-        val o = objects
-        if (o != null) {
-            try { tags.putAll(o.tag(work)) } catch (_: Throwable) { tags.putAll(basicObjects.tag(found)) }
-        } else tags.putAll(basicObjects.tag(found))
-        return tags
+        val o = objects ?: return basicObjects.tag(found)
+        return o.tag(work)
     }
 
     companion object {

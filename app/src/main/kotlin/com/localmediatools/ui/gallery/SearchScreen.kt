@@ -75,9 +75,13 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
             field.edit.requestFocus()
             (ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showSoftInput(field.edit, 0)
         }
-        scope.launch { GalleryIndex.changes.collect { if (field.edit.text.isNotBlank()) onQuery(field.edit.text.toString(), 600) } }
+        watch.start()
         return root
     }
+
+    private val watch = IndexWatch(this, 0) { if (field.edit.text.isNotBlank()) onQuery(field.edit.text.toString(), 600) }
+
+    override fun onShow() { watch.shown() }
 
     private fun loadSuggestions() = scope.launch {
         val s = withContext(Dispatchers.IO) {

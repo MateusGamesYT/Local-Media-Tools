@@ -20,8 +20,10 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
 import kotlin.coroutines.coroutineContext
 
@@ -32,7 +34,21 @@ import kotlin.coroutines.coroutineContext
  */
 object GalleryIndex {
     /** Bump when what the analyzer stores changes, so older results are redone. */
-    const val ANALYZER_VERSION = 1
+    const val ANALYZER_VERSION = 2
+
+    /**
+     * What an analysis is stored as: the version plus how capable the engines were, so photos looked
+     * at with the basic fallback are looked at again once the AI engines work (e.g. after a
+     * temporary failure), while a phone that only has the fallback doesn't redo them forever.
+     */
+    fun analyzedValue(faces: EngineMode, objects: EngineMode): Int {
+        val f = when (faces) { EngineMode.AI -> 2; EngineMode.BASIC -> 1; EngineMode.OFF -> 0 }
+        val o = if (objects == EngineMode.AI) 1 else 0
+        return ANALYZER_VERSION * 10 + f * 2 + o
+    }
+
+    /** What the current engines would store; anything below is (re)analysed. */
+    @Volatile var target = analyzedValue(EngineMode.AI, EngineMode.AI); private set
 
     enum class Phase { IDLE, READING, ANALYZING, GROUPING, PAUSED, DONE }
 
@@ -59,6 +75,7 @@ object GalleryIndex {
     private var analyzer: GalleryAnalyzer? = null
     @Volatile private var userPaused = false
     @Volatile private var again = false
+    @Volatile private var lastStart = 0L
 
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state
@@ -70,7 +87,7 @@ object GalleryIndex {
     /** Stands in for the analyzer where models can't run (JVM tests). */
     @Volatile var analyzerOverride: ((GMedia) -> Analysis)? = null
 
-    fun notifyChanged() { _changes.value = _changes.value + 1 }
+    fun notifyChanged() { _changes.update { it + 1 } }
 
     private fun prefs(ctx: Context) = ctx.getSharedPreferences("gallery", Context.MODE_PRIVATE)
 
@@ -79,79 +96,127 @@ object GalleryIndex {
     fun setPaused(ctx: Context, paused: Boolean) {
         prefs(ctx).edit().putBoolean("paused", paused).apply()
         userPaused = paused
-        if (paused) { job?.cancel(); _state.value = _state.value.copy(phase = Phase.PAUSED, pausedWhy = "Paused", pausedByUser = true) }
-        else { _state.value = _state.value.copy(pausedByUser = false); start(ctx) }
+        if (paused) { job?.cancel(); _state.update { it.copy(phase = Phase.PAUSED, pausedWhy = "Paused", pausedByUser = true) } }
+        else { _state.update { it.copy(pausedByUser = false) }; start(ctx) }
     }
 
-    /** Reads the library and analyses what is new. Safe to call often (e.g. every time the gallery opens). */
+    /**
+     * Like [start] for screens that call it often: nothing if a pass is running (it already picks up
+     * changes) or the library was read moments ago.
+     */
+    fun refresh(ctx: Context) {
+        if (job?.isActive == true || System.currentTimeMillis() - lastStart < 120_000) return
+        start(ctx)
+    }
+
+    /** Reads the library and analyses what is new. */
     fun start(ctx: Context) {
         val app = ctx.applicationContext
+        // Without access the library reads as (almost) empty: never sync then, or the index would be wiped.
+        if (!GalleryLibrary.hasAccess(app)) return
         // From now on, new, edited and deleted photos are picked up while the app runs.
         GalleryLibrary.watch(app) { start(app) }
         userPaused = isPausedByUser(app)
+        lastStart = System.currentTimeMillis()
         if (job?.isActive == true) { again = true; return }
         job = scope.launch {
-            do {
-                again = false
-                try { run(app) } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (t: Throwable) {
-                    android.util.Log.w("LMT", "gallery indexing failed", t)
+            try {
+                do {
+                    again = false
+                    try { run(app) } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (t: Throwable) {
+                        android.util.Log.w("LMT", "gallery indexing failed", t)
+                    }
+                } while (again && isActive)
+            } finally {
+                // However it ended (error, cancel, stop), never leave the state saying it is working.
+                _state.update { s ->
+                    when {
+                        userPaused -> s.copy(phase = Phase.PAUSED, pausedWhy = "Paused", pausedByUser = true)
+                        s.working || (s.phase == Phase.PAUSED && !s.pausedByUser) -> s.copy(phase = Phase.IDLE, pausedWhy = null)
+                        else -> s
+                    }
                 }
-            } while (again && isActive)
+                analyzer = null
+                ObjectTagger.release()
+            }
         }
     }
 
+    /** Stops indexing (e.g. when Android ends the background time); it resumes on the next start. */
     fun stop() { job?.cancel() }
+
+    /** Whether a pass is running (tests wait on it). */
+    val busy get() = job?.isActive == true
 
     /** Back to a clean state (tests). */
     fun resetForTests() {
-        job?.cancel(); job = null; analyzer = null; again = false; userPaused = false
+        job?.cancel(); job = null; analyzer = null; again = false; userPaused = false; lastStart = 0L
         _state.value = State()
     }
 
     private suspend fun run(ctx: Context) {
         val db = GalleryDb.get(ctx)
-        _state.value = _state.value.copy(phase = Phase.READING, pausedWhy = null)
+        _state.update { it.copy(phase = Phase.READING, pausedWhy = null) }
         val (changed, removed) = try { GalleryLibrary.sync(ctx, db) } catch (e: SecurityException) { 0 to 0 }
+        // Removed photos took their faces with them; people left without faces go (no full regroup needed).
+        if (removed > 0) db.pruneEmptyPeople()
         if (changed > 0 || removed > 0) notifyChanged()
-        if (removed > 0) regroup(ctx, db)
-        var (done, total) = db.counts(ANALYZER_VERSION)
-        if (userPaused) { _state.value = _state.value.copy(phase = Phase.PAUSED, done = done, total = total, pausedWhy = "Paused", pausedByUser = true); return }
-        if (done >= total) { _state.value = _state.value.copy(phase = Phase.DONE, done = done, total = total); return }
+        if (userPaused) {
+            val (d, t) = db.counts(target)
+            _state.update { it.copy(phase = Phase.PAUSED, done = d, total = t, pausedWhy = "Paused", pausedByUser = true) }
+            return
+        }
         val a = if (analyzerOverride != null) null else analyzer ?: GalleryAnalyzer.create(ctx).also { analyzer = it }
-        _state.value = _state.value.copy(phase = Phase.ANALYZING, done = done, total = total,
-            faceMode = a?.faceMode ?: EngineMode.AI, objectMode = a?.objectMode ?: EngineMode.AI)
+        target = if (a == null) analyzedValue(EngineMode.AI, EngineMode.AI) else analyzedValue(a.faceMode, a.objectMode)
+        var (done, total) = db.counts(target)
+        if (done >= total) { _state.update { it.copy(phase = Phase.DONE, done = done, total = total) }; return }
+        _state.update { it.copy(phase = Phase.ANALYZING, done = done, total = total,
+            faceMode = a?.faceMode ?: EngineMode.AI, objectMode = a?.objectMode ?: EngineMode.AI) }
         GalleryIndexService.ensure(ctx)
         var newFaces = 0
+        var groupedFaces = db.faceCount()
         var lastNotify = System.currentTimeMillis()
+        // Items that failed in this run aren't tried again until the next one.
+        val attempted = HashSet<Long>()
         while (coroutineContext.isActive) {
-            val batch = db.pending(ANALYZER_VERSION, 24)
+            val batch = db.pending(target, 24, attempted)
             if (batch.isEmpty()) break
             for (m in batch) {
                 if (!coroutineContext.isActive) return
                 waitForGoodConditions(ctx, done, total)
+                attempted.add(m.id)
+                // Counted before looking, so a file that crashes the app is skipped after two tries.
+                db.markAttempt(m.id)
                 val t0 = System.nanoTime()
                 val result = try {
                     analyzerOverride?.invoke(m) ?: a!!.analyze(m)
                 } catch (e: OutOfMemoryError) { null } catch (e: Exception) { null }
-                if (result == null) { db.markFailed(m.id); done++; continue }
-                db.saveAnalysis(m.id, ANALYZER_VERSION, result.tags, result.faces.map { f ->
-                    GFace(0, m.id, f.x, f.y, f.w, f.h, f.score, f.eyePx, f.yaw, f.good, f.quality, 0, f.kind, f.emb, null, false)
-                })
-                newFaces += result.faces.count { it.emb != null }
-                done++
-                _state.value = _state.value.copy(done = done)
+                if (result != null) {
+                    db.saveAnalysis(m.id, target, result.tags, result.faces.map { f ->
+                        GFace(0, m.id, f.x, f.y, f.w, f.h, f.score, f.eyePx, f.yaw, f.good, f.quality, f.frameMs, f.kind, f.emb, null, false)
+                    })
+                    newFaces += result.faces.count { it.emb != null }
+                    done++
+                    _state.update { it.copy(done = done) }
+                }
                 val now = System.currentTimeMillis()
-                if (now - lastNotify > 2500) { lastNotify = now; notifyChanged() }
-                // People appear progressively: regroup every few hundred new faces.
-                if (newFaces >= 300) { newFaces = 0; regroup(ctx, db); _state.value = _state.value.copy(phase = Phase.ANALYZING) }
+                if (now - lastNotify > 10_000) { lastNotify = now; notifyChanged() }
+                // People appear progressively; regrouping costs more as the library grows, so it
+                // happens after a growing number of new faces (a few dozen times for 30,000 faces).
+                if (newFaces >= maxOf(300, groupedFaces / 3)) {
+                    groupedFaces += newFaces; newFaces = 0
+                    regroup(ctx, db)
+                }
                 pace(System.nanoTime() - t0)
+                // Let waiting work (naming, merging) in between items.
+                yield()
             }
-            total = db.counts(ANALYZER_VERSION).second
-            _state.value = _state.value.copy(total = total)
+            val c = db.counts(target); done = c.first; total = c.second
+            _state.update { it.copy(done = done, total = total) }
         }
         regroup(ctx, db)
-        val (d, t) = db.counts(ANALYZER_VERSION)
-        _state.value = _state.value.copy(phase = Phase.DONE, done = d, total = t)
+        val (d, t) = db.counts(target)
+        _state.update { it.copy(phase = Phase.DONE, done = d, total = t) }
         notifyChanged()
     }
 
@@ -172,10 +237,10 @@ object GalleryIndex {
     private suspend fun waitForGoodConditions(ctx: Context, done: Int, total: Int) {
         while (coroutineContext.isActive) {
             val why = holdReason(ctx) ?: break
-            _state.value = _state.value.copy(phase = Phase.PAUSED, pausedWhy = why, done = done, total = total)
+            _state.update { it.copy(phase = Phase.PAUSED, pausedWhy = why, done = done, total = total) }
             delay(30_000)
         }
-        if (_state.value.phase == Phase.PAUSED) _state.value = _state.value.copy(phase = Phase.ANALYZING, pausedWhy = null)
+        _state.update { if (it.phase == Phase.PAUSED && !it.pausedByUser) it.copy(phase = Phase.ANALYZING, pausedWhy = null) else it }
     }
 
     private fun holdReason(ctx: Context): String? {
@@ -192,7 +257,7 @@ object GalleryIndex {
         return null
     }
 
-    private fun isCharging(ctx: Context): Boolean {
+    fun isCharging(ctx: Context): Boolean {
         val b = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED)) ?: return false
         return b.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0
     }
@@ -200,17 +265,23 @@ object GalleryIndex {
     /** Regroups faces into people now (also after the user named, merged or corrected someone). */
     fun regroupNow(ctx: Context) {
         val app = ctx.applicationContext
-        scope.launch { regroup(app, GalleryDb.get(app)); notifyChanged() }
+        scope.launch {
+            try { regroup(app, GalleryDb.get(app)) } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (t: Throwable) {
+                android.util.Log.w("LMT", "gallery regrouping failed", t)
+            }
+            notifyChanged()
+        }
     }
 
     private suspend fun regroup(ctx: Context, db: GalleryDb) {
         val prev = _state.value.phase
-        _state.value = _state.value.copy(phase = Phase.GROUPING)
+        _state.update { if (it.phase == Phase.PAUSED && it.pausedByUser) it else it.copy(phase = Phase.GROUPING) }
         try {
             val job = coroutineContext[Job]
             GalleryPeople.regroup(db) { job?.isActive == false }
         } finally {
-            _state.value = _state.value.copy(phase = prev)
+            // Only undo our own change: a pause (or anything else) set meanwhile stays.
+            _state.update { if (it.phase == Phase.GROUPING) it.copy(phase = if (prev == Phase.GROUPING) Phase.IDLE else prev) else it }
         }
         notifyChanged()
     }
@@ -218,15 +289,21 @@ object GalleryIndex {
 
 /** Turns face groups into people rows, keeping names and stable ids for unnamed groups. */
 object GalleryPeople {
+    /**
+     * The basic (LBP) descriptor is large (3,776 numbers, ~15 KB a face) and only groups
+     * near-identical faces, so at most this many of the best are grouped; the others stay on their own.
+     */
+    private const val MAX_BASIC = 3000
+
     fun regroup(db: GalleryDb, cancelled: () -> Boolean) {
-        val faces = db.faces("f.emb IS NOT NULL AND f.ignored = 0", withEmb = true, order = "f.id")
-        if (faces.isEmpty()) { db.applyGrouping(emptyMap()); return }
         val rejected = db.notPeople()
         val assign = HashMap<Long, Long?>()
         val used = HashSet<Long>()
         val unnamed = db.people(includeHidden = true).filter { !it.named }.mapTo(HashSet()) { it.id }
         for (kind in FaceKind.entries) {
-            val list = faces.filter { it.kind == kind }
+            val basic = kind == FaceKind.LBP
+            val list = db.faces("f.emb IS NOT NULL AND f.ignored = 0 AND f.kind = ?", arrayOf(kind.code.toString()), withEmb = true,
+                order = if (basic) "f.confirmed DESC, f.quality DESC, f.id" else "f.id", limit = if (basic) MAX_BASIC else null)
             if (list.isEmpty()) continue
             val recs = list.map { f ->
                 FaceRec(f.id, f.emb!!, f.quality, f.good, if (f.confirmed) f.personId else null, rejected[f.id] ?: LongArray(0))

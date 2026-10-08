@@ -40,6 +40,12 @@ validation photos the int8-weight backbone gives the same tags as float32 for 95
 model's own outputs. The 4-bit head keeps the full softmax; pruning classes saved little and moved
 more tags.
 
+`app_parity.py` reproduces the app's own preprocessing (decode at up to 1,600 px, its crop and
+letterbox arithmetic) and checks the final tags against the calibration path. With 1.4.0's resizing
+(2×2 box halvings plus plain bilinear) 93.0 % of 2,000 photos got identical tags; since 1.4.1 the app
+resizes exactly like Pillow (`PilResample`, checked bit for bit by a JVM test) and all 2,000 do.
+Not covered: photos larger than 1,600 px are first decoded smaller by Android itself.
+
 People grouping thresholds were tuned with `face_embed.py` / `face_analyze.py` / `cluster_proto.py`
 on the BIWI Kinect Head Pose database (not redistributable; only the measured results are used):
 the same YuNet + SFace pipeline as the app, clustering several hundred faces of 16 people.

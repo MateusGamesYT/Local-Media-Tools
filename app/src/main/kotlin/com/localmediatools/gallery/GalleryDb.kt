@@ -31,6 +31,14 @@ class GMedia(
 ) {
     val uri get() = GalleryLibrary.uriOf(id, video)
     val screenshot get() = GalleryLibrary.isScreenshot(path, bucket, name)
+
+    /** The file itself changed, so what was learned about it is stale. */
+    fun contentDiffers(o: GMedia) = modified != o.modified || size != o.size
+
+    /** Something shown or searched changed (name, album, date, favourite…). */
+    fun metaDiffers(o: GMedia) = video != o.video || mime != o.mime || name != o.name || bucketId != o.bucketId ||
+        bucket != o.bucket || path != o.path || taken != o.taken || width != o.width || height != o.height ||
+        orientation != o.orientation || durationMs != o.durationMs || favorite != o.favorite
     val gif get() = mime == "image/gif"
 }
 
@@ -98,11 +106,10 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
     }
 
     // ---------------------------------------------------------------- media
-    fun mediaStamps(): HashMap<Long, Long> {
-        val out = HashMap<Long, Long>()
-        readableDatabase.rawQuery("SELECT id, modified, size FROM media", null).use { c ->
-            while (c.moveToNext()) out[c.getLong(0)] = c.getLong(1) * 31 + c.getLong(2)
-        }
+    /** Everything indexed, by id (for comparing with the library). */
+    fun mediaById(): HashMap<Long, GMedia> {
+        val out = HashMap<Long, GMedia>()
+        for (m in queryMedia()) out[m.id] = m
         return out
     }
 
@@ -166,8 +173,9 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
 
     fun mediaById(id: Long): GMedia? = queryMedia("m.id=?", arrayOf(id.toString())).firstOrNull()
 
-    fun pending(version: Int, limit: Int): List<GMedia> =
-        queryMedia("m.analyzed < ? AND m.failures < 2", arrayOf(version.toString()), limit = limit)
+    fun pending(version: Int, limit: Int, exclude: Collection<Long> = emptyList()): List<GMedia> =
+        queryMedia("m.analyzed < ? AND m.failures < 2" + (if (exclude.isEmpty()) "" else " AND m.id NOT IN (${exclude.joinToString(",")})"),
+            arrayOf(version.toString()), limit = limit)
 
     fun counts(version: Int): Pair<Int, Int> {
         readableDatabase.rawQuery("SELECT COUNT(*), SUM(CASE WHEN analyzed >= ? OR failures >= 2 THEN 1 ELSE 0 END) FROM media", arrayOf(version.toString())).use { c ->
@@ -175,8 +183,18 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
         }
     }
 
-    fun markFailed(id: Long) {
+    /** Counts a try before looking at an item; a finished analysis resets it (see [saveAnalysis]). */
+    fun markAttempt(id: Long) {
         writableDatabase.execSQL("UPDATE media SET failures = failures + 1 WHERE id=?", arrayOf(id))
+    }
+
+    fun visibleFaceCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM faces WHERE ignored = 0", null).use { c -> c.moveToFirst(); c.getInt(0) }
+
+    fun faceCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM faces WHERE emb IS NOT NULL", null).use { c -> c.moveToFirst(); c.getInt(0) }
+
+    /** Unnamed people left without faces (their photos were deleted) disappear. */
+    fun pruneEmptyPeople() {
+        writableDatabase.execSQL("DELETE FROM people WHERE (name IS NULL OR name = '') AND id NOT IN (SELECT DISTINCT person_id FROM faces WHERE person_id IS NOT NULL)")
     }
 
     /** Albums: bucket id, name, item count and the newest item. */
@@ -240,10 +258,10 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
 
     private val faceCols = "f.id, f.media_id, f.x, f.y, f.w, f.h, f.score, f.eye, f.yaw, f.good, f.quality, f.frame_ms, f.kind, f.emb, f.person_id, f.confirmed, f.ignored"
 
-    fun faces(where: String = "1", args: Array<String> = emptyArray(), withEmb: Boolean = false, order: String = "m.taken DESC, f.id"): List<GFace> {
+    fun faces(where: String = "1", args: Array<String> = emptyArray(), withEmb: Boolean = false, order: String = "m.taken DESC, f.id", limit: Int? = null): List<GFace> {
         val cols = if (withEmb) faceCols else faceCols.replace("f.emb", "NULL")
         val out = ArrayList<GFace>()
-        readableDatabase.rawQuery("SELECT $cols FROM faces f JOIN media m ON m.id = f.media_id WHERE $where ORDER BY $order", args).use { c ->
+        readableDatabase.rawQuery("SELECT $cols FROM faces f JOIN media m ON m.id = f.media_id WHERE $where ORDER BY $order" + (limit?.let { " LIMIT $it" } ?: ""), args).use { c ->
             while (c.moveToNext()) out.add(face(c))
         }
         return out

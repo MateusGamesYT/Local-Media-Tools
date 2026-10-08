@@ -114,7 +114,7 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
         root.addView(bottom, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
         pager.setup()
         onPage()
-        scope.launch { GalleryIndex.changes.collect { loadFaces() } }
+        watch.start()
         return root
     }
 
@@ -128,6 +128,10 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
         subtitle.text = tf.format(Date(m.taken)) + " · " + m.bucket
         loadFaces()
     }
+
+    private val watch = IndexWatch(this, 0) { loadFaces() }
+
+    override fun onShow() { watch.shown() }
 
     private fun loadFaces() {
         val m = current() ?: return

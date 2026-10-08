@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Rect
 import com.localmediatools.gallery.core.Category
 import com.localmediatools.gallery.core.Detection
 import com.localmediatools.gallery.core.EfficientDetDecoder
+import com.localmediatools.gallery.core.PilResample
 import com.localmediatools.gallery.core.SceneHead
 import com.localmediatools.gallery.core.Taxonomy
 import org.tensorflow.lite.Interpreter
@@ -57,9 +57,8 @@ class ObjectTagger private constructor(
     fun detect(bmp: Bitmap): List<Detection> = synchronized(this) {
         val s = DET.toFloat() / max(bmp.width, bmp.height)
         val w = max(1, (bmp.width * s).roundToInt()); val h = max(1, (bmp.height * s).roundToInt())
-        val small = Resample.scale(bmp, w, h)
-        val px = IntArray(w * h); small.getPixels(px, 0, w, 0, 0, w, h)
-        if (small !== bmp) small.recycle()
+        val all = IntArray(bmp.width * bmp.height); bmp.getPixels(all, 0, bmp.width, 0, 0, bmp.width, bmp.height)
+        val px = PilResample.resize(all, bmp.width, bmp.height, w, h)
         detIn.rewind()
         for (y in 0 until DET) for (x in 0 until DET) {
             if (x < w && y < h) {
@@ -78,16 +77,12 @@ class ObjectTagger private constructor(
         EfficientDetDecoder.decode(boxes, scores, MIN_DET, w.toFloat() / DET, h.toFloat() / DET)
     }
 
-    /** The classifier's 1536 image features (centre crop, as in training). */
+    /** The classifier's 1536 image features (centre crop of 224/256 of the short side, as in training and calibration). */
     fun features(bmp: Bitmap): FloatArray = synchronized(this) {
-        val side = (minOf(bmp.width, bmp.height) * SCENE / (SCENE + 32f)).roundToInt().coerceAtLeast(1)
-        val crop = Bitmap.createBitmap(side, side, Bitmap.Config.ARGB_8888)
-        Canvas(crop).drawBitmap(bmp, Rect((bmp.width - side) / 2, (bmp.height - side) / 2, (bmp.width + side) / 2, (bmp.height + side) / 2),
-            Rect(0, 0, side, side), null)
-        val small = Resample.scale(crop, SCENE, SCENE)
-        if (small !== crop) crop.recycle()
-        val px = IntArray(SCENE * SCENE); small.getPixels(px, 0, SCENE, 0, 0, SCENE, SCENE)
-        small.recycle()
+        val side = (minOf(bmp.width, bmp.height) * SCENE / (SCENE + 32)).coerceAtLeast(1)
+        val crop = IntArray(side * side)
+        bmp.getPixels(crop, 0, side, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side)
+        val px = PilResample.resize(crop, side, side, SCENE, SCENE)
         sceneIn.rewind()
         for (c in px) { sceneIn.putFloat(((c shr 16) and 255).toFloat()); sceneIn.putFloat(((c shr 8) and 255).toFloat()); sceneIn.putFloat((c and 255).toFloat()) }
         sceneIn.rewind()
@@ -132,6 +127,13 @@ class ObjectTagger private constructor(
 
         @Volatile private var shared: ObjectTagger? = null
 
+        /** Frees the models (tens of MB) when nothing needs them; the next [create] loads them again. */
+        fun release() = synchronized(this) {
+            val t = shared ?: return@synchronized
+            shared = null
+            synchronized(t) { t.detector.close(); t.scene.close() }
+        }
+
         fun create(ctx: Context): ObjectTagger = shared ?: synchronized(this) {
             shared ?: run {
                 val threads = Runtime.getRuntime().availableProcessors().coerceIn(2, 4)
@@ -146,21 +148,5 @@ class ObjectTagger private constructor(
             val afd = ctx.assets.openFd(asset)
             return afd.use { FileInputStream(it.fileDescriptor).channel.use { ch -> ch.map(FileChannel.MapMode.READ_ONLY, it.startOffset, it.declaredLength) } }
         }
-    }
-}
-
-/** Downscaling that averages pixels (halving steps, then a final bilinear step), like the calibration did. */
-object Resample {
-    fun scale(src: Bitmap, w: Int, h: Int): Bitmap {
-        var cur = src
-        while (cur.width >= w * 2 && cur.height >= h * 2) {
-            val next = Bitmap.createScaledBitmap(cur, cur.width / 2, cur.height / 2, true)
-            if (cur !== src) cur.recycle()
-            cur = next
-        }
-        if (cur.width == w && cur.height == h) return cur
-        val out = Bitmap.createScaledBitmap(cur, w, h, true)
-        if (cur !== src && cur !== out) cur.recycle()
-        return out
     }
 }

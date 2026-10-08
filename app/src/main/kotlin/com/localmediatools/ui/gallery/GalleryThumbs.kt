@@ -116,8 +116,12 @@ object GalleryThumbs {
         val src: Bitmap
         val crop: Rect
         if (m.video) {
-            // Video faces come from frames; crop from the system thumbnail.
-            src = ctx.contentResolver.loadThumbnail(m.uri, Size(1024, 1024), null)
+            // Video faces come from frames: cut from the very frame the face was found in.
+            val mmr = android.media.MediaMetadataRetriever()
+            src = try {
+                mmr.setDataSource(ctx, m.uri)
+                mmr.getScaledFrameAtTime(f.frameMs * 1000, android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 1024, 1024)
+            } finally { try { mmr.release() } catch (_: Exception) { } } ?: return null
             crop = square(f, src.width, src.height)
         } else {
             val s = ImageSource.open(ctx, m.uri, m.name)

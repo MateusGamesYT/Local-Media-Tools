@@ -7,6 +7,7 @@ import com.localmediatools.gallery.core.FaceClustering
 import com.localmediatools.gallery.core.FaceRec
 import com.localmediatools.gallery.core.Lbp
 import com.localmediatools.gallery.core.MediaFilter
+import com.localmediatools.gallery.core.PilResample
 import com.localmediatools.gallery.core.SceneHead
 import com.localmediatools.gallery.core.SearchParser
 import com.localmediatools.gallery.core.SearchTerm
@@ -254,6 +255,26 @@ class GalleryCoreTest {
             }
         }
         assertTrue("only $tags tags", tags >= 60)
+    }
+
+    @Test fun resizesExactlyLikePillow() {
+        fun pattern(w: Int, h: Int) = IntArray(w * h) { i ->
+            val x = (i % w).toLong(); val y = (i / w).toLong()
+            val r = ((x * 37 + y * 11) xor (x * y)) and 255
+            val g = ((x * 7 + y * 53) + (x / 3) * (y / 5)) and 255
+            val b = ((x * x + 3 * y * y) / 7) and 255
+            (0xFF shl 24) or (r.toInt() shl 16) or (g.toInt() shl 8) or b.toInt()
+        }
+        val g = ByteBuffer.wrap(javaClass.getResourceAsStream("/gallery/pil_resize.bin")!!.readBytes()).order(ByteOrder.LITTLE_ENDIAN)
+        repeat(g.int) {
+            val w = g.int; val h = g.int; val ow = g.int; val oh = g.int; val crc = g.int.toLong() and 0xFFFFFFFFL
+            val full = if (g.int == 1) ByteArray(ow * oh * 3).also { g.get(it) } else null
+            val out = PilResample.resize(pattern(w, h), w, h, ow, oh)
+            val rgb = ByteArray(ow * oh * 3)
+            for ((i, p) in out.withIndex()) { rgb[i * 3] = (p shr 16).toByte(); rgb[i * 3 + 1] = (p shr 8).toByte(); rgb[i * 3 + 2] = p.toByte() }
+            if (full != null) for (i in rgb.indices) assertEquals("${w}x$h -> ${ow}x$oh byte $i", full[i].toInt() and 255, rgb[i].toInt() and 255)
+            assertEquals("${w}x$h -> ${ow}x$oh", crc, java.util.zip.CRC32().apply { update(rgb) }.value)
+        }
     }
 
     // ------------------------------------------------------------------ fallback face descriptor

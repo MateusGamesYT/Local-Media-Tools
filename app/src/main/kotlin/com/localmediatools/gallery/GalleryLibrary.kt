@@ -1,7 +1,9 @@
 package com.localmediatools.gallery
 
+import android.Manifest
 import android.content.ContentUris
 import android.content.Context
+import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.net.Uri
 import android.os.Build
@@ -24,6 +26,18 @@ object GalleryLibrary {
     /** Stands in for MediaStore where there is none (JVM tests). */
     @Volatile var source: ((Context) -> List<GMedia>)? = null
 
+    /** Whether the app may read photos or videos (all of them, or the ones the user selected). */
+    fun hasAccess(ctx: Context): Boolean {
+        fun granted(p: String) = ctx.checkSelfPermission(p) == PackageManager.PERMISSION_GRANTED
+        return when {
+            source != null -> true
+            Build.VERSION.SDK_INT >= 34 -> granted(Manifest.permission.READ_MEDIA_IMAGES) || granted(Manifest.permission.READ_MEDIA_VIDEO) ||
+                granted(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+            Build.VERSION.SDK_INT >= 33 -> granted(Manifest.permission.READ_MEDIA_IMAGES) || granted(Manifest.permission.READ_MEDIA_VIDEO)
+            else -> granted(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    }
+
     /** Everything the app may see right now (with "selected photos" access, only those). */
     fun query(ctx: Context): List<GMedia> {
         source?.let { return it(ctx) }
@@ -37,7 +51,9 @@ object GalleryLibrary {
         )
         if (Build.VERSION.SDK_INT >= 30) cols.add(MediaStore.MediaColumns.IS_FAVORITE)
         val sel = "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}, ${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}) AND ${MediaStore.MediaColumns.SIZE} > 0"
-        ctx.contentResolver.query(FILES, cols.toTypedArray(), sel, null, null)?.use { c ->
+        // No cursor means the media provider isn't answering, not that the library is empty.
+        val cursor = ctx.contentResolver.query(FILES, cols.toTypedArray(), sel, null, null) ?: throw IllegalStateException("The photo library isn't available right now")
+        cursor.use { c ->
             while (c.moveToNext()) {
                 val video = c.getInt(1) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
                 val mime = c.getString(2) ?: if (video) "video/*" else "image/*"
@@ -59,21 +75,44 @@ object GalleryLibrary {
         return out
     }
 
-    /** Brings the index up to date. Returns (added or changed, removed). */
+    /**
+     * Brings the index up to date. Returns (added or changed, removed).
+     *
+     * Removing is guarded, because a library that suddenly reads as empty or much smaller is more
+     * often a glitch (a memory card out for a moment, the media provider restarting) than real, and
+     * removing a photo also forgets its faces: an empty read removes nothing, and losing more than
+     * half of a big library only takes effect if the next read, at least half an hour later, agrees.
+     */
     fun sync(ctx: Context, db: GalleryDb): Pair<Int, Int> {
         val now = query(ctx)
-        val known = db.mediaStamps()
+        val known = db.mediaById()
+        val write = ArrayList<GMedia>()
         val changed = HashSet<Long>()
         for (m in now) {
-            val stamp = m.modified * 31 + m.size
             val old = known[m.id]
-            if (old == null || old != stamp) changed.add(m.id)
+            when {
+                old == null || old.contentDiffers(m) -> { write.add(m); changed.add(m.id) }
+                old.metaDiffers(m) -> write.add(m)
+            }
         }
         val present = now.mapTo(HashSet()) { it.id }
-        val gone = known.keys.filter { it !in present }
-        db.upsert(now, changed)
+        var gone: List<Long> = known.keys.filter { it !in present }
+        val prefs = ctx.getSharedPreferences("gallery", Context.MODE_PRIVATE)
+        val bigDrop = gone.size >= 200 && gone.size > known.size / 2
+        when {
+            now.isEmpty() && known.isNotEmpty() -> gone = emptyList()
+            bigDrop -> {
+                val seen = prefs.getLong("big_drop_at", 0L)
+                if (seen == 0L || System.currentTimeMillis() - seen < 30 * 60_000L) {
+                    if (seen == 0L) prefs.edit().putLong("big_drop_at", System.currentTimeMillis()).apply()
+                    gone = emptyList()
+                } else prefs.edit().remove("big_drop_at").apply()
+            }
+            else -> if (prefs.contains("big_drop_at")) prefs.edit().remove("big_drop_at").apply()
+        }
+        if (write.isNotEmpty()) db.upsert(write, changed)
         db.remove(gone)
-        return changed.size to gone.size
+        return write.size to gone.size
     }
 
     private var observer: ContentObserver? = null
@@ -88,6 +127,11 @@ object GalleryLibrary {
                 h.removeCallbacks(fire); h.postDelayed(fire, 1500)
             }
         }
-        try { ctx.applicationContext.contentResolver.registerContentObserver(FILES, true, observer!!) } catch (_: Exception) { observer = null }
+        // Photos and videos only: other files changing (downloads, documents) aren't a reason to re-read.
+        try {
+            val r = ctx.applicationContext.contentResolver
+            r.registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, observer!!)
+            r.registerContentObserver(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, observer!!)
+        } catch (_: Exception) { observer = null }
     }
 }

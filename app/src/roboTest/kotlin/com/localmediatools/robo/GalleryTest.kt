@@ -73,7 +73,7 @@ class GalleryTest {
     @Test fun indexesTheLibraryAndGroupsPeople() {
         val a = openGallery()
         val db = GalleryDb.get(app)
-        val (done, total) = db.counts(GalleryIndex.ANALYZER_VERSION)
+        val (done, total) = db.counts(GalleryIndex.target)
         assertEquals(36, total); assertEquals(36, done)
         // Photos tab: every item in the grid, newest first.
         val grid = all(a.navigator.top!!.view).filterIsInstance<MediaGrid>().single()
@@ -171,5 +171,64 @@ class GalleryTest {
         GalleryIndex.setPaused(app, false)
         waitFor("resume") { GalleryIndex.state.value.phase == GalleryIndex.Phase.DONE }
         render(a)
+    }
+    /** Starts a pass and waits until it has completely finished. */
+    private fun runIndex() {
+        waitFor("previous pass") { !GalleryIndex.busy }
+        GalleryIndex.start(app)
+        waitFor("indexing") { !GalleryIndex.busy }
+        idle(200)
+    }
+
+    @Test fun anEmptyOrFailingLibraryReadNeverWipesTheIndex() {
+        openGallery()
+        val db = GalleryDb.get(app)
+        val faces = db.faces("1").size
+        assertTrue(faces > 20)
+        // The media provider answers with nothing (e.g. restarting): keep everything.
+        com.localmediatools.gallery.GalleryLibrary.source = { emptyList() }
+        runIndex()
+        assertEquals(36, db.queryMedia().size)
+        assertEquals(faces, db.faces("1").size)
+        // Reading fails outright: nothing is removed and indexing doesn't stay "working".
+        com.localmediatools.gallery.GalleryLibrary.source = { throw IllegalStateException("provider gone") }
+        runIndex()
+        assertEquals(36, db.queryMedia().size)
+        assertTrue(!GalleryIndex.state.value.working)
+    }
+
+    @Test fun losingMostOfABigLibraryOnlyCountsWhenConfirmed() {
+        val many = (1L..300L).map { id ->
+            com.localmediatools.gallery.GMedia(id, false, "image/jpeg", "IMG_$id.jpg", "c", "Camera", "DCIM/Camera/",
+                FakeGallery.now - id * 60_000L, 1000 + id, 1_000_000, 4000, 3000, 0, 0, false)
+        }
+        com.localmediatools.gallery.GalleryLibrary.source = { many }
+        GalleryIndex.analyzerOverride = { com.localmediatools.gallery.Analysis(emptyMap(), emptyList()) }
+        runIndex()
+        val db = GalleryDb.get(app)
+        assertEquals(300, db.queryMedia().size)
+        // Suddenly only 50 are there (a memory card out, say): not removed yet.
+        com.localmediatools.gallery.GalleryLibrary.source = { many.take(50) }
+        runIndex()
+        assertEquals(300, db.queryMedia().size)
+        // Still true at a read more than half an hour later: now they go.
+        val prefs = app.getSharedPreferences("gallery", android.content.Context.MODE_PRIVATE)
+        prefs.edit().putLong("big_drop_at", System.currentTimeMillis() - 31 * 60_000L).commit()
+        runIndex()
+        assertEquals(50, db.queryMedia().size)
+    }
+
+    @Test fun failingItemsAreTriedAgainOnceThenSkipped() {
+        val few = FakeGallery.media().take(5)
+        com.localmediatools.gallery.GalleryLibrary.source = { few }
+        GalleryIndex.analyzerOverride = { throw IllegalStateException("can't read this file") }
+        runIndex()
+        val db = GalleryDb.get(app)
+        // Tried once each, nothing saved as "analysed", and the state isn't stuck.
+        assertEquals(0 to 5, db.counts(GalleryIndex.target))
+        assertTrue(!GalleryIndex.state.value.working)
+        // The next run tries them a second time; after that they count as done (given up).
+        runIndex()
+        assertEquals(5 to 5, db.counts(GalleryIndex.target))
     }
 }

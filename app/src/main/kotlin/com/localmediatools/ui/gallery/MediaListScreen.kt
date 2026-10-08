@@ -58,7 +58,11 @@ class MediaListScreen(activity: MainActivity, private val title: String, private
     }
 
     @OptIn(FlowPreview::class)
-    private fun observe() = scope.launch { GalleryIndex.changes.debounce(500).collect { load() } }
+    private val watch = IndexWatch(this, 500) { load() }
+
+    private fun observe() = watch.start()
+
+    override fun onShow() { watch.shown() }
 
     private fun load() = scope.launch {
         val items = withContext(Dispatchers.IO) {

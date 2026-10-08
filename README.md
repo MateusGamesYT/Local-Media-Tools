@@ -12,7 +12,7 @@ hidden file that is only published after it has been completely written and chec
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.4.0.apk`](release/LocalMediaTools-1.4.0.apk)
+**Install:** [`release/LocalMediaTools-1.4.1.apk`](release/LocalMediaTools-1.4.1.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -32,7 +32,29 @@ It installs over earlier versions (same signing key).
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.4: Gallery
+## What's new in 1.4.1: Gallery hardening
+
+A review of the Gallery aimed at what only shows up on real phones, and the fixes:
+
+- **Recognition exactly as calibrated** — photos are now shrunk for the recognisers exactly the way
+  they were during calibration (Pillow's resampling, reproduced bit for bit); all 2,000 test photos
+  now get exactly the tags measured in calibration (1.4.0: 93 % did).
+- **People and names are never lost by accident** — the library is never read without permission,
+  a failed or empty read removes nothing, and a sudden loss of more than half of a big library only
+  counts when a read half an hour later confirms it.
+- **Background indexing ends cleanly** — errors, pausing and Android's time limits no longer leave
+  the notification stuck "working"; a photo that keeps failing (or crashing the app) is skipped after
+  two tries; results from a temporary failure are redone instead of being kept as "nothing found";
+  while charging, indexing continues with the screen off.
+- **Lighter on big libraries** — people are regrouped after a growing number of new faces (not every
+  300), deleting photos no longer triggers a full regroup, open screens refresh only while visible,
+  and only changed library entries are rewritten; naming someone during indexing takes effect at once.
+- **Fixes** — faces from videos show the right frame; a person's page no longer closes another
+  screen; with Android 14's "selected photos" access the Gallery offers to allow more; Android 10 can
+  delete (one at a time: it has no trash); sharing and deleting take up to 500 items at a time, with a
+  clear message beyond.
+
+## What was new in 1.4: Gallery
 
 - **Your photos and videos, organised on the phone** — a new Gallery tab shows everything by day
   (**Photos**), by folder (**Albums**), by person (**People**) and by what is in them (**Things**).
@@ -209,16 +231,16 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 74 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 75 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
   channel mixing, pitch-preserving speed changes) and the gallery core: detector decoding against
   the model's anchors, people grouping (no mixed groups, names and "not this person" respected,
   blurry faces only joining clear matches), search parsing (names, typos, dates, albums, kinds),
-  score fusion, and the shipped 4-bit scene layer and category table reproducing the calibration's
-  scores on real photos' features.
-* `app/src/roboTest` — 46 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  score fusion, resizing bit-identical to Pillow, and the shipped 4-bit scene layer and category table
+  reproducing the calibration's scores on real photos' features.
+* `app/src/roboTest` — 49 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -227,7 +249,8 @@ so updates install over each other; use your own key for a store release.
   end, temporary in-between files, files passing steps that can't use them, merging, failures,
   and building and running a stack in the UI); the gallery on a stand-in photo library (indexing,
   grouping people, naming, search with typos, face names in the viewer, "not this person"
-  surviving regrouping, removed photos leaving the index, pausing, and every gallery screen); and a
+  surviving regrouping, removed photos leaving the index, empty or failing library reads and a
+  sudden big drop not wiping the index, failing photos retried once, pausing, and every gallery screen); and a
   pass that opens every tool from the home screen. `LMT_SHOTS=<dir>` also renders the screenshots
   above.
 

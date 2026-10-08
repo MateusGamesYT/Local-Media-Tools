@@ -50,6 +50,7 @@ class GalleryTab(private val shell: MainShell) {
     private var grid: MediaGrid? = null
     private var loadJob: Job? = null
     private val panes = HashMap<Int, View>()
+    private lateinit var partial: View
 
     fun build(): View {
         root = FrameLayout(ctx).apply { setBackgroundColor(Palette.BG) }
@@ -75,6 +76,14 @@ class GalleryTab(private val shell: MainShell) {
         col.addView(segments, lp().apply { leftMargin = ctx.dp(18); rightMargin = ctx.dp(18); topMargin = ctx.dp(12) })
         status = IndexStatusBar(ctx) { statusDetails() }
         col.addView(status, lp().apply { leftMargin = ctx.dp(18); rightMargin = ctx.dp(18); topMargin = ctx.dp(10) })
+        // Android 14+: the user may have allowed only some photos; offer to choose more.
+        partial = UI.note(ctx, "Showing only the photos you allowed. Tap to allow more.", UI.NoteKind.INFO).apply {
+            isClickable = true; isFocusable = true
+            contentDescription = "Allow more photos"
+            setOnClickListener { activity.ensureMediaAccess { ok -> if (ok) GalleryIndex.start(ctx) } }
+            visibility = View.GONE
+        }
+        col.addView(partial, lp().apply { leftMargin = ctx.dp(18); rightMargin = ctx.dp(18); topMargin = ctx.dp(8) })
         body = FrameLayout(ctx)
         col.addView(body, lp(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = ctx.dp(6) })
         root.addView(col, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
@@ -83,19 +92,29 @@ class GalleryTab(private val shell: MainShell) {
         return root
     }
 
+    /** The index changed while the tab wasn't in front; reload when it is again. */
+    private var dirty = false
+
+    private fun inFront() = activity.started.value && activity.navigator.top === shell && shell.tab == MainShell.TAB_GALLERY
+
+    private fun changed() { if (inFront()) reload() else dirty = true }
+
     @OptIn(FlowPreview::class)
     private fun observe() {
         shell.scope.launch { GalleryIndex.state.collect { status.render(it) } }
-        shell.scope.launch { GalleryIndex.changes.debounce(400).collect { reload() } }
+        shell.scope.launch { GalleryIndex.changes.debounce(400).collect { changed() } }
         // Finishing a pass may change nothing (an empty library) but still decides what to show.
-        shell.scope.launch { GalleryIndex.state.map { it.phase == GalleryIndex.Phase.DONE }.distinctUntilChanged().collect { if (it) reload() } }
+        shell.scope.launch { GalleryIndex.state.map { it.phase == GalleryIndex.Phase.DONE }.distinctUntilChanged().collect { if (it) changed() } }
+        shell.scope.launch { activity.started.collect { if (it && dirty && inFront()) { dirty = false; reload() } } }
     }
 
     /** Called when the tab becomes visible: check access, then refresh the index. */
     fun onShow() {
+        partial.visibility = if (activity.hasPartialMediaAccess()) View.VISIBLE else View.GONE
         if (!activity.hasMediaAccess()) { showPermission(); return }
         if (panes.isEmpty() || body.childCount == 0 || body.getChildAt(0).tag == "permission") show(pane)
-        GalleryIndex.start(ctx)
+        else if (dirty) { dirty = false; reload() }
+        GalleryIndex.refresh(ctx)
     }
 
     private fun show(i: Int) {
@@ -233,7 +252,7 @@ class GalleryTab(private val shell: MainShell) {
     private fun peopleData(): PeopleData {
         val db = GalleryDb.get(ctx)
         val people = db.people().filter { it.mediaCount > 0 && (it.named || it.faceCount >= 2) }
-        val faces = db.faces("f.ignored = 0").size
+        val faces = db.visibleFaceCount()
         return PeopleData(people.map { it to GalleryRepo.coverFace(ctx, it) }, faces)
     }
 

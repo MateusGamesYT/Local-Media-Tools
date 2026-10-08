@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +29,7 @@ class GalleryIndexService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var collector: Job? = null
     private var last = 0L
+    private var wake: PowerManager.WakeLock? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -45,6 +47,7 @@ class GalleryIndexService : Service() {
                     if (now - last > 1500) {
                         last = now
                         manager(this@GalleryIndexService).notify(ID, notification(this@GalleryIndexService, s))
+                        keepAwakeWhileCharging(s)
                     }
                 }
             }
@@ -61,7 +64,18 @@ class GalleryIndexService : Service() {
         }
     }
 
+    /**
+     * With the screen off the phone sleeps and indexing would stall. While charging it is kept
+     * awake (for at most 10 minutes past the last progress); on battery it is allowed to sleep.
+     */
+    private fun keepAwakeWhileCharging(s: GalleryIndex.State) {
+        val w = wake ?: (getSystemService(POWER_SERVICE) as PowerManager)
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocalMediaTools:gallery").apply { setReferenceCounted(false) }.also { wake = it }
+        if (s.working && GalleryIndex.isCharging(this)) w.acquire(10 * 60_000L) else if (w.isHeld) w.release()
+    }
+
     private fun stop() {
+        wake?.let { if (it.isHeld) it.release() }
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -72,6 +86,7 @@ class GalleryIndexService : Service() {
     }
 
     override fun onDestroy() {
+        wake?.let { if (it.isHeld) it.release() }
         scope.cancel()
         super.onDestroy()
     }

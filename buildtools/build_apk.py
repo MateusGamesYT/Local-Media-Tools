@@ -29,8 +29,8 @@ ROBO_SRC = os.path.join(APP, "src", "roboTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
-VERSION_CODE = 5
-VERSION_NAME = "1.4.0"
+VERSION_CODE = 6
+VERSION_NAME = "1.4.1"
 MIN_SDK = 29
 TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]

@@ -65,6 +65,19 @@ class MainActivity : Activity() {
         if (hasMediaAccess() && getDatabasePath("gallery.db").exists()) com.localmediatools.gallery.GalleryIndex.start(this)
     }
 
+    /** Whether the app is on screen (gallery screens only refresh then). */
+    val started = kotlinx.coroutines.flow.MutableStateFlow(false)
+
+    override fun onStart() {
+        super.onStart()
+        started.value = true
+    }
+
+    override fun onStop() {
+        started.value = false
+        super.onStop()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
