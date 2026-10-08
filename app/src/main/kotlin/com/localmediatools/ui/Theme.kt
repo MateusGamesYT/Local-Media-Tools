@@ -41,6 +41,7 @@ object Palette {
     val SUNSET = intArrayOf(0xFFFF8A4C.toInt(), 0xFFE5487A.toInt())
 
     fun section(s: ToolSection): Int = when (s) {
+        ToolSection.STACKS -> 0xFF60D5FA.toInt()
         ToolSection.EDIT -> 0xFFC084FC.toInt()
         ToolSection.IMAGES -> 0xFF2DD4BF.toInt()
         ToolSection.VIDEO -> 0xFFFB923C.toInt()
@@ -51,6 +52,7 @@ object Palette {
 
     /** Two-stop gradient for a section's icon tiles: a lighter top-left and a deeper bottom-right. */
     fun sectionGradient(s: ToolSection): IntArray = when (s) {
+        ToolSection.STACKS -> intArrayOf(0xFF5EEAD4.toInt(), 0xFF3D7BFF.toInt())
         ToolSection.EDIT -> AI
         ToolSection.IMAGES -> intArrayOf(0xFF34E3C5.toInt(), 0xFF0E9F8E.toInt())
         ToolSection.VIDEO -> intArrayOf(0xFFFFA65C.toInt(), 0xFFF0592C.toInt())
@@ -70,6 +72,7 @@ object Palette {
 
 object Icons {
     fun tool(t: ToolId): Int = when (t) {
+        ToolId.TOOL_STACK -> R.drawable.ic_tool_stack
         ToolId.PHOTO_EDITOR -> R.drawable.ic_tool_editor
         ToolId.MAGIC_ERASER -> R.drawable.ic_tool_eraser
         ToolId.BLUR_REDACT -> R.drawable.ic_tool_redact

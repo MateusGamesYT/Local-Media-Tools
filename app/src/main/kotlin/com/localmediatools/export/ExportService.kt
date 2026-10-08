@@ -167,7 +167,7 @@ object ExportNotifications {
             .setSmallIcon(R.drawable.ic_stat_export)
             .setContentTitle("$title · ${s.tool.title}")
             .setContentText(s.summary())
-            .setStyle(Notification.BigTextStyle().bigText(s.summary() + "\nSaved to ${s.tool.outputPath}"))
+            .setStyle(Notification.BigTextStyle().bigText(s.summary() + "\nSaved to ${s.savedTo}"))
             .setAutoCancel(true)
             .setContentIntent(openApp(ctx, s.id))
             .setColor(0xFF4DA3FF.toInt())

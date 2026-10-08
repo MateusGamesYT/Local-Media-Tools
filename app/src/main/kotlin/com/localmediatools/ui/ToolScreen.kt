@@ -12,16 +12,37 @@ import com.localmediatools.app.R
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ExportManager
+import com.localmediatools.tools.StackRules
+import com.localmediatools.tools.StackStep
 import com.localmediatools.tools.ToolId
 import kotlinx.coroutines.launch
+
+/** A tool screen opened to set up one step of a tool stack instead of exporting. */
+class StackMode(
+    val stepNumber: Int,
+    /** What the step gets, e.g. "the 3 files you picked" or "the videos made by step 1 (Blur faces)". */
+    val input: String,
+    /** The stack's own files that this tool can work on, used for previews. */
+    val previewItems: List<MediaItem>,
+    val editing: Boolean,
+    val onSave: (StackStep) -> Unit,
+)
 
 /**
  * Common layout for every tool: what it does, what to select/configure (numbered steps), where the
  * results go, live export status, and a sticky primary action.
  */
 abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(activity) {
-    protected val selection: Selection = Selection.of(tool)
+    /** Set before the screen is shown to configure a tool-stack step. */
+    var stack: StackMode? = null
+    /** In stack mode: the stack's files this tool can use for previews (not the tool's own selection). */
+    protected val selection: Selection by lazy {
+        stack?.let { m -> Selection(tool).apply { items.addAll(m.previewItems.filter { ToolRules.issue(tool, it) == null }) } } ?: Selection.of(tool)
+    }
     protected lateinit var content: LinearLayout
+    protected lateinit var optionsBody: LinearLayout
+    /** True while checking settings for a stack step from the normal screen (file count doesn't matter). */
+    private var checkingStep = false
     private lateinit var startButton: ButtonView
     private lateinit var helper: TextView
     private var selectionPanel: SelectionPanel? = null
@@ -33,6 +54,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
 
     /** Null when ready to export; otherwise a short instruction shown above the button. */
     protected open fun validate(): String? {
+        if (stack != null || checkingStep) return if (selection.loading > 0) "Reading the files…" else null
         val usable = selection.usable.size
         val min = ToolRules.minItems(tool)
         val noun = ToolRules.pickKind(tool).noun
@@ -45,6 +67,18 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
     }
 
     protected abstract fun createJob(items: List<MediaItem>): ExportJob
+
+    /**
+     * The job for a tool-stack step, holding the current settings. Its files are set when the
+     * stack runs; the selection's files only serve as a starting point.
+     */
+    protected open fun createStepJob(): ExportJob = createJob(selection.usable)
+
+    /** Short description of the settings, shown in the stack (e.g. "WebP · Quality 80"). */
+    protected open fun stackSummary(): String = OptionSummary.of(optionsBody)
+
+    /** True while a stack step is being set up or checked (not exporting this tool's own selection). */
+    protected val stepMode: Boolean get() = stack != null || checkingStep
 
     /** Explains naming of the outputs. */
     protected abstract fun outputNaming(): String
@@ -68,9 +102,10 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         scroll.addView(content)
         root.addView(scroll, FrameLayout.LayoutParams(MATCH, MATCH))
 
-        content.addView(TopBar(this, tool.title).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
+        val st = stack
+        content.addView(TopBar(this, if (st != null) "Step ${st.stepNumber}: ${tool.title}" else tool.title).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
         content.addView(hero())
-        buildSelection(content)
+        if (st != null) content.addView(stackInputCard(st), lp().apply { topMargin = ctx.dp(14) }) else buildSelection(content)
 
         val opts = UI.card(ctx)
         val head = UI.horizontal(ctx)
@@ -78,12 +113,17 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         head.addView(UI.text(ctx, "Options", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         opts.addView(head)
         val optBody = UI.vertical(ctx)
+        optionsBody = optBody
         buildOptions(optBody)
         opts.addView(optBody, lp().apply { topMargin = ctx.dp(8) })
         content.addView(opts, lp().apply { topMargin = ctx.dp(14) })
 
-        content.addView(outputCard(), lp().apply { topMargin = ctx.dp(14) })
-        content.addView(ExportStatusCard(this, tool), lp().apply { topMargin = ctx.dp(14) })
+        if (st != null) {
+            content.addView(stackResultCard(), lp().apply { topMargin = ctx.dp(14) })
+        } else {
+            content.addView(outputCard(), lp().apply { topMargin = ctx.dp(14) })
+            content.addView(ExportStatusCard(this, tool), lp().apply { topMargin = ctx.dp(14) })
+        }
 
         // Sticky action bar.
         val bar = UI.vertical(ctx, 16, 12)
@@ -91,7 +131,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         bar.elevation = ctx.dp(8).toFloat()
         helper = UI.text(ctx, "", TextStyle.CAPTION).apply { gravity = Gravity.CENTER; setPadding(0, 0, 0, ctx.dp(8)) }
         bar.addView(helper)
-        startButton = UI.primaryButton(ctx, startLabel) { start() }
+        startButton = UI.primaryButton(ctx, buttonLabel) { if (stack != null) saveStep() else start() }
         bar.addView(startButton, lp())
         root.addView(bar, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM).apply { setMargins(ctx.dp(10), 0, ctx.dp(10), ctx.dp(10)) })
 
@@ -138,7 +178,75 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         }, lp(0, WRAP, 1f))
         c.addView(row)
         c.addView(UI.note(ctx, "New files are always created; your originals are never changed. A file is only published after it has been fully written and checked.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
+        if (StackRules.stackable(tool)) {
+            val row = UI.horizontal(ctx)
+            row.setPadding(0, ctx.dp(14), 0, 0)
+            row.addView(UI.iconView(ctx, R.drawable.ic_tool_stack, Palette.section(com.localmediatools.tools.ToolSection.STACKS), 20))
+            row.addView(UI.titled(ctx, "Do more with the results?", "Stack another tool that works on them, e.g. compress after this").apply { setPadding(ctx.dp(10), 0, ctx.dp(8), 0) }, lp(0, WRAP, 1f))
+            c.addView(row)
+            c.addView(UI.secondaryButton(ctx, "Then run another tool", R.drawable.ic_add) { startStack() }, lp().apply { topMargin = ctx.dp(10) })
+        }
         return c
+    }
+
+    // ------------------------------------------------------------------ tool stacks
+    private val buttonLabel: String get() = stack?.let { if (it.editing) "Save step" else "Add to stack" } ?: startLabel
+
+    private fun stackInputCard(m: StackMode): View {
+        val c = UI.card(ctx)
+        val head = UI.horizontal(ctx)
+        head.addView(StepBadge(ctx, 1))
+        head.addView(UI.text(ctx, "Input", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        c.addView(head)
+        c.addView(UI.text(ctx, "Works on ${m.input}.", TextStyle.BODY).apply { setPadding(0, ctx.dp(10), 0, 0) })
+        val previews = selection.usable
+        c.addView(UI.text(ctx, if (previews.isEmpty()) "Files it can't work on go to the next step unchanged."
+            else "Previews use your file \"${previews.first().name}\". Files it can't work on go to the next step unchanged.", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, 0) })
+        return c
+    }
+
+    private fun stackResultCard(): View {
+        val c = UI.card(ctx)
+        val head = UI.horizontal(ctx)
+        head.addView(StepBadge(ctx, 3))
+        head.addView(UI.text(ctx, "Result", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        c.addView(head)
+        c.addView(UI.text(ctx, "Goes to the next step. If this is the last step, the results are saved in ${tool.outputPath.replace("\n", " and ")}.", TextStyle.BODY_2).apply { setPadding(0, ctx.dp(10), 0, 0) })
+        return c
+    }
+
+    private fun currentStep(): StackStep? {
+        val job = try { createStepJob() } catch (e: IllegalArgumentException) {
+            Toast.makeText(ctx, e.message ?: "Check the options", Toast.LENGTH_LONG).show(); return null
+        }
+        return StackStep(tool, stackSummary().ifBlank { "Standard settings" }, job)
+    }
+
+    private fun saveStep() {
+        val m = stack ?: return
+        if (validate() != null) return
+        val step = currentStep() ?: return
+        m.onSave(step)
+        pop()
+    }
+
+    /** Starts a new tool stack with this tool (and its files and settings) as step 1. */
+    private fun startStack() {
+        checkingStep = true
+        val msg = try { validate() } finally { checkingStep = false }
+        if (msg != null) { Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show(); return }
+        checkingStep = true
+        val step = try { currentStep() } finally { checkingStep = false } ?: return
+        fun go() {
+            ToolStackState.startWith(selection.items.toList(), step)
+            push(StackScreen(activity))
+        }
+        if (ToolStackState.steps.isEmpty()) go() else android.app.AlertDialog.Builder(ctx)
+            .setTitle("Start a new tool stack?")
+            .setMessage("Your current stack (${ToolStackState.steps.joinToString(" → ") { it.tool.title }}) will be replaced.")
+            .setPositiveButton("Start new") { _, _ -> go() }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     fun refreshValidation() {
@@ -146,10 +254,10 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         val msg = validate()
         startButton.isEnabled = msg == null
         val busy = ExportManager.state.value.busy
-        helper.text = msg ?: if (busy) "Another export is running; this one will start right after it." else
+        helper.text = msg ?: if (stack != null) "Settings are kept with the step; tap it in the stack to change them" else if (busy) "Another export is running; this one will start right after it." else
             "${selection.usable.size} ${if (selection.usable.size == 1) "file" else "files"} ready · you can leave the app while it runs"
         helper.setTextColor(if (msg == null) Palette.TEXT_2 else Palette.WARNING)
-        startButton.label = if (msg == null && busy) "Add to queue" else startLabel
+        startButton.label = if (msg == null && busy && stack == null) "Add to queue" else buttonLabel
     }
 
     protected open fun itemsForJob(): List<MediaItem> = selection.usable

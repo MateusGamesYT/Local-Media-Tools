@@ -170,7 +170,7 @@ class ScreenshotTest {
             val fake = Robo.fakeFaces(items)
             val people = fake.people
             val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
-            for ((k, p) in people.withIndex()) for (t in p.tracks) thumbs[t] = faces[k % faces.size]
+            for ((k, p) in people.withIndex()) for (t in p.tracks) thumbs[t] = faces[k % faces.size].copy(Bitmap.Config.ARGB_8888, false)
             com.localmediatools.vision.FaceScanResult(items, people, thumbs, emptyList())
         }
         val vid = Robo.item(app, Robo.write(inDir, "party.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64)))
@@ -204,6 +204,50 @@ class ScreenshotTest {
         open(a, ToolId.MERGE_VIDEOS, dir, "34_merge_videos") { true }
         Selection.of(ToolId.VIDEO_SPEED).add(clips.take(1))
         open(a, ToolId.VIDEO_SPEED, dir, "35_video_speed") { true }
+        stackShots(a, app, inDir, dir, faces)
+    }
+
+    private fun texts(a: MainActivity) = all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().map { it.text.toString() }
+
+    private fun click(a: MainActivity, pred: (String) -> Boolean) {
+        val v = all(a.navigator.top!!.view).firstOrNull { v -> (v.contentDescription?.toString() ?: (v as? android.widget.TextView)?.text?.toString())?.let(pred) == true }
+            ?: throw AssertionError("nothing to click among ${texts(a)}")
+        var c: View? = v
+        while (c != null && !c.isClickable) c = c.parent as? View
+        c!!.performClick(); idle(600)
+    }
+
+    /** Builds "Blur faces → Video compressor → Video → GIF → GIF optimizer" through the real screens. */
+    private fun stackShots(a: MainActivity, app: android.app.Application, inDir: File, dir: File, faces: List<Bitmap>) {
+        com.localmediatools.vision.FaceScanner.override = { items ->
+            val fake = Robo.fakeFaces(items)
+            val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
+            for ((k, p) in fake.people.withIndex()) for (t in p.tracks) thumbs[t] = faces[k % faces.size].copy(Bitmap.Config.ARGB_8888, false)
+            com.localmediatools.vision.FaceScanResult(items, fake.people, thumbs, emptyList())
+        }
+        com.localmediatools.ui.ToolStackState.steps.clear()
+        com.localmediatools.ui.ToolStackState.selection.clear()
+        com.localmediatools.ui.ToolStackState.selection.add(listOf(Robo.item(app, Robo.write(inDir, "holiday.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64)))))
+        com.localmediatools.ui.tools.ToolPrefs.compressQuality = 60
+        a.navigator.push(com.localmediatools.ui.StackScreen(a)); idle(800)
+        for ((k, t) in listOf(ToolId.FACE_BLUR, ToolId.COMPRESS_VIDEO, ToolId.VIDEO_TO_GIF, ToolId.OPTIMIZE_GIF).withIndex()) {
+            layoutRoot(a)
+            click(a) { it == "Add the first step" || it == "Add a step" }
+            layoutRoot(a)
+            if (t == ToolId.OPTIMIZE_GIF) shot(a, dir, "42_stack_picker")
+            click(a) { it == t.title }
+            val deadline = System.currentTimeMillis() + 15_000
+            if (t == ToolId.FACE_BLUR) while (System.currentTimeMillis() < deadline && texts(a).none { it.startsWith("Found") }) { idle(50); Thread.sleep(20); layoutRoot(a) }
+            idle(500)
+            if (t == ToolId.COMPRESS_VIDEO) shot(a, dir, "41_stack_step")
+            layoutRoot(a)
+            click(a) { it == "Add to stack" }
+            idle(800)
+        }
+        com.localmediatools.vision.FaceScanner.override = null
+        layoutRoot(a)
+        shot(a, dir, "40_tool_stack")
+        @Suppress("DEPRECATION") a.onBackPressed(); idle()
     }
 
     private fun open(a: MainActivity, t: ToolId, dir: File, name: String, ready: () -> Boolean) {

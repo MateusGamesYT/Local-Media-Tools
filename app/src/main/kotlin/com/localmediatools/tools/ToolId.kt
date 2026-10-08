@@ -3,6 +3,7 @@ package com.localmediatools.tools
 import com.localmediatools.core.OutputArea
 
 enum class ToolSection(val title: String, val subtitle: String) {
+    STACKS("Stacks", "Run several tools in a row"),
     EDIT("Edit & AI", "Retouch, cut out and anonymise with on-device AI"),
     IMAGES("Images", "Compress, convert, combine and brand photos"),
     VIDEO("Video", "Trim, cut, repackage and shrink videos"),
@@ -20,6 +21,9 @@ enum class ToolId(
     /** Tools that save images and videos to different places. */
     val videoArea: OutputArea? = null,
 ) {
+    TOOL_STACK(ToolSection.STACKS, "Tool stack", "Chain tools: each works on the last one's results",
+        "Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.",
+        OutputArea.EDITED),
     PHOTO_EDITOR(ToolSection.EDIT, "Photo editor", "Crop, straighten, light, colour and looks",
         "Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched.",
         OutputArea.EDITED),
@@ -117,4 +121,9 @@ enum class ToolId(
         OutputArea.EXTRACTED_AUDIO);
 
     val outputPath: String get() = videoArea?.let { "${area.displayPath}\n${it.displayPath}" } ?: area.displayPath
+
+    companion object {
+        /** Number of tools (the tool stack runs other tools, so it isn't counted). */
+        val toolCount: Int get() = entries.count { it != TOOL_STACK }
+    }
 }

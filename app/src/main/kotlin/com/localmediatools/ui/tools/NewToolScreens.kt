@@ -170,7 +170,8 @@ class TrimScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_VIDEO) {
 
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (selection.usable.size > 1) return "Select one video (trimming is set per video)"
+        if (stepMode && selection.usable.isEmpty()) return "Put a video in the stack to choose the part to keep"
+        if (!stepMode && selection.usable.size > 1) return "Select one video (trimming is set per video)"
         if (durationUs <= 0) return "Reading the video…"
         val len = (endF - startF) * durationUs
         if (len < 300_000) return "Keep at least a fraction of a second"
@@ -179,6 +180,16 @@ class TrimScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_VIDEO) {
     }
 
     override fun outputNaming() = "name_trim.mp4 (WebM stays WebM)"
+
+    /** In a stack the same part (as a share of the length) is kept from every video that arrives. */
+    override fun createStepJob(): ExportJob = TrimVideoJob(selection.usable.take(1), 0, 0, turns, startF to endF)
+
+    override fun stackSummary(): String {
+        val s = (startF * durationUs).toLong(); val e = (endF * durationUs).toLong()
+        val range = if (durationUs > 0) "Keep ${Format.duration(s / 1000)}–${Format.duration(e / 1000)} of ${Format.duration(durationUs / 1000)} (${(startF * 100).toInt()}–${(endF * 100).toInt()}% of each video)"
+            else "Keep ${(startF * 100).toInt()}–${(endF * 100).toInt()}% of each video"
+        return range + if (turns % 4 != 0) " · turn ${(turns % 4) * 90}° clockwise" else ""
+    }
     override fun createJob(items: List<MediaItem>): ExportJob =
         TrimVideoJob(items.first(), (startF * durationUs).toLong(), if (endF >= 0.9995) Long.MAX_VALUE else (endF * durationUs).toLong(), turns)
 }

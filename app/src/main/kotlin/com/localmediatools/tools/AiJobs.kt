@@ -3,12 +3,14 @@ package com.localmediatools.tools
 import android.graphics.Bitmap
 import android.os.ParcelFileDescriptor
 import com.localmediatools.codec.mp4.Mp4FastStart
+import com.localmediatools.core.ExportCancelledException
 import com.localmediatools.core.Format
 import com.localmediatools.core.MediaItem
 import com.localmediatools.core.MediaKind
 import com.localmediatools.core.OutputStore
 import com.localmediatools.core.SkipItemException
 import com.localmediatools.core.SniffedFormat
+import com.localmediatools.core.UserFacingException
 import com.localmediatools.edit.EditRenderer
 import com.localmediatools.edit.EditState
 import com.localmediatools.edit.PatchKind
@@ -29,7 +31,9 @@ import com.localmediatools.image.ImageSource
 import com.localmediatools.video.ObscureRegion
 import com.localmediatools.video.VideoProbe
 import com.localmediatools.video.VideoTranscoder
+import com.localmediatools.vision.FaceScanner
 import com.localmediatools.vision.VisionOps
+import com.localmediatools.vision.core.FaceEngine
 import com.localmediatools.vision.core.FaceTrack
 import com.localmediatools.vision.core.FaceTracker
 import com.localmediatools.vision.core.Matting
@@ -152,19 +156,50 @@ class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStren
 }
 
 // =========================================================================== Face blur
-/** What to hide: per file (by [MediaItem.key]), the face tracks of the people the user picked. */
-class FaceBlurPlan(val tracks: Map<String, List<FaceTrack>>, val pixelate: Boolean, val strength: Float)
+/**
+ * What to hide. [tracks]: per file (by [MediaItem.key]), the face tracks of the people the user
+ * picked in the face scan. With [scanOthers] (tool stacks, where the files are made by an earlier
+ * step) files without an entry are scanned when the job runs: faces that look like a person in
+ * [keep] stay visible and every other face is hidden.
+ */
+class FaceBlurPlan(
+    val tracks: Map<String, List<FaceTrack>>,
+    val pixelate: Boolean,
+    val strength: Float,
+    val scanOthers: Boolean = false,
+    val keep: List<FloatArray> = emptyList(),
+    val hide: List<FloatArray> = emptyList(),
+)
 
 class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : ExportJob(ToolId.FACE_BLUR, inputs) {
     override val title = "${if (plan.pixelate) "Pixelating" else "Blurring"} faces in ${plural(inputs.size, "file")}"
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
-            val tracks = plan.tracks[item.key].orEmpty()
-            if (tracks.isEmpty()) throw SkipItemException("None of the chosen people appear in this file, so it was left as it is.")
+            val tracks = plan.tracks[item.key] ?: (if (plan.scanOthers) findNow(ctx, index, item) else null).orEmpty()
+            if (tracks.isEmpty()) throw SkipItemException(if (plan.scanOthers && plan.tracks[item.key] == null) "No faces to hide were found in this file." else "None of the chosen people appear in this file, so it was left as it is.")
             if (item.kind == MediaKind.VIDEO) video(ctx, index, item, tracks) else photo(ctx, index, item, tracks)
         }
         Outputs.cleanTemp(ctx)
+    }
+
+    /** Scans a file now and returns the tracks to hide (everyone except people to keep visible). */
+    private fun findNow(ctx: JobContext, index: Int, item: MediaItem): List<FaceTrack> {
+        ctx.status("Finding faces", item.name)
+        val res = try {
+            FaceScanner.scan(ctx.app, listOf(item), { ctx.cancelled }) { f, _ -> ctx.unitProgress(index, f * 0.3) }
+        } catch (e: FaceScanner.Cancelled) { throw ExportCancelledException() }
+        try {
+            res.problems.firstOrNull()?.let { throw UserFacingException("Faces couldn't be found: ${it.second}") }
+            return res.people.filter { p ->
+                val f = FaceTrack(-1).apply { p.tracks.forEach { samples.addAll(it.samples) } }.meanFeature() ?: return@filter true
+                val k = plan.keep.maxOfOrNull { FaceEngine.cosine(it, f) } ?: -1f
+                val h = plan.hide.maxOfOrNull { FaceEngine.cosine(it, f) } ?: -1f
+                !(k >= FaceEngine.SAME_PERSON && k > h)
+            }.flatMap { it.tracks }
+        } finally {
+            res.release()
+        }
     }
 
     private fun photo(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>): ItemResult {

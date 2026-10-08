@@ -29,6 +29,8 @@ class JobContext(
     val app: Context,
     val job: ExportJob,
     private val listener: Listener,
+    /** The tool stack running this job as one of its steps, if any. */
+    private val parent: JobContext? = null,
 ) {
     interface Listener {
         fun onProgress(ctx: JobContext)
@@ -36,6 +38,13 @@ class JobContext(
     }
 
     @Volatile var cancelled = false
+        get() = field || parent?.cancelled == true
+
+    /**
+     * Where outputs are written; null means the shared LocalMediaTools folders. A tool stack
+     * points its in-between steps at private temporary files instead.
+     */
+    @Volatile var outputFactory: ((com.localmediatools.core.OutputArea, String, String) -> com.localmediatools.core.PendingOutput)? = null
     @Volatile var statusText: String = "Starting…"; private set
     @Volatile var currentName: String? = null; private set
     private val partial = ConcurrentHashMap<Int, Double>()

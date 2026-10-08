@@ -130,6 +130,7 @@ class RemoveAudioScreen(a: MainActivity) : ToolScreen(a, ToolId.REMOVE_AUDIO) {
 class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
     private lateinit var fps: SliderField
     private lateinit var width: SliderField
+    private lateinit var widthChoices: ChoiceGroup<Int>
     private val widthPresets = listOf(240, 320, 480, 640, 800)
 
     override fun buildOptions(container: LinearLayout) {
@@ -141,8 +142,8 @@ class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
         container.addView(fps, lp().apply { topMargin = ctx.dp(10) })
         width = SliderField(ctx, "Width", 120, 1280, ToolPrefs.gifWidth, " px", "Height follows the video's shape") { ToolPrefs.gifWidth = it }
         container.addView(width, lp().apply { topMargin = ctx.dp(14) })
-        val wp = ChoiceGroup(ctx, widthPresets, { "$it px" }, widthPresets.firstOrNull { it == ToolPrefs.gifWidth }) { width.setValue(it, fromField = false) }
-        container.addView(wp, lp().apply { topMargin = ctx.dp(6) })
+        widthChoices = ChoiceGroup(ctx, widthPresets, { "$it px" }, widthPresets.firstOrNull { it == ToolPrefs.gifWidth }) { width.setValue(it, fromField = false) }
+        container.addView(widthChoices, lp().apply { topMargin = ctx.dp(6) })
         section(container, "Part of the video", "Leave length at 0 to convert to the end")
         val row = UI.horizontal(ctx)
         row.addView(TextField(ctx, "Start (s)", "0", fmt(ToolPrefs.gifStart), numeric = true) { s -> ToolPrefs.gifStart = s.replace(',', '.').toDoubleOrNull() ?: 0.0; refreshValidation() }, lp(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(6) })
@@ -155,7 +156,7 @@ class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
     }
 
     private fun setManualEnabled(on: Boolean) {
-        for (v in listOf(fps, width)) { v.alpha = if (on) 1f else 0.4f; setEnabledDeep(v, on) }
+        for (v in listOf(fps, width, widthChoices)) { v.alpha = if (on) 1f else 0.4f; setEnabledDeep(v, on) }
     }
 
     private fun setEnabledDeep(v: android.view.View, on: Boolean) {

@@ -30,6 +30,7 @@ enum class PickKind(val mimes: Array<String>, val noun: String, val galleryType:
     GIFS(arrayOf("image/gif"), "GIFs", "image/gif"),
     PDFS(arrayOf("application/pdf"), "PDFs", null),
     MEDIA(arrayOf("image/*", "video/*"), "photos or videos", "*/*"),
+    ANY(arrayOf("image/*", "video/*", "application/pdf"), "files", "*/*"),
 }
 
 /** Which files each tool accepts and how selection behaves. */
@@ -40,6 +41,7 @@ object ToolRules {
         ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> PickKind.GIFS
         ToolId.PDF_TO_IMAGES, ToolId.MERGE_PDFS, ToolId.EXTRACT_PDF_PAGES -> PickKind.PDFS
         ToolId.REMOVE_METADATA, ToolId.FACE_BLUR -> PickKind.MEDIA
+        ToolId.TOOL_STACK -> PickKind.ANY
         else -> PickKind.IMAGES
     }
 
@@ -58,6 +60,7 @@ object ToolRules {
             PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else "Not a GIF file"
             PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else "Not a PDF file"
             PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR)) null else "Not a photo or video"
+            PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else "Not a photo, video, GIF or PDF"
             PickKind.IMAGES -> when {
                 item.kind == MediaKind.IMAGE -> null
                 item.kind == MediaKind.GIF -> if (t == ToolId.OPTIMIZE_IMAGES) "Use the GIF optimizer for GIFs" else null

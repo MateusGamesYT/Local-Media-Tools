@@ -274,12 +274,14 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
 
     private fun keys() = selection.usable.map { it.key }
 
+    private val emptyText get() = if (stack != null) "Every face found at this step will be hidden. To choose people, put photos or videos in the stack." else "Select photos or videos; faces are found automatically."
+
     override fun onSelectionChanged() {
         if (!::status.isInitialized) return
         if (keys() == scannedKeys && result != null) return
         if (scanning) stopScan()
         clearResult()
-        if (selection.usable.isEmpty()) { status.text = "Select photos or videos; faces are found automatically."; findButton.visibility = View.VISIBLE; return }
+        if (selection.usable.isEmpty()) { status.text = emptyText; findButton.visibility = if (stack != null) View.GONE else View.VISIBLE; return }
         // Start looking automatically once the selection settles.
         scope.launch {
             val k = keys()
@@ -319,7 +321,7 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
             if (k != keys()) {
                 // The selection changed meanwhile: look at the new one instead.
                 r.onSuccess { it.release() }
-                if (selection.usable.isNotEmpty()) startScan() else status.text = "Select photos or videos; faces are found automatically."
+                if (selection.usable.isNotEmpty()) startScan() else status.text = emptyText
                 return@launch
             }
             r.onSuccess { res ->
@@ -362,7 +364,7 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
             scaleType = ImageView.ScaleType.CENTER_CROP
             background = Shapes.circle(Palette.SURFACE_3)
             clipToOutline = true
-            setImageBitmap(round.getOrPut(p.id) { res.thumb(p)?.let(::circle) })
+            setImageBitmap(round.getOrPut(p.id) { res.thumb(p)?.takeIf { !it.isRecycled }?.let(::circle) })
             alpha = if (on) 1f else 0.5f
         }
         frame.addView(img, FrameLayout.LayoutParams(ctx.dp(72), ctx.dp(72), Gravity.CENTER))
@@ -390,6 +392,7 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
     override fun validate(): String? {
         super.validate()?.let { return it }
         if (scanning) return "Finding faces…"
+        if (stepMode) return if (result != null && chosen.isEmpty()) "Tap the people you want to hide" else null
         val r = result
         if (r == null || scannedKeys != keys()) return "Tap Find faces first"
         if (r.people.isEmpty()) return "No faces to hide in these files"
@@ -398,6 +401,26 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
     }
 
     override fun outputNaming() = "name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)"
+
+    /**
+     * In a stack the files are made by earlier steps, so people are recognised again when the step
+     * runs: faces like the people left visible here stay visible, every other face is hidden.
+     */
+    override fun createStepJob(): ExportJob {
+        val r = result?.takeIf { scannedKeys == keys() }
+        if (r == null) return FaceBlurJob(selection.usable, FaceBlurPlan(emptyMap(), FaceBlurPrefs.pixelate, FaceBlurPrefs.strength, scanOthers = true))
+        fun feature(p: FaceIdentity) = com.localmediatools.vision.core.FaceTrack(-1).apply { p.tracks.forEach { samples.addAll(it.samples) } }.meanFeature()
+        val hidden = r.people.filter { it.id in chosen }
+        val visible = r.people.filter { it.id !in chosen }
+        return FaceBlurJob(selection.usable, FaceBlurPlan(r.plan(hidden), FaceBlurPrefs.pixelate, FaceBlurPrefs.strength, scanOthers = true,
+            keep = visible.mapNotNull { feature(it) }, hide = hidden.mapNotNull { feature(it) }))
+    }
+
+    override fun stackSummary(): String {
+        val r = result?.takeIf { scannedKeys == keys() }
+        val who = if (r == null || chosen.size == r.people.size) "Hides every face" else "Hides ${chosen.size} of ${r.people.size} people (others stay visible)"
+        return "$who · ${if (FaceBlurPrefs.pixelate) "Pixelate" else "Blur"} · ${when { FaceBlurPrefs.strength < 0.55f -> "Light"; FaceBlurPrefs.strength < 0.85f -> "Medium"; else -> "Strong" }}"
+    }
 
     override fun createJob(items: List<MediaItem>): ExportJob {
         val r = result ?: throw IllegalArgumentException("Find faces first")

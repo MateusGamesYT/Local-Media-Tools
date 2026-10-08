@@ -22,7 +22,7 @@ object Outputs {
      */
     inline fun <T> produce(ctx: JobContext, area: OutputArea, name: String, mime: String, block: (PendingOutput) -> T): Pair<OutputFile, T> {
         ctx.checkCancelled()
-        val pending = OutputStore.create(ctx.app, area, name, mime)
+        val pending = ctx.outputFactory?.invoke(area, name, mime) ?: OutputStore.create(ctx.app, area, name, mime)
         try {
             val r = block(pending)
             ctx.checkCancelled()

@@ -24,8 +24,12 @@ data class ItemResult(
  * One export: a tool, its inputs and its options. Subclasses implement [run], reporting progress and
  * per-item results through the [JobContext].
  */
-abstract class ExportJob(val tool: ToolId, val inputs: List<MediaItem>) {
+abstract class ExportJob(val tool: ToolId, inputs: List<MediaItem>) {
     val id: Long = ids.incrementAndGet()
+
+    /** The files to process. A tool stack sets them again for each run of a step (see StackJob). */
+    var inputs: List<MediaItem> = inputs
+        internal set
 
     /** Progress units (usually the number of input files). */
     open val unitCount: Int get() = inputs.size
@@ -76,3 +80,7 @@ data class JobSnapshot(
         }
     }
 }
+
+/** Where an export's files went (a tool stack saves into the folders of the tools that made them). */
+val JobSnapshot.savedTo: String
+    get() = results.flatMap { r -> r.outputs.map { it.area.displayPath } }.distinct().joinToString(" and ").ifEmpty { tool.outputPath.replace("\n", " and ") }

@@ -20,6 +20,7 @@ import com.localmediatools.core.WorkloadProfile
 import com.localmediatools.export.ExportManager
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
+import com.localmediatools.export.savedTo
 import com.localmediatools.export.JobSnapshot
 import com.localmediatools.export.JobStatus
 import com.localmediatools.tools.ToolId
@@ -230,7 +231,7 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
             val row = FlowLayout(ctx)
             row.addView(UI.secondaryButton(ctx, "Share ${if (outs.size == 1) "file" else "all ${outs.size}"}", R.drawable.ic_share) { OutputActions.share(activity, outs) })
             body.addView(row, lp().apply { topMargin = ctx.dp(12) })
-            body.addView(UI.note(ctx, "Saved to ${snap.tool.outputPath}. Find them in your gallery, Files app or the folder named LocalMediaTools.", UI.NoteKind.SUCCESS), lp().apply { topMargin = ctx.dp(12) })
+            body.addView(UI.note(ctx, "Saved to ${snap.savedTo}. Find them in your gallery, Files app or the folder named LocalMediaTools.", UI.NoteKind.SUCCESS), lp().apply { topMargin = ctx.dp(12) })
         }
         val groups = listOf(ItemOutcome.FAILED, ItemOutcome.SKIPPED, ItemOutcome.SUCCESS)
         for (g in groups) {

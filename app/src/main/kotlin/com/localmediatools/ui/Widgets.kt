@@ -251,6 +251,9 @@ class ChoiceGroup<T>(
         if (notify) onChange(o)
     }
 
+    /** Label of the selected option (null when none is selected). */
+    fun selectedLabel(): String? = selected?.takeIf { it in options }?.let(labelOf)
+
     fun setOptionEnabled(o: T, enabled: Boolean) {
         enabledMap[options.indexOf(o)] = enabled
         refresh()
@@ -272,11 +275,11 @@ class ChoiceGroup<T>(
 /** Slider with a synchronised numeric field and value range validation. */
 class SliderField(
     ctx: Context,
-    title: String,
+    val title: String,
     private val min: Int,
     private val max: Int,
     initial: Int,
-    private val unit: String = "",
+    val unit: String = "",
     subtitle: String? = null,
     private val onChange: (Int) -> Unit,
 ) : LinearLayout(ctx) {
@@ -352,7 +355,7 @@ class SliderField(
 }
 
 /** Title + description + switch; the whole row toggles. */
-class ToggleRow(ctx: Context, title: String, subtitle: String?, checked: Boolean, private val onChange: (Boolean) -> Unit) : LinearLayout(ctx) {
+class ToggleRow(ctx: Context, val title: String, subtitle: String?, checked: Boolean, private val onChange: (Boolean) -> Unit) : LinearLayout(ctx) {
     val switch = Switch(ctx)
     init {
         orientation = HORIZONTAL
@@ -379,7 +382,7 @@ class ToggleRow(ctx: Context, title: String, subtitle: String?, checked: Boolean
 }
 
 /** Labelled single-line text input. */
-class TextField(ctx: Context, title: String, hint: String, initial: String, numeric: Boolean = false, private val onChange: (String) -> Unit) : LinearLayout(ctx) {
+class TextField(ctx: Context, val title: String, hint: String, initial: String, numeric: Boolean = false, private val onChange: (String) -> Unit) : LinearLayout(ctx) {
     val edit = EditText(ctx)
     init {
         orientation = VERTICAL

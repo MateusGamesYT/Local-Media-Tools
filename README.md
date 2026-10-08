@@ -8,9 +8,16 @@ including on-device AI for **face blurring in photos and videos**, **background 
 app has no internet permission), originals are never modified, and every result is written to a
 hidden file that is only published after it has been completely written and checked.
 
-**Install:** [`release/LocalMediaTools-1.2.0.apk`](release/LocalMediaTools-1.2.0.apk)
+**Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
+compressor → Video → GIF → GIF optimizer) and run them all with one tap.
+
+**Install:** [`release/LocalMediaTools-1.3.0.apk`](release/LocalMediaTools-1.3.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
-It installs over 1.1.0 (same signing key).
+It installs over earlier versions (same signing key).
+
+| Tool stack | Setting up a step | Choosing the next tool |
+|---|---|---|
+| ![](docs/screenshots/tool-stack.png) | ![](docs/screenshots/stack-step.png) | ![](docs/screenshots/stack-picker.png) |
 
 | Home | Blur faces | Background remover | Duplicate finder | Auto enhance | Speed & timelapse |
 |---|---|---|---|---|---|
@@ -20,7 +27,26 @@ It installs over 1.1.0 (same signing key).
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.2
+## What's new in 1.3: tool stacks
+
+- **Tool stack** (home screen, or **Then run another tool** at the bottom of any tool) — pick files
+  once, add tools in order and run them with one tap. Each step works on the results of the step
+  before, e.g. *Blur faces → Video compressor → Video → GIF → GIF optimizer*, or *Convert images →
+  Background remover → Bulk watermark*.
+- **Every option stays available**: adding or editing a step opens that tool's own screen (with
+  previews of your files) and an **Add to stack** button; the stack lists each step with a short
+  summary of its settings. Steps can be reordered, edited and removed.
+- **Easy to follow**: between the steps the stack shows what flows on (photos, videos, GIFs,
+  PDFs); the tool picker greys out tools that can't use what arrives at that point and says why.
+- **Nothing gets lost**: in-between results are private temporary files (or saved too, if you
+  switch that on); only the final files are saved, in the folders of the tools that made them. A
+  file a step can't work on, or has nothing to do for (say it's already small), goes on unchanged.
+  If a step fails for one file, the others continue.
+- **Blur faces in a stack**: people you choose are recognised again by their faces at that step,
+  so it also works after other steps; faces that look like no one you kept visible are hidden.
+  **Trim** in a stack keeps the same part (as a share of the length) of every video.
+
+## What was new in 1.2
 
 - **Blur faces (photos and videos)** — [YuNet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet)
   finds every face; [SFace](https://github.com/opencv/opencv_zoo/tree/main/models/face_recognition_sface)
@@ -71,6 +97,7 @@ It installs over 1.1.0 (same signing key).
 
 | Section | Tool | What it does | Saved to |
 |---|---|---|---|
+| Stacks | Tool stack | Runs any of the tools below in a row on the same files | Where the last tool saves |
 | Edit & AI | Photo editor | Crop, rotate, straighten, adjustments, looks, auto enhance | `Pictures/LocalMediaTools/Edited` |
 | | Magic eraser | On-device AI object removal | `Pictures/LocalMediaTools/Edited` |
 | | Blur & pixelate | Privacy brushes, hide all faces | `Pictures/LocalMediaTools/Edited` |
@@ -140,13 +167,15 @@ so updates install over each other; use your own key for a store release.
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, scene recognition, auto enhance, duplicate grouping) and the sound
   pipeline (resampling, channel mixing, pitch-preserving speed changes).
-* `app/src/roboTest` — 35 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+* `app/src/roboTest` — 42 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
   removal keeping photos upright; page extraction; background removal, auto enhance and photo face
-  blurring end to end (with stand-ins for the native models); and a pass that opens all 30 tools
-  from the home screen. `LMT_SHOTS=<dir>` also renders the screenshots above.
+  blurring end to end (with stand-ins for the native models); tool stacks (real tools chained end to
+  end, temporary in-between files, files passing steps that can't use them, merging, failures,
+  and building and running a stack in the UI); and a pass that opens every tool from the home
+  screen. `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): MediaCodec/MediaExtractor video paths (including
 the GPU face blur, merging and speed changes), PdfRenderer, BitmapRegionDecoder, the camera intent,

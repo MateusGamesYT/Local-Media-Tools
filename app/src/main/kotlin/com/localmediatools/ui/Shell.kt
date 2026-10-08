@@ -39,6 +39,7 @@ object ToolLauncher {
             else -> null
         }
         if (t == ToolId.DUPLICATES) { activity.navigator.push(DuplicatesScreen(activity)); return }
+        if (t == ToolId.TOOL_STACK) { activity.navigator.push(StackScreen(activity)); return }
         if (mode == null) { activity.navigator.push(ToolScreens.create(activity, t)); return }
         activity.pickMedia(PickKind.IMAGES, multiple = false) { uris -> uris.firstOrNull()?.let { openEditor(activity, it, t, mode) } }
     }
@@ -57,6 +58,7 @@ object ToolLauncher {
         ToolId.MAGIC_ERASER to "remove object person people erase delete clean ai inpaint",
         ToolId.PHOTO_EDITOR to "crop rotate straighten brightness contrast exposure saturation filter look edit adjust colour color warmth",
         ToolId.BLUR_REDACT to "censor hide face plate privacy mosaic anonymize redact",
+        ToolId.TOOL_STACK to "stack chain pipeline workflow combine multiple steps several tools in a row automate batch then",
         ToolId.BACKGROUND_REMOVER to "cut out cutout remove background transparent png sticker subject product ai",
         ToolId.AUTO_ENHANCE to "auto fix improve brighten colour color one tap magic ai enhance",
         ToolId.FACE_BLUR to "face faces blur pixelate hide anonymize people video privacy censor ai",
@@ -176,9 +178,9 @@ class HomeTab(private val shell: MainShell) {
         col.addView(header)
 
         col.addView(UI.text(ctx, "Edit, convert and\nclean up — privately.", TextStyle.HERO), lp().apply { topMargin = ctx.dp(26) })
-        col.addView(UI.text(ctx, "${ToolId.entries.size} tools that run entirely on this phone. No account, no internet, no limits.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(10) })
+        col.addView(UI.text(ctx, "${ToolId.toolCount} tools that run entirely on this phone. No account, no internet, no limits.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(10) })
 
-        col.addView(SearchField(ctx, "Search ${ToolId.entries.size} tools") { query = it.trim(); refresh() }, lp().apply { topMargin = ctx.dp(22) })
+        col.addView(SearchField(ctx, "Search ${ToolId.toolCount} tools") { query = it.trim(); refresh() }, lp().apply { topMargin = ctx.dp(22) })
         val cats: List<ToolSection?> = listOf(null) + ToolSection.entries
         // Chips scroll edge to edge.
         col.addView(ChipRow(ctx, cats, { it?.title ?: "All" }, null) { category = it; refresh() }.apply {
@@ -189,6 +191,9 @@ class HomeTab(private val shell: MainShell) {
 
         // "Edit & AI" block: two big cards plus a wide one (shown instead of that section in the full list).
         val block = UI.vertical(ctx)
+        block.addView(sectionHeader(ctx, ToolSection.STACKS.title, ToolSection.STACKS.subtitle, Palette.section(ToolSection.STACKS)), lp().apply { bottomMargin = ctx.dp(12) })
+        block.addView(FeatureCard(ctx, ToolId.TOOL_STACK, Palette.sectionGradient(ToolSection.STACKS), "NEW") { ToolLauncher.open(shell.activity, ToolId.TOOL_STACK) },
+            LinearLayout.LayoutParams(MATCH, ctx.dp(150)).apply { bottomMargin = ctx.dp(28) })
         block.addView(sectionHeader(ctx, ToolSection.EDIT.title, ToolSection.EDIT.subtitle, Palette.section(ToolSection.EDIT)), lp().apply { bottomMargin = ctx.dp(12) })
         fun cards(a: Triple<ToolId, IntArray, String?>, b: Triple<ToolId, IntArray, String?>): View = UI.horizontal(ctx, Gravity.TOP).apply {
             addView(FeatureCard(ctx, a.first, a.second, a.third) { ToolLauncher.open(shell.activity, a.first) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { rightMargin = ctx.dp(6) })
@@ -237,7 +242,7 @@ class HomeTab(private val shell: MainShell) {
             return
         }
         val groups: List<ToolSection?> = if (query.isNotEmpty()) listOf(null)
-            else tools.map { it.section }.distinct().filter { filtering || it != ToolSection.EDIT }
+            else tools.map { it.section }.distinct().filter { filtering || (it != ToolSection.EDIT && it != ToolSection.STACKS) }
         for (sec in groups) {
             val list = if (sec == null) tools else tools.filter { it.section == sec }
             if (sec != null) results.addView(sectionHeader(ctx, sec.title, sec.subtitle, Palette.section(sec)), lp().apply { topMargin = ctx.dp(28); bottomMargin = ctx.dp(12) })
@@ -325,7 +330,7 @@ class SettingsTab(private val shell: MainShell) {
 
         val about = group(col, "About")
         val version = try { ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName } catch (_: Exception) { "" }
-        about.addView(listRow(ctx, R.drawable.ic_info, Palette.ACCENT, "Local Media Tools $version", "${ToolId.entries.size} tools · Android ${android.os.Build.VERSION.RELEASE}"))
+        about.addView(listRow(ctx, R.drawable.ic_info, Palette.ACCENT, "Local Media Tools $version", "${ToolId.toolCount} tools · Android ${android.os.Build.VERSION.RELEASE}"))
         about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, TensorFlow Lite, MI-GAN, YuNet, SFace, U²-Net…") { shell.push(LicensesScreen(shell.activity)) })
         return scroll
     }

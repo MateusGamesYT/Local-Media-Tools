@@ -82,18 +82,24 @@ class RemoveMetadataJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_METAD
 
 // =========================================================================== Trim & rotate video
 class TrimVideoJob(
-    private val item: MediaItem,
-    private val startUs: Long,
-    private val endUs: Long,
+    items: List<MediaItem>,
+    private val startAt: Long,
+    private val endAt: Long,
     /** Extra clockwise quarter turns. */
     private val turns: Int,
-) : ExportJob(ToolId.TRIM_VIDEO, listOf(item)) {
-    override val title = "Trimming ${item.name}"
+    /** In a tool stack the range is kept as fractions of each video's length (start, end). */
+    private val fractions: Pair<Double, Double>? = null,
+) : ExportJob(ToolId.TRIM_VIDEO, items) {
+    constructor(item: MediaItem, startUs: Long, endUs: Long, turns: Int) : this(listOf(item), startUs, endUs, turns)
+
+    override val title = if (items.size == 1) "Trimming ${items[0].name}" else "Trimming ${plural(items.size, "video")}"
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, it ->
             val info = VideoProbe.probe(ctx.app, it.uri)
             val v = info.video ?: throw UserFacingException("This file has no video track.")
+            val startUs = fractions?.let { f -> (f.first * info.durationUs).toLong() } ?: startAt
+            val endUs = fractions?.let { f -> if (f.second >= 0.9995) Long.MAX_VALUE else (f.second * info.durationUs).toLong() } ?: endAt
             val end = endUs.coerceAtMost(info.durationUs.takeIf { d -> d > 0 } ?: Long.MAX_VALUE)
             if (end - startUs < 100_000) throw UserFacingException("The selected part is too short.")
             ctx.status("Finding keyframes", it.name)
