@@ -26,17 +26,19 @@ APP = os.path.join(ROOT, "app")
 SRC = os.path.join(APP, "src", "main")
 TEST_SRC = os.path.join(APP, "src", "test", "kotlin")
 ROBO_SRC = os.path.join(APP, "src", "roboTest", "kotlin")
+# Test helpers both test suites use (e.g. the simulated printer).
+SHARED_TEST_SRC = os.path.join(APP, "src", "sharedTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
-VERSION_CODE = 7
-VERSION_NAME = "1.5.0"
+VERSION_CODE = 8
+VERSION_NAME = "1.6.0"
 MIN_SDK = 29
 TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]
 
 # Packages of pure-Kotlin engine code that must not depend on Android (unit tested on the JVM).
-PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core", "com/localmediatools/vision/core", "com/localmediatools/gallery/core"]
+PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core", "com/localmediatools/vision/core", "com/localmediatools/gallery/core", "com/localmediatools/print/core"]
 
 LIBS = [
     "kotlin-stdlib-2.3.21.jar",
@@ -366,7 +368,7 @@ def run_tests():
         shutil.rmtree(out)
     stdlib = os.path.join(TC, "libs", "kotlin-stdlib-2.3.21.jar")
     junit = jars(os.path.join(TC, "test"))
-    srcs = sources(os.path.join(SRC, "kotlin"), only_pure=True) + sources(TEST_SRC)
+    srcs = sources(os.path.join(SRC, "kotlin"), only_pure=True) + sources(TEST_SRC) + sources(SHARED_TEST_SRC)
     log(f"compiling unit tests ({len(srcs)} files)")
     run(kotlinc_cmd() + KOTLIN_FLAGS + ["-classpath", os.pathsep.join([stdlib] + junit), "-d", out] + srcs)
     tests = []
@@ -394,7 +396,7 @@ def run_robo_tests():
     rcls = os.path.join(BUILD, "classes-r")
     kt = os.path.join(BUILD, "classes-kt")
     libjars = jars(os.path.join(BUILD, "libs", "jars"))
-    srcs = sources(ROBO_SRC)
+    srcs = sources(ROBO_SRC) + sources(SHARED_TEST_SRC)
     log(f"compiling Robolectric tests ({len(srcs)} files)")
     run(kotlinc_cmd() + KOTLIN_FLAGS + ["-classpath", os.pathsep.join([ANDROID_JAR, rcls, kt] + libjars + robo), "-d", out] + srcs)
     cfg = os.path.join(out, "com", "android", "tools")

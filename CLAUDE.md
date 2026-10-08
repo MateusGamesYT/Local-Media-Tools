@@ -14,3 +14,9 @@
 - Recognition settings are measured, not guessed: change `ClusterParams` or the analyzers only with
   numbers from the real-photo evaluation (`buildtools/gallery/people/final_eval.py`), checked on
   people the settings were not tuned on.
+- **Network rule.** The app never connects to servers on the internet. Its only network use is
+  printing to printers on the local network: all sockets live in `print/core` and go through
+  `LocalNetwork` (local addresses only, no DNS lookups); `NetworkRuleTest` fails the build if any
+  other code uses the network. No telemetry, cloud features or online lookups.
+- Printing is tested against `FakePrinter` (app/src/sharedTest, described like an Epson L3250) and,
+  with `buildtools/print/cups_check.sh`, CUPS's reference IPP Everywhere printer.

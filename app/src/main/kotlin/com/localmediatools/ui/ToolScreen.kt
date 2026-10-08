@@ -148,12 +148,16 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         row.addView(UI.text(ctx, tool.longDescription, TextStyle.BODY_2).apply { setPadding(ctx.dp(14), 0, 0, 0) }, lp(0, WRAP, 1f))
         c.addView(row)
         val chips = FlowLayout(ctx)
-        chips.addView(chip(R.drawable.ic_shield, "On-device", Palette.SUCCESS))
-        chips.addView(chip(R.drawable.ic_lock, "Originals untouched", Palette.TEXT_2))
-        chips.addView(chip(R.drawable.ic_clock, "Runs in background", Palette.TEXT_2))
+        for (v in heroChips()) chips.addView(v)
         c.addView(chips, lp().apply { topMargin = ctx.dp(12) })
         return c
     }
+
+    protected open fun heroChips(): List<View> = listOf(
+        chip(R.drawable.ic_shield, "On-device", Palette.SUCCESS),
+        chip(R.drawable.ic_lock, "Originals untouched", Palette.TEXT_2),
+        chip(R.drawable.ic_clock, "Runs in background", Palette.TEXT_2),
+    )
 
     protected fun chip(icon: Int, text: String, color: Int): View = UI.horizontal(ctx).apply {
         background = Shapes.pill(ctx, Palette.SURFACE_2, Palette.STROKE)
@@ -162,7 +166,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         addView(UI.text(ctx, text, TextStyle.CAPTION, Palette.TEXT_2).apply { setPadding(ctx.dp(6), 0, 0, 0) })
     }
 
-    private fun outputCard(): View {
+    protected open fun outputCard(): View {
         val c = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 3))
@@ -270,10 +274,13 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         activity.ensureNotificationPermission {
             val wasBusy = ExportManager.state.value.busy
             ExportManager.enqueue(job)
-            Toast.makeText(ctx, if (wasBusy) "Queued — it starts when the current export finishes." else "Export started. You can leave the app; progress is shown in the notification.", Toast.LENGTH_LONG).show()
+            Toast.makeText(ctx, startedText(wasBusy), Toast.LENGTH_LONG).show()
             refreshValidation()
         }
     }
+
+    protected open fun startedText(queued: Boolean) =
+        if (queued) "Queued — it starts when the current export finishes." else "Export started. You can leave the app; progress is shown in the notification."
 
     override fun onShow() { refreshValidation(); selectionPanel?.refresh() }
 

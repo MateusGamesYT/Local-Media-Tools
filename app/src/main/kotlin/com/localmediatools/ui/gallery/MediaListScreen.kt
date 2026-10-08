@@ -82,7 +82,7 @@ class MediaListScreen(activity: MainActivity, private val title: String, private
     }
 }
 
-/** Floating actions for selected grid items: share, use in a tool, move to trash. */
+/** Floating actions for selected grid items: share, use in a tool, print, move to trash. */
 class SelectionBar(private val screen: Screen, private val grid: MediaGrid) : LinearLayout(screen.ctx) {
     private val label = UI.text(context, "", TextStyle.SUBTITLE)
 
@@ -97,6 +97,7 @@ class SelectionBar(private val screen: Screen, private val grid: MediaGrid) : Li
         addView(UI.iconButton(context, R.drawable.ic_check, "Select all") { grid.selectAll() })
         addView(UI.iconButton(context, R.drawable.ic_share, "Share") { GalleryActions.share(screen.activity, chosen()) })
         addView(UI.iconButton(context, R.drawable.ic_wand, "Use in a tool") { GalleryActions.chooseTool(screen.activity, chosen()) })
+        addView(UI.iconButton(context, R.drawable.ic_tool_print, "Print") { GalleryActions.print(screen.activity, chosen()) })
         addView(UI.iconButton(context, R.drawable.ic_trash, "Move to trash") { GalleryActions.trash(screen.activity, chosen()) { grid.endSelecting() } })
         visibility = GONE
         grid.onSelection = { sel ->

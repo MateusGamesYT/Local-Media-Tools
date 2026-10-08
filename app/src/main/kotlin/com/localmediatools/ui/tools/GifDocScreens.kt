@@ -309,5 +309,6 @@ object ToolScreens {
         ToolId.PDF_SCANNER -> ScannerScreen(a)
         ToolId.CONVERT_IMAGES -> ConvertScreen(a)
         ToolId.EXTRACT_AUDIO -> ExtractAudioScreen(a)
+        ToolId.PRINT -> com.localmediatools.ui.print.PrintScreen(a)
     }
 }

@@ -84,6 +84,7 @@ class MainActivity : Activity() {
     }
 
     private fun handleIntent(i: Intent?) {
+        if (i?.action == Intent.ACTION_SEND || i?.action == Intent.ACTION_SEND_MULTIPLE) { receivePrint(i); return }
         val id = i?.getLongExtra(EXTRA_SHOW_JOB, -1L) ?: -1L
         if (id > 0) {
             i?.removeExtra(EXTRA_SHOW_JOB)
@@ -93,6 +94,37 @@ class MainActivity : Activity() {
             i.removeExtra(EXTRA_OPEN_GALLERY)
             while (navigator.depth > 1) navigator.pop()
             (navigator.top as? MainShell)?.show(MainShell.TAB_GALLERY)
+        }
+    }
+
+    /**
+     * Photos or PDFs shared from another app to "Print": copied into the app's cache first (another
+     * app's permission to read them ends with this screen, while printing runs in the background).
+     */
+    private fun receivePrint(i: Intent) {
+        @Suppress("DEPRECATION")
+        val uris: List<Uri> = if (i.action == Intent.ACTION_SEND) listOfNotNull(i.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri)
+            else (i.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM) ?: arrayListOf())
+        i.action = null
+        if (uris.isEmpty()) return
+        lifecycleScope.launch {
+            val copies = withContext(Dispatchers.IO) {
+                val dir = File(cacheDir, "shared").apply { mkdirs() }
+                dir.listFiles()?.filter { System.currentTimeMillis() - it.lastModified() > 86_400_000L }?.forEach { it.delete() }
+                uris.mapIndexedNotNull { n, u ->
+                    try {
+                        val name = com.localmediatools.core.MediaProbe.describe(this@MainActivity, u).name.replace('/', '_')
+                        val f = File(dir, "${System.currentTimeMillis()}-$n-$name")
+                        contentResolver.openInputStream(u)?.use { input -> f.outputStream().use { input.copyTo(it, 1 shl 16) } } ?: return@mapIndexedNotNull null
+                        Uri.fromFile(f)
+                    } catch (_: Exception) { null }
+                }
+            }
+            if (copies.isEmpty()) { Toast.makeText(this@MainActivity, "Couldn't read the shared files.", Toast.LENGTH_LONG).show(); return@launch }
+            val sel = com.localmediatools.ui.Selection.of(com.localmediatools.tools.ToolId.PRINT)
+            sel.clear(); sel.addUris(this@MainActivity, copies)
+            while (navigator.depth > 1) navigator.pop()
+            navigator.push(com.localmediatools.ui.print.PrintScreen(this@MainActivity))
         }
     }
 

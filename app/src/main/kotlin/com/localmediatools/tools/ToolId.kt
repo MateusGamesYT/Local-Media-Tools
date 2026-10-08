@@ -9,6 +9,7 @@ enum class ToolSection(val title: String, val subtitle: String) {
     VIDEO("Video", "Trim, cut, repackage and shrink videos"),
     GIF("GIF", "Create and slim down animations"),
     DOCUMENTS("PDF", "Pages, scans and merges"),
+    PRINT("Print", "Photos and documents on your Wi-Fi printer"),
     PRIVACY("Privacy & audio", "Clean metadata and extract sound"),
 }
 
@@ -111,6 +112,10 @@ enum class ToolId(
         OutputArea.PDF),
     PDF_SCANNER(ToolSection.DOCUMENTS, "PDF scanner", "Camera or gallery pages into a PDF",
         "Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.",
+        OutputArea.PDF),
+
+    PRINT(ToolSection.PRINT, "Print", "Photos and PDFs on your Wi-Fi printer, no printer app",
+        "Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.",
         OutputArea.PDF),
 
     REMOVE_METADATA(ToolSection.PRIVACY, "Remove metadata", "Strip location, camera and date info",

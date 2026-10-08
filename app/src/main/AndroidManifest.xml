@@ -12,6 +12,12 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <!-- Printing talks to printers on the local network only (IPP, and multicast DNS to find them);
+         every connection is checked to stay on the local network (print.core.LocalNetwork). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
 
@@ -47,6 +53,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- "Print" in other apps' share menus (photos and PDFs). -->
+        <activity-alias
+            android:name=".PrintShared"
+            android:targetActivity=".MainActivity"
+            android:label="@string/print_label"
+            android:icon="@mipmap/ic_launcher"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+        </activity-alias>
 
         <service
             android:name="com.localmediatools.export.ExportService"

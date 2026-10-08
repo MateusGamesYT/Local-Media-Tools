@@ -92,7 +92,7 @@ class UiSmokeTest {
         fun img(n: String, w: Int, h: Int, c: Int) = Robo.item(app, Robo.write(inDir, n,
             Robo.encode(Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).apply { eraseColor(c) }, Bitmap.CompressFormat.PNG)))
         return when (ToolRules.pickKind(t)) {
-            PickKind.IMAGES -> listOf(img("${t.name}_a.png", 300, 200, Color.RED), img("${t.name}_b.png", 200, 300, Color.BLUE))
+            PickKind.IMAGES, PickKind.PRINTABLE -> listOf(img("${t.name}_a.png", 300, 200, Color.RED), img("${t.name}_b.png", 200, 300, Color.BLUE))
             PickKind.GIFS -> {
                 val bos = ByteArrayOutputStream()
                 GifAnimationWriter(bos, 32, 32, null, 0).apply {
@@ -191,7 +191,9 @@ class UiSmokeTest {
                     assertTrue("placement steps: $steps", steps == 3)
                     assertTrue(visibleTop(a) is ToolScreen)
                 }
-                if (t != ToolId.STITCH && t != ToolId.TRIM_VIDEO) assertTrue("${t.title}: ready text ${texts(a).filter { "ready" in it || "Select" in it || "Add" in it }}", texts(a).any { "ready" in it })
+                // Printing needs a printer first (PrintTest covers the rest).
+                if (t == ToolId.PRINT) assertTrue(texts(a).toString(), texts(a).contains("Choose a printer"))
+                else if (t != ToolId.STITCH && t != ToolId.TRIM_VIDEO) assertTrue("${t.title}: ready text ${texts(a).filter { "ready" in it || "Select" in it || "Add" in it }}", texts(a).any { "ready" in it })
                 a.navigator.push(SelectionReviewScreen(a, Selection.of(t)))
                 idle(); render(a)
                 @Suppress("DEPRECATION") a.onBackPressed(); idle()

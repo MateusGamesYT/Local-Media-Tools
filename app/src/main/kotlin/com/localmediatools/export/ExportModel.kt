@@ -71,13 +71,16 @@ data class JobSnapshot(
         JobStatus.QUEUED -> "Waiting to start"
         JobStatus.RUNNING -> statusText
         JobStatus.CANCELLED -> "Cancelled" + if (outputs.isNotEmpty()) " · ${outputs.size} saved before cancelling" else ""
-        else -> buildString {
-            val saved = outputs.size
-            append(if (saved == 1) "1 file saved" else "$saved files saved")
-            if (failed > 0) append(" · $failed failed")
-            if (skipped > 0) append(" · $skipped skipped")
-            if (errorMessage != null && saved == 0) { clear(); append(errorMessage) }
-        }
+        // Printing saves nothing: its result says what happened.
+        else -> if (tool == ToolId.PRINT) results.firstOrNull()?.message ?: errorMessage ?: "Not printed" else saved()
+    }
+
+    private fun saved(): String = buildString {
+        val saved = outputs.size
+        append(if (saved == 1) "1 file saved" else "$saved files saved")
+        if (failed > 0) append(" · $failed failed")
+        if (skipped > 0) append(" · $skipped skipped")
+        if (errorMessage != null && saved == 0) { clear(); append(errorMessage) }
     }
 }
 

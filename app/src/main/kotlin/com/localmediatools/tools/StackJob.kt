@@ -44,7 +44,7 @@ enum class FlowKind(val noun: String) {
 /** Which tools can be stacked, what they accept and what they make. */
 object StackRules {
     /** Tools that work on one photo interactively, scan the library or use the camera. */
-    private val notStackable = setOf(ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT, ToolId.DUPLICATES, ToolId.PDF_SCANNER, ToolId.TOOL_STACK)
+    private val notStackable = setOf(ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT, ToolId.DUPLICATES, ToolId.PDF_SCANNER, ToolId.TOOL_STACK, ToolId.PRINT)
 
     fun stackable(t: ToolId) = t !in notStackable
 
@@ -52,6 +52,7 @@ object StackRules {
         ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT -> "Edits one photo by hand, so it can't run in a stack"
         ToolId.DUPLICATES -> "Looks through your whole photo library, so it can't run in a stack"
         ToolId.PDF_SCANNER -> "Uses the camera; to make a PDF from files in a stack use Images → PDF"
+        ToolId.PRINT -> "Prints instead of saving files, so it can't be a step of a stack"
         else -> "Can't be part of a stack"
     }
 
@@ -62,6 +63,7 @@ object StackRules {
         PickKind.PDFS -> setOf(FlowKind.PDF)
         PickKind.MEDIA -> if (t == ToolId.FACE_BLUR) setOf(FlowKind.IMAGE, FlowKind.VIDEO) else setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.VIDEO)
         PickKind.ANY -> FlowKind.entries.toSet() - FlowKind.AUDIO
+        PickKind.PRINTABLE -> setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.PDF)
     }
 
     /** What a tool makes from a file of kind [k]. */

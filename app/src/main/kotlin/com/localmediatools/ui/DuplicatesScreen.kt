@@ -87,7 +87,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
             is DupScanState.Idle -> {
                 statusCard.addView(UI.text(ctx, "Find duplicates in your photos", TextStyle.SUBTITLE))
                 statusCard.addView(UI.text(ctx, if (activity.hasPhotoAccess()) "Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos."
-                    else "The app needs permission to see your photos for this. It never uploads them and has no internet access.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
+                    else "The app needs permission to see your photos for this. It never uploads them.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
                 statusCard.addView(UI.primaryButton(ctx, "Scan my photos") { start() }, lp().apply { topMargin = ctx.dp(14) })
                 showGroups(null)
             }

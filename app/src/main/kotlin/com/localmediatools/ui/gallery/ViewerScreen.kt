@@ -109,6 +109,7 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
             addView(action(R.drawable.ic_share, "Share") { current()?.let { GalleryActions.share(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             addView(action(R.drawable.ic_tool_editor, "Edit") { edit() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             addView(action(R.drawable.ic_wand, "Tools") { current()?.let { GalleryActions.chooseTool(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(action(R.drawable.ic_tool_print, "Print") { current()?.let { GalleryActions.print(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             addView(action(R.drawable.ic_trash, "Delete") { delete() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         })
         root.addView(bottom, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))

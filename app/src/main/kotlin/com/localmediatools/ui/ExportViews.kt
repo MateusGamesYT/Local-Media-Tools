@@ -230,6 +230,10 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
         if (outs.isNotEmpty()) {
             val row = FlowLayout(ctx)
             row.addView(UI.secondaryButton(ctx, "Share ${if (outs.size == 1) "file" else "all ${outs.size}"}", R.drawable.ic_share) { OutputActions.share(activity, outs) })
+            if (outs.all { it.mime.startsWith("image/") || it.mime == "application/pdf" }) row.addView(UI.secondaryButton(ctx, "Print", R.drawable.ic_tool_print) {
+                val sel = Selection.of(com.localmediatools.tools.ToolId.PRINT); sel.clear(); sel.addUris(activity, outs.map { it.uri })
+                activity.navigator.push(com.localmediatools.ui.print.PrintScreen(activity))
+            })
             body.addView(row, lp().apply { topMargin = ctx.dp(12) })
             body.addView(UI.note(ctx, "Saved to ${snap.savedTo}. Find them in your gallery, Files app or the folder named LocalMediaTools.", UI.NoteKind.SUCCESS), lp().apply { topMargin = ctx.dp(12) })
         }
@@ -237,7 +241,7 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
         for (g in groups) {
             val items = snap.results.filter { it.outcome == g }
             if (items.isEmpty()) continue
-            val label = when (g) { ItemOutcome.FAILED -> "Failed (${items.size})"; ItemOutcome.SKIPPED -> "Skipped (${items.size})"; else -> "Saved (${items.size})" }
+            val label = when (g) { ItemOutcome.FAILED -> "Failed (${items.size})"; ItemOutcome.SKIPPED -> "Skipped (${items.size})"; else -> if (snap.tool == com.localmediatools.tools.ToolId.PRINT) "Printed" else "Saved (${items.size})" }
             body.addView(UI.label(ctx, label), lp().apply { topMargin = ctx.dp(20); bottomMargin = ctx.dp(8) })
             for (r in items.take(300)) body.addView(resultRow(r), lp().apply { bottomMargin = ctx.dp(8) })
             if (items.size > 300) body.addView(UI.text(ctx, "…and ${items.size - 300} more", TextStyle.CAPTION))

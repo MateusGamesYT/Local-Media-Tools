@@ -196,7 +196,7 @@ class HomeTab(private val shell: MainShell) {
         col.addView(header)
 
         col.addView(UI.text(ctx, "Edit, convert and\nclean up — privately.", TextStyle.HERO), lp().apply { topMargin = ctx.dp(26) })
-        col.addView(UI.text(ctx, "${ToolId.toolCount} tools that run entirely on this phone. No account, no internet, no limits.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(10) })
+        col.addView(UI.text(ctx, "${ToolId.toolCount} tools that run entirely on this phone. No account, no cloud, no limits.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(10) })
 
         col.addView(SearchField(ctx, "Search ${ToolId.toolCount} tools") { query = it.trim(); refresh() }, lp().apply { topMargin = ctx.dp(22) })
         val cats: List<ToolSection?> = listOf(null) + ToolSection.entries
@@ -228,7 +228,7 @@ class HomeTab(private val shell: MainShell) {
         col.addView(results, lp())
         refresh()
 
-        col.addView(UI.note(ctx, "Your photos, videos and documents are processed on this phone and never uploaded — the app doesn't even have internet permission. Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(26) })
+        col.addView(UI.note(ctx, "Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(26) })
         return scroll
     }
 
@@ -351,7 +351,7 @@ class SettingsTab(private val shell: MainShell) {
         }
 
         val privacy = group(col, "Privacy")
-        privacy.addView(listRow(ctx, R.drawable.ic_shield, Palette.SUCCESS, "No internet access", "The app has no internet permission, so nothing can be uploaded."))
+        privacy.addView(listRow(ctx, R.drawable.ic_shield, Palette.SUCCESS, "Nothing goes to the internet", "The app never connects to servers on the internet; printing talks only to printers on your own network."))
         privacy.addView(listRow(ctx, R.drawable.ic_lock, Palette.SUCCESS, "Originals are never changed", "Every tool writes new files and checks them before saving."))
 
         val about = group(col, "About")

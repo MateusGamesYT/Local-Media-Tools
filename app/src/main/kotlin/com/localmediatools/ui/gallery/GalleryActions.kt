@@ -121,8 +121,17 @@ object GalleryActions {
                 PickKind.MEDIA -> !(t == ToolId.FACE_BLUR && anyGif)
                 PickKind.ANY -> true
                 PickKind.PDFS -> false
+                PickKind.PRINTABLE -> !anyVideo
             }
         }.sortedBy { if (it.section == ToolSection.EDIT) 0 else 1 }
+    }
+
+    /** Opens printing with the photos among [items] (videos can't be printed). */
+    fun print(activity: MainActivity, items: List<GMedia>) {
+        val photos = items.filter { !it.video }
+        if (photos.isEmpty()) { Toast.makeText(activity, "Videos can't be printed.", Toast.LENGTH_SHORT).show(); return }
+        if (photos.size < items.size) Toast.makeText(activity, "Videos are left out: only photos can be printed.", Toast.LENGTH_SHORT).show()
+        openIn(activity, ToolId.PRINT, photos)
     }
 
     fun chooseTool(activity: MainActivity, items: List<GMedia>) {

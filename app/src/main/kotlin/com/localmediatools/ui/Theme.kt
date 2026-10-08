@@ -47,6 +47,7 @@ object Palette {
         ToolSection.VIDEO -> 0xFFFB923C.toInt()
         ToolSection.GIF -> 0xFFFACC15.toInt()
         ToolSection.DOCUMENTS -> 0xFF60A5FA.toInt()
+        ToolSection.PRINT -> 0xFFF472B6.toInt()
         ToolSection.PRIVACY -> 0xFF34D399.toInt()
     }
 
@@ -58,6 +59,7 @@ object Palette {
         ToolSection.VIDEO -> intArrayOf(0xFFFFA65C.toInt(), 0xFFF0592C.toInt())
         ToolSection.GIF -> intArrayOf(0xFFFFD84A.toInt(), 0xFFF29A0C.toInt())
         ToolSection.DOCUMENTS -> intArrayOf(0xFF7DB8FF.toInt(), 0xFF3D6BFF.toInt())
+        ToolSection.PRINT -> intArrayOf(0xFFF9A8D4.toInt(), 0xFFDB2777.toInt())
         ToolSection.PRIVACY -> intArrayOf(0xFF4BE3A6.toInt(), 0xFF119E6E.toInt())
     }
 
@@ -103,6 +105,7 @@ object Icons {
         ToolId.CONVERT_IMAGES -> R.drawable.ic_tool_convert
         ToolId.REMOVE_METADATA -> R.drawable.ic_tool_metadata
         ToolId.EXTRACT_AUDIO -> R.drawable.ic_tool_audio
+        ToolId.PRINT -> R.drawable.ic_tool_print
     }
 }
 

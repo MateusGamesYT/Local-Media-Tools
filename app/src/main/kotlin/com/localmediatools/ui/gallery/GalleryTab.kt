@@ -198,7 +198,7 @@ class GalleryTab(private val shell: MainShell) {
         val col = UI.vertical(ctx).apply { tag = "permission"; gravity = Gravity.CENTER_HORIZONTAL; setPadding(ctx.dp(28), ctx.dp(48), ctx.dp(28), ctx.dp(140)) }
         col.addView(UI.gradientTile(ctx, R.drawable.ic_gallery, Palette.BRAND, 64, 32))
         col.addView(UI.text(ctx, "Your photos, organised on this phone", TextStyle.TITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(18), 0, 0) })
-        col.addView(UI.text(ctx, "Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for \"dog\" or \"Sophie\" — entirely on this phone. Nothing is uploaded: the app has no internet access.", TextStyle.BODY_2).apply {
+        col.addView(UI.text(ctx, "Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for \"dog\" or \"Sophie\" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet.", TextStyle.BODY_2).apply {
             gravity = Gravity.CENTER; setPadding(0, ctx.dp(10), 0, 0)
         })
         col.addView(UI.primaryButton(ctx, "Allow access") {

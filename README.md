@@ -3,16 +3,18 @@
 # Local Media Tools (Android)
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
-photos and lets you search them in plain words, and **30 tools** for photos, video, GIF, PDF and
-audio, including on-device AI for **face blurring in photos and videos**, **background removal**,
-**one-tap enhancement**, a **magic eraser** and a **duplicate finder**. Nothing is uploaded (the
-app has no internet permission), originals are never modified, and every result is written to a
-hidden file that is only published after it has been completely written and checked.
+photos and lets you search them in plain words, **printing** to Wi-Fi printers without the
+printer maker's app, and **31 tools** for photos, video, GIF, PDF and audio, including on-device AI
+for **face blurring in photos and videos**, **background removal**, **one-tap enhancement**, a
+**magic eraser** and a **duplicate finder**. Nothing is uploaded: the app never connects to servers
+on the internet (its only network traffic is to your own printer, and the code allows nothing else),
+originals are never modified, and every result is written to a hidden file that is only published
+after it has been completely written and checked.
 
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.5.0.apk`](release/LocalMediaTools-1.5.0.apk)
+**Install:** [`release/LocalMediaTools-1.6.0.apk`](release/LocalMediaTools-1.6.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -23,6 +25,10 @@ It installs over earlier versions (same signing key).
 Gallery screenshots show Creative Commons photos (CC BY 2.0) of Caroline Wozniacki, Ian Somerhalder and
 Kelly Clarkson by Andrew Campbell, karlnorling, cirodelia47, Jean & Nathalie and vagueonthehow (sources
 in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found and grouped them.
+
+| Print | Choosing the printer |
+|---|---|
+| ![](docs/screenshots/print.png) | ![](docs/screenshots/print-printers.png) |
 
 | Tool stack | Setting up a step | Choosing the next tool |
 |---|---|---|
@@ -36,7 +42,38 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.5.0: one person, one group
+## What's new in 1.6.0: printing, without the printer's app
+
+- **Print photos and PDFs** straight to a printer on your Wi-Fi — the Epson L3250 and other printers
+  that support AirPrint, Mopria or IPP Everywhere (most current Wi-Fi printers). No printer app or
+  driver: the app speaks the standard printing protocol (IPP) itself and draws the pages on the phone,
+  in the formats these printers take (PWG raster, Apple raster, JPEG or PDF, whichever the printer
+  prefers).
+- **Finds your printer** on the Wi-Fi in a few seconds, or add it by IP address; it is remembered,
+  and found again if the router gives it a new address. Works on a printer's own Wi-Fi Direct network.
+- **See every sheet before printing**: the printer's own paper sizes (A4, Letter, 10 × 15, 13 × 18,
+  9 × 13…) and paper types (plain, glossy, matte…), borderless where the printer allows it, 1–9 photos
+  per sheet (whole photo or filling the space, turned to fit), PDF page ranges and actual size, colour
+  or black & white, draft / normal / best (photo paper picks best), copies.
+- **Plain-word status**: ready, printing, "Add paper", "Paper jam", cover open, ink as the printer
+  estimates it; printing runs in the background with progress in the notification and Activity, and
+  can be cancelled.
+- **Print from anywhere**: the photo viewer and gallery selection, the results of any tool, and
+  "Print (Local Media Tools)" in other apps' share menus (a PDF from e-mail or WhatsApp, say).
+- **Privacy, enforced in code**: printing needs network access, so the app now has it — for the local
+  network only. Every connection is checked to go to a local address (192.168.x, 10.x, 172.16–31.x,
+  link-local, IPv6 local); printers are found with multicast DNS on the Wi-Fi and addressed by IP, so
+  no name lookup can reach outside; a test fails the build if any other code touches the network.
+  Encrypted printing (IPPS) is used when the printer offers it, trusting the printer's own
+  certificate the first time and only that one afterwards.
+- **Tested** with real photos against a simulated Epson L3250 (described the way Epson EcoTanks
+  describe themselves over IPP) and against CUPS's reference IPP Everywhere printer, `ippeveprinter`,
+  over plain and encrypted IPP; CUPS's own filters read the pages exactly as drawn
+  (`buildtools/print/cups_check.sh`). Not yet on a real L3250.
+- **Not possible this way**: printer maintenance (nozzle check, head cleaning) uses Epson's private
+  protocol — use the printer's buttons or Epson's app for that.
+
+## What was new in 1.5.0: one person, one group
 
 People were too often split into several "people", or left out of their group, especially with a
 cap, sunglasses, stage make-up, a big laugh or a face turned away. Measured on real photos: 802
@@ -234,6 +271,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Merge PDFs | Structural merge: text and links kept | `Documents/LocalMediaTools/PDF` |
 | | Extract PDF pages | `1-3, 5, 8-` into one PDF or one per page | `Documents/LocalMediaTools/PDF` |
 | | PDF scanner | Camera and gallery pages, A4 | `Documents/LocalMediaTools/PDF` |
+| Print | Print | Photos and PDFs on AirPrint / Mopria / IPP Everywhere printers on the Wi-Fi: paper size and type, borderless, 1–9 per sheet, colour, quality, copies, preview | — (prints) |
 | Privacy & audio | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos | `Pictures/…/Clean`, `Movies/…/Clean` |
 | | Extract audio | AAC track to M4A without re-encoding | `Music/LocalMediaTools/Extracted Audio` |
 
@@ -272,7 +310,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 77 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 92 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -282,8 +320,14 @@ so updates install over each other; use your own key for a store release.
   found again, nobody mixed up, and most of each person's faces grouped together with caps, glasses,
   make-up, expressions, turned and small faces), search parsing (names, typos, dates, albums, kinds),
   score fusion, resizing bit-identical to Pillow, and the shipped 4-bit scene layer and category table
-  reproducing the calibration's scores on real photos' features.
-* `app/src/roboTest` — 49 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  reproducing the calibration's scores on real photos' features; and printing: IPP messages, the
+  local-network rule (and a scan of the source that nothing else uses the network), finding printers
+  from their announcements, PWG and Apple raster decoding to the exact pixels, sheet layout, and whole
+  jobs of real photos to a simulated Epson L3250 (paper, borderless, grayscale, quality, copies, a
+  printer that refuses streamed jobs, AirPrint-only and JPEG-only printers, no paper, cancelling).
+  `buildtools/print/cups_check.sh` also prints to CUPS's reference IPP Everywhere printer
+  (`ippeveprinter`, plain and encrypted) and has CUPS's own filters read the pages back.
+* `app/src/roboTest` — 53 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -293,12 +337,16 @@ so updates install over each other; use your own key for a store release.
   and building and running a stack in the UI); the gallery on a stand-in photo library of real photos and faces (indexing,
   grouping people, naming, search with typos, face names in the viewer, "not this person"
   surviving regrouping, removed photos leaving the index, empty or failing library reads and a
-  sudden big drop not wiping the index, failing photos retried once, pausing, and every gallery screen); and a
-  pass that opens every tool from the home screen. `LMT_SHOTS=<dir>` also renders the screenshots
+  sudden big drop not wiping the index, failing photos retried once, pausing, and every gallery screen);
+  printing from the Print screen to the simulated L3250 (finding it, its state and ink, its paper
+  sizes and types, borderless photos two per sheet, the job it receives; a printer added by IP
+  address falling back from encrypted to plain IPP; files shared from other apps); and a pass that
+  opens every tool from the home screen. `LMT_SHOTS=<dir>` also renders the screenshots
   above.
 
-Not covered by automated tests (no emulator here): MediaCodec/MediaExtractor video paths (including
-the GPU face blur, merging and speed changes), PdfRenderer, BitmapRegionDecoder, the camera intent,
+Not covered by automated tests (no emulator here): a real printer (see above for what printing is
+tested against), MediaCodec/MediaExtractor video paths (including the GPU face blur, merging and
+speed changes), PdfRenderer (also used to print PDF pages), BitmapRegionDecoder, the camera intent,
 the photo-library scan and trash request, MediaStore and the background indexing service on a real
 phone, and the native OpenCV/TFLite code on a device (the face and cut-out models are tested on the
 JVM with OpenCV's desktop build, the eraser model against PyTorch, and the gallery's TFLite models
