@@ -16,6 +16,7 @@ import com.localmediatools.gallery.GPerson
 import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.GalleryRepo
+import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceClustering
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Screen
@@ -102,6 +103,7 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         val mine = db.faces("f.person_id = ? AND f.emb IS NOT NULL AND f.ignored = 0", arrayOf(p.id.toString()), withEmb = true)
         if (mine.isEmpty()) return emptyList()
         val kind = mine[0].kind
+        val params = ClusterParams.of(kind)
         val same = mine.filter { it.kind == kind }
         val sumA = FloatArray(same[0].emb!!.size)
         for (f in same) for (k in sumA.indices) sumA[k] += f.emb!![k]
@@ -114,8 +116,8 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
             if (fs.any { f -> rejected[f.id]?.contains(p.id) == true }) continue
             val sumB = FloatArray(sumA.size)
             for (f in fs) for (k in sumB.indices) sumB[k] += f.emb!![k]
-            val s = FaceClustering.linkage(sumA, same.size, sumB, fs.size)
-            if (s >= FaceClustering.SUGGEST) out.add(o to s)
+            val s = FaceClustering.linkage(sumA, same.size, sumB, fs.size, params)
+            if (s >= params.suggestGroup) out.add(o to s)
         }
         return out.sortedByDescending { it.second }.take(6).map { it.first to GalleryRepo.coverFace(ctx, it.first) }
     }

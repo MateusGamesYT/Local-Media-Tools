@@ -107,25 +107,25 @@ class GalleryTest {
         val db = GalleryDb.get(app)
         fun groupOf(owner: Int) = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == owner } }
         // Name the two groups.
-        FaceSheet.nameGroup(a, groupOf(0), "Sophie", emptyList()) {}
-        waitFor("naming") { db.people().any { it.name == "Sophie" } }
-        FaceSheet.nameGroup(a, groupOf(1), "John", db.people().filter { it.named }) {}
-        waitFor("naming") { db.people().any { it.name == "John" } }
+        FaceSheet.nameGroup(a, groupOf(0), "Caroline", emptyList()) {}
+        waitFor("naming") { db.people().any { it.name == "Caroline" } }
+        FaceSheet.nameGroup(a, groupOf(1), "Ian", db.people().filter { it.named }) {}
+        waitFor("naming") { db.people().any { it.name == "Ian" } }
         idle(800)
-        val sophie = db.people().single { it.name == "Sophie" }
-        assertEquals(10, GalleryRepo.person(app, sophie.id).size)
+        val caroline = db.people().single { it.name == "Caroline" }
+        assertEquals(10, GalleryRepo.person(app, caroline.id).size)
         // Search: both people (with a typo), a person at a place, things.
-        val both = GalleryRepo.search(app, "Jonh and Sophie")
-        assertEquals(listOf("jonh" to "john"), both.query.corrections)
+        val both = GalleryRepo.search(app, "Ian and Carolnie")
+        assertEquals(listOf("carolnie" to "caroline"), both.query.corrections)
         assertEquals((3L..10L).toSet(), both.items.map { it.id }.toSet())
-        val beach = GalleryRepo.search(app, "sophie at the beach")
+        val beach = GalleryRepo.search(app, "caroline at the beach")
         assertEquals(setOf(6L, 7L, 8L), beach.items.map { it.id }.toSet())
         assertEquals(setOf(2L, 6L, 12L, 18L), GalleryRepo.search(app, "dogs").items.map { it.id }.toSet())
         assertEquals(setOf(7L, 21L), GalleryRepo.search(app, "videos").items.map { it.id }.toSet())
         assertEquals(3, GalleryRepo.search(app, "screenshots").items.size)
         assertTrue(GalleryRepo.search(app, "whatsapp images").query.terms.single() is SearchTerm.Album)
         // The search screen shows the results with the understood terms.
-        a.navigator.push(SearchScreen(a, "Sophie John")); idle(500)
+        a.navigator.push(SearchScreen(a, "Caroline Ian")); idle(500)
         val grid = all(a.navigator.top!!.view).filterIsInstance<MediaGrid>().single()
         waitFor("search results") { grid.items().size == 8 && texts(a).any { it == "8 results" } }
         render(a)
@@ -135,20 +135,20 @@ class GalleryTest {
         a.navigator.push(ViewerScreen(a, listOf(photo), 0)); idle(800)
         waitFor("faces button") { all(a.navigator.top!!.view).any { it.contentDescription == "Show faces" } }
         all(a.navigator.top!!.view).first { it.contentDescription == "Show faces" }.performClick()
-        waitFor("face names") { texts(a).containsAll(listOf("Sophie", "John")) }
+        waitFor("face names") { texts(a).containsAll(listOf("Caroline", "Ian")) }
         render(a)
         a.navigator.pop(); idle()
-        // "This isn't Sophie" takes a face out for good, also after regrouping.
-        val wrong = db.faces("f.person_id = ? AND f.media_id = 4", arrayOf(sophie.id.toString())).single()
-        db.reject(wrong.id, sophie.id)
+        // "This isn't Caroline" takes a face out for good, also after regrouping.
+        val wrong = db.faces("f.person_id = ? AND f.media_id = 4", arrayOf(caroline.id.toString())).single()
+        db.reject(wrong.id, caroline.id)
         GalleryIndex.regroupNow(app)
-        waitFor("regroup") { GalleryIndex.state.value.phase != GalleryIndex.Phase.GROUPING && db.faceById(wrong.id)?.personId != sophie.id }
+        waitFor("regroup") { GalleryIndex.state.value.phase != GalleryIndex.Phase.GROUPING && db.faceById(wrong.id)?.personId != caroline.id }
         idle(500)
-        assertTrue(db.faces("f.person_id = ?", arrayOf(sophie.id.toString())).none { it.id == wrong.id })
-        assertEquals(9, GalleryRepo.person(app, sophie.id).size)
+        assertTrue(db.faces("f.person_id = ?", arrayOf(caroline.id.toString())).none { it.id == wrong.id })
+        assertEquals(9, GalleryRepo.person(app, caroline.id).size)
         // Person and all-faces screens render.
-        a.navigator.push(PersonScreen(a, sophie.id))
-        waitFor("person screen") { texts(a).contains("Sophie") }
+        a.navigator.push(PersonScreen(a, caroline.id))
+        waitFor("person screen") { texts(a).contains("Caroline") }
         render(a)
         a.navigator.pop(); idle()
         a.navigator.push(FacesScreen(a))

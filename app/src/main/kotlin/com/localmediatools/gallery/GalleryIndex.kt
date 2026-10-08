@@ -169,7 +169,12 @@ object GalleryIndex {
         val a = if (analyzerOverride != null) null else analyzer ?: GalleryAnalyzer.create(ctx).also { analyzer = it }
         target = if (a == null) analyzedValue(EngineMode.AI, EngineMode.AI) else analyzedValue(a.faceMode, a.objectMode)
         var (done, total) = db.counts(target)
-        if (done >= total) { _state.update { it.copy(phase = Phase.DONE, done = done, total = total) }; return }
+        if (done >= total) {
+            // Nothing new to look at, but people found under older grouping rules are regrouped once.
+            if (!GalleryPeople.current(db)) regroup(ctx, db)
+            _state.update { it.copy(phase = Phase.DONE, done = done, total = total) }
+            return
+        }
         _state.update { it.copy(phase = Phase.ANALYZING, done = done, total = total,
             faceMode = a?.faceMode ?: EngineMode.AI, objectMode = a?.objectMode ?: EngineMode.AI) }
         GalleryIndexService.ensure(ctx)
@@ -295,6 +300,13 @@ object GalleryPeople {
      */
     private const val MAX_BASIC = 3000
 
+    /** Bumped when the grouping rules change, so libraries grouped before are regrouped (1.5.0: mean-face grouping). */
+    const val VERSION = 2
+    private const val VERSION_KEY = "grouping_version"
+
+    /** Whether the people were last grouped with the current rules. */
+    fun current(db: GalleryDb) = db.meta(VERSION_KEY) == VERSION.toString()
+
     fun regroup(db: GalleryDb, cancelled: () -> Boolean) {
         val rejected = db.notPeople()
         val assign = HashMap<Long, Long?>()
@@ -305,11 +317,12 @@ object GalleryPeople {
             val list = db.faces("f.emb IS NOT NULL AND f.ignored = 0 AND f.kind = ?", arrayOf(kind.code.toString()), withEmb = true,
                 order = if (basic) "f.confirmed DESC, f.quality DESC, f.id" else "f.id", limit = if (basic) MAX_BASIC else null)
             if (list.isEmpty()) continue
+            val params = ClusterParams.of(kind)
             val recs = list.map { f ->
-                FaceRec(f.id, f.emb!!, f.quality, f.good, if (f.confirmed) f.personId else null, rejected[f.id] ?: LongArray(0))
+                FaceRec(f.id, f.emb!!, f.quality, f.good, if (f.confirmed) f.personId else null, rejected[f.id] ?: LongArray(0), params.isUsable(f.score))
             }
             val previous = list.associate { it.id to it.personId }
-            val groups = FaceClustering.cluster(recs, ClusterParams.of(kind), cancelled)
+            val groups = FaceClustering.cluster(recs, params, cancelled)
             if (cancelled()) return
             // Bigger groups pick their old id first.
             for (g in groups.sortedByDescending { it.faces.size }) {
@@ -327,5 +340,6 @@ object GalleryPeople {
             }
         }
         db.applyGrouping(assign)
+        db.setMeta(VERSION_KEY, VERSION.toString())
     }
 }

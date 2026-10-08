@@ -12,13 +12,17 @@ hidden file that is only published after it has been completely written and chec
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.4.1.apk`](release/LocalMediaTools-1.4.1.apk)
+**Install:** [`release/LocalMediaTools-1.5.0.apk`](release/LocalMediaTools-1.5.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
 | Gallery | Search | Faces with names | People | Things | A person | All faces |
 |---|---|---|---|---|---|---|
 | ![](docs/screenshots/gallery-photos.png) | ![](docs/screenshots/gallery-search.png) | ![](docs/screenshots/gallery-viewer.png) | ![](docs/screenshots/gallery-people.png) | ![](docs/screenshots/gallery-things.png) | ![](docs/screenshots/gallery-person.png) | ![](docs/screenshots/gallery-faces.png) |
+
+Gallery screenshots show Creative Commons photos (CC BY 2.0) of Caroline Wozniacki, Ian Somerhalder and
+Kelly Clarkson by Andrew Campbell, karlnorling, cirodelia47, Jean & Nathalie and vagueonthehow (sources
+in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found and grouped them.
 
 | Tool stack | Setting up a step | Choosing the next tool |
 |---|---|---|
@@ -32,7 +36,44 @@ It installs over earlier versions (same signing key).
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.4.1: Gallery hardening
+## What's new in 1.5.0: one person, one group
+
+People were too often split into several "people", or left out of their group, especially with a
+cap, sunglasses, stage make-up, a big laugh or a face turned away. Measured on real photos: 802
+faces of 78 people, checked by eye, in 1,233 Creative Commons photos taken by many photographers
+over the years, with the 3,776 other faces in those photos as strangers (all faces at once, through
+the app's own code):
+
+| Share of a person's faces in their main group | 1.4.1 | 1.5.0 |
+|---|---|---|
+| All | 75 % | 87 % |
+| With a cap, hat or visor | 54 % | 68 % |
+| With glasses or sunglasses | 78 % | 86 % |
+| With heavy make-up | 56 % | 75 % |
+| With a strong expression | 77 % | 89 % |
+| Turned | 75 % | 88 % |
+| In profile | 43 % | 73 % |
+| Small, far from the camera | 43 % | 68 % |
+| **Faces put with the wrong person** | 0.2 % | 0.7 % |
+
+The settings were tuned on half of the people and checked on the other half, which they had never
+seen: there, 77 % → 87 % of each person's faces were in their main group, with no faces mixed up.
+
+- **How** — a face is now compared with each group's *mean face* rather than with the average of all
+  its faces, so someone photographed in very different conditions (whose photos agree less with each
+  other) still forms one group; faces the detector is unsure about (blurry, half hidden) stay on
+  their own instead of joining the wrong person; the "is this…?" and look-alike suggestions were
+  recalibrated on the same photos.
+- **Your library is regrouped once** after updating (photos aren't scanned again; names and
+  corrections are kept).
+- **Still hard** — dark sunglasses with a hat can make two people look alike (most of the wrong faces
+  above), and in a small library someone whose looks vary a lot can still appear twice until more
+  photos connect the two; a person's page suggests look-alike groups to merge.
+- **Tests use real people** — the app's tests now run on 63 Creative Commons photos of nine public
+  figures (credits in [`app/src/test/resources/people`](app/src/test/resources/people)): the real face
+  models and grouping on the JVM, and the gallery screens (and screenshots) on real photos and faces.
+
+## What was new in 1.4.1: Gallery hardening
 
 A review of the Gallery aimed at what only shows up on real phones, and the fixes:
 
@@ -231,13 +272,15 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 75 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 77 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
   channel mixing, pitch-preserving speed changes) and the gallery core: detector decoding against
   the model's anchors, people grouping (no mixed groups, names and "not this person" respected,
-  blurry faces only joining clear matches), search parsing (names, typos, dates, albums, kinds),
+  blurry faces only joining clear matches; on 63 real photos with the real face models: everyone
+  found again, nobody mixed up, and most of each person's faces grouped together with caps, glasses,
+  make-up, expressions, turned and small faces), search parsing (names, typos, dates, albums, kinds),
   score fusion, resizing bit-identical to Pillow, and the shipped 4-bit scene layer and category table
   reproducing the calibration's scores on real photos' features.
 * `app/src/roboTest` — 49 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
@@ -247,7 +290,7 @@ so updates install over each other; use your own key for a store release.
   removal keeping photos upright; page extraction; background removal, auto enhance and photo face
   blurring end to end (with stand-ins for the native models); tool stacks (real tools chained end to
   end, temporary in-between files, files passing steps that can't use them, merging, failures,
-  and building and running a stack in the UI); the gallery on a stand-in photo library (indexing,
+  and building and running a stack in the UI); the gallery on a stand-in photo library of real photos and faces (indexing,
   grouping people, naming, search with typos, face names in the viewer, "not this person"
   surviving regrouping, removed photos leaving the index, empty or failing library reads and a
   sudden big drop not wiping the index, failing photos retried once, pausing, and every gallery screen); and a

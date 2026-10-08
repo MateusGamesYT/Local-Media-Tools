@@ -1,6 +1,7 @@
 package com.localmediatools.gallery.core
 
 import kotlin.math.max
+import kotlin.math.sqrt
 
 /** One face as the people grouping sees it. */
 class FaceRec(
@@ -15,6 +16,8 @@ class FaceRec(
     val person: Long? = null,
     /** People the user said this face is not. */
     val notPeople: LongArray = LongArray(0),
+    /** Clear enough to join a group at all; faces that aren't stay on their own. */
+    val usable: Boolean = true,
 )
 
 /** A group of faces believed to be one person. [person] is set when the group holds faces confirmed as that person. */
@@ -30,54 +33,78 @@ enum class FaceKind(val code: Int) {
     companion object { fun of(code: Int) = entries.firstOrNull { it.code == code } ?: SFACE }
 }
 
-/** Thresholds for grouping one kind of face descriptor. */
+/**
+ * Thresholds for grouping one kind of face descriptor. With [centroid] a face's similarity to a
+ * group is its cosine to the group's mean direction (normalised sum of member embeddings), and two
+ * groups compare by the cosine of their sums; otherwise both are plain averages of pairwise cosines.
+ */
 class ClusterParams(
     val join: Float, val merge: Float, val assign: Float, val low: Float, val margin: Float,
     val goodScore: Float, val goodYaw: Float, val goodEye: Float,
+    val centroid: Boolean = false,
+    /** Faces below this detector score never join a group (blurry or half-hidden bystanders). */
+    val lowScore: Float = 0f,
+    /** A face this similar to a named person is offered as "is this …?" (one-tap naming). */
+    val suggestFace: Float = 0.30f,
+    /** Groups this similar (but below [merge]) are offered as "same person?" suggestions. */
+    val suggestGroup: Float = 0.30f,
 ) {
     fun isGood(score: Float, yaw: Float, eyePx: Float) = score >= goodScore && yaw <= goodYaw && eyePx >= goodEye
+
+    fun isUsable(score: Float) = score >= lowScore
 
     fun quality(score: Float, yaw: Float, eyePx: Float) = score * minOf(eyePx, 60f) * (1f - minOf(yaw, 1f))
 
     companion object {
         /**
-         * SFace (flip-averaged, int8). Tuned on labelled head-pose sequences (BIWI) and photo pairs:
-         * at 0.42 no different-person pair of sharp faces matched while 100 % of same-person photo
-         * pairs did; in simulated galleries B-cubed precision was 0.996–1.0 at recall ≈ 0.87.
+         * SFace (flip-averaged, int8), tuned on 802 hand-verified faces of 78 real people in 1,233
+         * Creative Commons photos (Open Images; hats, sunglasses, stage make-up, expressions, profiles,
+         * small faces) plus the 3,776 other faces in those photos as strangers; tuned on half of the
+         * people and checked on the other half (buildtools/gallery/README.md). Against the averaged
+         * rules of 1.4.0–1.4.1 (join 0.42 on the average pairwise cosine), a person's faces found in
+         * their main group rose from 75 % to 87 % (B-cubed recall 0.65 → 0.81, all 78 people at once)
+         * while faces put with the wrong person stayed under 1 %.
+         *  - centroid: a face is compared with a group's mean face, so people photographed in many
+         *    different conditions (whose faces agree less with each other) still form one group;
+         *  - merge 0.65: the most alike two different people's mean faces came to 0.56;
+         *  - lowScore 0.85: blurry, tiny or half-hidden faces below it stay on their own.
+         *  - suggestions: 96.5 % of faces have their own person at ≥ 0.40 (0.26 others on average);
+         *    different people's groups were ≥ 0.45 for under 1 % of pairs.
          */
-        val SFACE = ClusterParams(join = 0.42f, merge = 0.40f, assign = 0.40f, low = 0.50f, margin = 0.05f,
-            goodScore = 0.75f, goodYaw = 0.45f, goodEye = 24f)
+        val SFACE = ClusterParams(join = 0.46f, merge = 0.65f, assign = 0.42f, low = 0.46f, margin = 0.06f,
+            goodScore = 0.80f, goodYaw = 1.0f, goodEye = 24f, centroid = true, lowScore = 0.85f,
+            suggestFace = 0.40f, suggestGroup = 0.45f)
 
         /**
          * LBP fallback. Different people overlap heavily with same-person pairs (different-person
          * pairs reach 0.71), so only near-identical faces (bursts, copies) are grouped.
          */
         val BASIC = ClusterParams(join = 0.80f, merge = 0.80f, assign = 0.80f, low = 0.86f, margin = 0.05f,
-            goodScore = 0.45f, goodYaw = 1f, goodEye = 20f)
+            goodScore = 0.45f, goodYaw = 1f, goodEye = 20f, suggestFace = 0.70f, suggestGroup = 0.70f)
 
         fun of(kind: FaceKind) = if (kind == FaceKind.LBP) BASIC else SFACE
     }
 }
 
 /**
- * Groups faces into people: average-linkage clustering on cosine similarity, tuned for very few
- * wrong merges (thresholds in [ClusterParams]):
+ * Groups faces into people by cosine similarity to each group's mean face (or, for the basic
+ * descriptor, the average over its faces), tuned for very few wrong merges (thresholds in [ClusterParams]):
  *  1. groups for named people start from their confirmed faces;
- *  2. good faces (sharp, frontal, eyes far enough apart) are added best-first to the group they
- *     are most similar to on average (≥ join) or start a new one;
- *  3. groups whose average similarity is ≥ merge are merged (never two named people, never into a
+ *  2. good faces (sharp, not in profile, eyes far enough apart) are added best-first to the group
+ *     they are most similar to (≥ join) or start a new one;
+ *  3. groups whose similarity is ≥ merge are merged (never two named people, never into a
  *     person one of the faces was rejected from);
  *  4. every good face is re-assigned to the group it fits best (≥ assign), twice;
  *  5. small, blurry or turned faces join a group of at least two faces only when they match it
- *     clearly (≥ low, and margin above the next best group); otherwise they stay on their own.
+ *     clearly (≥ low, and margin above the next best group) and the detector is sure enough it is
+ *     a face (≥ lowScore); otherwise they stay on their own.
  */
 object FaceClustering {
-    /** Groups this similar (but below the merge threshold) are offered as "same person?" suggestions. */
-    const val SUGGEST = 0.30f
-
-    private class Work(val dim: Int) {
+    private class Work(val dim: Int, val centroid: Boolean) {
         var sums = FloatArray(0)
         var counts = IntArray(0)
+        /** Length of each group's sum. */
+        var norms = FloatArray(0)
         val members = ArrayList<MutableList<Int>>()
         val person = ArrayList<Long?>()
         val rejects = ArrayList<HashSet<Long>>()
@@ -89,6 +116,7 @@ object FaceClustering {
             if ((c + 1) * dim > sums.size) {
                 sums = sums.copyOf(max(64, (c + 1) * 2) * dim)
                 counts = counts.copyOf(max(64, (c + 1) * 2))
+                norms = norms.copyOf(max(64, (c + 1) * 2))
             }
             members.add(ArrayList()); this.person.add(person); rejects.add(HashSet()); alive.add(true)
             return c
@@ -99,22 +127,29 @@ object FaceClustering {
             val o = c * dim
             for (k in 0 until dim) sums[o + k] += f.emb[k]
             for (p in f.notPeople) rejects[c].add(p)
+            renorm(c)
         }
 
-        /** Average similarity of a face to group c. */
+        fun renorm(c: Int) {
+            var s = 0f; val o = c * dim
+            for (k in 0 until dim) s += sums[o + k] * sums[o + k]
+            norms[c] = sqrt(s)
+        }
+
+        /** Similarity of a face to group c. */
         fun sim(e: FloatArray, c: Int): Float {
             val n = counts[c]
             if (n == 0) return -1f
             var s = 0f; val o = c * dim
             for (k in 0 until dim) s += e[k] * sums[o + k]
-            return s / n
+            return if (centroid) s / max(norms[c], 1e-6f) else s / n
         }
 
-        /** Average pairwise similarity between groups a and b. */
+        /** Similarity between groups a and b. */
         fun linkage(a: Int, b: Int): Float {
             var s = 0f; val oa = a * dim; val ob = b * dim
             for (k in 0 until dim) s += sums[oa + k] * sums[ob + k]
-            return s / (counts[a].toFloat() * counts[b])
+            return if (centroid) s / max(norms[a] * norms[b], 1e-6f) else s / (counts[a].toFloat() * counts[b])
         }
 
         fun canJoin(f: FaceRec, c: Int): Boolean {
@@ -135,9 +170,10 @@ object FaceClustering {
             counts[a] += counts[b]
             val oa = a * dim; val ob = b * dim
             for (k in 0 until dim) sums[oa + k] += sums[ob + k]
+            renorm(a)
             if (person[a] == null) person[a] = person[b]
             rejects[a].addAll(rejects[b])
-            members[b].clear(); counts[b] = 0; alive[b] = false
+            members[b].clear(); counts[b] = 0; alive[b] = false; norms[b] = 0f
             for (k in 0 until dim) sums[ob + k] = 0f
         }
     }
@@ -145,7 +181,7 @@ object FaceClustering {
     fun cluster(faces: List<FaceRec>, p: ClusterParams = ClusterParams.SFACE, cancelled: () -> Boolean = { false }): List<FaceGroup> {
         if (faces.isEmpty()) return emptyList()
         val dim = faces[0].emb.size
-        val w = Work(dim)
+        val w = Work(dim, p.centroid)
         // 1. Named people.
         val byPerson = HashMap<Long, Int>()
         for ((i, f) in faces.withIndex()) {
@@ -178,7 +214,7 @@ object FaceClustering {
             val n = w.size
             val home = IntArray(faces.size) { -1 }
             for (c in 0 until n) if (w.alive[c]) for (i in w.members[c]) home[i] = c
-            val snapSums = w.sums.copyOf(); val snapCounts = w.counts.copyOf()
+            val snapSums = w.sums.copyOf(); val snapCounts = w.counts.copyOf(); val snapNorms = w.norms.copyOf()
             val target = IntArray(faces.size) { -1 }
             for (i in order) {
                 val f = faces[i]; val own = home[i]
@@ -191,7 +227,14 @@ object FaceClustering {
                     if (inGroup && c != own && cnt < 2) continue
                     var dot = 0f; val o = c * dim
                     for (d in 0 until dim) dot += f.emb[d] * snapSums[o + d]
-                    val s = if (c == own) { if (cnt > 1) (dot - 1f) / (cnt - 1) else -9f } else dot / cnt
+                    // The face's own group is judged without the face itself.
+                    val s = when {
+                        c == own && cnt < 2 -> -9f
+                        c == own && p.centroid -> (dot - 1f) / sqrt(max(snapNorms[c] * snapNorms[c] - 2f * dot + 1f, 1e-6f))
+                        c == own -> (dot - 1f) / (cnt - 1)
+                        p.centroid -> dot / max(snapNorms[c], 1e-6f)
+                        else -> dot / cnt
+                    }
                     if (c == own) ownS = s
                     if (s > bs) { bs = s; best = c }
                 }
@@ -200,7 +243,7 @@ object FaceClustering {
                 target[i] = if (best >= 0 && bs >= p.assign) best else -1
             }
             // Rebuild: named groups keep their confirmed faces, everything else moves to its target.
-            val keep = Work(dim)
+            val keep = Work(dim, p.centroid)
             val map = HashMap<Int, Int>()
             for (c in 0 until n) {
                 if (!w.alive[c]) continue
@@ -217,7 +260,7 @@ object FaceClustering {
                 keep.put(nc, i, faces[i])
             }
             // Low-quality faces placed earlier keep their group until step 5.
-            w.sums = keep.sums; w.counts = keep.counts
+            w.sums = keep.sums; w.counts = keep.counts; w.norms = keep.norms
             w.members.clear(); w.members.addAll(keep.members)
             w.person.clear(); w.person.addAll(keep.person)
             w.rejects.clear(); w.rejects.addAll(keep.rejects)
@@ -229,6 +272,7 @@ object FaceClustering {
             if (fixed[i] || faces[i].good) continue
             if (i % 256 == 0 && cancelled()) return emptyList()
             val f = faces[i]
+            if (!f.usable) { w.put(w.add(null), i, f); continue }
             var b1 = -1; var s1 = -9f; var s2 = -9f
             for (c in 0 until groupsBefore) {
                 if (!w.alive[c] || w.counts[c] < 2 || !w.canJoin(f, c)) continue
@@ -292,29 +336,37 @@ object FaceClustering {
 
     /**
      * Places one new face into existing groups between full re-groupings: the group it fits best
-     * on average if that is ≥ join (good faces) or a clear low-quality match (others), else null.
+     * if that is ≥ join (good faces) or a clear low-quality match (others), else null.
      * [groups] are (sum of member embeddings, member count, person).
      */
     fun place(f: FaceRec, groups: List<Triple<FloatArray, Int, Long?>>, p: ClusterParams = ClusterParams.SFACE): Int? {
+        if (!f.good && !f.usable) return null
         var b1 = -1; var s1 = -9f; var s2 = -9f
         for ((c, g) in groups.withIndex()) {
-            val (sum, n, p) = g
+            val (sum, n, person) = g
             if (n <= 0) continue
-            if (p != null && f.notPeople.any { it == p }) continue
+            if (person != null && f.notPeople.any { it == person }) continue
             if (!f.good && n < 2) continue
-            var s = 0f
-            for (k in sum.indices) s += f.emb[k] * sum[k]
-            s /= n
+            val s = similarity(f.emb, sum, n, p)
             if (s > s1) { s2 = s1; s1 = s; b1 = c } else if (s > s2) s2 = s
         }
         if (b1 < 0) return null
         return if (f.good) b1.takeIf { s1 >= p.join } else b1.takeIf { s1 >= p.low && s1 - s2 >= p.margin }
     }
 
-    /** Similarity between two groups given their embedding sums and sizes (average linkage). */
-    fun linkage(sumA: FloatArray, nA: Int, sumB: FloatArray, nB: Int): Float {
+    /** Similarity of a face to a group given the sum of its members' embeddings and their number, measured as the grouping does. */
+    fun similarity(e: FloatArray, sum: FloatArray, n: Int, p: ClusterParams = ClusterParams.SFACE): Float {
+        var s = 0f
+        for (k in sum.indices) s += e[k] * sum[k]
+        return if (p.centroid) s / max(length(sum), 1e-6f) else s / max(n, 1)
+    }
+
+    /** Similarity between two groups given their embedding sums and sizes, measured as the grouping does. */
+    fun linkage(sumA: FloatArray, nA: Int, sumB: FloatArray, nB: Int, p: ClusterParams = ClusterParams.SFACE): Float {
         var s = 0f
         for (k in sumA.indices) s += sumA[k] * sumB[k]
-        return s / (nA.toFloat() * nB)
+        return if (p.centroid) s / max(length(sumA) * length(sumB), 1e-6f) else s / (nA.toFloat() * nB)
     }
+
+    private fun length(v: FloatArray): Float { var s = 0f; for (x in v) s += x * x; return sqrt(s) }
 }

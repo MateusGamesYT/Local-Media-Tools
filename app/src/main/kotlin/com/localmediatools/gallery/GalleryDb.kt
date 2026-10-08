@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceKind
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -251,15 +252,21 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
     }
 
     // ---------------------------------------------------------------- faces and people
-    private fun face(c: Cursor) = GFace(
-        c.getLong(0), c.getLong(1), c.getFloat(2), c.getFloat(3), c.getFloat(4), c.getFloat(5), c.getFloat(6), c.getFloat(7),
-        c.getFloat(8), c.getInt(9) == 1, c.getFloat(10), c.getLong(11), FaceKind.of(c.getInt(12)), c.getBlob(13)?.let { unpack(it) },
-        if (c.isNull(14)) null else c.getLong(14), c.getInt(15) == 1, c.getInt(16) == 1)
+    // "good" is worked out from the current grouping rules rather than read back, so faces found by
+    // an earlier version follow them too (column 9 says whether the face has an embedding).
+    private fun face(c: Cursor): GFace {
+        val kind = FaceKind.of(c.getInt(12))
+        val good = c.getInt(9) == 1 && ClusterParams.of(kind).isGood(c.getFloat(6), c.getFloat(8), c.getFloat(7))
+        return GFace(
+            c.getLong(0), c.getLong(1), c.getFloat(2), c.getFloat(3), c.getFloat(4), c.getFloat(5), c.getFloat(6), c.getFloat(7),
+            c.getFloat(8), good, c.getFloat(10), c.getLong(11), kind, c.getBlob(13)?.let { unpack(it) },
+            if (c.isNull(14)) null else c.getLong(14), c.getInt(15) == 1, c.getInt(16) == 1)
+    }
 
-    private val faceCols = "f.id, f.media_id, f.x, f.y, f.w, f.h, f.score, f.eye, f.yaw, f.good, f.quality, f.frame_ms, f.kind, f.emb, f.person_id, f.confirmed, f.ignored"
+    private val faceCols = "f.id, f.media_id, f.x, f.y, f.w, f.h, f.score, f.eye, f.yaw, f.emb IS NOT NULL, f.quality, f.frame_ms, f.kind, f.emb, f.person_id, f.confirmed, f.ignored"
 
     fun faces(where: String = "1", args: Array<String> = emptyArray(), withEmb: Boolean = false, order: String = "m.taken DESC, f.id", limit: Int? = null): List<GFace> {
-        val cols = if (withEmb) faceCols else faceCols.replace("f.emb", "NULL")
+        val cols = if (withEmb) faceCols else faceCols.replace(", f.emb, ", ", NULL, ")
         val out = ArrayList<GFace>()
         readableDatabase.rawQuery("SELECT $cols FROM faces f JOIN media m ON m.id = f.media_id WHERE $where ORDER BY $order" + (limit?.let { " LIMIT $it" } ?: ""), args).use { c ->
             while (c.moveToNext()) out.add(face(c))

@@ -14,6 +14,7 @@ import com.localmediatools.gallery.GFace
 import com.localmediatools.gallery.GPerson
 import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
+import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceClustering
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Shapes
@@ -23,7 +24,6 @@ import com.localmediatools.ui.dp
 import com.localmediatools.ui.listRow
 import com.localmediatools.ui.lp
 import com.localmediatools.ui.style
-import com.localmediatools.vision.core.FaceEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,7 +56,7 @@ object FaceSheet {
             val sub = when {
                 person != null && person.confirmed(face) -> "You confirmed this · in ${person.mediaCount} ${if (person.mediaCount == 1) "photo" else "photos"}"
                 person != null -> "Recognised automatically · in ${person.mediaCount} ${if (person.mediaCount == 1) "photo" else "photos"}"
-                !face.good -> "This face is small, blurry or turned, so it isn't grouped automatically"
+                !face.good -> "This face is small, blurry or turned, so it's only grouped when it clearly matches someone"
                 else -> "Not grouped with anyone yet"
             }
             head.addView(UI.titled(ctx, who, sub).apply { setPadding(ctx.dp(14), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
@@ -103,13 +103,14 @@ object FaceSheet {
         val e = f.emb ?: return emptyList()
         if (named.isEmpty()) return emptyList()
         val scored = ArrayList<Pair<GPerson, Float>>()
+        val params = ClusterParams.of(f.kind)
         for (p in named) {
             val faces = db.faces("f.person_id = ? AND f.kind = ? AND f.emb IS NOT NULL", arrayOf(p.id.toString(), f.kind.code.toString()), withEmb = true)
             if (faces.isEmpty()) continue
-            var s = 0f
-            for (o in faces) s += FaceEngine.cosine(e, o.emb!!)
-            val avg = s / faces.size
-            if (avg >= FaceClustering.SUGGEST) scored.add(p to avg)
+            val sum = FloatArray(e.size)
+            for (o in faces) { val oe = o.emb!!; for (k in sum.indices) sum[k] += oe[k] }
+            val s = FaceClustering.similarity(e, sum, faces.size, params)
+            if (s >= params.suggestFace) scored.add(p to s)
         }
         return scored.sortedByDescending { it.second }.take(3).map { it.first }
     }

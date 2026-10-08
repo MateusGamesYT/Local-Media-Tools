@@ -144,10 +144,10 @@ class ScreenshotTest {
             FakeGallery.learnOwners(app)
             val db = com.localmediatools.gallery.GalleryDb.get(app)
             fun groupOf(owner: Int) = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == owner } }
-            com.localmediatools.ui.gallery.FaceSheet.nameGroup(a, groupOf(0), "Sophie", emptyList()) {}
-            waitFor { db.people().any { it.name == "Sophie" } }
-            com.localmediatools.ui.gallery.FaceSheet.nameGroup(a, groupOf(1), "John", db.people().filter { it.named }) {}
-            waitFor { db.people().any { it.name == "John" } }
+            com.localmediatools.ui.gallery.FaceSheet.nameGroup(a, groupOf(0), "Caroline", emptyList()) {}
+            waitFor { db.people().any { it.name == "Caroline" } }
+            com.localmediatools.ui.gallery.FaceSheet.nameGroup(a, groupOf(1), "Ian", db.people().filter { it.named }) {}
+            waitFor { db.people().any { it.name == "Ian" } }
             idle(1200)
             fun texts() = all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().map { it.text.toString() }
             fun tab(label: String, ready: String) {
@@ -155,9 +155,9 @@ class ScreenshotTest {
                 waitFor { texts().any { it.startsWith(ready) } }; idle(800)
             }
             tab("Photos", "Today"); shot(a, dir, "40_gallery_photos")
-            tab("People", "Sophie"); shot(a, dir, "41_gallery_people")
+            tab("People", "Caroline"); shot(a, dir, "41_gallery_people")
             tab("Things", "Dogs"); shot(a, dir, "42_gallery_things")
-            a.navigator.push(com.localmediatools.ui.gallery.SearchScreen(a, "Sophie at the beach")); idle(500)
+            a.navigator.push(com.localmediatools.ui.gallery.SearchScreen(a, "Caroline at the beach")); idle(500)
             waitFor { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.endsWith("results") } }
             idle(800); shot(a, dir, "43_gallery_search")
             a.navigator.pop(); idle()
@@ -166,13 +166,13 @@ class ScreenshotTest {
             all(a.navigator.top!!.view).first { it.contentDescription == "Show faces" }.performClick(); idle(800)
             shot(a, dir, "44_gallery_viewer_faces")
             a.navigator.pop(); idle()
-            val sophie = db.people().single { it.name == "Sophie" }
-            a.navigator.push(com.localmediatools.ui.gallery.PersonScreen(a, sophie.id))
-            waitFor { texts().contains("Sophie") }; idle(1000)
+            val caroline = db.people().single { it.name == "Caroline" }
+            a.navigator.push(com.localmediatools.ui.gallery.PersonScreen(a, caroline.id))
+            waitFor { texts().contains("Caroline") }; idle(1000)
             shot(a, dir, "45_gallery_person")
             a.navigator.pop(); idle()
             a.navigator.push(com.localmediatools.ui.gallery.FacesScreen(a))
-            waitFor { texts().contains("Sophie") }; idle(1000)
+            waitFor { texts().contains("Caroline") }; idle(1000)
             shot(a, dir, "46_gallery_all_faces")
         } finally { FakeGallery.uninstall() }
     }

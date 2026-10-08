@@ -130,14 +130,43 @@ object Robo {
 /**
  * A pretend photo library for gallery tests: MediaStore, the analyzer and the thumbnailer are
  * replaced, so indexing, people grouping, search and every gallery screen run for real on top.
- * Sophie and John appear in several photos (together in some), plus a stranger and a blurry face.
+ * The people are real (test resources /people, Creative Commons, credits in CREDITS.tsv), with the
+ * faces and embeddings the app's face pipeline found in those photos: Caroline Wozniacki (A) and
+ * Ian Somerhalder (B) in several photos (side by side in some), Kelly Clarkson (C) in three, and a
+ * small, far-away face of Caroline that is too unclear to group.
  */
 object FakeGallery {
     const val DAY = 86_400_000L
     val now = System.currentTimeMillis()
-    /** Which identity each face belongs to: 0 Sophie, 1 John, 2 a stranger. */
+    /** Which identity each stored face belongs to: 0 Caroline, 1 Ian, 2 Kelly. */
     val faceOwners = HashMap<Long, Int>()
-    private val colors = intArrayOf(0xFFE0A47A.toInt(), 0xFF8D5A3B.toInt(), 0xFFB4C7DB.toInt())
+
+    /** A face from the fixture: its photo, box (fractions of the photo) and what the pipeline found. */
+    class RealFace(val file: String, val x: Float, val y: Float, val w: Float, val h: Float, val score: Float, val eye: Float, val yaw: Float, val emb: FloatArray)
+
+    /** Fixture faces by role (A1..A10, A-small, B1..B12, C1..C3). */
+    val roles: Map<String, RealFace> by lazy {
+        val out = HashMap<String, RealFace>()
+        val text = FakeGallery::class.java.getResourceAsStream("/people/faces.tsv")!!.readBytes().toString(Charsets.UTF_8)
+        for (line in text.lines()) {
+            if (line.isBlank() || line.startsWith("#")) continue
+            val r = line.split('\t')
+            val fb = java.nio.ByteBuffer.wrap(java.util.Base64.getDecoder().decode(r[12])).order(java.nio.ByteOrder.LITTLE_ENDIAN).asFloatBuffer()
+            val face = RealFace(r[0], r[2].toFloat(), r[3].toFloat(), r[4].toFloat(), r[5].toFloat(), r[6].toFloat(), r[7].toFloat(), r[8].toFloat(), FloatArray(128) { fb.get(it) })
+            for (role in r[11].split(',')) if (role.isNotEmpty() && role != "jvm") out[role] = face
+        }
+        out
+    }
+
+    /** Who is in each item, left to right. */
+    fun people(id: Long): List<String> = when (id) {
+        in 1L..2L -> listOf("A$id")
+        in 3L..10L -> listOf("A$id", "B${id - 2}")
+        in 11L..14L -> listOf("B${id - 2}")
+        in 20L..22L -> listOf("C${id - 19}")
+        30L -> listOf("A-small")
+        else -> emptyList()
+    }
 
     fun media(): List<com.localmediatools.gallery.GMedia> = (1L..36L).map { id ->
         val video = id == 7L || id == 21L
@@ -164,52 +193,69 @@ object FakeGallery {
         return t
     }
 
-    private fun centre(p: Int): FloatArray {
-        val r = java.util.Random(100L + p)
-        return com.localmediatools.vision.core.FaceEngine.normalize(FloatArray(128) { r.nextGaussian().toFloat() })
+    private val photos = HashMap<String, Bitmap>()
+    private fun photo(file: String): Bitmap = synchronized(photos) {
+        photos.getOrPut(file) { FakeGallery::class.java.getResourceAsStream("/people/$file")!!.use { BitmapFactory.decodeStream(it)!! } }
+    }
+
+    /**
+     * Where each person's photo sits in an item's 4:3 picture (fractions): one photo fills it, two
+     * stand side by side, each scaled to fit its half and centred.
+     */
+    private fun layout(id: Long): List<Pair<RealFace, android.graphics.RectF>> {
+        val who = people(id).map { roles.getValue(it) }
+        return who.mapIndexed { k, f ->
+            val b = photo(f.file)
+            val cellW = 4f / who.size
+            val s = minOf(cellW / b.width, 3f / b.height)
+            val w = b.width * s; val h = b.height * s
+            val left = k * cellW + (cellW - w) / 2; val top = (3f - h) / 2
+            f to android.graphics.RectF(left / 4f, top / 3f, (left + w) / 4f, (top + h) / 3f)
+        }
     }
 
     fun analysis(m: com.localmediatools.gallery.GMedia): com.localmediatools.gallery.Analysis {
-        val id = m.id
-        val who = ArrayList<Int>()
-        if (id in 1L..10L) who.add(0)
-        if (id in 3L..14L) who.add(1)
-        if (id in 20L..22L) who.add(2)
-        val faces = who.mapIndexed { k, p ->
-            val r = java.util.Random(id * 31 + p)
-            val c = centre(p)
-            val e = com.localmediatools.vision.core.FaceEngine.normalize(FloatArray(128) { c[it] + 0.6f * r.nextGaussian().toFloat() / 11.3f })
-            com.localmediatools.gallery.FoundFace(0.18f + 0.38f * k, 0.22f, 0.2f, 0.27f, 0.93f, 48f, 0.08f, e)
-        }.toMutableList()
-        // A small, blurry face of Sophie: found but not grouped on its own.
-        if (id == 30L) {
-            val r = java.util.Random(7); val c = centre(0)
-            faces.add(com.localmediatools.gallery.FoundFace(0.6f, 0.4f, 0.05f, 0.07f, 0.66f, 12f, 0.5f,
-                com.localmediatools.vision.core.FaceEngine.normalize(FloatArray(128) { c[it] + 2.6f * r.nextGaussian().toFloat() / 11.3f })))
+        val faces = layout(m.id).map { (f, r) ->
+            com.localmediatools.gallery.FoundFace(r.left + f.x * r.width(), r.top + f.y * r.height(), f.w * r.width(), f.h * r.height(), f.score, f.eye, f.yaw, f.emb)
         }
-        val t = tags(id).toMutableMap()
+        val t = tags(m.id).toMutableMap()
         if (faces.isNotEmpty()) t["people"] = 0.92f
         return com.localmediatools.gallery.Analysis(t, faces)
     }
 
-    /** Synthetic pictures: a scene per tag, with a face disc for each person in it. */
+    /** Pictures: the real photos for items with people (a crop around the face when asked for a face), a drawn scene per tag otherwise. */
     fun picture(m: com.localmediatools.gallery.GMedia?, f: com.localmediatools.gallery.GFace?, size: Int): Bitmap {
         val s = size.coerceIn(64, 512)
-        val b = Bitmap.createBitmap(s, s * 3 / 4, Bitmap.Config.ARGB_8888)
-        val c = android.graphics.Canvas(b)
-        val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
         if (f != null) {
-            val owner = faceOwners[f.id] ?: 0
+            // The face with some room around it, cut from the photo it came from.
+            val cx = f.x + f.w / 2; val cy = f.y + f.h / 2
+            val placed = layout(f.mediaId)
+            val (rf, r) = placed.firstOrNull { it.second.contains(cx, cy) } ?: placed.firstOrNull() ?: return scene(f.mediaId, null, s)
+            val b = photo(rf.file)
+            val px = (cx - r.left) / r.width() * b.width; val py = (cy - r.top) / r.height() * b.height
+            val side = maxOf(f.w / r.width() * b.width, f.h / r.height() * b.height) * 1.8f
             val sq = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888)
-            val cc = android.graphics.Canvas(sq)
-            cc.drawColor(0xFF2A2F3A.toInt())
-            p.color = colors[owner]; cc.drawCircle(s / 2f, s * 0.55f, s * 0.34f, p)
-            p.color = 0xFF3B2A20.toInt(); cc.drawArc(s * 0.16f, s * 0.12f, s * 0.84f, s * 0.7f, 180f, 180f, true, p)
+            val c = android.graphics.Canvas(sq)
+            c.drawColor(0xFF15171C.toInt())
+            c.drawBitmap(b, android.graphics.Rect((px - side / 2).toInt(), (py - side / 2).toInt(), (px + side / 2).toInt(), (py + side / 2).toInt()),
+                android.graphics.Rect(0, 0, s, s), android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG))
             return sq
         }
-        val id = m?.id ?: 0
-        val t = tags(id)
+        return scene(m?.id ?: 0, m, s)
+    }
+
+    private fun scene(id: Long, m: com.localmediatools.gallery.GMedia?, s: Int): Bitmap {
+        val b = Bitmap.createBitmap(s, s * 3 / 4, Bitmap.Config.ARGB_8888)
+        val c = android.graphics.Canvas(b)
+        val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG or android.graphics.Paint.FILTER_BITMAP_FLAG)
         val w = b.width.toFloat(); val h = b.height.toFloat()
+        val placed = layout(id)
+        if (placed.isNotEmpty()) {
+            c.drawColor(0xFF15171C.toInt())
+            for ((f, r) in placed) c.drawBitmap(photo(f.file), null, android.graphics.RectF(r.left * w, r.top * h, r.right * w, r.bottom * h), p)
+            return b
+        }
+        val t = tags(id)
         when {
             "beach" in t -> {
                 p.shader = android.graphics.LinearGradient(0f, 0f, 0f, h, intArrayOf(0xFF7EC8F2.toInt(), 0xFF2E86C1.toInt(), 0xFFE9D7A6.toInt()), floatArrayOf(0f, 0.55f, 0.7f), android.graphics.Shader.TileMode.CLAMP)
@@ -230,12 +276,6 @@ object FakeGallery {
         }
         if ("dog" in t) { p.color = 0xFF8D6E63.toInt(); c.drawOval(w * 0.35f, h * 0.45f, w * 0.75f, h * 0.85f, p); c.drawCircle(w * 0.75f, h * 0.45f, h * 0.13f, p) }
         if ("car" in t) { p.color = 0xFFD32F2F.toInt(); c.drawRoundRect(w * 0.2f, h * 0.5f, w * 0.8f, h * 0.75f, 20f, 20f, p); p.color = 0xFF212121.toInt(); c.drawCircle(w * 0.33f, h * 0.77f, h * 0.08f, p); c.drawCircle(w * 0.67f, h * 0.77f, h * 0.08f, p) }
-        val a = analysis(m ?: return b)
-        for ((k, face) in a.faces.withIndex()) {
-            val owner = if (m.id in 1L..10L && k == 0) 0 else if (m.id in 20L..22L) 2 else 1
-            p.color = colors[owner]
-            c.drawCircle((face.x + face.w / 2) * w, (face.y + face.h / 2) * h, face.w * w * 0.45f, p)
-        }
         return b
     }
 
@@ -251,13 +291,14 @@ object FakeGallery {
         com.localmediatools.ui.gallery.GalleryThumbs.override = { m, f, size -> picture(m, f, size) }
     }
 
-    /** After indexing: remember who each stored face is (for drawing face crops). */
+    /** After indexing: remember who each stored face is (the fixture embedding it was stored with). */
     fun learnOwners(app: Context) {
         faceOwners.clear()
         val db = com.localmediatools.gallery.GalleryDb.get(app)
         for (f in db.faces("1", withEmb = true)) {
             val e = f.emb ?: continue
-            faceOwners[f.id] = (0..2).maxByOrNull { p -> com.localmediatools.vision.core.FaceEngine.cosine(e, centre(p)) }!!
+            val role = roles.entries.firstOrNull { it.value.emb.contentEquals(e) }?.key ?: continue
+            faceOwners[f.id] = "ABC".indexOf(role[0])
         }
     }
 

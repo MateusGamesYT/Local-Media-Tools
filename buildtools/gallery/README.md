@@ -46,7 +46,52 @@ letterbox arithmetic) and checks the final tags against the calibration path. Wi
 resizes exactly like Pillow (`PilResample`, checked bit for bit by a JVM test) and all 2,000 do.
 Not covered: photos larger than 1,600 px are first decoded smaller by Android itself.
 
-People grouping thresholds were tuned with `face_embed.py` / `face_analyze.py` / `cluster_proto.py`
-on the BIWI Kinect Head Pose database (not redistributable; only the measured results are used):
-the same YuNet + SFace pipeline as the app, clustering several hundred faces of 16 people.
-`lbp_eval.py` measured the classical fallback descriptor.
+## People: real photos (`people/`)
+
+People grouping (`ClusterParams.SFACE` in `gallery/core/FaceClusters.kt`) is tuned and checked on
+real photos of real people: Open Images V7 photos from Flickr, all under CC BY 2.0. Scripts and the
+verified labels are in `people/`; downloads and intermediate files go to `buildtools/dl/people`
+(or `PEOPLE_WORK`). Python 3.12 with NumPy, Pillow and OpenCV 4.11 (`opencv-python`).
+
+1. `strip_meta.py out.csv.gz < image_ids_and_rotation.csv` — the metadata (title, author, licence,
+   rotation); keep the downloadable images (validation, test, boxable train).
+2. `mine_names.py` → names that recur in titles by several photographers; `names.txt` the chosen 86.
+   `collect.py` → photos whose title names them (statues, posters, wax figures, costumes, look-alikes,
+   screens… excluded by title); `photos.json` the 1,233 used (at most 40 a person, spread over
+   photographers).
+3. `fetch.py photos.json` (rotation applied, at most 2,048 px); `extract.py photos.json faces.json` —
+   the app's face pipeline (`GalleryFaces`) in Python: 4,578 faces with embeddings.
+4. `propose.py` + `sheets.py` → each person's face in each photo, checked by eye on contact sheets:
+   `labels.json`, 802 faces of 78 people, tagged H (headwear), G (glasses), M (heavy make-up),
+   E (strong expression). Excluded: wax figures, posters, impersonators, unclear faces, and one
+   account reposting magazine shoots. The 3,776 other faces are kept as strangers.
+5. `harness/build.sh` compiles the app's `gallery/core` with `Harness.kt`; `evaluate.py` has the
+   metrics (B-cubed precision/recall over verified faces, share of each person's faces in their main
+   group, per condition, strangers joining someone) and a Python port of the grouping that gives the
+   same groups as the Kotlin code.
+6. `search.py A|B <n>` — random search tuned on one half of the people (39), checked on the other;
+   `final_eval.py '<params>'` — 1.4.1's rules vs new ones through the app's code (`ClusterParams`
+   cites the results).
+
+| Through the app's code | 1.4.1 recall / main group | 1.5.0 recall / main group | wrong faces |
+|---|---|---|---|
+| Half A (tuning) | 0.70 / 75 % | 0.83 / 86 % | 0 → 0 |
+| Half B (held out) | 0.63 / 77 % | 0.81 / 87 % | 0 → 0 |
+| All 78 people at once | 0.65 / 75 % | 0.81 / 87 % | 2 → 6 of 802 |
+
+Findings that shaped the rules: SFace separates these people well (97 % of faces are closer to
+their own person's mean face than to anyone else's); the averaged rules were the problem, because
+people photographed in varied conditions agree less with each other on average. Comparing a face with
+a group's mean face fixes that, but lets blurry strangers in; a gate on the detector's score (0.85)
+for faces that may only join a group keeps them out about as well as the embedding's magnitude would
+(which would need every photo analysed again). The mean faces of two different people reached 0.56
+(merging starts at 0.65). The six wrong faces were mostly faces with dark sunglasses (and hats).
+
+7. `make_fixture.py <dir>` writes the app's test photos (`app/src/test/resources/people`): crops of
+   63 photos (no edits, screen grabs or promotional reposts), the faces found with embeddings, labels
+   and credits. `fixture_sheet.py` draws them for checking.
+
+Earlier (1.4.0–1.4.1) the thresholds came from `face_embed.py` / `face_analyze.py` / `cluster_proto.py`
+on the BIWI Kinect Head Pose database (not redistributable; only the measured results were used):
+the same YuNet + SFace pipeline, clustering several hundred faces of 16 people. `lbp_eval.py`
+measured the classical fallback descriptor.
