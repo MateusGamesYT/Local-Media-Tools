@@ -20,7 +20,7 @@ class NameSuggestionsTest {
     }
 
     @Test fun suggestsWhoAGroupIsAndNeverSomeoneElse() {
-        val p = ClusterParams.SFACE
+        val p = ClusterParams.MBF
         val seen = RealPeopleTest.seen
         val recs = seen.mapIndexed { i, s -> FaceRec(i.toLong(), s.emb, p.quality(s.score, s.yaw, s.eye), p.isGood(s.score, s.yaw, s.eye), usable = p.isUsable(s.score)) }
         val groups = FaceClustering.cluster(recs, p).filter { it.faces.size >= 2 }.sortedByDescending { it.faces.size }

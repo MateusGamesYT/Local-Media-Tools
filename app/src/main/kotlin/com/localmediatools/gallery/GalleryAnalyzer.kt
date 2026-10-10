@@ -30,20 +30,23 @@ class GalleryAnalyzer private constructor(
     val faceMode get() = if (faces != null) EngineMode.AI else if (basicFaces != null) EngineMode.BASIC else EngineMode.OFF
     val objectMode get() = if (objects != null) EngineMode.AI else EngineMode.BASIC
 
-    fun analyze(m: GMedia): Analysis = if (m.video) video(m) else photo(m)
+    fun analyze(m: GMedia): Analysis = if (m.video) video(m, true) else photo(m, true)
 
-    private fun photo(m: GMedia): Analysis {
+    /** Only the faces (the tags of an earlier analysis stay); [Analysis.tags] is empty. */
+    fun analyzeFaces(m: GMedia): Analysis = if (m.video) video(m, false) else photo(m, false)
+
+    private fun photo(m: GMedia, withTags: Boolean): Analysis {
         ImageSource.open(ctx, m.uri, m.name).use { src ->
             val work = src.preview(GalleryFaces.DETECT_SIDE)
             try {
                 val found = findFaces(src, work)
-                val tags = tagsFor(work, found)
+                val tags = if (withTags) tagsFor(work, found) else emptyMap()
                 return Analysis(tags, found)
             } finally { work.recycle() }
         }
     }
 
-    private fun video(m: GMedia): Analysis {
+    private fun video(m: GMedia, withTags: Boolean): Analysis {
         val mmr = MediaMetadataRetriever()
         try {
             mmr.setDataSource(ctx, m.uri)
@@ -57,7 +60,7 @@ class GalleryAnalyzer private constructor(
                     val f = findFaces(null, frame)
                     // Remember the frame, so the face's picture can be cut from that same frame later.
                     all.addAll(f.map { it.atFrame(t / 1000) })
-                    for ((k, v) in tagsFor(frame, f)) tags[k] = max(tags[k] ?: 0f, v)
+                    if (withTags) for ((k, v) in tagsFor(frame, f)) tags[k] = max(tags[k] ?: 0f, v)
                 } finally { frame.recycle() }
             }
             return Analysis(tags, dedupe(all))
@@ -71,7 +74,8 @@ class GalleryAnalyzer private constructor(
         val out = ArrayList<FoundFace>()
         for (f in list.sortedByDescending { it.quality }) {
             val e = f.emb
-            if (e != null && out.any { o -> o.emb != null && FaceEngine.cosine(o.emb, e) >= 0.55f }) continue
+            val same = com.localmediatools.gallery.core.ClusterParams.of(f.kind).sameVideoFace
+            if (e != null && out.any { o -> o.emb != null && o.kind == f.kind && FaceEngine.cosine(o.emb, e) >= same }) continue
             if (e == null && out.size >= 8) continue
             out.add(f)
         }
@@ -109,12 +113,14 @@ class GalleryAnalyzer private constructor(
     /** Quick checks that the AI engines load and give sane answers on this phone. */
     object SelfTest {
         fun faces(engine: FaceEngine): Boolean {
-            // A blank picture has no faces; the call must simply work.
+            // A blank picture has no faces; the call must simply work. The recogniser must describe a
+            // fixed pattern as it did when it was converted.
             val bmp = Bitmap.createBitmap(160, 120, Bitmap.Config.ARGB_8888)
             return try {
                 bmp.eraseColor(0xFF808080.toInt())
                 val m = VisionOps.bgr(bmp)
-                try { engine.detect(m); true } finally { m.release() }
+                try { engine.detect(m) } finally { m.release() }
+                engine.recognizerWorks().also { if (!it) android.util.Log.w("LMT", "face recognition self-test failed") }
             } catch (t: Throwable) { android.util.Log.w("LMT", "face self-test failed", t); false } finally { bmp.recycle() }
         }
 

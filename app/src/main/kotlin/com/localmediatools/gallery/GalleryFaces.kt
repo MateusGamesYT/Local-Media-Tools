@@ -20,7 +20,7 @@ class FoundFace(
     val eyePx: Float,
     val yaw: Float,
     val emb: FloatArray?,
-    val kind: FaceKind = FaceKind.SFACE,
+    val kind: FaceKind = FaceKind.AI,
     /** For videos: the frame (ms) the face was seen in. */
     val frameMs: Long = 0,
 ) {
@@ -32,7 +32,7 @@ class FoundFace(
 }
 
 /**
- * Face pipeline for the gallery: YuNet on a copy of at most [DETECT_SIDE] px, then SFace identity
+ * Face pipeline for the gallery: YuNet on a copy of at most [DETECT_SIDE] px, then MobileFaceNet identity
  * embeddings averaged with the mirrored face. Small faces are detected again on a sharper crop
  * decoded from the full-resolution original, so people far from the camera are still recognised.
  */

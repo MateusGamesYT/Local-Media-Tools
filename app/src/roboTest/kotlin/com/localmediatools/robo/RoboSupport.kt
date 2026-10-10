@@ -133,7 +133,7 @@ object Robo {
  * The people are real (test resources /people, Creative Commons, credits in CREDITS.tsv), with the
  * faces and embeddings the app's face pipeline found in those photos: Caroline Wozniacki (A) and
  * Ian Somerhalder (B) in several photos (side by side in some), Kelly Clarkson (C) in three, and a
- * small, far-away face of Caroline that is too unclear to group.
+ * small, far-away face of Caroline in profile (SFace left it on its own; MobileFaceNet recognises it).
  */
 object FakeGallery {
     const val DAY = 86_400_000L
@@ -152,7 +152,7 @@ object FakeGallery {
             if (line.isBlank() || line.startsWith("#")) continue
             val r = line.split('\t')
             val fb = java.nio.ByteBuffer.wrap(java.util.Base64.getDecoder().decode(r[12])).order(java.nio.ByteOrder.LITTLE_ENDIAN).asFloatBuffer()
-            val face = RealFace(r[0], r[2].toFloat(), r[3].toFloat(), r[4].toFloat(), r[5].toFloat(), r[6].toFloat(), r[7].toFloat(), r[8].toFloat(), FloatArray(128) { fb.get(it) })
+            val face = RealFace(r[0], r[2].toFloat(), r[3].toFloat(), r[4].toFloat(), r[5].toFloat(), r[6].toFloat(), r[7].toFloat(), r[8].toFloat(), FloatArray(fb.remaining()) { fb.get(it) })
             for (role in r[11].split(',')) if (role.isNotEmpty() && role != "jvm") out[role] = face
         }
         out

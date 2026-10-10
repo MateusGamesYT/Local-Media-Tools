@@ -9,7 +9,9 @@ photo and order (and checked by box), so the verified labels apply.
     (SFace, the app's current model, is always included as "sface"; the aligned faces are kept in
     <work>/models_crops.npy.)
     python extract_models.py <model dir> name=file.tflite … --from-crops   → the same from the kept faces
-    (for converted or quantised versions of a model: .onnx or .tflite).
+    (for converted or quantised versions of a model: .onnx or .tflite; name=file.onnx:cv runs an ONNX
+    file through OpenCV's DNN module as the app does; --single also writes models_<name>_single.npy,
+    the face alone without its mirror image, as face blur describes faces).
 """
 import os, sys, time, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -38,16 +40,40 @@ class TfliteModel:
         return out / np.linalg.norm(out, axis=1, keepdims=True)
 
 
-def from_crops(models):
+class CvModel:
+    """An ONNX model through OpenCV's DNN module, prepared as the app prepares faces (blobFromImages)."""
+    def __init__(self, path):
+        self.net = cv2.dnn.readNetFromONNX(path)
+
+    def describe(self, faces_bgr):
+        self.net.setInput(cv2.dnn.blobFromImages(faces_bgr, 1 / 127.5, (112, 112), (127.5, 127.5, 127.5), swapRB=True))
+        out = self.net.forward()
+        return out / np.linalg.norm(out, axis=1, keepdims=True)
+
+
+class SfaceModel:
+    """The shipped SFace model through OpenCV's FaceRecognizerSF."""
+    def describe(self, faces_bgr):
+        out = np.array([rec.feature(f).flatten() for f in faces_bgr], np.float32)
+        return out / np.linalg.norm(out, axis=1, keepdims=True)
+
+
+def load_model(mdir, f):
+    if f == 'sface': return SfaceModel()
+    if f.endswith(':cv'): return CvModel(os.path.join(mdir, f[:-3]))
+    return (TfliteModel if f.endswith('.tflite') else Model)(os.path.join(mdir, f))
+
+
+def from_crops(models, single=False):
     crops = np.load(os.path.join(WORK, 'models_crops.npy'))
     for name, m in models.items():
-        t0 = time.time(); rows = []
+        t0 = time.time(); rows = []; ones = []
         for k, c in enumerate(crops):
-            if not c.any(): rows.append(np.full(512, np.nan, np.float32)); continue
             d = m.describe([c, cv2.flip(c, 1)]); e = d[0] + d[1]
-            rows.append(e / np.linalg.norm(e))
+            rows.append(e / np.linalg.norm(e)); ones.append(d[0])
             if k % 500 == 0: print(name, k, f"{time.time() - t0:.0f} s", flush=True)
         np.save(os.path.join(WORK, f'models_{name}.npy'), np.array(rows, np.float32))
+        if single: np.save(os.path.join(WORK, f'models_{name}_single.npy'), np.array(ones, np.float32))
         print(name, len(rows), 'faces')
 
 
@@ -74,7 +100,7 @@ def main():
     specs = [a.split('=', 1) for a in sys.argv[2:] if '=' in a]
     only = int(sys.argv[sys.argv.index('--only') + 1]) if '--only' in sys.argv else None
     if '--from-crops' in sys.argv:
-        return from_crops({name: (TfliteModel if f.endswith('.tflite') else Model)(os.path.join(mdir, f)) for name, f in specs})
+        return from_crops({name: load_model(mdir, f) for name, f in specs}, single='--single' in sys.argv)
     models = {name: Model(os.path.join(mdir, f)) for name, f in specs}
     faces = load(os.path.join(WORK, 'faces.json'), os.path.join(HERE, 'labels.json'))
     index = {f['face']: k for k, f in enumerate(faces)}

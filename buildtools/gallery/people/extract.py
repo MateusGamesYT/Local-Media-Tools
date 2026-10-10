@@ -1,11 +1,13 @@
 """The app's face pipeline (GalleryFaces.analyze) in Python: YuNet on a copy of at most 1600 px,
-small faces re-detected from the full-resolution picture, SFace (int8) embeddings averaged with the
-mirrored face. Saves every face with its embedding, quality numbers and a crop for checking."""
+small faces re-detected from the full-resolution picture, embeddings averaged with the mirrored face:
+SFace (int8), the app's recogniser until 1.7.0 and what faces.json holds, or after use_mbf() the
+1.8.0 recogniser (MobileFaceNet with 16-bit weights through OpenCV's DNN module, the face aligned as
+FaceAlign does). Saves every face with its embedding, quality numbers and a crop for checking."""
 import cv2, numpy as np, json, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import WORK as D, MODELS as M
+from common import WORK as D, MODELS as M, SFACE
 det = cv2.FaceDetectorYN.create(os.path.join(M, 'face_detection_yunet_2023mar.onnx'), '', (320, 320), 0.62, 0.3, 500)
-rec = cv2.FaceRecognizerSF.create(os.path.join(M, 'face_recognition_sface_2021dec_int8.onnx'), '')
+rec = cv2.FaceRecognizerSF.create(SFACE, '')
 def detect(img):
     h, w = img.shape[:2]; det.setInputSize((w, h))
     _, f = det.detect(img)
@@ -28,6 +30,27 @@ def emb(img, r):
     e = e / np.linalg.norm(e)
     NORMS[id(e)] = ((na + nb) / 2, float(a @ b))
     return e
+# 1.8.0: MobileFaceNet, as vision/core/FaceEngine.kt describes faces.
+DST = np.array([[38.2946, 51.6963], [73.5318, 51.5014], [56.0252, 71.7366], [41.5493, 92.3655], [70.7299, 92.2041]])
+def align_matrix(r):
+    """FaceAlign.matrix: the least-squares similarity transform of the five landmarks onto DST."""
+    src = np.array(r[4:14], np.float64).reshape(5, 2)
+    sm = src.mean(0); dm = np.array([56.0262, 71.9008])
+    s = src - sm; d = DST - dm; n = (s ** 2).sum()
+    a = (s * d).sum() / n; b = (s[:, 0] * d[:, 1] - s[:, 1] * d[:, 0]).sum() / n
+    M = np.array([[a, -b, 0], [b, a, 0]]); M[:, 2] = dm - M[:, :2] @ sm
+    return M
+_mbf = []
+def emb_mbf(img, r):
+    if not _mbf: _mbf.append(cv2.dnn.readNetFromONNX(os.path.join(M, 'face_recognition_mbf_w600k_fp16.onnx')))
+    al = cv2.warpAffine(img, align_matrix(r), (112, 112), flags=cv2.INTER_LINEAR)
+    _mbf[0].setInput(cv2.dnn.blobFromImages([al, cv2.flip(al, 1)], 1 / 127.5, (112, 112), (127.5, 127.5, 127.5), swapRB=True))
+    o = _mbf[0].forward().astype(np.float32); o /= np.linalg.norm(o, axis=1, keepdims=True)
+    e = o[0] + o[1]
+    return e / np.linalg.norm(e)
+def use_mbf():
+    global emb
+    emb = emb_mbf
 def refine(full, r, up):
     eye, _ = eyes_yaw(r); fe = eye * up; sample = 1
     while fe / (sample * 2) >= 64 and sample < 16: sample *= 2

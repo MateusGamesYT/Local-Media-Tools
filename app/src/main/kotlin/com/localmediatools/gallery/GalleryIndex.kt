@@ -33,8 +33,13 @@ import kotlin.coroutines.coroutineContext
  * Runs at low priority, eases off when the phone is hot and pauses when the battery is low.
  */
 object GalleryIndex {
-    /** Bump when what the analyzer stores changes, so older results are redone. */
-    const val ANALYZER_VERSION = 2
+    /**
+     * Bump when what the analyzer stores changes, so older results are redone. 3 (1.8.0): faces are
+     * described with MobileFaceNet; items analysed by version [FACES_ONLY_FROM] only have their faces
+     * looked at again (their tags stay, and what the user said about each face stays with it).
+     */
+    const val ANALYZER_VERSION = 3
+    const val FACES_ONLY_FROM = 2
 
     /**
      * What an analysis is stored as: the version plus how capable the engines were, so photos looked
@@ -60,6 +65,8 @@ object GalleryIndex {
         val pausedWhy: String? = null,
         /** Paused from the app or the notification (not for battery or heat). */
         val pausedByUser: Boolean = false,
+        /** Faces found before are being described again by a newer face model (names are kept). */
+        val updatingFaces: Boolean = false,
         val faceMode: EngineMode? = null,
         val objectMode: EngineMode? = null,
     ) {
@@ -148,6 +155,9 @@ object GalleryIndex {
     /** Whether a pass is running (tests wait on it). */
     val busy get() = job?.isActive == true
 
+    /** Waits until the work queued on the indexing thread so far (e.g. a regrouping) has finished (tests). */
+    fun drainForTests() = kotlinx.coroutines.runBlocking { scope.launch { }.join() }
+
     /** Back to a clean state (tests). */
     fun resetForTests() {
         job?.cancel(); job = null; analyzer = null; again = false; userPaused = false; lastStart = 0L
@@ -168,6 +178,9 @@ object GalleryIndex {
         }
         val a = if (analyzerOverride != null) null else analyzer ?: GalleryAnalyzer.create(ctx).also { analyzer = it }
         target = if (a == null) analyzedValue(EngineMode.AI, EngineMode.AI) else analyzedValue(a.faceMode, a.objectMode)
+        // Items without faces need nothing new from a face-model update; where the face AI doesn't work,
+        // faces described before stay as they are (still grouped) instead of becoming basic ones.
+        db.promoteUnchanged(FACES_ONLY_FROM, target, keepFaces = a != null && a.faceMode != EngineMode.AI)
         var (done, total) = db.counts(target)
         if (done >= total) {
             // Nothing new to look at, but people found under older grouping rules are regrouped once.
@@ -193,14 +206,21 @@ object GalleryIndex {
                 // Counted before looking, so a file that crashes the app is skipped after two tries.
                 db.markAttempt(m.id)
                 val t0 = System.nanoTime()
+                // Analysed before with engines at least as capable for tags: only the faces are new.
+                val prev = db.analyzedValue(m.id)
+                val facesOnly = prev / 10 == FACES_ONLY_FROM && prev % 2 >= target % 2
+                if (facesOnly != _state.value.updatingFaces) _state.update { it.copy(updatingFaces = facesOnly) }
                 val result = try {
-                    analyzerOverride?.invoke(m) ?: a!!.analyze(m)
+                    analyzerOverride?.invoke(m) ?: if (facesOnly) a!!.analyzeFaces(m) else a!!.analyze(m)
                 } catch (e: OutOfMemoryError) { null } catch (e: Exception) { null }
                 if (result != null) {
-                    db.saveAnalysis(m.id, target, result.tags, result.faces.map { f ->
+                    val faces = result.faces.map { f ->
                         GFace(0, m.id, f.x, f.y, f.w, f.h, f.score, f.eyePx, f.yaw, f.good, f.quality, f.frameMs, f.kind, f.emb, null, false)
-                    })
-                    newFaces += result.faces.count { it.emb != null }
+                    }
+                    if (facesOnly) db.saveFaces(m.id, target, faces) else db.saveAnalysis(m.id, target, result.tags, faces)
+                    // Faces described again keep their people until the regrouping at the end, so nobody
+                    // shows up twice (old and new descriptions) on the way.
+                    if (!facesOnly) newFaces += result.faces.count { it.emb != null }
                     done++
                     _state.update { it.copy(done = done) }
                 }
@@ -221,7 +241,7 @@ object GalleryIndex {
         }
         regroup(ctx, db)
         val (d, t) = db.counts(target)
-        _state.update { it.copy(phase = Phase.DONE, done = d, total = t) }
+        _state.update { it.copy(phase = Phase.DONE, done = d, total = t, updatingFaces = false) }
         notifyChanged()
     }
 

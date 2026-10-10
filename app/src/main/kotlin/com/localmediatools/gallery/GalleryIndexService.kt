@@ -125,6 +125,7 @@ class GalleryIndexService : Service() {
             val text = when {
                 s.phase == GalleryIndex.Phase.PAUSED -> s.pausedWhy ?: "Paused"
                 s.phase == GalleryIndex.Phase.GROUPING -> "Grouping faces into people"
+                s.updatingFaces && s.total > 0 -> "Updating face recognition · ${s.done} of ${s.total} · names are kept"
                 s.total > 0 -> "${s.done} of ${s.total} photos and videos · on this phone"
                 else -> "Reading your library"
             }

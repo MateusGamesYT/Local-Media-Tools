@@ -6,7 +6,7 @@ import kotlin.math.sqrt
 /** One face as the people grouping sees it. */
 class FaceRec(
     val id: Long,
-    /** L2-normalised identity embedding (SFace, flip-averaged). */
+    /** L2-normalised identity embedding (MobileFaceNet or, before 1.8.0, SFace; flip-averaged). */
     val emb: FloatArray,
     /** Higher is better: detector score × eye distance × frontalness. */
     val quality: Float,
@@ -25,12 +25,18 @@ class FaceGroup(val faces: LongArray, val person: Long?)
 
 /** Which descriptor a face was described with; faces are only compared within one kind. */
 enum class FaceKind(val code: Int) {
-    /** SFace identity embedding (on-device AI). */
+    /** SFace identity embedding (on-device AI until 1.7.0; such faces are described again with [MBF]). */
     SFACE(0),
     /** Classical LBP texture descriptor (fallback when the AI can't run). */
-    LBP(1);
+    LBP(1),
+    /** MobileFaceNet identity embedding (on-device AI since 1.8.0). */
+    MBF(2);
 
-    companion object { fun of(code: Int) = entries.firstOrNull { it.code == code } ?: SFACE }
+    companion object {
+        fun of(code: Int) = entries.firstOrNull { it.code == code } ?: SFACE
+        /** What the face AI describes faces with now. */
+        val AI = MBF
+    }
 }
 
 /**
@@ -48,6 +54,8 @@ class ClusterParams(
     val suggestFace: Float = 0.30f,
     /** Groups this similar (but below [merge]) are offered as "same person?" suggestions. */
     val suggestGroup: Float = 0.30f,
+    /** Faces seen in several frames of one video this alike are one person, kept once. */
+    val sameVideoFace: Float = 0.55f,
 ) {
     fun isGood(score: Float, yaw: Float, eyePx: Float) = score >= goodScore && yaw <= goodYaw && eyePx >= goodEye
 
@@ -86,7 +94,31 @@ class ClusterParams(
         val BASIC = ClusterParams(join = 0.80f, merge = 0.80f, assign = 0.80f, low = 0.86f, margin = 0.05f,
             goodScore = 0.45f, goodYaw = 1f, goodEye = 20f, suggestFace = 0.70f, suggestGroup = 0.70f)
 
-        fun of(kind: FaceKind) = if (kind == FaceKind.LBP) BASIC else SFACE
+        /**
+         * MobileFaceNet (InsightFace w600k_mbf, flip-averaged), 1.8.0, measured the same way on the same
+         * photos, with the 83 faces of the 78 people the first labels had missed added and 49 unclear
+         * ones left out (885 faces): thresholds searched on half A of the people and checked on half B,
+         * which they were not tuned on (buildtools/gallery/README.md, "Stronger face models"). Against
+         * SFace on the same faces, a person's faces in their main group went from 86 % to 92 % (A) and
+         * from 86 % to 90 % (B), faces left on their own from 15 % to 8 % and from 18 % to 12.5 %
+         * (B-cubed recall 0.831 → 0.886 and 0.784 → 0.851), with no face of another labelled person in
+         * anyone's group on either half. A user naming each person's biggest group once gets 93 % (A)
+         * and 89 % (B) of their faces under the name (SFace 88 % and 82 %). All 78 people grouped at
+         * once: 3 faces with the wrong person (SFace 8) and 50 strangers' faces in someone's group
+         * (SFace 36, of 3,644 strangers' faces).
+         *  - merge 0.50: the most alike two different people's mean faces came to 0.34; anywhere from
+         *    0.35 to 0.55 groups the same, and 0.50 left no wrong group for the user to correct;
+         *  - suggestions: two different people's groups were at most 0.27 alike on either half and a
+         *    single face at most 0.33 to someone else's group; at 0.36 (groups) and 0.38 (faces),
+         *    97–100 % of a person's own groups and 80–86 % of their single faces are offered (SFace's
+         *    0.62 / 0.55 on these faces: 94–97 % and 74–75 %);
+         *  - sameVideoFace 0.47: SFace's 0.55 at the same rate of different people's faces above it.
+         */
+        val MBF = ClusterParams(join = 0.377f, merge = 0.50f, assign = 0.308f, low = 0.317f, margin = 0f,
+            goodScore = 0.70f, goodYaw = 0.70f, goodEye = 20f, centroid = true, lowScore = 0.80f,
+            suggestFace = 0.38f, suggestGroup = 0.36f, sameVideoFace = 0.47f)
+
+        fun of(kind: FaceKind) = when (kind) { FaceKind.LBP -> BASIC; FaceKind.MBF -> MBF; FaceKind.SFACE -> SFACE }
     }
 }
 

@@ -1,0 +1,19 @@
+Face recognition model: MobileFaceNet "w600k_mbf" from the buffalo_s package of InsightFace
+(https://github.com/deepinsight/insightface, release v0.7), trained on WebFace600K. The app stores
+its weights as 16-bit floats; nothing else is changed.
+
+InsightFace's licence statement (README, "License"):
+
+The code of InsightFace is released under the MIT License. There is no limitation for both academic
+and commercial usage.
+
+The training data containing the annotation (and the models trained with these data) are available
+for non-commercial research purposes only.
+
+Both manual-downloading models from our github repo and auto-downloading models with our
+python-library follow the above license policy (which is for non-commercial research purposes only).
+
+InsightFace model zoo: "ALL models are available for non-commercial research purposes only."
+
+This app is free and non-commercial; the model is used only on this phone, to recognise the same
+person across your photos and videos.

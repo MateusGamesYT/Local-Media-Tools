@@ -14,7 +14,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.7.0.apk`](release/LocalMediaTools-1.7.0.apk)
+**Install:** [`release/LocalMediaTools-1.8.0.apk`](release/LocalMediaTools-1.8.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -46,7 +46,53 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.7.0: highlight videos, a precise duplicate finder, naming people quickly
+## What's new in 1.8.0: a stronger face model, so one person stays one person
+
+- **A new face recognition model**: InsightFace's MobileFaceNet ("w600k_mbf") replaces SFace for the
+  Gallery's people and for face blur. Measured through the app's own grouping code on 885 checked
+  faces of 78 real people in Creative Commons photos (hats, sunglasses, stage make-up, expressions,
+  profiles, small faces, strangers in the background), with the settings chosen on half of the people
+  and checked on the other half:
+
+  | | SFace (1.5–1.7) | MobileFaceNet (1.8) |
+  |---|---|---|
+  | A person's faces in their main group | 86 % / 86 % | **92 % / 90 %** |
+  | Faces left on their own | 15 % / 18 % | **8 % / 12.5 %** |
+  | Under the right name after naming each person's biggest group once | 88 % / 82 % | **93 % / 89 %** |
+  | Faces of another person in someone's group | 0 / 0 | 0 / 0 |
+
+  (First number: the half of the people the settings were chosen on; second: the other half.) With
+  all 78 people at once: 3 faces with the
+  wrong person (SFace 8) and 50 strangers' faces in someone's group (SFace 36, of 3,644). It is better
+  for 23 of the 78 people and worse for 3. Two cautions: in the app's test set of each person's six
+  hardest photos, Lady Gaga's six stage looks stay apart (SFace grouped five), so someone with only a
+  few photos in very different looks can still be split; and the 78 people are public figures, whom the
+  model may have seen while it was trained, so your own photos may show a smaller gain.
+- **Smaller and faster**: 6.8 MB instead of 9.9 MB, and 21 ms instead of 52 ms per face on one core of
+  the build machine (9 ms instead of 30 ms on four).
+- **"Is this …?" suggestions** now come for 97–100 % of a person's groups and 80–86 % of their single
+  faces (SFace: 94–97 % and 74–75 %), still without a wrong one in the measurement.
+- **Your names are kept.** After the update the app looks again only at the photos and videos that
+  have faces (the others, and every "things and places" tag, stay as they are). Each face keeps its
+  place, so names, confirmations, "this isn't …" corrections and hidden faces stay with it. The
+  Gallery shows "Updating face recognition · names are kept" meanwhile, and people are regrouped once
+  at the end.
+- **Learning from your corrections**: four ways for the app to learn more from naming were measured
+  on top of the new model (confirmed faces as examples, a comparison learnt from the people you named,
+  easier joining for named people, letting unclear faces join them): none gained more than about one
+  point without letting strangers in, so none shipped. What the app learns from you stays what counts:
+  every name, confirmation and correction anchors the grouping from then on.
+- **Licence**: the model's weights are InsightFace's, for non-commercial research use only (the app is
+  free and non-commercial); credited under Settings → Open-source licences. Details and all numbers:
+  [`buildtools/gallery/README.md`](buildtools/gallery/README.md).
+- **Tested** on real photos of real people: the app's Kotlin code gives the same face descriptions as
+  the evaluation (cosine 0.99999), its new face alignment the same crops as OpenCV's, the people are
+  grouped better than with SFace on the same photos, and a UI test updates a library from 1.7.0 keeping
+  every name and correction. **Not yet run on a phone**: phones load the model with OpenCV 4.12 (the
+  tests use 4.9 and 4.11); a self-check at start falls back to the basic face mode if a phone computes
+  it wrongly.
+
+## What was new in 1.7.0: highlight videos, a precise duplicate finder, naming people quickly
 
 - **Highlight video** (new, in Video): pick the photos and videos of a day out, a trip or a party.
   The app puts them in the order they were taken (photo and video clocks lined up: EXIF local time
@@ -355,8 +401,9 @@ python3 buildtools/build_apk.py --robo-test          # + Android-framework tests
 ```
 
 The on-device models are committed in `app/src/main/assets/models/` with their licences in
-`app/src/main/assets/licenses/` (also shown in Settings → Open-source licences): YuNet (MIT) and
-SFace (Apache-2.0) from the OpenCV Zoo, U²-Net-p (Apache-2.0, via rembg, MIT), EfficientDet-Lite2
+`app/src/main/assets/licenses/` (also shown in Settings → Open-source licences): YuNet (MIT) from the
+OpenCV Zoo, MobileFaceNet "w600k_mbf" from InsightFace (weights for non-commercial research use only;
+`buildtools/gallery/face_model.py` makes the app's 16-bit copy from InsightFace's release), U²-Net-p (Apache-2.0, via rembg, MIT), EfficientDet-Lite2
 (Apache-2.0, MediaPipe), EfficientNetV2-B3 ImageNet-21k (Apache-2.0, Google AutoML) and the decoder
 of Magenta's MusicVAE trio model (Apache-2.0, Google; run by the app's own Kotlin code, checked
 against magenta.js, see [`buildtools/music/`](buildtools/music/README.md)). The ONNX
@@ -374,7 +421,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 112 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 114 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -399,8 +446,10 @@ so updates install over each other; use your own key for a store release.
   fades), capture times from photos and videos, moments and their names, the edit (chronological, on
   the beat, bursts once, choices kept, the liveliest part of videos), each frame's layers and fades,
   texture coordinates for every video rotation, the sound mix with the music stepped back, and real
-  people's faces kept in frame on every frame in all three shapes.
-* `app/src/roboTest` — 61 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  people's faces kept in frame on every frame in all three shapes. New in 1.8: the new face model on
+  the real photos (the app's Kotlin pipeline giving the evaluation's embeddings, its alignment giving
+  OpenCV's crops, its self-check, and grouping at least as well as SFace on the same photos).
+* `app/src/roboTest` — 62 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -410,7 +459,8 @@ so updates install over each other; use your own key for a store release.
   and building and running a stack in the UI); the gallery on a stand-in photo library of real photos and faces (indexing,
   grouping people, naming, search with typos, face names in the viewer, "not this person"
   surviving regrouping, removed photos leaving the index, empty or failing library reads and a
-  sudden big drop not wiping the index, failing photos retried once, pausing, and every gallery screen);
+  sudden big drop not wiping the index, failing photos retried once, pausing, every gallery screen,
+  and updating a library from 1.7.0 to the new face model with every name and correction kept);
   printing from the Print screen to the simulated L3250 (finding it, its state and ink, its paper
   sizes and types, borderless photos two per sheet, the job it receives; a printer added by IP
   address falling back from encrypted to plain IPP; files shared from other apps); the duplicate

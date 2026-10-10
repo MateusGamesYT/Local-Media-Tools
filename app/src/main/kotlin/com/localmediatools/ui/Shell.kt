@@ -339,7 +339,7 @@ class SettingsTab(private val shell: MainShell) {
                 !com.localmediatools.gallery.GalleryIndex.isPausedByUser(ctx)) { on -> com.localmediatools.gallery.GalleryIndex.setPaused(ctx, !on) })
         })
         gal.addView(listRow(ctx, R.drawable.ic_sparkle, Palette.ACCENT, "Recognition models",
-            "EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and SFace (faces) · all on this phone"))
+            "EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and MobileFaceNet (faces) · all on this phone"))
 
         val storage = group(col, "Storage")
         val folders = OutputArea.entries.map { it.displayPath.substringBefore("/LocalMediaTools") }.distinct().joinToString(", ")
@@ -358,7 +358,7 @@ class SettingsTab(private val shell: MainShell) {
         val about = group(col, "About")
         val version = try { ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName } catch (_: Exception) { "" }
         about.addView(listRow(ctx, R.drawable.ic_info, Palette.ACCENT, "Local Media Tools $version", "${ToolId.toolCount} tools · Android ${android.os.Build.VERSION.RELEASE}"))
-        about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, TensorFlow Lite, MI-GAN, YuNet, SFace, EfficientDet, EfficientNetV2…") { shell.push(LicensesScreen(shell.activity)) })
+        about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, "Open-source licences", "OpenCV, TensorFlow Lite, MI-GAN, YuNet, InsightFace, EfficientDet, EfficientNetV2…") { shell.push(LicensesScreen(shell.activity)) })
         return scroll
     }
 
@@ -390,7 +390,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("MI-GAN (Picsart AI Research)", "MIT License", "Magic eraser model, converted to TensorFlow Lite."),
             Triple("MobileNet-V3 image embedder (MediaPipe)", "Apache License 2.0", "Stitcher alignment assist and similar-photo detection."),
             Triple("YuNet face detector (OpenCV Zoo)", "MIT License", "Finding faces for face blur and auto enhance."),
-            Triple("SFace face recognition (OpenCV Zoo)", "Apache License 2.0", "Recognising the same person across frames and files."),
+            Triple("MobileFaceNet face recognition (InsightFace, w600k_mbf)", "Non-commercial research use only (code MIT)", "Recognising the same person across photos, videos and frames."),
             Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", "Background remover."),
             Triple("EfficientDet-Lite2 (MediaPipe)", "Apache License 2.0", "Finding people, animals, vehicles and objects in the gallery."),
             Triple("EfficientNetV2-B3, ImageNet-21k (Google AutoML)", "Apache License 2.0", "Recognising scenes and kinds of things in the gallery and for auto enhance."),
@@ -407,7 +407,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
                 addView(UI.text(ctx, what, TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
-        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/SFace-Apache-2.0.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
+        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/InsightFace-models.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
                 "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })

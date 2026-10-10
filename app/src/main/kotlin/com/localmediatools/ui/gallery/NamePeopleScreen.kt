@@ -86,7 +86,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
             for ((pid, fs) in byPerson) for ((kind, list) in fs.groupBy { it.kind })
                 NameSuggestions.of(list.map { it.emb!! }, pid)?.let { sums[pid to kind] = it }
             val unnamed = all.filter { !it.named && it.faceCount >= 2 && it.mediaCount > 0 }.sortedByDescending { it.faceCount }
-            unnamed.map { p -> Group(p, byPerson[p.id]?.groupingBy { it.kind }?.eachCount()?.maxByOrNull { it.value }?.key ?: FaceKind.SFACE) } to all.filter { it.named }
+            unnamed.map { p -> Group(p, byPerson[p.id]?.groupingBy { it.kind }?.eachCount()?.maxByOrNull { it.value }?.key ?: FaceKind.AI) } to all.filter { it.named }
         }
         queue = groups
         for (p in people) named[p.id] = p.name!!

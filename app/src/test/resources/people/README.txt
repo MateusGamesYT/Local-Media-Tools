@@ -10,10 +10,10 @@ people over several years, with caps, visors and hats, glasses and sunglasses, s
 strong expressions, turned and profile faces and small faces far from the camera, plus 25 other
 people who happen to be in the pictures. Who each labelled face is was checked by eye.
 
-faces.tsv: every face the gallery's pipeline (YuNet + SFace, flip-averaged) finds in each photo,
-as fractions of the photo, with detector score, eye distance (px), yaw, the person (empty for
-the other people in the picture), tags (H headwear, G glasses, M heavy make-up, E strong
-expression), roles and the 128-number embedding. Roles: "jvm" marks the 6 faces per person chosen
+faces.tsv: every face the gallery's pipeline (YuNet + MobileFaceNet, flip-averaged; SFace before
+1.8.0) finds in each photo, as fractions of the photo, with detector score, eye distance (px), yaw,
+the person (empty for the other people in the picture), tags (H headwear, G glasses, M heavy
+make-up, E strong expression), roles and the 512-number embedding. Roles: "jvm" marks the 6 faces per person chosen
 to cover the conditions above; A1..A10, A-small, B1..B12 and C1..C3 are the faces the Robolectric
 fake gallery shows (its UI tests need a gallery that groups one known way).
 

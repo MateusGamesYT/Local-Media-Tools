@@ -71,7 +71,7 @@ class FaceTracker(private val maxGapUs: Long = 800_000, private val minIou: Floa
                 val dx = (f.x + f.w / 2) - (l.x + l.w / 2); val dy = (f.y + f.h / 2) - (l.y + l.h / 2)
                 val near = dx * dx + dy * dy < (max(f.w, l.w) * 0.9f).let { it * it }
                 val sim = if (f.feature != null && l.feature != null) FaceEngine.cosine(f.feature, l.feature) else 0.5f
-                if ((iou >= minIou || near) && sim > 0.2f) {
+                if ((iou >= minIou || near) && sim > FaceEngine.TRACK_GATE) {
                     val s = iou + 0.5f * sim
                     if (s > bestScore) { bestScore = s; best = t }
                 }

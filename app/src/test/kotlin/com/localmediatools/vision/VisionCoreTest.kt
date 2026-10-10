@@ -34,7 +34,7 @@ class VisionCoreTest {
 
         @BeforeClass @JvmStatic fun load() {
             nu.pattern.OpenCV.loadLocally()
-            faces = FaceEngine(File(models, "face_detection_yunet_2023mar.onnx").path, File(models, "face_recognition_sface_2021dec_int8.onnx").path)
+            faces = FaceEngine(File(models, "face_detection_yunet_2023mar.onnx").path, File(models, "face_recognition_mbf_w600k_fp16.onnx").path)
         }
 
         fun photo(name: String): Mat {

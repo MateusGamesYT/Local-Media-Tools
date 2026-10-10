@@ -112,7 +112,7 @@ turned, 6 clear ones). Three ways of learning from the user were tried, none wor
 What these numbers point at is the descriptor: SFace finds only 39–65 % of same-person pairs at a 1 in
 10,000 false-match rate on these photos. The next step is a stronger face model measured the same way.
 
-### Stronger face models (measured after 1.7.0; nothing shipped yet)
+### Stronger face models (measured after 1.7.0; 1.8.0 ships MobileFaceNet)
 
 `extract_models.py` describes every face with other models: the same faces, the same 112×112
 alignment, the face and its mirror image averaged (`models_<name>.npy`, and the aligned faces in
@@ -188,6 +188,45 @@ already keeps are what learning from the user amounts to; the model is what move
 A caution on all of this: the 78 people are public figures, and the bigger models were trained on
 large collections of celebrities' photos, so some of their lead may come from having seen these people.
 Ordinary family photos may show a smaller gap.
+
+**What 1.8.0 ships.** MobileFaceNet, chosen for being clearly better than SFace while smaller and
+faster, so it fits in the app (the ResNet-50 and AuraFace files don't fit under GitHub's 100 MB file
+limit with the rest of the app). `face_model.py` makes the app's copy from InsightFace's v0.7 release
+(the same weights as the copy measured above, checked tensor by tensor) with 16-bit weights, which
+OpenCV's DNN module reads (ONNX Runtime doesn't); through OpenCV it gives the same embeddings as the
+original (cosine ≥ 0.99993 on all 4,578 faces) in 21 ms instead of 32 ms per face (one thread). The
+face is aligned by the app's own `FaceAlign` (the least-squares similarity transform OpenCV's
+`FaceRecognizerSF.alignCrop` computes, which needs the SFace model): the same matrix to 1/10,000 px and
+the same embeddings to a cosine of 0.99999 (`extract.py` has the same pipeline: `use_mbf()`).
+
+`ClusterParams.MBF` is the search's best on half A with merge raised to 0.50 (from 0.35, which sat
+just above the 0.34 of the two most alike people's mean faces; from 0.35 to 0.55 the grouping is the
+same, and at 0.50 the naming user had no wrong group to correct on half B); `model_settings.py <model>`
+measures the other settings: suggestions (1.7.0's measure), face blur's same-person and tracking
+thresholds and the same-person-in-a-video threshold (SFace's carried over at the same rate of
+different people's pairs above them), and the most alike mean faces. With the shipped settings
+(`mbfapp`, the app's file through OpenCV), against SFace's:
+
+| | SFace (shipped 1.5–1.7) | MobileFaceNet (1.8.0) |
+|---|---|---|
+| B-cubed recall, half A / half B (wrong faces) | 0.831 / 0.784 (0 / 0) | 0.886 / 0.851 (0 / 0) |
+| Main group / alone, half A | 86 % / 15 % | 92 % / 8 % |
+| Main group / alone, half B | 86 % / 18 % | 90 % / 12.5 % |
+| All 78 at once: recall, wrong faces, strangers in someone's group | 0.798, 8, 36 | 0.868, 3, 50 |
+| Named after one round, half A / half B | 0.876 / 0.820 | 0.927 / 0.886 |
+| Suggestions: own groups / own single faces offered | 94–97 % / 74–75 % (0.62 / 0.55) | 97–100 % / 80–86 % (0.36 / 0.38) |
+| Different people's groups / faces, most alike | 0.45–0.53 / 0.44–0.50 | 0.27 / 0.31–0.33 |
+| Face blur same person (one view) | 0.40: 74 % of same-person pairs | 0.29: 75 % (the same 3.6 in 1,000 different-people pairs) |
+| Tracking gate / one person in a video | 0.20 / 0.55 | 0.10 / 0.47 |
+
+Per person (main-group share, both halves): better by more than 5 points for 23 of the 78 people,
+worse for 3 (Sarah Palin 1.00 → 0.85, Usain Bolt 0.86 → 0.71, Britney Spears 0.85 → 0.77). The app's
+test photos (each person's six hardest faces) show the same trade: recall 0.79 against SFace's 0.77,
+headwear and turned faces 1.00, but Lady Gaga's six stage looks each on their own (SFace kept five
+together) and heavy make-up at 0.56 there (on the full set make-up went 0.88 → 0.92 and 0.69 → 0.74).
+
+`make_fixture.py` keeps the test photos chosen in 1.5.0 (with SFace) and writes the faces as
+MobileFaceNet describes them; the Robolectric set now groups the small face in profile with its person.
 
 7. `make_fixture.py <dir>` writes the app's test photos (`app/src/test/resources/people`): crops of
    63 photos (no edits, screen grabs or promotional reposts), the faces found with embeddings, labels

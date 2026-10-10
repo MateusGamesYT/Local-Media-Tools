@@ -88,13 +88,13 @@ class GalleryTest {
         waitFor("photos grid") { grid.items().size == 36 }
         assertEquals(1L, grid.items().first().id)
         render(a)
-        // Three people with several photos each; the blurry face stays on its own.
+        // Three people with several photos each; the small, far-away face in profile is Caroline's too.
         val groups = db.people().filter { it.faceCount >= 2 }
         assertEquals(3, groups.size)
         val sizes = groups.map { it.mediaCount }.sorted()
-        assertEquals(listOf(3, 10, 12), sizes)
-        val blurry = db.faces("f.media_id = 30").single()
-        assertEquals(null, blurry.personId)
+        assertEquals(listOf(3, 11, 12), sizes)
+        val small = db.faces("f.media_id = 30").single()
+        assertEquals(db.faces("f.media_id = 1").single().personId, small.personId)
         // Each group is one identity only.
         for (g in groups) {
             val owners = db.faces("f.person_id = ?", arrayOf(g.id.toString())).map { FakeGallery.faceOwners[it.id] }.distinct()
@@ -121,7 +121,7 @@ class GalleryTest {
         waitFor("naming") { db.people().any { it.name == "Ian" } }
         idle(800)
         val caroline = db.people().single { it.name == "Caroline" }
-        assertEquals(10, GalleryRepo.person(app, caroline.id).size)
+        assertEquals(11, GalleryRepo.person(app, caroline.id).size)
         // Search: both people (with a typo), a person at a place, things.
         val both = GalleryRepo.search(app, "Ian and Carolnie")
         assertEquals(listOf("carolnie" to "caroline"), both.query.corrections)
@@ -153,14 +153,14 @@ class GalleryTest {
         waitFor("regroup") { GalleryIndex.state.value.phase != GalleryIndex.Phase.GROUPING && db.faceById(wrong.id)?.personId != caroline.id }
         idle(500)
         assertTrue(db.faces("f.person_id = ?", arrayOf(caroline.id.toString())).none { it.id == wrong.id })
-        assertEquals(9, GalleryRepo.person(app, caroline.id).size)
+        assertEquals(10, GalleryRepo.person(app, caroline.id).size)
         // Person and all-faces screens render.
         a.navigator.push(PersonScreen(a, caroline.id))
         waitFor("person screen") { texts(a).contains("Caroline") }
         render(a)
         a.navigator.pop(); idle()
         a.navigator.push(FacesScreen(a))
-        waitFor("all faces") { texts(a).contains("Small or blurry") }
+        waitFor("all faces") { texts(a).contains("On their own") }
         render(a)
     }
 
@@ -206,7 +206,7 @@ class GalleryTest {
         // Leaving regroups once with the new names.
         a.navigator.pop(); idle()
         waitFor("regrouped") { GalleryIndex.state.value.phase != GalleryIndex.Phase.GROUPING }
-        for (p in db.people().filter { it.named }) assertEquals(p.name, if (p.name == "Caroline") 10 else 12, GalleryRepo.person(app, p.id).size)
+        for (p in db.people().filter { it.named }) assertEquals(p.name, if (p.name == "Caroline") 11 else 12, GalleryRepo.person(app, p.id).size)
     }
 
     @Test fun anExistingNameAddsTheFacesToThatPerson() {
@@ -216,6 +216,9 @@ class GalleryTest {
         FaceSheet.nameGroup(a, groupOf(0), "Caroline", emptyList()) {}
         waitFor("naming") { db.people().any { it.name == "Caroline" } }
         idle(500)
+        // The regrouping naming starts would put the halves below back together (MobileFaceNet sees one
+        // person): let it finish first.
+        GalleryIndex.drainForTests()
         // Split Ian's group in two by hand, as an over-split person would be.
         val ian = groupOf(1)
         val faces = db.faces("f.person_id = ?", arrayOf(ian.id.toString()))
@@ -239,7 +242,55 @@ class GalleryTest {
         val kelly = db.people().single { !it.named && it.faceCount >= 2 }
         input.setText("caroline"); input.onEditorAction(android.view.inputmethod.EditorInfo.IME_ACTION_DONE)
         waitFor("merged") { db.person(kelly.id) == null }
-        assertEquals(13, db.faces("f.person_id = ?", arrayOf(groupOf(0).id.toString())).size)
+        assertEquals(14, db.faces("f.person_id = ?", arrayOf(groupOf(0).id.toString())).size)
+    }
+
+    @Test fun aNewFaceModelKeepsNamesAndCorrections() {
+        openGallery()
+        val db = GalleryDb.get(app)
+        fun groupOf(owner: Int) = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == owner } }
+        // The user named Caroline and Ian, said one face isn't Caroline and hid one of Kelly's faces.
+        db.nameGroup(groupOf(0).id, "Caroline"); db.nameGroup(groupOf(1).id, "Ian")
+        val caroline = db.people().single { it.name == "Caroline" }
+        val notHer = db.faces("f.media_id = 2").single()
+        db.reject(notHer.id, caroline.id)
+        val hidden = db.faces("f.media_id = 20").single()
+        db.setIgnored(hidden.id, true)
+        val tags = (1L..36L).associateWith { db.tagsOf(it) }
+        // As 1.7.0 left the index: analysed by analyzer version 2, faces described by SFace (128 numbers).
+        val w = db.writableDatabase
+        w.execSQL("UPDATE media SET analyzed = 25")
+        val rnd = java.util.Random(1)
+        for (f in db.faces("1")) w.execSQL("UPDATE faces SET kind = 0, emb = ? WHERE id = ?",
+            arrayOf<Any>(GalleryDb.pack(com.localmediatools.vision.core.FaceEngine.normalize(FloatArray(128) { rnd.nextGaussian().toFloat() })), f.id))
+        val before = db.faces("1").associateBy { it.id }
+        val looked = java.util.concurrent.atomic.AtomicInteger()
+        GalleryIndex.analyzerOverride = { m -> looked.incrementAndGet(); FakeGallery.analysis(m) }
+        GalleryIndex.start(app)
+        waitFor("faces described again") { GalleryIndex.state.value.phase == GalleryIndex.Phase.DONE && db.counts(GalleryIndex.target).let { it.first == it.second } }
+        idle(800)
+        // Only the 18 items with faces were looked at again; the others were up to date as they were.
+        assertEquals(18, looked.get())
+        val after = db.faces("1", withEmb = true)
+        // The same faces (same ids), now described by MobileFaceNet; tags untouched.
+        assertEquals(before.keys, after.map { it.id }.toSet())
+        assertTrue(after.all { it.kind == com.localmediatools.gallery.core.FaceKind.MBF && it.emb!!.size == 512 })
+        assertEquals(tags, (1L..36L).associateWith { db.tagsOf(it) })
+        // Names, confirmations, the correction and the hidden face stayed.
+        for (f in after) if (before.getValue(f.id).confirmed) { assertTrue(f.confirmed); assertEquals(before.getValue(f.id).personId, f.personId) }
+        assertTrue(db.notPeople().getValue(notHer.id).contains(caroline.id))
+        assertTrue(db.faceById(hidden.id)!!.ignored)
+        assertEquals(setOf("Caroline", "Ian"), db.people().filter { it.named }.map { it.name }.toSet())
+        assertEquals(10, GalleryRepo.person(app, caroline.id).size)
+        assertTrue(db.faces("f.person_id = ?", arrayOf(caroline.id.toString())).none { it.id == notHer.id })
+        // On a phone where the face model fails its self-check, faces described before stay as they were
+        // (still grouped) instead of being described again by the basic fallback.
+        w.execSQL("UPDATE media SET analyzed = 25")
+        val kept = db.faces("1", withEmb = true).associate { it.id to it.emb!!.toList() }
+        val basic = GalleryIndex.analyzedValue(com.localmediatools.gallery.EngineMode.BASIC, com.localmediatools.gallery.EngineMode.AI)
+        db.promoteUnchanged(GalleryIndex.FACES_ONLY_FROM, basic, keepFaces = true)
+        assertTrue(db.pending(basic, 100).isEmpty())
+        assertEquals(kept, db.faces("1", withEmb = true).associate { it.id to it.emb!!.toList() })
     }
 
     @Test fun pausingStopsIndexingAndRemovedPhotosLeaveTheIndex() {

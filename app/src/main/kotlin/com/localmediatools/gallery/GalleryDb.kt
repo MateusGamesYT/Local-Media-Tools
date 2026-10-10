@@ -214,12 +214,82 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
         val db = writableDatabase
         db.beginTransaction()
         try {
-            forgetAnalysis(db, id)
+            db.delete("tags", "media_id=?", arrayOf(id.toString()))
             for ((k, s) in tags) db.insert("tags", null, ContentValues().apply { put("media_id", id); put("cat", k); put("score", s) })
-            for (f in faces) db.insert("faces", null, faceValues(f, id))
+            replaceFaces(db, id, faces)
             db.execSQL("UPDATE media SET analyzed=?, failures=0 WHERE id=?", arrayOf<Any>(version, id))
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
+    }
+
+    /** Like [saveAnalysis] when only the faces were looked at again: the tags stay. */
+    fun saveFaces(id: Long, version: Int, faces: List<GFace>) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            replaceFaces(db, id, faces)
+            db.execSQL("UPDATE media SET analyzed=?, failures=0 WHERE id=?", arrayOf<Any>(version, id))
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+    }
+
+    /** What an item's analysis was stored as ([GalleryIndex.analyzedValue]); 0 if never analysed. */
+    fun analyzedValue(id: Long): Int =
+        readableDatabase.rawQuery("SELECT analyzed FROM media WHERE id=?", arrayOf(id.toString())).use { c -> if (c.moveToFirst()) c.getInt(0) else 0 }
+
+    /**
+     * Items analysed by analyzer version [fromVersion] that need nothing new stay as they are (marked as
+     * analysed at [target]): their tags were made by engines at least as capable as now ([target]'s
+     * modes), and only faces are looked at again — so items without faces (the detector is the same),
+     * or with [keepFaces] every item (the face AI doesn't work on this phone: faces described before
+     * stay described as they were, rather than with the basic fallback).
+     */
+    fun promoteUnchanged(fromVersion: Int, target: Int, keepFaces: Boolean) {
+        if (keepFaces) writableDatabase.execSQL("UPDATE media SET analyzed=? WHERE analyzed / 10 = ? AND analyzed % 2 >= ?",
+            arrayOf<Any>(target, fromVersion, target % 2))
+        else writableDatabase.execSQL(
+            "UPDATE media SET analyzed=? WHERE analyzed / 10 = ? AND (analyzed % 10) / 2 = ? AND analyzed % 2 >= ? AND " +
+                "id NOT IN (SELECT media_id FROM faces)", arrayOf<Any>(target, fromVersion, (target % 10) / 2, target % 2))
+    }
+
+    /**
+     * Writes an item's newly found faces over the ones found before, keeping what the user said about
+     * each face (who it is, whether confirmed or hidden, who it is not): a new face takes over the row
+     * of the old face its box overlaps most (the same video frame, at least half of their area in
+     * common), so its id and everything attached to it stay. Old faces no new face takes over go, with
+     * what was said about them.
+     */
+    private fun replaceFaces(db: SQLiteDatabase, mediaId: Long, faces: List<GFace>) {
+        class Old(val id: Long, val x: Float, val y: Float, val w: Float, val h: Float, val frameMs: Long)
+        val old = ArrayList<Old>()
+        db.rawQuery("SELECT id, x, y, w, h, frame_ms FROM faces WHERE media_id=?", arrayOf(mediaId.toString())).use { c ->
+            while (c.moveToNext()) old.add(Old(c.getLong(0), c.getFloat(1), c.getFloat(2), c.getFloat(3), c.getFloat(4), c.getLong(5)))
+        }
+        fun overlap(o: Old, f: GFace): Float {
+            if (o.frameMs != f.frameMs) return 0f
+            val iw = minOf(o.x + o.w, f.x + f.w) - maxOf(o.x, f.x); val ih = minOf(o.y + o.h, f.y + f.h) - maxOf(o.y, f.y)
+            if (iw <= 0f || ih <= 0f) return 0f
+            val i = iw * ih
+            return i / (o.w * o.h + f.w * f.h - i)
+        }
+        val pairs = ArrayList<Triple<Int, Int, Float>>()
+        for ((ni, f) in faces.withIndex()) for ((oi, o) in old.withIndex()) { val v = overlap(o, f); if (v >= 0.5f) pairs.add(Triple(ni, oi, v)) }
+        pairs.sortByDescending { it.third }
+        val newDone = BooleanArray(faces.size); val oldTaken = BooleanArray(old.size)
+        for ((ni, oi, _) in pairs) {
+            if (newDone[ni] || oldTaken[oi]) continue
+            newDone[ni] = true; oldTaken[oi] = true
+            val v = faceValues(faces[ni], mediaId).apply {
+                remove("person_id"); remove("confirmed")
+                if (faces[ni].emb == null) putNull("emb")
+            }
+            db.update("faces", v, "id=?", arrayOf(old[oi].id.toString()))
+        }
+        for ((ni, f) in faces.withIndex()) if (!newDone[ni]) db.insert("faces", null, faceValues(f, mediaId))
+        for ((oi, o) in old.withIndex()) if (!oldTaken[oi]) {
+            db.execSQL("DELETE FROM not_person WHERE face_id=?", arrayOf(o.id))
+            db.delete("faces", "id=?", arrayOf(o.id.toString()))
+        }
     }
 
     private fun faceValues(f: GFace, mediaId: Long) = ContentValues().apply {

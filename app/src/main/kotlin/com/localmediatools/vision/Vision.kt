@@ -24,13 +24,13 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
- * The on-device vision models: face detection (YuNet) and recognition (SFace) and subject cut-out
+ * The on-device vision models: face detection (YuNet) and recognition (MobileFaceNet) and subject cut-out
  * (U²-Net-p); scenes are recognised by the gallery's [ObjectTagger]. They are loaded once and kept
  * while the app runs; everything runs on this phone.
  */
 object VisionModels {
     const val YUNET = "face_detection_yunet_2023mar.onnx"
-    const val SFACE = "face_recognition_sface_2021dec_int8.onnx"
+    const val FACE_RECOGNITION = "face_recognition_mbf_w600k_fp16.onnx"
     const val U2NET = "u2netp.onnx"
 
     private var faces: FaceEngine? = null
@@ -55,7 +55,7 @@ object VisionModels {
     @Synchronized fun faces(ctx: Context): FaceEngine {
         faces?.let { return it }
         OpenCvLoader.ensure()
-        return FaceEngine(file(ctx, YUNET).path, file(ctx, SFACE).path).also { faces = it }
+        return FaceEngine(file(ctx, YUNET).path, file(ctx, FACE_RECOGNITION).path).also { faces = it }
     }
 
     @Synchronized fun matting(ctx: Context): Matting {
