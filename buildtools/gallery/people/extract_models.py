@@ -6,7 +6,10 @@ then describes the aligned face and its mirror image, averaged. Faces are matche
 photo and order (and checked by box), so the verified labels apply.
 
     python extract_models.py <model dir> name=file.onnx … [--only N]   → <work>/models_<name>.npy
-    (SFace, the app's current model, is always included as "sface".)
+    (SFace, the app's current model, is always included as "sface"; the aligned faces are kept in
+    <work>/models_crops.npy.)
+    python extract_models.py <model dir> name=file.tflite … --from-crops   → the same from the kept faces
+    (for converted or quantised versions of a model: .onnx or .tflite).
 """
 import os, sys, time, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -15,6 +18,37 @@ import extract
 from extract import rec
 from evaluate import load
 from common import WORK, HERE
+
+
+class TfliteModel:
+    """A converted model (onnx2tf: NHWC input, the same normalisation as the ONNX model it came from)."""
+    def __init__(self, path, mean=127.5, std=127.5):
+        import tensorflow as tf
+        self.it = tf.lite.Interpreter(model_path=path, num_threads=4); self.it.allocate_tensors()
+        self.i = self.it.get_input_details()[0]; self.o = self.it.get_output_details()[0]
+        self.mean, self.std = mean, std
+
+    def describe(self, faces_bgr):
+        out = []
+        for f in faces_bgr:
+            x = ((cv2.cvtColor(f, cv2.COLOR_BGR2RGB).astype(np.float32) - self.mean) / self.std)[None]
+            self.it.set_tensor(self.i['index'], x); self.it.invoke()
+            out.append(self.it.get_tensor(self.o['index']).reshape(-1))
+        out = np.array(out)
+        return out / np.linalg.norm(out, axis=1, keepdims=True)
+
+
+def from_crops(models):
+    crops = np.load(os.path.join(WORK, 'models_crops.npy'))
+    for name, m in models.items():
+        t0 = time.time(); rows = []
+        for k, c in enumerate(crops):
+            if not c.any(): rows.append(np.full(512, np.nan, np.float32)); continue
+            d = m.describe([c, cv2.flip(c, 1)]); e = d[0] + d[1]
+            rows.append(e / np.linalg.norm(e))
+            if k % 500 == 0: print(name, k, f"{time.time() - t0:.0f} s", flush=True)
+        np.save(os.path.join(WORK, f'models_{name}.npy'), np.array(rows, np.float32))
+        print(name, len(rows), 'faces')
 
 
 class Model:
@@ -39,12 +73,15 @@ def main():
     mdir = sys.argv[1]
     specs = [a.split('=', 1) for a in sys.argv[2:] if '=' in a]
     only = int(sys.argv[sys.argv.index('--only') + 1]) if '--only' in sys.argv else None
+    if '--from-crops' in sys.argv:
+        return from_crops({name: (TfliteModel if f.endswith('.tflite') else Model)(os.path.join(mdir, f)) for name, f in specs})
     models = {name: Model(os.path.join(mdir, f)) for name, f in specs}
     faces = load(os.path.join(WORK, 'faces.json'), os.path.join(HERE, 'labels.json'))
     index = {f['face']: k for k, f in enumerate(faces)}
     out = {name: np.zeros((len(faces), 0), np.float32) for name in ['sface'] + list(models)}
     got = {name: [None] * len(faces) for name in out}
     crops = []   # aligned faces of the current photo, in analyze()'s order
+    kept = np.zeros((len(faces), 112, 112, 3), np.uint8)
 
     def describe(img, r):
         al = rec.alignCrop(img, r)
@@ -65,7 +102,7 @@ def main():
             if i is None: continue
             # The same face as in faces.json (same detector, same order): check the box.
             if np.abs(np.array(res['box']) - np.array(faces[i]['box'])).max() > 1e-3: bad += 1; continue
-            got['sface'][i] = res['emb']
+            got['sface'][i] = res['emb']; kept[i] = crops[k]
             pair = [crops[k], cv2.flip(crops[k], 1)]
             for name, m in models.items():
                 d = m.describe(pair); e = d[0] + d[1]
@@ -79,6 +116,7 @@ def main():
         print(name, f"{sum(ok)} of {len(rows)} faces described, {dim} numbers each")
     print('faces whose box differed from faces.json:', bad)
     json.dump([f['face'] for f in faces], open(os.path.join(WORK, 'models_faces.json'), 'w'))
+    np.save(os.path.join(WORK, 'models_crops.npy'), kept)
 
 
 if __name__ == '__main__':

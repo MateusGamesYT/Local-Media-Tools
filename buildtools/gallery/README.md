@@ -112,6 +112,83 @@ turned, 6 clear ones). Three ways of learning from the user were tried, none wor
 What these numbers point at is the descriptor: SFace finds only 39–65 % of same-person pairs at a 1 in
 10,000 false-match rate on these photos. The next step is a stronger face model measured the same way.
 
+### Stronger face models (measured after 1.7.0; nothing shipped yet)
+
+`extract_models.py` describes every face with other models: the same faces, the same 112×112
+alignment, the face and its mirror image averaged (`models_<name>.npy`, and the aligned faces in
+`models_crops.npy` so converted or quantised versions can be described again with `--from-crops`).
+`compare_models.py` compares them on pairs and through the app's grouping; `search_models.py` searches
+each model's thresholds on one half of the people and checks them on the other; `learn_export.py
+<model>` + `LearnHarness.kt` play the naming user; `time_models.py` times them.
+
+Comparing models showed faces of the 78 people that the labels had missed (posters, screens, magazine
+covers, people behind someone else): `labels_extra.json` adds 83 of them, checked by eye, and leaves
+out 49 nobody could be sure of (`evaluate.load(…, extra=True)`; 885 faces of the 78 people). The
+numbers below use it; the earlier sections don't.
+
+Models (all ArcFace-style, 112×112 input, (x − 127.5) / 127.5):
+
+| | Licence of the weights | File | ms per face, 1 / 4 threads (x86, no mirror) |
+|---|---|---|---|
+| SFace (shipped) | Apache-2.0 | 9.9 MB int8 ONNX | 52 / 30 (OpenCV DNN) |
+| AuraFace (ResNet-100, fal) | Apache-2.0 | 130 MB fp16 TFLite (66 MB int8) | 437 / 131 |
+| MBF (InsightFace w600k_mbf) | non-commercial research only | 6.8 MB fp16 TFLite | 19 / 6.5 |
+| LVFace-T (ByteDance ViT-tiny) | non-commercial research only | 77 MB fp32 ONNX | 40 / 17 (ONNX Runtime) |
+| ResNet-50 (InsightFace w600k_r50) | non-commercial research only | 87 MB fp16 TFLite (44 MB int8) | 234 / 71 |
+
+Same-person pairs found at a false-match rate of 1 in 1,000 / 10,000 (impostors: every other face;
+in brackets only the other 77 people's faces):
+
+| SFace | AuraFace | SFace + AuraFace | MBF | LVFace-T | ResNet-50 |
+|---|---|---|---|---|---|
+| 0.769 / 0.626 (0.630) | 0.804 / 0.718 (0.700) | 0.841 / 0.758 (0.737) | 0.842 / 0.735 (0.774) | 0.856 / 0.760 (0.833) | 0.920 / 0.793 (0.892) |
+
+("SFace + AuraFace": both embeddings side by side, so the similarity is the mean of the two.)
+
+Through the app's grouping code, thresholds searched on one half and checked on the other, in both
+directions (B-cubed recall; faces of other people / strangers' faces in someone's group, held-out half):
+
+| | tuned A → held-out B | tuned B → held-out A |
+|---|---|---|
+| SFace, shipped thresholds | A 0.831, B 0.784 (0 / 3) | |
+| SFace, searched again | 0.857 → 0.826 (0 / 9) | 0.836 → 0.823 (0 / 5) |
+| AuraFace | 0.847 → 0.824 (2 / 19; 11 wrong faces on the tuning half) | the same thresholds |
+| SFace + AuraFace | 0.880 → 0.839 (0 / 15) | 0.853 → 0.857 (6 / 5) |
+| MBF | 0.887 → 0.851 (0 / 2) | 0.876 → 0.899 (0 / 7) |
+| LVFace-T | 0.900 → 0.856 (0 / 26) | 0.848 → 0.880 (0 / 3) |
+| ResNet-50 | 0.938 → 0.890 (0 / 0) | 0.899 → 0.908 (0 / 1) |
+
+AuraFace's thresholds carried over from SFace merged different people: two people's mean faces reach
+0.50 with it (0.55 with SFace, 0.29 with ResNet-50), so the search had to cover a wide range of merge
+thresholds; even then no setting kept other people out with useful recall.
+
+The naming user (thresholds tuned on half A; share of each person's faces under their name after one
+round, half A / half B, then faces of other people and strangers' faces under the names on half B):
+
+| | half A | half B | wrong / strangers (B) |
+|---|---|---|---|
+| SFace, shipped | 0.876 | 0.820 | 0 / 8 |
+| SFace, searched again | 0.866 | 0.815 | 12 / 11 |
+| AuraFace | 0.834 | 0.850 | 40 / 30 |
+| SFace + AuraFace | 0.924 | 0.882 | 13 / 26 |
+| MBF | 0.927 | 0.886 | 0 / 2 |
+| LVFace-T | 0.950 | 0.885 | 0 / 0 |
+| ResNet-50 | 0.969 | 0.903 | 0 / 0 |
+
+Converted to TFLite, MBF in fp16 gives the same embeddings as the ONNX model (cosine ≥ 0.9999);
+dynamic-range int8 (3.6 MB) loses a little (median cosine 0.995; pairs at 1 in 10,000 0.735 → 0.731).
+ResNet-50 in dynamic-range int8 (44 MB): 0.920 → 0.920 at 1 in 1,000, 0.793 → 0.779 at 1 in 10,000.
+
+Learning from naming, tried again with MBF: lower thresholds for joining a named person gain at most
+1.4 points (0.927 → 0.934 on half A, 0.886 → 0.901 on half B) while strangers' faces under the names
+go from 3 to 19 (A) and 2 to 11 (B); letting faces the detector is unsure of join a named person when
+very alike (≥ 0.35) gains 0 / 0.6 points. As with SFace, the confirmations and corrections the app
+already keeps are what learning from the user amounts to; the model is what moves the numbers.
+
+A caution on all of this: the 78 people are public figures, and the bigger models were trained on
+large collections of celebrities' photos, so some of their lead may come from having seen these people.
+Ordinary family photos may show a smaller gap.
+
 7. `make_fixture.py <dir>` writes the app's test photos (`app/src/test/resources/people`): crops of
    63 photos (no edits, screen grabs or promotional reposts), the faces found with embeddings, labels
    and credits. `fixture_sheet.py` draws them for checking.

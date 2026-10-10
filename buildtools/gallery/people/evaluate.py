@@ -12,7 +12,9 @@ sys.path.insert(0, D)
 from common import WORK, HERE
 H = os.path.join(WORK, 'harness')
 
-def load(faces_path, labels_path):
+def load(faces_path, labels_path, extra=False):
+    """extra: also apply labels_extra.json (faces of the labelled people the original labels missed, checked
+    by eye in 2026-10; the faces nobody could be sure of are left out entirely)."""
     faces = json.load(open(faces_path)); labels = json.load(open(labels_path))
     # A photo selected for two people (both named in its title) was analysed twice: keep each face once.
     seen = set(); uniq = []
@@ -23,6 +25,12 @@ def load(faces_path, labels_path):
         l = labels.get(f['face'])
         f['label'] = l['person'] if l else None
         f['tags'] = l.get('tags', '') if l else ''
+    if extra:
+        x = json.load(open(os.path.join(HERE, 'labels_extra.json')))
+        unsure = set(x['unsure'])
+        faces = [f for f in faces if f['face'] not in unsure]
+        for f in faces:
+            if f['face'] in x['same']: f['label'] = x['same'][f['face']]
     return faces
 
 def good_default(f, p):
@@ -40,18 +48,19 @@ def quality(f):
 def cluster_app(faces, p=None):
     """The app's FaceClustering (Kotlin harness). p overrides ClusterParams.SFACE (keys as in cluster_py)."""
     E = np.array([f['emb'] for f in faces], np.float32)
-    path = os.path.join(H, 'in.bin')
+    path = os.path.join(H, f'in_{os.getpid()}.bin')   # one per process: several evaluations may run at once
     with open(path, 'wb') as o:
         o.write(struct.pack('<ii', len(faces), E.shape[1]))
         for f, e in zip(faces, E):
             o.write(struct.pack('<fff', f['score'], f['eye'], f['yaw'])); o.write(e.astype('<f4').tobytes())
-    outp = os.path.join(H, 'out.txt')
+    outp = os.path.join(H, f'out_{os.getpid()}.txt')
     args = [os.path.join(H, 'run.sh'), path, outp]
     if p: args.append(','.join(f"{k}={v}" for k, v in p.items() if k in ('join', 'merge', 'assign', 'low', 'margin', 'goodScore', 'goodYaw', 'goodEye', 'lowScore', 'link')))
     subprocess.run(args, check=True, capture_output=True)
     lab = np.full(len(faces), -1)
     for line in open(outp):
         i, g = map(int, line.split()); lab[i] = g
+    os.remove(path); os.remove(outp)
     return lab
 
 # ---------------------------------------------------------------- Python variants

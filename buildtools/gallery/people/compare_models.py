@@ -8,7 +8,8 @@
 3. Grouping through the app's own Kotlin code (harness/build.sh): the shipped thresholds carried over to
    each model at the same impostor rates, then searched around on half A and checked on half B.
 
-    python compare_models.py sface aura lvt r50 mbf [--group]
+    python compare_models.py sface aura lvt r50 mbf [--group] [--original]
+Uses labels.json with the corrections of labels_extra.json (--original: labels.json alone).
 """
 import os, sys, json, collections, itertools
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -16,9 +17,10 @@ import numpy as np
 from evaluate import load, split, subset, cluster_app, metrics, harm
 from common import WORK, HERE
 
-faces = load(os.path.join(WORK, 'faces.json'), os.path.join(HERE, 'labels.json'))
+faces = load(os.path.join(WORK, 'faces.json'), os.path.join(HERE, 'labels.json'), extra='--original' not in sys.argv)
 order = json.load(open(os.path.join(WORK, 'models_faces.json')))
-assert order == [f['face'] for f in faces]
+assert order == [f['face'] for f in load(os.path.join(WORK, 'faces.json'), os.path.join(HERE, 'labels.json'))]
+ROWS = np.array([order.index(f['face']) for f in faces])   # the rows of models_<name>.npy for these faces
 lab = np.array([f['label'] or '' for f in faces])
 A, B = split(faces)
 COND = {'headwear': lambda f: 'H' in f['tags'], 'glasses': lambda f: 'G' in f['tags'], 'make-up': lambda f: 'M' in f['tags'],
@@ -26,11 +28,15 @@ COND = {'headwear': lambda f: 'H' in f['tags'], 'glasses': lambda f: 'G' in f['t
 
 
 def emb(name):
-    e = np.load(os.path.join(WORK, f'models_{name}.npy')).astype(np.float64)
+    """A model's embeddings; "a+b" puts two models side by side (its similarity is the mean of theirs)."""
+    if '+' in name:
+        e = np.concatenate([emb(n) for n in name.split('+')], axis=1)
+    else:
+        e = np.load(os.path.join(WORK, f'models_{name}.npy')).astype(np.float64)[ROWS]
     return e / np.linalg.norm(e, axis=1, keepdims=True)
 
 
-def pairs(E, people, cond=None):
+def pairs(E, people, cond=None, verified=False):
     idx = np.array([i for i in range(len(faces)) if lab[i] in people])
     S = E[idx] @ E.T
     shows = np.array([cond(f) for f in faces]) if cond is not None else None
@@ -39,7 +45,8 @@ def pairs(E, people, cond=None):
         m = lab == lab[i]; m[i] = False
         # With a condition: pairs where at least one of the two faces shows it.
         same.append(S[r, m & (shows | shows[i])] if shows is not None else S[r, m])
-        imp.append(S[r, lab != lab[i]])
+        # Impostors: every other face, or (verified) only the other labelled people's.
+        imp.append(S[r, (lab != lab[i]) & (lab != '')] if verified else S[r, lab != lab[i]])
     return np.concatenate(same), np.concatenate(imp)
 
 
@@ -92,6 +99,8 @@ def main():
         for hn, half in [('A', A), ('B', B), ('all', A | B)]:
             s, i = pairs(E, half)
             row.append(f"{hn}: {tar(s, i, 1e-3):.3f} {tar(s, i, 1e-4):.3f} {tar(s, i, 1e-5):.3f}")
+        s, i = pairs(E, A | B, verified=True)
+        row.append(f"all, other people only: {tar(s, i, 1e-3):.3f} {tar(s, i, 1e-4):.3f}")
         print(f"  {n:6s} " + ' | '.join(row) + f" | own person nearest {nearest(E):.3f}")
     print('At 1e-4 by condition (all people; pairs where one face shows it)')
     for n, E in Es.items():
