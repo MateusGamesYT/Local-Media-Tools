@@ -14,7 +14,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.8.0.apk`](release/LocalMediaTools-1.8.0.apk)
+**Install:** [`release/LocalMediaTools-1.8.1.apk`](release/LocalMediaTools-1.8.1.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -46,7 +46,15 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.8.0: a stronger face model, so one person stays one person
+## What's new in 1.8.1: the Gallery keeps going when the phone is warm
+
+- **Organising the Gallery no longer stops as soon as the phone warms up.** It used to pause at
+  Android's "severe" heat level, which phones reach easily during a long scan. Now it carries on at
+  about half speed there (a short rest after each photo; the strip says "slower while the phone is
+  warm") and only pauses at the "critical" level, until the phone has cooled below it. Pausing for a
+  low battery or Battery Saver is unchanged.
+
+## What was new in 1.8.0: a stronger face model, so one person stays one person
 
 - **A new face recognition model**: InsightFace's MobileFaceNet ("w600k_mbf") replaces SFace for the
   Gallery's people and for face blur. Measured through the app's own grouping code on 885 checked

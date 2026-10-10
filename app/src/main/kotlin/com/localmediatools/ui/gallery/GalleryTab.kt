@@ -373,7 +373,7 @@ class GalleryTab(private val shell: MainShell) {
         val progress = if (s.total > 0) "${s.done} of ${s.total} photos and videos analysed." else "Reading your library."
         val update = if (s.updatingFaces) "\n\nFaces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes." else ""
         val msg = "$progress$update\n\nObjects and scenes: ${mode(s.objectMode)}.\nFaces and people: ${mode(s.faceMode)}.\n\n" +
-            "Everything runs on this phone at low priority. It pauses when the battery is low or the phone is hot, and continues where it left off."
+            "Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off."
         AlertDialog.Builder(activity).setTitle("Organising your gallery").setMessage(msg)
             .setPositiveButton("OK", null)
             .setNeutralButton(if (GalleryIndex.isPausedByUser(ctx)) "Resume" else "Pause") { _, _ -> GalleryIndex.setPaused(ctx, !GalleryIndex.isPausedByUser(ctx)) }
@@ -442,8 +442,8 @@ class IndexStatusBar(ctx: android.content.Context, onClick: () -> Unit) : Linear
             s.phase == GalleryIndex.Phase.PAUSED -> "${s.pausedWhy ?: "Paused"} · $left left"
             s.phase == GalleryIndex.Phase.READING -> "Reading your library…"
             s.phase == GalleryIndex.Phase.GROUPING -> "Grouping faces into people…"
-            s.updatingFaces -> "Updating face recognition · ${s.done} of ${s.total} · names are kept"
-            else -> "Finding people and things · ${s.done} of ${s.total} · on this phone"
+            s.updatingFaces -> "Updating face recognition · ${s.done} of ${s.total} · " + if (s.warm) "slower while the phone is warm" else "names are kept"
+            else -> "Finding people and things · ${s.done} of ${s.total} · " + if (s.warm) "slower while the phone is warm" else "on this phone"
         }
         bar.setProgress(s.fraction, if (s.phase == GalleryIndex.Phase.PAUSED) Palette.WARNING else Palette.ACCENT)
         contentDescription = text.text

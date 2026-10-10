@@ -30,7 +30,8 @@ import kotlin.coroutines.coroutineContext
 /**
  * Keeps the gallery index up to date: reads the library, then looks at new photos and videos one
  * by one (newest first) in the background, and regroups faces into people as they come in.
- * Runs at low priority, eases off when the phone is hot and pauses when the battery is low.
+ * Runs at low priority, slows down when the phone is warm and pauses when it is very hot or the
+ * battery is low.
  */
 object GalleryIndex {
     /**
@@ -40,6 +41,15 @@ object GalleryIndex {
      */
     const val ANALYZER_VERSION = 3
     const val FACES_ONLY_FROM = 2
+
+    /**
+     * How hot the phone may get (PowerManager's thermal status): from [EASE_AT] indexing goes on at
+     * about half speed (after each item, a pause as long as the item took), from [PAUSE_AT] it waits
+     * until the phone is below it again. Until 1.8.0 it paused from SEVERE, which phones reach easily
+     * during a long scan (Android already slows the processor down by then).
+     */
+    private const val EASE_AT = PowerManager.THERMAL_STATUS_SEVERE
+    private const val PAUSE_AT = PowerManager.THERMAL_STATUS_CRITICAL
 
     /**
      * What an analysis is stored as: the version plus how capable the engines were, so photos looked
@@ -67,6 +77,8 @@ object GalleryIndex {
         val pausedByUser: Boolean = false,
         /** Faces found before are being described again by a newer face model (names are kept). */
         val updatingFaces: Boolean = false,
+        /** Going slower because the phone is warm ([EASE_AT]). */
+        val warm: Boolean = false,
         val faceMode: EngineMode? = null,
         val objectMode: EngineMode? = null,
     ) {
@@ -232,7 +244,9 @@ object GalleryIndex {
                     groupedFaces += newFaces; newFaces = 0
                     regroup(ctx, db)
                 }
-                pace(System.nanoTime() - t0)
+                val warm = thermalStatus(ctx) >= EASE_AT
+                if (warm != _state.value.warm) _state.update { it.copy(warm = warm) }
+                pace(System.nanoTime() - t0, warm)
                 // Let waiting work (naming, merging) in between items.
                 yield()
             }
@@ -241,24 +255,24 @@ object GalleryIndex {
         }
         regroup(ctx, db)
         val (d, t) = db.counts(target)
-        _state.update { it.copy(phase = Phase.DONE, done = d, total = t, updatingFaces = false) }
+        _state.update { it.copy(phase = Phase.DONE, done = d, total = t, updatingFaces = false, warm = false) }
         notifyChanged()
     }
 
-    /** Duty cycle from the workload setting: lighter settings leave gaps between items. */
-    private suspend fun pace(workNanos: Long) {
+    /** Duty cycle from the workload setting (lighter settings leave gaps between items), at most half while [warm]. */
+    private suspend fun pace(workNanos: Long, warm: Boolean) {
         val pct = Workload.percent.value
-        val ratio = when {
+        val ratio = maxOf(if (warm) 1.0 else 0.0, when {
             pct >= 90 -> 0.0
             pct >= 60 -> 0.25
             pct >= 35 -> 0.8
             else -> 1.6
-        }
+        })
         val ms = (workNanos / 1_000_000 * ratio).toLong()
         if (ms > 0) delay(ms.coerceAtMost(3000))
     }
 
-    /** Waits while the phone is hot or the battery is low (and not charging). */
+    /** Waits while the phone is very hot or the battery is low (and not charging). */
     private suspend fun waitForGoodConditions(ctx: Context, done: Int, total: Int) {
         while (coroutineContext.isActive) {
             val why = holdReason(ctx) ?: break
@@ -268,9 +282,11 @@ object GalleryIndex {
         _state.update { if (it.phase == Phase.PAUSED && !it.pausedByUser) it.copy(phase = Phase.ANALYZING, pausedWhy = null) else it }
     }
 
+    private fun thermalStatus(ctx: Context) = (ctx.getSystemService(Context.POWER_SERVICE) as PowerManager).currentThermalStatus
+
     private fun holdReason(ctx: Context): String? {
         val pm = ctx.getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (pm.currentThermalStatus >= PowerManager.THERMAL_STATUS_SEVERE) return "Waiting for the phone to cool down"
+        if (pm.currentThermalStatus >= PAUSE_AT) return "Waiting for the phone to cool down"
         val battery = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         if (battery != null) {
             val level = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)

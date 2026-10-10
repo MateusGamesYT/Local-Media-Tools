@@ -335,7 +335,7 @@ class SettingsTab(private val shell: MainShell) {
 
         val gal = group(col, "Gallery")
         gal.addView(UI.vertical(ctx, 14, 4).apply {
-            addView(ToggleRow(ctx, "Organise in the background", "Finds people and things in new photos on this phone so you can search them. Pauses on low battery or when the phone is hot.",
+            addView(ToggleRow(ctx, "Organise in the background", "Finds people and things in new photos on this phone so you can search them. Slows down when the phone is warm; pauses when it's very hot or the battery is low.",
                 !com.localmediatools.gallery.GalleryIndex.isPausedByUser(ctx)) { on -> com.localmediatools.gallery.GalleryIndex.setPaused(ctx, !on) })
         })
         gal.addView(listRow(ctx, R.drawable.ic_sparkle, Palette.ACCENT, "Recognition models",
