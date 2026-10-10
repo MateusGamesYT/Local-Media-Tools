@@ -44,6 +44,9 @@ enum class ToolId(
         "On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.",
         OutputArea.BLURRED_IMAGES, OutputArea.BLURRED_VIDEO),
 
+    HIGHLIGHT_VIDEO(ToolSection.VIDEO, "Highlight video", "Your best moments, cut to music, automatically",
+        "Pick the photos and videos of a day out, a trip or a party. On-device AI puts them in the order they were taken, finds the moments (setting off, lunch, the beach…), picks the best shots and the liveliest part of each video, and edits them into a short film on the beat of background music it writes for it — always instrumental, and quieter while your videos speak. Review the moments, change anything, then save. Nothing is uploaded.",
+        OutputArea.HIGHLIGHTS),
     SPLIT_VIDEO(ToolSection.VIDEO, "Split videos", "Cut into equal-length parts without re-encoding",
         "Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.",
         OutputArea.SPLITS),

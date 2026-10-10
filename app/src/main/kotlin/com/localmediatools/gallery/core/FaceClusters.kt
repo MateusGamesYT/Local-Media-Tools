@@ -68,12 +68,16 @@ class ClusterParams(
          *    different conditions (whose faces agree less with each other) still form one group;
          *  - merge 0.65: the most alike two different people's mean faces came to 0.56;
          *  - lowScore 0.85: blurry, tiny or half-hidden faces below it stay on their own.
-         *  - suggestions: 96.5 % of faces have their own person at ≥ 0.40 (0.26 others on average);
-         *    different people's groups were ≥ 0.45 for under 1 % of pairs.
+         *  - suggestions ("is this …?"), 1.7.0: a wrong suggestion costs more than a missing one. On
+         *    each half of the people (groups of 2–8 of a person's faces, the rest as single faces),
+         *    no group of someone else reached 0.62 (the most alike: 0.45 and 0.56) while 93–95 % of
+         *    the person's own groups did; no single face of someone else reached 0.55 (0.47, 0.54)
+         *    while 70–74 % of their own did. 1.6.0's 0.45 / 0.40 offered 37 wrong groups among
+         *    15,741 pairs and 39 wrong faces.
          */
         val SFACE = ClusterParams(join = 0.46f, merge = 0.65f, assign = 0.42f, low = 0.46f, margin = 0.06f,
             goodScore = 0.80f, goodYaw = 1.0f, goodEye = 24f, centroid = true, lowScore = 0.85f,
-            suggestFace = 0.40f, suggestGroup = 0.45f)
+            suggestFace = 0.55f, suggestGroup = 0.62f)
 
         /**
          * LBP fallback. Different people overlap heavily with same-person pairs (different-person

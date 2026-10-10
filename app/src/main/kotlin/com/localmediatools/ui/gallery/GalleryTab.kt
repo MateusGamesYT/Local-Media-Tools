@@ -270,6 +270,19 @@ class GalleryTab(private val shell: MainShell) {
         }, lp().apply { bottomMargin = ctx.dp(14); leftMargin = ctx.dp(4); rightMargin = ctx.dp(4) })
         val named = d.people.filter { it.first.named }
         val unnamed = d.people.filter { !it.first.named }
+        if (unnamed.isNotEmpty()) {
+            // The quick way through every unnamed group, keyboard ready.
+            col.addView(UI.horizontal(ctx).apply {
+                background = Shapes.clickable(ctx, Palette.ACCENT_DARK, 18f, Palette.ACCENT)
+                setPadding(ctx.dp(14), ctx.dp(12), ctx.dp(12), ctx.dp(12))
+                addView(UI.iconTile(ctx, R.drawable.ic_add, Palette.ACCENT, 38, 20))
+                addView(UI.titled(ctx, "Name people", "${unnamed.size} ${if (unnamed.size == 1) "group" else "groups"} to name, one after another").apply { setPadding(ctx.dp(12), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+                addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_2, 18))
+                isClickable = true; isFocusable = true
+                contentDescription = "Name people, ${unnamed.size} groups to name"
+                setOnClickListener { shell.push(NamePeopleScreen(activity)) }
+            }, lp().apply { bottomMargin = ctx.dp(14); leftMargin = ctx.dp(4); rightMargin = ctx.dp(4) })
+        }
         if (d.people.isEmpty()) {
             val st = GalleryIndex.state.value
             col.addView(emptyState(R.drawable.ic_tool_faceblur, if (st.working) "Finding people…" else "No people yet",

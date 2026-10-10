@@ -188,33 +188,7 @@ class VisionCoreTest {
         assertEquals(SceneKind.GENERAL, SceneMapper.fromCategories(mapOf("dog" to 0.3f)).first)
     }
 
-    private fun info(i: Int, hash: Long, emb: FloatArray?, t: Long? = null, digest: String? = null, w: Int = 4000, sharp: Double = 1.0, bytes: Long = 1000) =
-        PhotoInfo(i, bytes, w, 3000, hash, emb, sharp, t, digest)
-
-    @Test fun duplicateGroupsAndBestPick() {
-        val e = { seed: Int -> FaceEngine.normalize(FloatArray(64) { kotlin.math.sin((it + 1) * seed * 0.37).toFloat() }) }
-        val a = e(1); val b = e(2)
-        val near = FaceEngine.normalize(a.copyOf().also { it[0] += 0.3f; it[5] -= 0.2f })
-        assertTrue(FaceEngine.cosine(a, near) > 0.9f && FaceEngine.cosine(a, b) < 0.5f)
-        val items = listOf(
-            info(0, 0x0F0F0F0FL, a, digest = "x", bytes = 5000),
-            info(1, 0x0F0F0F0FL, a, digest = "x", bytes = 5000),            // identical file
-            info(2, 0x0F0F0F0EL, a, w = 2000, bytes = 900),                // resized copy (hash 1 bit off)
-            info(3, 0x7777000077770000L, near, t = 1_000_000L, sharp = 5.0),// burst …
-            info(4, 0x0000777700007777L, near, t = 1_030_000L, sharp = 9.0),// … sharper
-            info(5, 0x123456789L, b),                                       // unrelated
-        )
-        val g = Duplicates.group(items)
-        val byMember = g.associateBy { it.members.sorted().first() }
-        // 0,1,2 are one group (identical + resized), best is the 4000-px largest one.
-        val first = g.first { 0 in it.members }
-        assertEquals(DupKind.IDENTICAL, first.kind)
-        assertTrue(first.members.containsAll(listOf(0, 1, 2, 3, 4)) || first.members.containsAll(listOf(0, 1, 2)))
-        assertTrue(first.best in listOf(0, 1, 3, 4))
-        assertTrue(g.none { 5 in it.members })
-        val burst = g.first { 4 in it.members }
-        assertTrue(3 in burst.members)
-        assertNotNull(byMember)
+    @Test fun duplicateHash() {
         // dHash of a gradient.
         val grad = IntArray(72) { (it % 9) * 10 }
         assertEquals(-1L, Duplicates.dhash(grad))

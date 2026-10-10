@@ -41,7 +41,7 @@ object ToolRules {
         ToolId.MERGE_VIDEOS, ToolId.VIDEO_SPEED -> PickKind.VIDEOS
         ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> PickKind.GIFS
         ToolId.PDF_TO_IMAGES, ToolId.MERGE_PDFS, ToolId.EXTRACT_PDF_PAGES -> PickKind.PDFS
-        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR -> PickKind.MEDIA
+        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.HIGHLIGHT_VIDEO -> PickKind.MEDIA
         ToolId.TOOL_STACK -> PickKind.ANY
         ToolId.PRINT -> PickKind.PRINTABLE
         else -> PickKind.IMAGES
@@ -50,7 +50,7 @@ object ToolRules {
     /** Tools that work on one file at a time. */
     fun single(t: ToolId) = t == ToolId.TRIM_VIDEO
 
-    fun minItems(t: ToolId) = when (t) { ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.MERGE_PDFS, ToolId.MERGE_VIDEOS -> 2; else -> 1 }
+    fun minItems(t: ToolId) = when (t) { ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.MERGE_PDFS, ToolId.MERGE_VIDEOS, ToolId.HIGHLIGHT_VIDEO -> 2; else -> 1 }
 
     fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS)
 
@@ -61,7 +61,7 @@ object ToolRules {
             PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else "Not a video file"
             PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else "Not a GIF file"
             PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else "Not a PDF file"
-            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR)) null else "Not a photo or video"
+            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO)) null else "Not a photo or video"
             PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else "Not a photo, video, GIF or PDF"
             PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF) null else "Not a photo or PDF"
             PickKind.IMAGES -> when {

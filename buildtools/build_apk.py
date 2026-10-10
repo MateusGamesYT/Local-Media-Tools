@@ -8,6 +8,8 @@ Usage:
   python3 buildtools/build_apk.py            # release-style build (signed with the sideload key)
   python3 buildtools/build_apk.py --test     # also compile + run the JVM unit tests first
   python3 buildtools/build_apk.py --robo-test  # build, then run the Robolectric (Android framework) tests
+  --test-only / --robo-test-only run one kind of test without packaging; --only=Name runs the test
+  classes whose name contains Name.
 """
 import hashlib
 import os
@@ -31,14 +33,14 @@ SHARED_TEST_SRC = os.path.join(APP, "src", "sharedTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
-VERSION_CODE = 8
-VERSION_NAME = "1.6.0"
+VERSION_CODE = 9
+VERSION_NAME = "1.7.0"
 MIN_SDK = 29
 TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]
 
 # Packages of pure-Kotlin engine code that must not depend on Android (unit tested on the JVM).
-PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core", "com/localmediatools/vision/core", "com/localmediatools/gallery/core", "com/localmediatools/print/core"]
+PURE_DIRS = ["com/localmediatools/codec", "com/localmediatools/stitch/core", "com/localmediatools/vision/core", "com/localmediatools/gallery/core", "com/localmediatools/print/core", "com/localmediatools/music/core", "com/localmediatools/highlight/core"]
 
 LIBS = [
     "kotlin-stdlib-2.3.21.jar",
@@ -377,6 +379,9 @@ def run_tests():
             if fn.endswith("Test.class") and "$" not in fn:
                 rel = os.path.relpath(os.path.join(dirpath, fn), out)
                 tests.append(rel[:-6].replace(os.sep, "."))
+    only = [a.split("=", 1)[1] for a in sys.argv if a.startswith("--only=")]
+    if only:
+        tests = [t for t in tests if any(o in t for o in only)]
     log(f"running {len(tests)} test classes")
     resources = os.path.join(APP, "src", "test", "resources")
     run(["java", "-Xmx2g", "-cp", os.pathsep.join([out, resources, stdlib] + junit), "org.junit.runner.JUnitCore"] + sorted(tests))

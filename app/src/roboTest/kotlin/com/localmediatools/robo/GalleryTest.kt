@@ -18,6 +18,8 @@ import com.localmediatools.ui.gallery.MediaGrid
 import com.localmediatools.ui.gallery.PersonScreen
 import com.localmediatools.ui.gallery.SearchScreen
 import com.localmediatools.ui.gallery.ViewerScreen
+import com.localmediatools.ui.ButtonView
+import com.localmediatools.ui.gallery.NamePeopleScreen
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -49,12 +51,18 @@ class GalleryTest {
     private fun all(v: View): List<View> = if (v is ViewGroup) listOf(v) + (0 until v.childCount).flatMap { all(v.getChildAt(it)) } else listOf(v)
     private fun texts(a: MainActivity) = all(a.navigator.top!!.view).filterIsInstance<TextView>().map { it.text.toString() }
 
-    private fun render(a: MainActivity) {
+    /** Draws the screen (catching drawing errors); with a [name] and LMT_SHOTS set, also saves it there. */
+    private fun render(a: MainActivity, name: String? = null) {
+        val dir = System.getenv("LMT_SHOTS")?.takeIf { name != null }?.let { java.io.File(it).apply { mkdirs() } }
+        if (dir != null) { val t = System.currentTimeMillis(); while (System.currentTimeMillis() - t < 2500) { idle(50); Thread.sleep(20) } }
         val root = a.window.decorView
         val w = a.resources.displayMetrics.widthPixels; val h = a.resources.displayMetrics.heightPixels
         root.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY))
         root.layout(0, 0, w, h)
-        root.draw(Canvas(Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)))
+        val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        if (dir != null) bmp.eraseColor(0xFF0B0D12.toInt())
+        root.draw(Canvas(bmp))
+        if (dir != null) java.io.File(dir, "$name.png").outputStream().use { Bitmap.createScaledBitmap(bmp, w / 2, h / 2, true).compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
     @Before fun setUp() { Robo.resetUiState(); FakeGallery.install(app) }
@@ -154,6 +162,84 @@ class GalleryTest {
         a.navigator.push(FacesScreen(a))
         waitFor("all faces") { texts(a).contains("Small or blurry") }
         render(a)
+    }
+
+    @Test fun namingPeopleOneAfterAnother() {
+        val a = openGallery()
+        val db = GalleryDb.get(app)
+        // The People tab offers the quick naming flow for the three unnamed groups.
+        all(a.navigator.top!!.view).filterIsInstance<TextView>().first { it.text == "People" }.performClick()
+        waitFor("name people card") { texts(a).any { it == "Name people" } }
+        all(a.navigator.top!!.view).filterIsInstance<TextView>().first { it.text == "Name people" }.let { t ->
+            var v: View? = t; while (v != null && !v.isClickable) v = v.parent as? View; v!!.performClick()
+        }
+        waitFor("naming screen") { a.navigator.top is NamePeopleScreen && texts(a).any { it == "1 of 3" } }
+        render(a, "47_name_people")
+        fun input() = all(a.navigator.top!!.view).filterIsInstance<android.widget.AutoCompleteTextView>().single()
+        fun groupOwner(): Int {
+            // Who the faces on screen are: the group being named is the biggest unnamed one left.
+            val p = db.people().filter { !it.named && it.faceCount >= 2 }.maxBy { it.faceCount }
+            return db.faces("f.person_id = ?", arrayOf(p.id.toString())).map { FakeGallery.faceOwners[it.id] }.distinct().single()!!
+        }
+        val names = listOf("Caroline", "Ian", "Kelly")
+        // Type a name and press Enter: saved, and the next group is shown with the keyboard ready.
+        val first = groupOwner()
+        input().setText(names[first]); input().onEditorAction(android.view.inputmethod.EditorInfo.IME_ACTION_DONE)
+        waitFor("second group") { texts(a).any { it == "2 of 3" } && db.people().any { it.name == names[first] } }
+        val second = groupOwner()
+        input().setText(names[second]); input().onEditorAction(android.view.inputmethod.EditorInfo.IME_ACTION_DONE)
+        waitFor("third group") { texts(a).any { it == "3 of 3" } }
+        // The people named so far are one tap away.
+        assertTrue(texts(a).containsAll(listOf(names[first], names[second])))
+        // The third is no one to keep track of: its faces are ignored.
+        val third = db.people().single { !it.named && it.faceCount >= 2 }
+        all(a.navigator.top!!.view).filterIsInstance<ButtonView>().first { it.label == "No one I know" }.performClick()
+        waitFor("done") { texts(a).any { it == "All done" } }
+        render(a)
+        assertTrue(db.faces("f.person_id = ?", arrayOf(third.id.toString())).isEmpty())
+        assertEquals(setOf(names[first], names[second]), db.people().filter { it.named }.map { it.name }.toSet())
+        // Each named person holds exactly their own faces.
+        for (p in db.people().filter { it.named }) {
+            val owners = db.faces("f.person_id = ?", arrayOf(p.id.toString())).map { FakeGallery.faceOwners[it.id] }.distinct()
+            assertEquals(listOf(names.indexOf(p.name)), owners)
+        }
+        // Leaving regroups once with the new names.
+        a.navigator.pop(); idle()
+        waitFor("regrouped") { GalleryIndex.state.value.phase != GalleryIndex.Phase.GROUPING }
+        for (p in db.people().filter { it.named }) assertEquals(p.name, if (p.name == "Caroline") 10 else 12, GalleryRepo.person(app, p.id).size)
+    }
+
+    @Test fun anExistingNameAddsTheFacesToThatPerson() {
+        val a = openGallery()
+        val db = GalleryDb.get(app)
+        fun groupOf(owner: Int) = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == owner } }
+        FaceSheet.nameGroup(a, groupOf(0), "Caroline", emptyList()) {}
+        waitFor("naming") { db.people().any { it.name == "Caroline" } }
+        idle(500)
+        // Split Ian's group in two by hand, as an over-split person would be.
+        val ian = groupOf(1)
+        val faces = db.faces("f.person_id = ?", arrayOf(ian.id.toString()))
+        val other = db.newPerson(null)
+        db.applyGrouping(faces.drop(6).associate { it.id to other })
+        db.nameGroup(ian.id, "Ian")
+        a.navigator.push(NamePeopleScreen(a))
+        waitFor("naming screen") { texts(a).any { it == "1 of 2" } }
+        // The bigger unnamed group is the other half of Ian (6 faces; Kelly has 3): suggested as Ian.
+        assertEquals(other, db.people().filter { !it.named && it.faceCount >= 2 }.maxBy { it.faceCount }.id)
+        waitFor("suggestion") { texts(a).any { it == "This is Ian" } }
+        assertTrue(texts(a).none { it == "This is Caroline" })
+        render(a)
+        all(a.navigator.top!!.view).filterIsInstance<TextView>().first { it.text == "This is Ian" }.let { t ->
+            var v: View? = t; while (v != null && !v.isClickable) v = v.parent as? View; v!!.performClick()
+        }
+        waitFor("added") { db.person(other) == null && texts(a).any { it == "2 of 2" } }
+        assertEquals(12, db.faces("f.person_id = ?", arrayOf(ian.id.toString())).size)
+        // Typing an existing name (any case) does the same.
+        val input = all(a.navigator.top!!.view).filterIsInstance<android.widget.AutoCompleteTextView>().single()
+        val kelly = db.people().single { !it.named && it.faceCount >= 2 }
+        input.setText("caroline"); input.onEditorAction(android.view.inputmethod.EditorInfo.IME_ACTION_DONE)
+        waitFor("merged") { db.person(kelly.id) == null }
+        assertEquals(13, db.faces("f.person_id = ?", arrayOf(groupOf(0).id.toString())).size)
     }
 
     @Test fun pausingStopsIndexingAndRemovedPhotosLeaveTheIndex() {

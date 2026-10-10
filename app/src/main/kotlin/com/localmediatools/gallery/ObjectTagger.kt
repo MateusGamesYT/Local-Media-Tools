@@ -91,12 +91,15 @@ class ObjectTagger private constructor(
     }
 
     /** Category → fused score (only scores worth keeping). */
-    fun tag(bmp: Bitmap): Map<String, Float> {
+    fun tag(bmp: Bitmap): Map<String, Float> = tagWithFeatures(bmp).first
+
+    /** The tags and the classifier's image features from one run of each model (features describe the scene). */
+    fun tagWithFeatures(bmp: Bitmap): Pair<Map<String, Float>, FloatArray> {
         val dets = detect(bmp)
         val f = features(bmp)
         val probs = head.probabilities(f)
         val probes = head.probes(f)
-        return Taxonomy.scores(categories, dets, probs, probes)
+        return Taxonomy.scores(categories, dets, probs, probes) to f
     }
 
     /** Runs both models on a test picture and checks the outputs are sane. */

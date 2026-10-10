@@ -20,6 +20,7 @@ enum class OutputArea(val collection: Collection, val relativePath: String) {
     CLEAN_VIDEO(Collection.VIDEO, "Movies/LocalMediaTools/Clean"),
     MERGED_VIDEO(Collection.VIDEO, "Movies/LocalMediaTools/Merged"),
     SPEED_VIDEO(Collection.VIDEO, "Movies/LocalMediaTools/Speed"),
+    HIGHLIGHTS(Collection.VIDEO, "Movies/LocalMediaTools/Highlights"),
     BLURRED_VIDEO(Collection.VIDEO, "Movies/LocalMediaTools/Blurred faces"),
     EDITED(Collection.IMAGES, "Pictures/LocalMediaTools/Edited"),
     CUTOUTS(Collection.IMAGES, "Pictures/LocalMediaTools/Cutouts"),

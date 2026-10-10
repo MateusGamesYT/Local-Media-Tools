@@ -251,6 +251,12 @@ class ChoiceGroup<T>(
         if (notify) onChange(o)
     }
 
+    /** Shows the labels again (for labels that depend on other settings). */
+    fun relabel() {
+        for ((i, tv) in views.withIndex()) { val b = badgeOf?.invoke(options[i]); tv.text = if (b != null) "${labelOf(options[i])}  ·  $b" else labelOf(options[i]) }
+        refresh()
+    }
+
     /** Label of the selected option (null when none is selected). */
     fun selectedLabel(): String? = selected?.takeIf { it in options }?.let(labelOf)
 

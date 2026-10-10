@@ -65,6 +65,7 @@ object ToolLauncher {
         ToolId.FACE_BLUR to "face faces blur pixelate hide anonymize people video privacy censor ai",
         ToolId.DUPLICATES to "duplicate similar same copies clean storage space free gallery burst",
         ToolId.MERGE_VIDEOS to "join combine concatenate clips append video",
+        ToolId.HIGHLIGHT_VIDEO to "highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto",
         ToolId.VIDEO_SPEED to "fast slow motion timelapse time lapse speed up hyperlapse",
         ToolId.TRIM_VIDEO to "cut shorten clip rotate sideways",
         ToolId.SPLIT_VIDEO to "cut parts segments whatsapp status",
@@ -393,6 +394,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", "Background remover."),
             Triple("EfficientDet-Lite2 (MediaPipe)", "Apache License 2.0", "Finding people, animals, vehicles and objects in the gallery."),
             Triple("EfficientNetV2-B3, ImageNet-21k (Google AutoML)", "Apache License 2.0", "Recognising scenes and kinds of things in the gallery and for auto enhance."),
+            Triple("MusicVAE trio model (Magenta, Google)", "Apache License 2.0", "Writing the instrumental background music for highlight videos, on the phone."),
             Triple("WordNet 3.0 (Princeton University)", "WordNet License", "Grouping the classifier's classes into searchable categories."),
             Triple("Open Images V7 annotations (Google)", "CC BY 4.0", "Human-verified labels used to calibrate and train the category recognisers."),
             Triple("Kotlin & kotlinx.coroutines", "Apache License 2.0", "Language runtime."),
@@ -406,7 +408,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
         for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/SFace-Apache-2.0.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
-                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt")) {
+                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })
             body.addView(UI.text(ctx, text, TextStyle.CAPTION).apply { setTextIsSelectable(true) })

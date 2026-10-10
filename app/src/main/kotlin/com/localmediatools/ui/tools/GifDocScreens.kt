@@ -287,6 +287,7 @@ object ToolScreens {
         ToolId.AUTO_ENHANCE -> AutoEnhanceScreen(a)
         ToolId.FACE_BLUR -> FaceBlurScreen(a)
         ToolId.MERGE_VIDEOS -> MergeVideosScreen(a)
+        ToolId.HIGHLIGHT_VIDEO -> HighlightScreen(a)
         ToolId.VIDEO_SPEED -> SpeedScreen(a)
         ToolId.TRIM_VIDEO -> TrimScreen(a)
         ToolId.EXTRACT_PDF_PAGES -> ExtractPagesScreen(a)

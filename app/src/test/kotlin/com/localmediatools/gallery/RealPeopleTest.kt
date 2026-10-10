@@ -37,6 +37,7 @@ class RealPeopleTest {
         var labelled = 0
 
         @BeforeClass @JvmStatic fun analyse() {
+            if (seen.isNotEmpty()) return  // already done (other tests use these faces too)
             nu.pattern.OpenCV.loadLocally()
             val engine = FaceEngine(File(models, "face_detection_yunet_2023mar.onnx").path, File(models, "face_recognition_sface_2021dec_int8.onnx").path)
             val rows = text("faces.tsv").lines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }

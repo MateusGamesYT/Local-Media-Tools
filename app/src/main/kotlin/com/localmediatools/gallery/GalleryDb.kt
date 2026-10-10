@@ -350,6 +350,30 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
         else writableDatabase.execSQL("UPDATE faces SET ignored=0 WHERE id=?", arrayOf(faceId))
     }
 
+    /** Names a group in one step: renames it and confirms all its faces (they now anchor the person). */
+    fun nameGroup(personId: Long, name: String) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            db.update("people", ContentValues().apply { put("name", name) }, "id=?", arrayOf(personId.toString()))
+            db.execSQL("UPDATE faces SET confirmed=1 WHERE person_id=?", arrayOf(personId))
+            db.execSQL("DELETE FROM not_person WHERE person_id=? AND face_id IN (SELECT id FROM faces WHERE person_id=?)", arrayOf(personId, personId))
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+    }
+
+    /** Stops tracking a whole group (strangers, a poster): its faces are ignored and the group goes. */
+    fun ignoreGroup(personId: Long) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            db.execSQL("UPDATE faces SET ignored=1, person_id=NULL, confirmed=0 WHERE person_id=?", arrayOf(personId))
+            db.execSQL("DELETE FROM not_person WHERE person_id=?", arrayOf(personId))
+            db.delete("people", "id=? AND (name IS NULL OR name = '')", arrayOf(personId.toString()))
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+    }
+
     /** "None of these faces is [personId]" for a whole group (they stay together). */
     fun rejectGroup(groupId: Long, personId: Long) {
         writableDatabase.execSQL("INSERT OR IGNORE INTO not_person(face_id, person_id) SELECT id, ? FROM faces WHERE person_id = ?", arrayOf(personId, groupId))

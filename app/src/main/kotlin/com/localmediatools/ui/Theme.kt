@@ -83,6 +83,7 @@ object Icons {
         ToolId.FACE_BLUR -> R.drawable.ic_tool_faceblur
         ToolId.DUPLICATES -> R.drawable.ic_tool_duplicates
         ToolId.MERGE_VIDEOS -> R.drawable.ic_tool_video_merge
+        ToolId.HIGHLIGHT_VIDEO -> R.drawable.ic_tool_highlight
         ToolId.VIDEO_SPEED -> R.drawable.ic_tool_speed
         ToolId.SPLIT_VIDEO -> R.drawable.ic_tool_split
         ToolId.TRIM_VIDEO -> R.drawable.ic_tool_trim

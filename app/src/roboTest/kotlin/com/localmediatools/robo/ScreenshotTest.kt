@@ -229,26 +229,8 @@ class ScreenshotTest {
         open(a, ToolId.FACE_BLUR, dir, "32_face_blur") { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Found") } }
         com.localmediatools.vision.FaceScanner.override = null
 
-        // Duplicate finder with a finished scan.
-        fun gp(id: Long, name: String, color: Int, w: Int, h: Int, size: Long): com.localmediatools.vision.GalleryPhoto {
-            val b = Bitmap.createBitmap(w / 10, h / 10, Bitmap.Config.ARGB_8888)
-            val c = Canvas(b); b.eraseColor(color)
-            c.drawCircle(b.width * 0.6f, b.height * 0.4f, b.width * 0.18f, android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { this.color = 0xFFFFE08A.toInt() })
-            val f = Robo.write(inDir, name, Robo.encode(b, Bitmap.CompressFormat.PNG))
-            return com.localmediatools.vision.GalleryPhoto(id, android.net.Uri.fromFile(f), name, size, w, h, null, 0, "Camera")
-        }
-        val g1 = listOf(gp(1, "IMG_2041.jpg", 0xFF4F7CAC.toInt(), 4000, 3000, 3_400_000), gp(2, "IMG_2041(1).jpg", 0xFF4F7CAC.toInt(), 4000, 3000, 3_400_000))
-        val g2 = listOf(gp(3, "beach.jpg", 0xFF2A9D8F.toInt(), 4032, 3024, 4_100_000), gp(4, "beach_whatsapp.jpg", 0xFF2A9D8F.toInt(), 1600, 1200, 310_000))
-        val g3 = listOf(gp(5, "IMG_3001.jpg", 0xFFE76F51.toInt(), 4000, 3000, 3_900_000), gp(6, "IMG_3002.jpg", 0xFFE98A6F.toInt(), 4000, 3000, 3_800_000), gp(7, "IMG_3003.jpg", 0xFFD9604A.toInt(), 4000, 3000, 3_950_000))
-        com.localmediatools.vision.DuplicateScanner.show(com.localmediatools.vision.DupScanState.Done(listOf(
-            com.localmediatools.vision.DupResultGroup(com.localmediatools.vision.core.DupKind.IDENTICAL, g1, g1[0]),
-            com.localmediatools.vision.DupResultGroup(com.localmediatools.vision.core.DupKind.NEAR_DUPLICATE, g2, g2[0]),
-            com.localmediatools.vision.DupResultGroup(com.localmediatools.vision.core.DupKind.SIMILAR, g3, g3[2])), 2412, true))
-        a.navigator.push(com.localmediatools.ui.DuplicatesScreen(a)); idle(1500)
-        val t0 = System.currentTimeMillis(); while (System.currentTimeMillis() - t0 < 3000) { idle(50); Thread.sleep(20) }
-        shotWindowFull(a, dir, "33_duplicates")
-        @Suppress("DEPRECATION") a.onBackPressed(); idle()
-        com.localmediatools.vision.DuplicateScanner.show(com.localmediatools.vision.DupScanState.Idle)
+        // The duplicate finder is rendered by DuplicatesUiTest, from real photos.
+
 
         val clips = (1..3).map { Robo.item(app, Robo.write(inDir, "clip_$it.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))) }
         Selection.of(ToolId.MERGE_VIDEOS).add(clips)
