@@ -87,6 +87,31 @@ for faces that may only join a group keeps them out about as well as the embeddi
 (which would need every photo analysed again). The mean faces of two different people reached 0.56
 (merging starts at 0.65). The six wrong faces were mostly faces with dark sunglasses (and hats).
 
+### Learning from naming (measured after 1.7.0; nothing shipped)
+
+`learn_export.py` + `harness/LearnHarness.kt` (`harness/build_learn.sh`) play a user in the app's own
+grouping code: each round the user names every person's biggest unnamed group and takes out the faces
+in it that aren't them, then the library is grouped again. With the shipped rules, one round puts
+88 % (half A) / 83 % (half B) of each person's faces under their name, with 1 / 0 faces of other people
+and 6 / 13 strangers' faces among them; further rounds add almost nothing, because what is left are
+single faces that never form a group to name (half A: 11 the detector is unsure of, 26 small or
+turned, 6 clear ones). Three ways of learning from the user were tried, none worth shipping:
+
+- **Confirmed faces as examples** (a face counted for a person when its two best matches among the
+  person's confirmed faces are close enough, faces said not to be them counting against): no change
+  at all. A person's mean face matches their own faces better than their two closest other faces do
+  (median 0.75 against 0.70; 10th percentile 0.57 against 0.52), and none of the 38 faces below the
+  mean face's threshold were closer than 0.50 to two of the person's faces.
+- **A comparison learnt from the named people** (within-person whitening of the embeddings, learnt on
+  one half, measured on the other): same-person pairs found at a 1 in 10,000 false-match rate
+  0.386 → 0.391 (half B) and 0.651 → 0.674 (half A); at 1 in 1,000, 0.715 → 0.733 and 0.833 → 0.843.
+  Too small and too uneven to be worth thresholds recalibrated on each phone.
+- **Lower thresholds for named people**: at most +1 point (0.878 → 0.888 on half A) while the strangers
+  in named people went from 6 to 26 or more.
+
+What these numbers point at is the descriptor: SFace finds only 39–65 % of same-person pairs at a 1 in
+10,000 false-match rate on these photos. The next step is a stronger face model measured the same way.
+
 7. `make_fixture.py <dir>` writes the app's test photos (`app/src/test/resources/people`): crops of
    63 photos (no edits, screen grabs or promotional reposts), the faces found with embeddings, labels
    and credits. `fixture_sheet.py` draws them for checking.
