@@ -8,13 +8,60 @@ import org.opencv.core.Size
 import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import org.opencv.imgproc.Imgproc
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Subject cut-out: U²-Net-p (Apache-2.0, via rembg) predicts a soft foreground mask at 320×320;
- * [refine] then snaps it to the photo's edges with a guided filter at working resolution.
+ * [refine] then snaps it to the photo's edges with a guided filter at working resolution. [cutout]
+ * is the whole pipeline the app uses.
  */
 class Matting(modelPath: String) : AutoCloseable {
     private val net: Net = Dnn.readNetFromONNX(modelPath)
+
+    /**
+     * Subject mask (0..1) for an ARGB picture of [w]×[h] (the app's working size, ≤ 1024 px): the
+     * model looks at the photo and at its mirror image (averaged), looks again at the subject cropped
+     * when it is clearly smaller than the photo, and the result is fitted to the photo's edges.
+     * Measured on AIM-500 (buildtools/matting/README.md): about 8 % less error than one look.
+     */
+    fun cutout(px: IntArray, w: Int, h: Int): FloatArray {
+        val c = closerLook(px, w, h)
+        val r = max(4, (min(w, h) * REFINE_RADIUS).roundToInt())
+        return refine(luma(px), c, w, h, r)
+    }
+
+    /** The model's mask at [SIZE]² for an ARGB picture, averaged with the mask of its mirror image. */
+    private fun predictBoth(px: IntArray, w: Int, h: Int): FloatArray {
+        val a = rgbMat(px, w, h, false).let { m -> try { predict(m) } finally { m.release() } }
+        val b = rgbMat(px, w, h, true).let { m -> try { predict(m) } finally { m.release() } }
+        return FloatArray(SIZE * SIZE) { i -> (a[i] + b[(i / SIZE) * SIZE + (SIZE - 1 - i % SIZE)]) / 2 }
+    }
+
+    /** The coarse mask at the picture's size, the subject's area replaced by a closer look at it. */
+    private fun closerLook(px: IntArray, w: Int, h: Int): FloatArray {
+        val first = resize(predictBoth(px, w, h), SIZE, SIZE, w, h)
+        val box = bounds(first, w, h, 0.25f) ?: return first
+        val bw = box[2] - box[0]; val bh = box[3] - box[1]
+        val mx = (bw * 0.12f).roundToInt() + 8; val my = (bh * 0.12f).roundToInt() + 8
+        val l = max(0, box[0] - mx); val t = max(0, box[1] - my); val r = min(w, box[2] + mx); val b = min(h, box[3] + my)
+        val cw = r - l; val ch = b - t
+        if (cw * ch > 0.7 * w * h || cw < 16 || ch < 16) return first
+        val crop = IntArray(cw * ch) { i -> px[(t + i / cw) * w + l + i % cw] }
+        val second = resize(predictBoth(crop, cw, ch), SIZE, SIZE, cw, ch)
+        val out = first.copyOf()
+        // Blended over a band inside the crop's edges, except where the crop meets the photo's edge.
+        val band = max(4, min(cw, ch) / 20)
+        for (y in 0 until ch) for (x in 0 until cw) {
+            val d = min(min(x, cw - 1 - x), min(y, ch - 1 - y))
+            val atPhotoEdge = (x == 0 && l == 0) || (y == 0 && t == 0) || (x == cw - 1 && r == w) || (y == ch - 1 && b == h)
+            val k = if (atPhotoEdge) 1f else min(1f, d.toFloat() / band)
+            val i = (t + y) * w + l + x
+            out[i] = first[i] * (1 - k) + second[y * cw + x] * k
+        }
+        return out
+    }
 
     /** Foreground probability (0..1) at [SIZE]² for an RGB (CV_8UC3) image of any size. */
     fun predict(rgb: Mat): FloatArray = synchronized(this) {
@@ -46,6 +93,21 @@ class Matting(modelPath: String) : AutoCloseable {
 
     companion object {
         const val SIZE = 320
+
+        /** Guided-filter radius as a fraction of the short side (AIM-500: 3.6 % beat the 1.2 % used until 1.8). */
+        const val REFINE_RADIUS = 0.036f
+
+        fun luma(px: IntArray) = FloatArray(px.size) { i -> val c = px[i]; (0.299f * ((c shr 16) and 255) + 0.587f * ((c shr 8) and 255) + 0.114f * (c and 255)) / 255f }
+
+        /** An RGB (CV_8UC3) Mat of an ARGB picture, mirrored left to right with [flip]. */
+        fun rgbMat(px: IntArray, w: Int, h: Int, flip: Boolean): Mat {
+            val bytes = ByteArray(w * h * 3)
+            for (y in 0 until h) for (x in 0 until w) {
+                val c = px[y * w + (if (flip) w - 1 - x else x)]; val o = (y * w + x) * 3
+                bytes[o] = (c shr 16).toByte(); bytes[o + 1] = (c shr 8).toByte(); bytes[o + 2] = c.toByte()
+            }
+            return Mat(h, w, CvType.CV_8UC3).also { it.put(0, 0, bytes) }
+        }
 
         /** Bilinear resize of a float map. */
         fun resize(src: FloatArray, sw: Int, sh: Int, dw: Int, dh: Int): FloatArray {

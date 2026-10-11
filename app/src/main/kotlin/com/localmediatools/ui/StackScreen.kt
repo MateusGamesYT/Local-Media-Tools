@@ -24,6 +24,7 @@ import com.localmediatools.tools.ToolId
 import com.localmediatools.tools.ToolSection
 import com.localmediatools.ui.tools.ToolScreens
 import kotlinx.coroutines.launch
+import com.localmediatools.i18n.takeWhole
 
 /** The tool stack being put together. Kept while the app runs, like each tool's selection. */
 object ToolStackState {
@@ -70,7 +71,7 @@ object OptionSummary {
         }
         walk(root)
         val s = parts.distinct().joinToString(" · ")
-        return if (s.length > 140) s.take(137) + "…" else s
+        return if (s.length > 140) s.takeWhole(137) + "…" else s
     }
 }
 

@@ -163,7 +163,10 @@ class ImageSource private constructor(
                 bmp
             }
         }
-        val cut = Bitmap.createBitmap(full, displayRect.left, displayRect.top, displayRect.width(), displayRect.height())
+        // Clamped to the picture, as the region decoder's rectangle is.
+        val d = Rect(displayRect.left.coerceAtLeast(0), displayRect.top.coerceAtLeast(0), displayRect.right.coerceAtMost(full.width), displayRect.bottom.coerceAtMost(full.height))
+        require(!d.isEmpty) { "Empty region" }
+        val cut = Bitmap.createBitmap(full, d.left, d.top, d.width(), d.height())
         return if (sampleSize > 1) BitmapOps.scale(cut, maxOf(1, cut.width / sampleSize), maxOf(1, cut.height / sampleSize), recycleSource = cut !== full) else
             (if (cut === full) cut.copy(Bitmap.Config.ARGB_8888, false) else cut)
     }

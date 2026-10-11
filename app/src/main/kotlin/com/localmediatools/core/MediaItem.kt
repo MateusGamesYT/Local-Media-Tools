@@ -7,6 +7,7 @@ import android.provider.OpenableColumns
 import com.localmediatools.i18n.I18n
 import com.localmediatools.i18n.tr
 import java.util.Locale
+import com.localmediatools.i18n.takeWhole
 
 enum class MediaKind { IMAGE, GIF, VIDEO, PDF, AUDIO, OTHER }
 
@@ -92,7 +93,7 @@ data class MediaItem(
     val readError: String? = null,
 ) {
     val kind: MediaKind get() = format.kind
-    val baseName: String get() = name.substringBeforeLast('.').ifBlank { "file" }.take(80)
+    val baseName: String get() = name.substringBeforeLast('.').ifBlank { "file" }.takeWhole(80)
     val key: String get() = uri.toString()
 }
 
@@ -173,5 +174,5 @@ object Format {
 
     /** Removes characters that are unsafe in file names and limits the length. */
     fun safeFileName(s: String): String =
-        s.replace(Regex("[\\\\/:*?\"<>|\\p{Cntrl}]"), "_").trim().trim('.').take(100).ifBlank { "output" }
+        s.replace(Regex("[\\\\/:*?\"<>|\\p{Cntrl}]"), "_").trim().trim('.').takeWhole(100).ifBlank { "output" }
 }

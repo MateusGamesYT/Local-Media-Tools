@@ -157,6 +157,9 @@ fun trn(n: Number, one: String, other: String, vararg args: Any?): String {
  */
 fun trc(context: String, english: String, vararg args: Any?): String = I18n.format(I18n.catalog.text(english, context), args)
 
+/** The first [n] UTF-16 units of the text, without cutting a surrogate pair (an emoji) in half. */
+fun String.takeWhole(n: Int): String = if (length <= n) this else take(if (n > 0 && Character.isHighSurrogate(this[n - 1])) n - 1 else n)
+
 /**
  * Marks English text that is stored and translated later, where it is shown (with [tr]); it is
  * returned unchanged (as gettext's N_).

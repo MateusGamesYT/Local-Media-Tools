@@ -29,6 +29,7 @@ import com.localmediatools.ui.style
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.localmediatools.i18n.takeWhole
 
 /**
  * What can be done with one face: name it (or the whole group it belongs to), say it is someone
@@ -134,7 +135,7 @@ object FaceSheet {
         val d = AlertDialog.Builder(activity).setTitle(tr("Who is this?")).setView(box)
             .setPositiveButton(tr("Save")) { _, _ ->
                 val name = input.text.toString().trim().replace(Regex("\\s+"), " ")
-                if (name.isNotEmpty()) done(name.take(60))
+                if (name.isNotEmpty()) done(name.takeWhole(60))
             }
             .setNegativeButton(tr("Cancel"), null).create()
         d.setOnShowListener { input.requestFocus(); d.window?.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE) }

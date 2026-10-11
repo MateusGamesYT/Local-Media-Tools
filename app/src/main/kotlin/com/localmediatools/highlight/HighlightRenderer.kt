@@ -374,7 +374,12 @@ class HighlightRenderer(
             // Long titles are made smaller to fit.
             val maxW = outW * 0.86f
             while (main.measureText(c.text) > maxW && main.textSize > 8f) main.textSize *= 0.92f
-            val subText = c.sub?.let { s -> var t = s; while (sub.measureText(t) > maxW && t.length > 4) t = t.dropLast(2) + "…"; t }
+            // A long line is shortened by whole characters (never half of an emoji or other surrogate pair).
+            val subText = c.sub?.let { s ->
+                var t = s; var end = s.length
+                while (sub.measureText(t) > maxW && end > 1) { end = s.offsetByCodePoints(end, -1); t = s.substring(0, end).trimEnd() + "…" }
+                t
+            }
             val pad = (short * 0.03f).toInt()
             val gap = (main.textSize * 0.25f).toInt()
             val r = Rect(); main.getTextBounds("Ag", 0, 2, r)

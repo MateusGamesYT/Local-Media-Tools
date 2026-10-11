@@ -168,8 +168,8 @@ object VisionOps {
     }
 
     /**
-     * Subject mask for a photo: the model's 320 px prediction, refined with a guided filter at up
-     * to [workSide] px so it follows the real edges. Returns the alpha (0..1) and its size.
+     * Subject mask for a photo at up to [workSide] px ([Matting.cutout]: the model's looks at the
+     * photo, refined to follow its real edges). Returns the alpha (0..1) and its size.
      */
     fun subjectMask(ctx: Context, bmp: Bitmap, workSide: Int = 1024): Triple<FloatArray, Int, Int> {
         maskOverride?.let { f ->
@@ -179,14 +179,9 @@ object VisionOps {
         val matting = VisionModels.matting(ctx)
         val work = fit(bmp, workSide)
         val w = work.width; val h = work.height
-        val rgb = rgb(work)
-        val coarse = try { matting.predict(rgb) } finally { rgb.release() }
         val px = IntArray(w * h)
         work.getPixels(px, 0, w, 0, 0, w, h)
         if (work !== bmp) work.recycle()
-        val guide = FloatArray(w * h) { i -> val c = px[i]; (0.299f * ((c shr 16) and 255) + 0.587f * ((c shr 8) and 255) + 0.114f * (c and 255)) / 255f }
-        val up = Matting.resize(coarse, Matting.SIZE, Matting.SIZE, w, h)
-        val r = max(4, (minOf(w, h) * 0.012f).roundToInt())
-        return Triple(Matting.refine(guide, up, w, h, r), w, h)
+        return Triple(matting.cutout(px, w, h), w, h)
     }
 }

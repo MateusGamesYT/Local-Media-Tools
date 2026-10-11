@@ -190,8 +190,8 @@ large collections of celebrities' photos, so some of their lead may come from ha
 Ordinary family photos may show a smaller gap.
 
 **What 1.8.0 ships.** MobileFaceNet, chosen for being clearly better than SFace while smaller and
-faster, so it fits in the app (the ResNet-50 and AuraFace files don't fit under GitHub's 100 MB file
-limit with the rest of the app). `face_model.py` makes the app's copy from InsightFace's v0.7 release
+faster, so it fits in the app (the ResNet-50 and AuraFace files didn't fit under GitHub's 100 MB file
+limit with the rest of the app; 1.9.0 stores the APK with Git LFS instead, see below). `face_model.py` makes the app's copy from InsightFace's v0.7 release
 (the same weights as the copy measured above, checked tensor by tensor) with 16-bit weights, which
 OpenCV's DNN module reads (ONNX Runtime doesn't); through OpenCV it gives the same embeddings as the
 original (cosine ≥ 0.99993 on all 4,578 faces) in 21 ms instead of 32 ms per face (one thread). The
@@ -224,6 +224,26 @@ worse for 3 (Sarah Palin 1.00 → 0.85, Usain Bolt 0.86 → 0.71, Britney Spears
 test photos (each person's six hardest faces) show the same trade: recall 0.79 against SFace's 0.77,
 headwear and turned faces 1.00, but Lady Gaga's six stage looks each on their own (SFace kept five
 together) and heavy make-up at 0.56 there (on the full set make-up went 0.88 → 0.92 and 0.69 → 0.74).
+
+**What 1.9.0 ships.** ResNet-50 (InsightFace w600k_r50) for the Gallery's people, as TensorFlow Lite
+with 8-bit weights (44 MB; `face_model.py` makes it; about 90 MB of memory while indexing, where OpenCV
+needed 370–790 MB for the same model), with the face and its mirror image averaged. The APK is now
+larger than GitHub's 100 MB file limit, so `release/*.apk` is stored with Git LFS. Face blur keeps
+MobileFaceNet, which is fast enough for every frame of a video. `ClusterParams.R50`, measured like
+MobileFaceNet on the same 885 faces of 78 people (thresholds searched on half A, checked on half B):
+
+| | MobileFaceNet (1.8) | ResNet-50 (1.9) |
+|---|---|---|
+| B-cubed recall, half A / half B (faces of another person in a group) | 0.886 / 0.851 (0 / 0) | **0.938 / 0.890** (0 / 0) |
+| A person's faces in their main group, half A / half B | 92 % / 90 % | **96 % / 93 %** |
+| Faces left on their own, half A / half B | 8 % / 12.5 % | **4 % / 10 %** |
+| All 78 at once: wrong faces, strangers' faces in someone's group | 3, 50 | **1, 38** |
+| Named after one round, half A / half B | 93 % / 89 % | **97 % / 90 %** |
+| Suggestions: own groups / own single faces offered | 97–100 % / 80–86 % | 99–100 % / 90–94 % |
+
+The 8-bit weights group these people exactly as the full-precision model does (both halves). Faces
+described by an older model are described again after the update, keeping names, confirmations and
+corrections (as in 1.8.0). The same caution applies: the 78 people are public figures.
 
 `make_fixture.py` keeps the test photos chosen in 1.5.0 (with SFace) and writes the faces as
 MobileFaceNet describes them; the Robolectric set now groups the small face in profile with its person.

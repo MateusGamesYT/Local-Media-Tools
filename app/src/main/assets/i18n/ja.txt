@@ -1,0 +1,6377 @@
+# 日本語 — translations of the app's English text (see buildtools/i18n/catalog.py).
+# "< " lines: the English (two lines: singular and plural); "> " lines: the translation (one per plural form);
+# "@ " lines: which meaning of the English is meant.
+
+< Exposure
+> 露出
+
+< Brightness
+> 明るさ
+
+< Contrast
+> コントラスト
+
+< Highlights
+> ハイライト
+
+< Shadows
+> シャドウ
+
+< Saturation
+> 彩度
+
+< Vibrance
+> 自然な彩度
+
+< Warmth
+> 色温度
+
+< Tint
+> 色合い
+
+< Sharpness
+> シャープネス
+
+< Vignette
+> ビネット
+
+< Original
+> オリジナル
+
+< Vivid
+> ビビッド
+
+< Golden
+> ゴールデン
+
+< Nordic
+> ノルディック
+
+< Matte
+> マット
+
+< Vintage
+> ヴィンテージ
+
+< Cinema
+> シネマ
+
+< Drama
+> ドラマ
+
+< Mono
+> モノ
+
+< Noir
+> ノワール
+
+< Sepia
+> セピア
+
+< File is too large to decode in memory on this device
+> この端末ではファイルが大きすぎて、メモリ上でデコードできません
+
+< Image has invalid dimensions
+> 画像のサイズが正しくありません
+
+< Image is too large ({0}×{1})
+> 画像が大きすぎます（{0}×{1}）
+
+< Not a TIFF file
+> TIFFファイルではありません
+
+< BigTIFF files are not supported
+> BigTIFFファイルには対応していません
+
+< TIFF file is truncated
+> TIFFファイルが途中で切れています
+
+< Corrupt TIFF tag
+> TIFFタグが壊れています
+
+< TIFF has no image data
+> TIFFに画像データがありません
+
+< TIFF with mixed bit depths is not supported
+> ビット深度が混在するTIFFには対応していません
+
+< TIFF with {0}-bit samples is not supported
+> {0}ビットサンプルのTIFFには対応していません
+
+< Floating-point TIFF is not supported
+> 浮動小数点のTIFFには対応していません
+
+< TIFF compression {0} is not supported
+> TIFFの圧縮方式{0}には対応していません
+
+< TIFF colour model {0} is not supported
+> TIFFのカラーモデル{0}には対応していません
+
+< TIFF is missing image data
+> TIFFの画像データが不足しています
+
+< Unsupported TIFF compression
+> 非対応のTIFF圧縮方式です
+
+< Palette TIFF without colour map
+> カラーマップのないパレットTIFFです
+
+< Corrupt compressed TIFF data
+> 圧縮されたTIFFデータが壊れています
+
+< Not a PSD file
+> PSDファイルではありません
+
+< {0}-bit PSD is not supported
+> {0}ビットのPSDには対応していません
+
+< PSD colour mode {0} is not supported (use RGB, Grayscale or CMYK)
+> PSDのカラーモード{0}には対応していません（RGB、グレースケール、CMYKを使用してください）
+
+< PSD file is truncated
+> PSDファイルが途中で切れています
+
+< PSD file has no merged image
+> PSDファイルに統合画像がありません
+
+< PSD with ZIP-compressed composite is not supported
+> ZIP圧縮の合成データを持つPSDには対応していません
+
+< Not a QOI file
+> QOIファイルではありません
+
+< QOI file is truncated
+> QOIファイルが途中で切れています
+
+< Corrupt PNM header
+> PNMヘッダーが壊れています
+
+< Not a PNM file
+> PNMファイルではありません
+
+< Corrupt PAM header
+> PAMヘッダーが壊れています
+
+< PNM file is truncated
+> PNMファイルが途中で切れています
+
+< PBM file is truncated
+> PBMファイルが途中で切れています
+
+< Not a TGA file
+> TGAファイルではありません
+
+< Not a supported TGA file
+> 対応していないTGAファイルです
+
+< Unsupported TGA pixel depth {0}
+> 非対応のTGAピクセル深度です：{0}
+
+< TGA file is truncated
+> TGAファイルが途中で切れています
+
+< TGA colour index out of range
+> TGAのカラーインデックスが範囲外です
+
+< Truncated MP4 box header
+> MP4ボックスヘッダーが途中で切れています
+
+< MP4 box '{0}' at {1} is truncated or corrupt
+> {1}のMP4ボックス「{0}」が途切れているか、壊れています
+
+< The file has no movie header (moov box)
+> ファイルにムービーヘッダー（moovボックス）がありません
+
+< The file has no media data (mdat box)
+> ファイルにメディアデータ（mdatボックス）がありません
+
+< Movie header is unexpectedly large
+> ムービーヘッダーが想定外に大きくなっています
+
+< Chunk offsets do not fit even in 64-bit tables
+> チャンクオフセットが64ビットのテーブルにも収まりません
+
+< Corrupt '{0}' box in movie header
+> ムービーヘッダー内の「{0}」ボックスが壊れています
+
+< A media chunk points outside the file's data boxes
+> メディアチャンクがファイルのデータボックスの外を指しています
+
+< Corrupt chunk offset table
+> チャンクオフセットテーブルが壊れています
+
+< Unexpected end of file
+> ファイルが予期せず終了しています
+
+< GIF cannot store semi-transparent pixels
+> GIFでは半透明のピクセルを保存できません
+
+< Frame {0} needs more than 256 colours including transparency, which GIF cannot store exactly
+> フレーム{0}は透明を含めて256色を超えるため、GIFでは正確に保存できません
+
+< Not a GIF file
+> GIFファイルではありません
+
+< GIF has an empty canvas
+> GIFのキャンバスが空です
+
+< GIF canvas {0}×{1} is too large to process on this device
+> GIFのキャンバス（{0}×{1}）は、この端末で処理するには大きすぎます
+
+< Corrupt GIF block ({0}) after frame {1}
+> フレーム{1}の後のGIFブロック（{0}）が壊れています
+
+< GIF is truncated inside frame {0}
+> GIFがフレーム{0}の途中で切れています
+
+< GIF frame {0} has no colour table
+> GIFのフレーム{0}にカラーテーブルがありません
+
+< GIF frame {0} has invalid LZW code size
+> GIFのフレーム{0}のLZWコードサイズが正しくありません
+
+< GIF frame {0} is too large
+> GIFのフレーム{0}が大きすぎます
+
+< GIF frame {0} is missing image data
+> GIFのフレーム{0}に画像データがありません
+
+< GIF is truncated
+> GIFが途中で切れています
+
+< GPS location
+> GPS位置情報
+
+< camera make & model
+> カメラのメーカーと機種
+
+< date & time
+> 日付と時刻
+
+< software
+> ソフトウェア
+
+< author & copyright
+> 作成者と著作権
+
+< camera serial number
+> カメラのシリアル番号
+
+< lens details
+> レンズの詳細
+
+< maker notes
+> メーカーノート
+
+< descriptions & comments
+> 説明とコメント
+
+< shooting settings
+> 撮影設定
+
+< embedded thumbnail
+> 埋め込みサムネイル
+
+< Not a JPEG file
+> JPEGファイルではありません
+
+< Damaged JPEG segment
+> JPEGセグメントが破損しています
+
+< other application data
+> その他のアプリケーションデータ
+
+< XMP metadata
+> XMPメタデータ
+
+< colour profile
+> カラープロファイル
+
+< extra images (depth, HDR or motion data)
+> 追加画像（深度、HDR、モーションデータ）
+
+< Adobe colour transform
+> Adobeカラー変換
+
+< IPTC / Photoshop data
+> IPTC / Photoshopデータ
+
+< The JPEG file is truncated
+> JPEGファイルが途中で切れています
+
+< Not a PNG file
+> PNGファイルではありません
+
+< Damaged PNG chunk
+> PNGチャンクが破損しています
+
+< EXIF data
+> EXIFデータ
+
+< text notes ({0})
+> テキストメモ（{0}）
+
+< hidden data after the image
+> 画像の後ろに隠れたデータ
+
+< Not a WebP file
+> WebPファイルではありません
+
+< Damaged GIF (unexpected block {0})
+> GIFが破損しています（予期しないブロック{0}）
+
+< The file is truncated
+> ファイルが途中で切れています
+
+< {0} supports at most {1} px per side; the edited photo is {2}×{3}. Choose PNG or JPEG.
+> {0}は1辺あたり最大{1}pxまでです。編集した写真は{2}×{3}です。PNGまたはJPEGを選んでください。
+
+< This photo is too large to edit with the memory available right now. Close other apps or raise the export workload and try again.
+> 現在使えるメモリでは、この写真が大きすぎて編集できません。他のアプリを閉じるか、エクスポート負荷を上げてから、もう一度お試しください。
+
+< {0} can't be written in pieces and this photo is too large for memory; choose JPEG or PNG.
+> {0}は分割して書き込めず、この写真はメモリに対して大きすぎます。JPEGまたはPNGを選んでください。
+
+< Erase
+> 消去
+
+< Blur
+> ぼかし
+
+< Pixelate
+> モザイク
+
+< Could not store the retouched area
+> 修正した範囲を保存できませんでした
+
+< A retouched area is missing; please redo it.
+> 修正した範囲が見つかりません。もう一度やり直してください。
+
+< AI · MI-GAN on-device
+> AI · MI-GAN（端末内）
+
+< Basic fill (AI unavailable)
+> 基本塗りつぶし（AI利用不可）
+
+< This phone is set up as a low-memory device.
+> この端末は低メモリ端末として設定されています。
+
+< Needs at least 2 GB of RAM.
+> 2 GB以上のRAMが必要です。
+
+< Needs a 64-bit processor.
+> 64ビットプロセッサーが必要です。
+
+< The on-device model is missing from this build.
+> 端末内モデルがこのビルドに含まれていません。
+
+< On-device AI
+> 端末内AI
+
+< That area is too large to erase in one go with the memory available. Erase it in smaller parts.
+> 使えるメモリでは、その範囲は一度に消すには大きすぎます。小さく分けて消してください。
+
+< That area is too large for the memory available. Do it in smaller parts.
+> その範囲は使えるメモリに対して大きすぎます。小さく分けて行ってください。
+
+< Clear search
+> 検索をクリア
+
+< , selected
+> 、選択中
+
+< , changed
+> 、変更済み
+
+< Value {0}
+> 値 {0}
+
+< Most space
+> 容量の大きい順
+
+< Newest
+> 新しい順
+
+< Oldest
+> 古い順
+
+< Most photos
+> 枚数の多い順
+
+< All
+> すべて
+
+< Copies
+> 同じ写真
+
+< Similar shots
+> 似た写真
+
+< Keep all
+> すべて残す
+
+< Suggested
+> おすすめ
+
+< Next
+> 次へ
+
+< Group {0} of {1}
+> グループ {0}/{1}
+
+< Tap a photo to keep or remove it · long-press to open it · swipe for the next group
+> 写真をタップして残す/削除を切り替え · 長押しで開く · スワイプで次のグループへ
+
+< Done
+> 完了
+
+< {0} photo
+< {0} photos
+> {0}枚
+
+< all kept
+> すべて残す
+
+< {0} to remove ({1})
+< {0} to remove ({1})
+> {0}枚を削除（{1}）
+
+< {0} selected in total
+< {0} selected in total
+> 合計{0}枚を選択中
+
+< Photos are compared on this phone. Nothing is deleted until you confirm, and removed photos go to the system trash, where they can be restored for 30 days.
+> 写真の比較はこの端末内で行われます。確認するまで何も削除されず、削除した写真はシステムのゴミ箱に移動し、30日間は元に戻せます。
+
+< Move to trash
+> ゴミ箱に移動
+
+< Find duplicates in your photos
+> 写真の重複を探す
+
+< Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos.
+> このアプリが参照できるすべての写真をスキャンします。初回のスキャンには時間がかかります（1,000枚あたり約1分）。2回目以降は新しい写真だけを確認します。
+
+< The app needs permission to see your photos for this. It never uploads them.
+> この機能には、写真へのアクセス許可が必要です。写真がアップロードされることはありません。
+
+< Scan my photos
+> 写真をスキャン
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {0}枚中{1}枚
+
+< Starting…
+> 開始中…
+
+< Stop
+> 停止
+
+< The scan stopped: {0}
+> スキャンが停止しました：{0}
+
+< Try again
+> もう一度試す
+
+< No duplicates found
+> 重複は見つかりませんでした
+
+< {0} group
+< {0} groups
+> {0}グループ
+
+< {0} photo you could remove
+< {0} photos you could remove
+> 削除できる写真：{0}枚
+
+< Checked {0} photo. Nice and tidy!
+< Checked {0} photos. Nice and tidy!
+> {0}枚をチェックしました。きれいに整っています！
+
+< Checked {0} photo. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+< Checked {0} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+> {0}枚をチェックしました。同じ写真は削除候補として提案され（ベストの1枚は残ります）、似た写真は自分で選ぶか、下のルールに任せることができます。
+
+< Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
+> 似た写真の検出には端末内AIモデルが必要ですが、この端末では利用できません。完全に同じ写真や再保存されたコピーは引き続き検出されます。
+
+< Scan again
+> もう一度スキャン
+
+< Without access to your photos the duplicate finder can't look for copies.
+> 写真へのアクセスがないと、重複の検出はできません。
+
+< RAWs
+> RAW
+
+< favourites
+> お気に入り
+
+< {0} person
+< {0} people
+> {0}人
+
+< Keep rules
+> 残すルール
+
+< Nothing always kept
+> 常に残すものはありません
+
+< Always kept: {0}
+> 常に残す：{0}
+
+@ between the items of a list
+< , 
+> 、
+
+< picks the best similar shot
+> 似た写真のベストを選択
+
+< Keep rules, expanded
+> 残すルール（展開済み）
+
+< Keep rules, collapsed
+> 残すルール（折りたたみ済み）
+
+< Always keep RAW photos
+> RAW写真を常に残す
+
+< DNG, CR2, NEF, ARW and other camera RAW files; the best other copy stays next to them
+> DNG、CR2、NEF、ARWなどのカメラRAWファイル。そのほかのコピーのうちベストの1枚も一緒に残ります
+
+< Always keep favourites
+> お気に入りを常に残す
+
+< Photos you starred in your gallery
+> ギャラリーでスターを付けた写真
+
+< Suggest similar shots too
+> 似た写真も提案
+
+< Keeps the best shot of each burst and suggests the rest
+> 連写ごとにベストの1枚を残し、残りを削除候補にします
+
+< Which copy to keep
+> 残すコピー
+
+< Always keep photos of
+> 次の人物の写真を常に残す
+
+< Name people in the Gallery's People tab to keep every photo they're in.
+> ギャラリーの「人物」タブで名前を付けると、その人が写っている写真をすべて残せます。
+
+< {0}, always kept
+> {0}、常に残す
+
+< {0}, not protected
+> {0}、保護なし
+
+< Rules apply to every group you haven't changed by hand.
+> ルールは、手動で変更していないすべてのグループに適用されます。
+
+< Review one by one
+> 1件ずつ確認
+
+< Reset to suggestions
+> おすすめに戻す
+
+< Every group follows the keep rules again.
+> すべてのグループが再び残すルールに従います。
+
+< {1} selected in {0} group · frees {2}
+< {1} selected in {0} groups · frees {2}
+> {0}グループで{1}枚を選択 · {2}を解放
+
+< Move {0} to trash
+< Move {0} to trash
+> {0}枚をゴミ箱に移動
+
+< Moving photos to the trash needs Android 11 or newer. Long-press a photo to open it in your gallery and delete it there.
+> 写真をゴミ箱に移動するには、Android 11以降が必要です。写真を長押しするとギャラリーで開くので、そこで削除してください。
+
+< These photos can't be moved to the trash: {0}
+> 次の写真はゴミ箱に移動できません：{0}
+
+< Moved {0} photo to the trash. You can restore it from your gallery's trash for 30 days.
+< Moved {0} photos to the trash. You can restore them from your gallery's trash for 30 days.
+> {0}枚の写真をゴミ箱に移動しました。ギャラリーのゴミ箱から30日間は復元できます。
+
+@ badge on the photo to keep
+< Best
+> ベスト
+
+@ badge on a photo that is kept
+< Keep
+> 残す
+
+< {0} MP
+> {0} MP
+
+< {0}, will be moved to the trash
+> {0}、ゴミ箱に移動されます
+
+< {0}, kept
+> {0}、残す
+
+< , always kept: {0}
+> 、常に残す：{0}
+
+< , best photo
+> 、ベスト写真
+
+< Keep at least one photo of each group.
+> 各グループで、少なくとも1枚は残してください。
+
+< Back
+> 戻る
+
+< No installed app can open {0} files.
+> {0}ファイルを開けるアプリがインストールされていません。
+
+< This file is no longer available.
+> このファイルは利用できなくなりました。
+
+< Share
+> 共有
+
+< Waiting for the current export to finish
+> 現在のエクスポートの完了を待っています
+
+< {0}%
+> {0}%
+
+< Export workload: {0} ({1}%)
+> エクスポート負荷：{0}（{1}%）
+
+< {0} of {1} done
+> {1}件中{0}件完了
+
+< 1 job
+> 処理1件
+
+< Cancel
+> キャンセル
+
+< Workload
+> 負荷
+
+< View results
+> 結果を見る
+
+< Open
+> 開く
+
+< Cancel this export?
+> このエクスポートをキャンセルしますか？
+
+< Files already saved are kept. The file being processed is discarded, never left half-written.
+> 保存済みのファイルはそのまま残ります。処理中のファイルは破棄され、書きかけのまま残ることはありません。
+
+< Cancel export
+> エクスポートをキャンセル
+
+< Keep going
+> 続ける
+
+< Custom setting.
+> カスタム設定。
+
+< Export workload
+> エクスポート負荷
+
+< How hard exports may work the phone
+> エクスポートが端末にかけてよい負荷
+
+< This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.
+> これはCPU使用率の正確な上限ではありません。並列処理の数、スレッドの優先度、処理の合間の休止、エクスポートが使える空きメモリの量を設定します。変更は数秒以内に、実行中のエクスポートへ反映されます。
+
+< Export results
+> エクスポート結果
+
+< This export is no longer in the history.
+> このエクスポートは履歴から削除されています。
+
+< Share file
+> ファイルを共有
+
+< Share all {0}
+< Share all {0}
+> {0}件すべてを共有
+
+< Print
+> 印刷
+
+< Saved to {0}. Find them in your gallery, Files app or the folder named LocalMediaTools.
+> {0}に保存しました。ギャラリー、ファイルアプリ、またはLocalMediaToolsという名前のフォルダで確認できます。
+
+< Failed ({0})
+> 失敗（{0}）
+
+< Skipped ({0})
+> スキップ（{0}）
+
+< Printed
+> 印刷済み
+
+< Saved ({0})
+> 保存済み（{0}）
+
+< …and {0} more
+< …and {0} more
+> …ほか{0}件
+
+< Finished {0}
+> {0}に完了
+
+< took {0}
+> 所要時間 {0}
+
+< workload {0}%
+> 負荷 {0}%
+
+< Open {0}
+> {0}を開く
+
+< Share {0}
+> {0}を共有
+
+< …and {0} more file
+< …and {0} more files
+> …ほか{0}ファイル
+
+@ empty the list
+< Clear
+> クリア
+
+< Clear export history?
+> エクスポート履歴をクリアしますか？
+
+< Only the list is cleared; saved files stay on your phone.
+> 消去されるのは一覧だけです。保存したファイルは端末に残ります。
+
+< Recent exports
+> 最近のエクスポート
+
+< No exports yet. Results of every export appear here.
+> エクスポートはまだありません。エクスポートの結果はここに表示されます。
+
+< Nothing here yet
+> まだ何もありません
+
+< Choose an image
+> 画像を選ぶ
+
+< Choose images
+> 画像を選ぶ
+
+< Choose a video
+> 動画を選ぶ
+
+< Choose videos
+> 動画を選ぶ
+
+< Choose a GIF
+> GIFを選ぶ
+
+< Choose GIFs
+> GIFを選ぶ
+
+< Choose a PDF
+> PDFを選ぶ
+
+< Choose PDFs
+> PDFを選ぶ
+
+< Choose a photo or video
+> 写真または動画を選ぶ
+
+< Choose photos or videos
+> 写真または動画を選ぶ
+
+< Choose a file
+> ファイルを選ぶ
+
+< Choose files
+> ファイルを選ぶ
+
+< Choose a photo or PDF
+> 写真またはPDFを選ぶ
+
+< Choose photos or PDFs
+> 写真またはPDFを選ぶ
+
+< Select images
+> 画像を選択
+
+< Select videos
+> 動画を選択
+
+< Select GIFs
+> GIFを選択
+
+< Select PDFs
+> PDFを選択
+
+< Select photos or videos
+> 写真または動画を選択
+
+< Select files
+> ファイルを選択
+
+< Select photos or PDFs
+> 写真またはPDFを選択
+
+< Select images to continue
+> 続けるには画像を選択してください
+
+< Select videos to continue
+> 続けるには動画を選択してください
+
+< Select GIFs to continue
+> 続けるにはGIFを選択してください
+
+< Select PDFs to continue
+> 続けるにはPDFを選択してください
+
+< Select photos or videos to continue
+> 続けるには写真または動画を選択してください
+
+< Select files to continue
+> 続けるにはファイルを選択してください
+
+< Select photos or PDFs to continue
+> 続けるには写真またはPDFを選択してください
+
+< Select at least {0} image
+< Select at least {0} images
+> 画像を{0}枚以上選択してください
+
+< Select at least {0} video
+< Select at least {0} videos
+> 動画を{0}本以上選択してください
+
+< Select at least {0} GIF
+< Select at least {0} GIFs
+> GIFを{0}個以上選択してください
+
+< Select at least {0} PDF
+< Select at least {0} PDFs
+> PDFを{0}個以上選択してください
+
+< Select at least {0} photo or video
+< Select at least {0} photos or videos
+> 写真または動画を{0}件以上選択してください
+
+< Select at least {0} file
+< Select at least {0} files
+> ファイルを{0}個以上選択してください
+
+< Select at least {0} photo or PDF
+< Select at least {0} photos or PDFs
+> 写真またはPDFを{0}件以上選択してください
+
+< {0} image selected
+< {0} images selected
+> 画像を{0}枚選択中
+
+< {0} video selected
+< {0} videos selected
+> 動画を{0}本選択中
+
+< {0} GIF selected
+< {0} GIFs selected
+> GIFを{0}個選択中
+
+< {0} PDF selected
+< {0} PDFs selected
+> PDFを{0}個選択中
+
+< {0} photo or video selected
+< {0} photos and videos selected
+> 写真と動画を{0}件選択中
+
+< {0} file selected
+< {0} files selected
+> ファイルを{0}個選択中
+
+< {0} photo or PDF selected
+< {0} photos and PDFs selected
+> 写真とPDFを{0}件選択中
+
+< No images found in that folder.
+> そのフォルダに画像が見つかりません。
+
+< No videos found in that folder.
+> そのフォルダに動画が見つかりません。
+
+< No GIFs found in that folder.
+> そのフォルダにGIFが見つかりません。
+
+< No PDFs found in that folder.
+> そのフォルダにPDFが見つかりません。
+
+< No photos or videos found in that folder.
+> そのフォルダに写真や動画が見つかりません。
+
+< No files found in that folder.
+> そのフォルダにファイルが見つかりません。
+
+< No photos or PDFs found in that folder.
+> そのフォルダに写真やPDFが見つかりません。
+
+< Not a video file
+> 動画ファイルではありません
+
+< Not a PDF file
+> PDFファイルではありません
+
+< Not a photo or video
+> 写真または動画ではありません
+
+< Not a photo, video, GIF or PDF
+> 写真、動画、GIF、PDFのいずれでもありません
+
+< Not a photo or PDF
+> 写真またはPDFではありません
+
+< Use the GIF optimizer for GIFs
+> GIFには「GIF最適化」を使ってください
+
+< Not an image file
+> 画像ファイルではありません
+
+< One at a time
+> 1つずつ
+
+< They'll be used in the order you select them
+> 選択した順に使われます
+
+< Select as many as you like
+> いくつでも選択できます
+
+< Gallery
+> ギャラリー
+
+< Files
+> ファイル
+
+< Folder
+> フォルダ
+
+< Review & order
+> 確認と並べ替え
+
+< Review
+> 確認
+
+< Reading the selected files…
+> 選択したファイルを読み込み中…
+
+< Nothing selected yet.
+> まだ何も選択されていません。
+
+< {0} can't be used
+< {0} can't be used
+> 使用できません：{0}
+
+< {0} file will be skipped: {1}
+< {0} files will be skipped: {1}
+> スキップされるファイル（{0}件）：{1}
+
+< {0}: {1}, can't be used
+> {0}：{1}、使用できません
+
+< Selected files
+> 選択したファイル
+
+< Files are processed from top to bottom. Use the arrows to change the order.
+> ファイルは上から順に処理されます。矢印で順番を変更できます。
+
+< {0} file
+< {0} files
+> {0}ファイル
+
+< {0} will be skipped
+< {0} will be skipped
+> スキップされます：{0}
+
+< Move up
+> 上へ移動
+
+< Move down
+> 下へ移動
+
+< Remove
+> 削除
+
+< remove object person people erase delete clean ai inpaint
+> 消す 削除 消去 物体 オブジェクト 人物 人 不要 消しゴム 消しゴムマジック 修復 クリーン ai
+
+< crop rotate straighten brightness contrast exposure saturation filter look edit adjust colour color warmth
+> トリミング 切り抜き 回転 傾き 補正 明るさ コントラスト 露出 彩度 フィルター 編集 調整 色 色温度
+
+< censor hide face plate privacy mosaic anonymize redact
+> 隠す 顔 ナンバープレート プライバシー モザイク 匿名 伏せる ぼかし
+
+< stack chain pipeline workflow combine multiple steps several tools in a row automate batch then
+> スタック 連続 ワークフロー 自動化 複数 ステップ ツール 一括 まとめて 順番
+
+< cut out cutout remove background transparent png sticker subject product ai
+> 切り抜き 背景 背景削除 背景透過 透明 png ステッカー 被写体 商品 ai
+
+< auto fix improve brighten colour color one tap magic ai enhance
+> 自動 補正 改善 明るく 色 ワンタップ マジック ai 強調
+
+< face faces blur pixelate hide anonymize people video privacy censor ai
+> 顔 ぼかし モザイク 隠す 匿名 人物 動画 プライバシー ai
+
+< duplicate similar same copies clean storage space free gallery burst
+> 重複 似た 同じ コピー 整理 ストレージ 容量 空き ギャラリー 連写
+
+< join combine concatenate clips append video
+> 結合 つなぐ 連結 クリップ 動画
+
+< highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
+> ハイライト モンタージュ ムービー 映画 スライドショー 思い出 旅行 休暇 イベント 音楽 まとめ 編集 自動
+
+< fast slow motion timelapse time lapse speed up hyperlapse
+> 速く 遅く スロー スローモーション タイムラプス 倍速 早送り 速度
+
+< cut shorten clip rotate sideways
+> カット 短縮 トリミング 切り取り クリップ 回転 横向き
+
+< cut parts segments whatsapp status
+> 分割 切り分け 区間 部分 whatsapp ステータス
+
+< shrink smaller reduce size mp4 h264
+> 圧縮 縮小 小さく サイズ 容量 mp4 h264
+
+< shrink smaller reduce size jpg jpeg webp resize
+> 圧縮 縮小 小さく サイズ 容量 jpg jpeg webp リサイズ
+
+< heic avif jpg jpeg png webp tiff format
+> heic avif jpg jpeg png webp tiff 形式 変換 フォーマット
+
+< collage combine join stack
+> コラージュ 結合 つなぐ 組み合わせ
+
+< panorama join overlap screenshots
+> パノラマ つなぎ合わせ 重なり スクリーンショット 結合
+
+< logo brand copyright text
+> ロゴ ブランド 著作権 テキスト 文字 透かし ウォーターマーク
+
+< exif gps location privacy clean strip
+> exif gps 位置情報 プライバシー 削除 消去 メタデータ
+
+< mp3 m4a sound music
+> mp3 m4a 音声 音楽 サウンド オーディオ
+
+< mute silent sound
+> ミュート 無音 消音 音
+
+< scan document camera paper
+> スキャン 書類 ドキュメント カメラ 紙
+
+< split pdf pages select
+> 分割 抽出 pdf ページ 選択
+
+< animation meme
+> アニメーション ミーム
+
+< Tools
+> ツール
+
+< Activity
+> アクティビティ
+
+< Settings
+> 設定
+
+< Private · offline · on-device
+> プライベート · オフライン · 端末内処理
+
+< No uploads
+> アップロードなし
+
+< Edit, convert and\nclean up — privately.
+> 編集・変換・クリーンアップを、\nプライベートに。
+
+< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
+< {0} tools that run entirely on this phone. No account, no cloud, no limits.
+> {0}個のツールすべてが、この端末内で動作します。アカウント不要、クラウド不要、制限なし。
+
+< Search {0} tool
+< Search {0} tools
+> {0}個のツールを検索
+
+< Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
+> 写真、動画、ドキュメントはこの端末内で処理され、アップロードされることはありません。アプリがインターネット上のサーバーに接続することはありません（印刷は、同じネットワーク内のプリンターとのみ通信します）。結果は、Pictures、Movies、Music、Documents内のLocalMediaToolsフォルダに保存されます。
+
+< No tool matches "{0}"
+> 「{0}」に一致するツールはありません
+
+< Try words like crop, gps, mp3, heic or panorama.
+> 「トリミング」「gps」「mp3」「heic」「パノラマ」などの言葉で検索してみてください。
+
+< {0} result
+< {0} results
+> {0}件の結果
+
+< Exports keep running when you leave the app.
+> アプリを閉じても、エクスポートは続行されます。
+
+< Start a tool and its results will be listed here, with files you can open or share.
+> ツールを実行すると、結果がここに一覧表示され、ファイルを開いたり共有したりできます。
+
+< Language
+> 言語
+
+< App language
+> アプリの言語
+
+< Performance
+> パフォーマンス
+
+< How hard exports may work the phone. Lower keeps it cool and responsive; higher finishes sooner.
+> エクスポートが端末にかけてよい負荷です。低くすると発熱を抑えて動作も軽く、高くすると早く終わります。
+
+< Magic eraser model
+> 消しゴムマジックのモデル
+
+< MI-GAN · runs on this phone · ready
+> MI-GAN · この端末内で動作 · 準備完了
+
+< Unavailable: {0} Basic fill is used instead.
+> 利用できません：{0} 代わりに基本塗りつぶしを使用します。
+
+< Stitcher alignment assist
+> つなぎ合わせの位置合わせ補助
+
+< MobileNet-V3 · runs on this phone · ready
+> MobileNet-V3 · この端末内で動作 · 準備完了
+
+< Organise in the background
+> バックグラウンドで整理
+
+< Finds people and things in new photos on this phone so you can search them. Slows down when the phone is warm; pauses when it's very hot or the battery is low.
+> 新しい写真に写っている人物やものをこの端末内で見つけ、検索できるようにします。端末が温かくなると動作が遅くなり、高温になったりバッテリー残量が少なくなったりすると一時停止します。
+
+< Recognition models
+> 認識モデル
+
+< EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and ResNet-50 (faces and people) · all on this phone
+> EfficientDet-Lite2とEfficientNetV2（ものと場所）、YuNetとResNet-50（顔と人物） · すべてこの端末内
+
+< Storage
+> ストレージ
+
+< Where results go
+> 結果の保存先
+
+< LocalMediaTools folders in {0}
+> {0}内のLocalMediaToolsフォルダ
+
+< Clear temporary files
+> 一時ファイルを削除
+
+< Calculating…
+> 計算中…
+
+< {0} in the app's cache · your files are not affected
+> アプリのキャッシュ内に{0} · 保存したファイルには影響しません
+
+< Privacy
+> プライバシー
+
+< Nothing goes to the internet
+> インターネットには何も送信されません
+
+< The app never connects to servers on the internet; printing talks only to printers on your own network.
+> このアプリがインターネット上のサーバーに接続することはありません。印刷は、同じネットワーク内のプリンターとのみ通信します。
+
+< Originals are never changed
+> 元のファイルは変更されません
+
+< Every tool writes new files and checks them before saving.
+> どのツールも新しいファイルを書き出し、保存前にチェックします。
+
+< About
+> アプリについて
+
+< {0} tool
+< {0} tools
+> {0}個のツール
+
+< Open-source licences
+> オープンソースライセンス
+
+< Phone's language ({0})
+> 端末の言語（{0}）
+
+< Clear temporary files?
+> 一時ファイルを削除しますか？
+
+< An export is running; temporary files will be cleared after it finishes. Try again then.
+> エクスポートを実行中です。一時ファイルは終了後に削除されます。その後でもう一度お試しください。
+
+< Thumbnails and leftovers from interrupted exports are removed. Your saved files are not affected.
+> サムネイルと、中断されたエクスポートの残りファイルが削除されます。保存したファイルには影響しません。
+
+@ delete files
+< Clear
+> 削除
+
+< Temporary files cleared
+> 一時ファイルを削除しました
+
+< Image alignment for the stitcher and basic fill.
+> つなぎ合わせと基本塗りつぶしのための画像の位置合わせ。
+
+< Merging PDFs and extracting pages.
+> PDFの結合とページの抽出。
+
+< Runs the on-device AI models.
+> 端末内のAIモデルを実行します。
+
+< Magic eraser model, converted to TensorFlow Lite.
+> TensorFlow Liteに変換した消しゴムマジックのモデル。
+
+< Stitcher alignment assist and similar-photo detection.
+> つなぎ合わせの位置合わせ補助と、似た写真の検出。
+
+< Finding faces for face blur, the Gallery and auto enhance.
+> 顔ぼかし、ギャラリー、自動補正のための顔検出。
+
+< Non-commercial research use only (code MIT)
+> 非営利の研究目的のみ（コードはMIT）
+
+< Recognising the people in the Gallery.
+> ギャラリー内の人物の認識。
+
+< Recognising the same person across video frames and files for face blur.
+> 顔ぼかしのための、動画のフレームやファイルをまたいだ同一人物の認識。
+
+< Background remover.
+> 背景削除。
+
+< Finding people, animals, vehicles and objects in the gallery.
+> ギャラリー内の人物、動物、乗り物、物体の検出。
+
+< Recognising scenes and kinds of things in the gallery and for auto enhance.
+> ギャラリー内と自動補正のための、シーンやものの種類の認識。
+
+< Writing the instrumental background music for highlight videos, on the phone.
+> ハイライト動画用のインストゥルメンタルBGMを、端末内で作成します。
+
+< Grouping the classifier's classes into searchable categories.
+> 分類器のクラスを、検索できるカテゴリにまとめます。
+
+< Human-verified labels used to calibrate and train the category recognisers.
+> カテゴリ認識の調整と学習に使う、人が確認したラベル。
+
+< Language runtime.
+> 言語ランタイム。
+
+< App typography.
+> アプリの書体。
+
+< {0}: original
+> {0}：元のまま
+
+< Run several tools in a row. Each tool works on the results of the one before; only the final files are saved.
+> 複数のツールを続けて実行します。各ツールは前のツールの結果に対して動作し、保存されるのは最終的なファイルだけです。
+
+< Example: {0}
+> 例：{0}
+
+< Pick your files
+> ファイルを選ぶ
+
+< Steps
+> ステップ
+
+< Tap a step to change its settings
+> ステップをタップすると設定を変更できます
+
+< Results
+> 結果
+
+< Also save the in-between results
+> 途中の結果も保存
+
+< Off: only the final files are saved; the rest are temporary
+> オフ：最終的なファイルだけが保存され、それ以外は一時的なものです
+
+< If a step has nothing to do for a file (for example it's already small), or can't work on that kind of file, the file goes on to the next step unchanged, so nothing is lost.
+> ステップがファイルに対して行うことがない場合（たとえば、すでに小さい場合）や、その種類のファイルを処理できない場合、ファイルは変更されないまま次のステップに進むため、何も失われません。
+
+< Run stack
+> スタックを実行
+
+< Starts with the files you pick
+> 選んだファイルから開始します
+
+< Starts with {0} file: {1}
+< Starts with {0} files: {1}
+> {0}ファイルから開始：{1}
+
+< Gets no files it can work on: it needs {0}
+> 処理できるファイルがありません。必要なもの：{0}
+
+< Saved: {0}
+> 保存：{0}
+
+< then {0}
+> 次：{0}
+
+< Add the first step
+> 最初のステップを追加
+
+< Add a step
+> ステップを追加
+
+< Add steps to see where the results go.
+> ステップを追加すると、結果の行き先が表示されます。
+
+< The final files are saved where step {0} saves them: {1}. Files that the last step doesn't change are saved by the last step that did.
+> 最終的なファイルは、ステップ{0}の保存先（{1}）に保存されます。最後のステップで変更されないファイルは、最後に変更したステップによって保存されます。
+
+< Move step {0} up
+> ステップ{0}を上へ移動
+
+< Move step {0} down
+> ステップ{0}を下へ移動
+
+< Remove step {0}
+> ステップ{0}を削除
+
+< Step {0}: {1}. {2}. Tap to change
+> ステップ{0}：{1}。{2}。タップして変更
+
+< Works on the files you pick.
+> 選んだファイルを処理します。
+
+< Works on the {0} file you picked.
+< Works on the {0} files you picked.
+> 選んだ{0}個のファイルを処理します。
+
+< Works on the {0} coming from step {1} ({2}).
+> ステップ{1}（{2}）から渡される{0}を処理します。
+
+< Pick files to continue
+> 続けるにはファイルを選んでください
+
+< Add at least one step
+> ステップを1つ以上追加してください
+
+< Step {0} ({1}) gets no files it can work on
+> ステップ{0}（{1}）には処理できるファイルがありません
+
+< {0} step
+< {0} steps
+> {0}ステップ
+
+< starts after the current export
+> 現在のエクスポートの後に開始
+
+< you can leave the app while it runs
+> 実行中はアプリを閉じても大丈夫です
+
+< Add to queue
+> キューに追加
+
+< Queued — it starts when the current export finishes.
+> キューに追加しました。現在のエクスポートが終わると開始します。
+
+< Stack started. You can leave the app; progress is shown in the notification.
+> スタックを開始しました。アプリを閉じても大丈夫です。進行状況は通知に表示されます。
+
+< Add step {0}
+> ステップ{0}を追加
+
+< This step gets {0}. Pick a tool; you'll set its options next.
+> このステップには{0}が渡されます。ツールを選んでください。オプションは次に設定します。
+
+< Works on {0}, which this step doesn't get
+> {0}を処理しますが、このステップには渡されません
+
+< {0}, not available at this step
+> {0}、このステップでは利用できません
+
+< Not available in stacks: {0}. They work on one photo by hand, look through your library or use the camera.
+> スタックでは利用できません：{0}。これらは、1枚の写真を手動で扱うか、ライブラリを調べるか、カメラを使うツールです。
+
+< Reading the files…
+> ファイルを読み込み中…
+
+< Start export
+> エクスポートを開始
+
+< Step {0}: {1}
+> ステップ{0}：{1}
+
+< Options
+> オプション
+
+< On-device
+> 端末内
+
+< Originals untouched
+> 元のファイルは変更なし
+
+< Runs in background
+> バックグラウンドで実行
+
+< Output
+> 出力
+
+< New files are always created; your originals are never changed. A file is only published after it has been fully written and checked.
+> 常に新しいファイルが作成され、元のファイルは変更されません。ファイルは、すべて書き込まれてチェックが終わってから公開されます。
+
+< Do more with the results?
+> 結果をさらに加工しますか？
+
+< Stack another tool that works on them, e.g. compress after this
+> 結果を処理する別のツールを重ねられます（例：この後に圧縮）
+
+< Then run another tool
+> 続けて別のツールを実行
+
+< Save step
+> ステップを保存
+
+< Add to stack
+> スタックに追加
+
+< Input
+> 入力
+
+< Files it can't work on go to the next step unchanged.
+> 処理できないファイルは、変更されずに次のステップへ進みます。
+
+< Previews use your file "{0}". Files it can't work on go to the next step unchanged.
+> プレビューには「{0}」を使用します。処理できないファイルは、変更されずに次のステップへ進みます。
+
+< Result
+> 結果
+
+< Goes to the next step. If this is the last step, the results are saved in {0}.
+> 次のステップへ渡されます。最後のステップの場合、結果は{0}に保存されます。
+
+< Check the options
+> オプションを確認してください
+
+< Standard settings
+> 標準設定
+
+< Start a new tool stack?
+> 新しいツールスタックを始めますか？
+
+< Your current stack ({0}) will be replaced.
+> 現在のスタック（{0}）は置き換えられます。
+
+< Start new
+> 新規作成
+
+< Settings are kept with the step; tap it in the stack to change them
+> 設定はステップに保存されます。スタック内でステップをタップすると変更できます
+
+< Another export is running; this one will start right after it.
+> 別のエクスポートが実行中です。このエクスポートはその直後に開始します。
+
+< {0} file ready · you can leave the app while it runs
+< {0} files ready · you can leave the app while it runs
+> {0}ファイルの準備完了 · 実行中はアプリを閉じても大丈夫です
+
+< Export started. You can leave the app; progress is shown in the notification.
+> エクスポートを開始しました。アプリを閉じても大丈夫です。進行状況は通知に表示されます。
+
+< {0} value
+> {0}の値
+
+< {0} percent
+> {0}パーセント
+
+< Crop
+> トリミング
+
+< Adjust
+> 調整
+
+< Looks
+> フィルター
+
+< Close editor
+> エディターを閉じる
+
+< Undo
+> 元に戻す
+
+< Redo
+> やり直す
+
+< Hold to compare with the original
+> 長押しで元の写真と比較
+
+< Save
+> 保存
+
+< Opening photo…
+> 写真を開いています…
+
+< This photo can't be edited: {0}
+> この写真は編集できません：{0}
+
+< Brush over what you want to remove
+> 消したいものをブラシでなぞってください
+
+< Paint over what you want to hide
+> 隠したいものをなぞってください
+
+< Basic fill
+> 基本塗りつぶし
+
+< Erasing…
+> 消去中…
+
+< Applying…
+> 適用中…
+
+< Free
+> 自由
+
+< Square
+> 正方形
+
+< Straighten
+> 傾き補正
+
+< Rotate
+> 回転
+
+< Flip
+> 反転
+
+< Reset
+> リセット
+
+< Auto enhance
+> 自動補正
+
+< Double-tap a slider to reset
+> スライダーをダブルタップするとリセットされます
+
+< Strength
+> 強さ
+
+< Brush size
+> ブラシのサイズ
+
+< AI
+> AI
+
+< Loading the on-device model…
+> 端末内モデルを読み込み中…
+
+< Paint over a person or object, then lift your finger. Cover its shadow too. Zoom with two fingers for small details.
+> 人物や物体をなぞってから、指を離してください。影も一緒になぞってください。細かい部分は2本指でズームします。
+
+< Enhancing…
+> 補正中…
+
+< {0}: {1}
+> {0}：{1}
+
+< already well balanced
+> すでにバランスが取れています
+
+< Finding faces…
+> 顔を検出中…
+
+< No faces were found in this photo.
+> この写真には顔が見つかりませんでした。
+
+< Pixelated {0} face · undo to bring it back
+< Pixelated {0} faces · undo to bring them back
+> {0}個の顔にモザイクをかけました · 元に戻すと復元されます
+
+< Blurred {0} face · undo to bring it back
+< Blurred {0} faces · undo to bring them back
+> {0}個の顔をぼかしました · 元に戻すと復元されます
+
+< Hide all faces
+> すべての顔を隠す
+
+< full resolution
+> フル解像度
+
+< Quality
+> 画質
+
+< This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
+> この写真には透明な部分があります。PNGまたはWebPなら保持され、JPEGでは白で塗りつぶされます。
+
+< A new copy is saved to {0}. The original is not changed. Location and camera details are not copied.
+> 新しいコピーを{0}に保存します。元の写真は変更されません。位置情報とカメラの詳細情報はコピーされません。
+
+< Save a copy
+> コピーを保存
+
+< Saving in the background…
+> バックグラウンドで保存中…
+
+< Discard your edits?
+> 編集内容を破棄しますか？
+
+< Nothing has been saved yet. Your original photo is not affected.
+> まだ何も保存されていません。元の写真には影響しません。
+
+< Discard
+> 破棄
+
+< Keep editing
+> 編集を続ける
+
+< Unnamed person
+> 名前のない人物
+
+< Who is this?
+> これは誰？
+
+< You confirmed this · in {0} photo
+< You confirmed this · in {0} photos
+> 確認済み · {0}枚の写真に写っています
+
+< Recognised automatically · in {0} photo
+< Recognised automatically · in {0} photos
+> 自動認識 · {0}枚の写真に写っています
+
+< This face is small, blurry or turned, so it's only grouped when it clearly matches someone
+> この顔は小さい、ぼやけている、または横を向いているため、明らかに誰かと一致する場合にのみグループ化されます
+
+< Not grouped with anyone yet
+> まだ誰ともグループ化されていません
+
+< Name this person
+> この人物に名前を付ける
+
+< Names the {0} face in this group
+< Names all {0} faces in this group
+> このグループのすべての顔（{0}個）に名前を付けます
+
+< This is {0}
+> これは{0}です
+
+< Looks similar
+> 似ています
+
+< Add a name
+> 名前を追加
+
+< Start a person, or pick one you named
+> 新しい人物を作成するか、名前を付けた人物を選んでください
+
+< This isn't {0}
+> {0}ではありません
+
+< Removes it from {0} for good
+> {0}から完全に外します
+
+< Not the same person
+> 別の人物
+
+< Takes this face out of the group
+> この顔をグループから外します
+
+< This is someone else…
+> 別の人です…
+
+< Pick or type their name
+> 名前を選ぶか、入力してください
+
+< Use as {0}'s picture
+> {0}の写真として使用
+
+< Use as the group's picture
+> グループの写真として使用
+
+< Ignore this face
+> この顔を無視
+
+< For strangers, posters or statues: it won't appear in People
+> 知らない人、ポスター、彫像などに：「人物」には表示されません
+
+< Name
+> 名前
+
+< Add to {0}?
+> {0}に追加しますか？
+
+< {1} already exists. This face will be added to {1}.
+< {1} already exists. These {0} faces will be added to {1}.
+> 「{1}」はすでに存在します。{0}個の顔が「{1}」に追加されます。
+
+< Add
+> 追加
+
+< Named {0}
+> {0}という名前を付けました
+
+< Named
+> 名前あり
+
+< Unnamed groups
+> 名前のないグループ
+
+< On their own
+> 単独
+
+< Ignored
+> 無視
+
+< All faces
+> すべての顔
+
+< Review faces
+> 顔を確認
+
+< Tap a face that isn't this person to remove it.
+> この人物ではない顔をタップすると、外せます。
+
+< Show this face in People again?
+> この顔を「人物」に再表示しますか？
+
+< Show
+> 表示
+
+< Unnamed
+> 名前なし
+
+< Small or blurry
+> 小さい・ぼやけた顔
+
+< {0}. Tap to name or correct, long-press to open the photo.
+> {0}。タップで名前の入力や修正、長押しで写真を開きます。
+
+< You can share up to {0} items at a time ({1} selected).
+> 一度に共有できるのは{0}件までです（{1}件選択中）。
+
+< You can delete up to {0} items at a time ({1} selected).
+> 一度に削除できるのは{0}件までです（{1}件選択中）。
+
+< These items can't be moved to the trash: {0}
+> 次の項目はゴミ箱に移動できません：{0}
+
+< Moved {0} item to the trash. You can restore it for 30 days.
+< Moved {0} items to the trash. You can restore them for 30 days.
+> {0}件をゴミ箱に移動しました。30日間は元に戻せます。
+
+< On Android 10, photos can be deleted one at a time (there is no trash).
+> Android 10では、写真は1枚ずつ削除できます（ゴミ箱はありません）。
+
+< Delete for good?
+> 完全に削除しますか？
+
+< Android 10 has no trash, so {0} can't be restored afterwards.
+> Android 10にはゴミ箱がないため、{0}は削除後に元に戻せません。
+
+< Delete
+> 削除
+
+< Deleted.
+> 削除しました。
+
+< This item can't be deleted.
+> この項目は削除できません。
+
+< This item can't be deleted: {0}
+> この項目は削除できません：{0}
+
+< No app can open this file.
+> このファイルを開けるアプリがありません。
+
+< Videos can't be printed.
+> 動画は印刷できません。
+
+< Videos are left out: only photos can be printed.
+> 動画は対象外です。印刷できるのは写真だけです。
+
+< No tool works on this selection.
+> この選択内容に使えるツールはありません。
+
+< Open in a tool
+> ツールで開く
+
+< Use {0} item in a tool
+< Use {0} items in a tool
+> {0}件をツールで使用
+
+< Search photos
+> 写真を検索
+
+< Gallery options
+> ギャラリーのオプション
+
+< Search people, things, places…
+> 人物、もの、場所を検索…
+
+< Photos
+> 写真
+
+< Albums
+> アルバム
+
+< People
+> 人物
+
+< Things
+> もの
+
+< Showing only the photos you allowed. Tap to allow more.
+> 許可した写真のみ表示しています。タップするとさらに許可できます。
+
+< Allow more photos
+> 写真の許可を追加
+
+< No photos or videos yet
+> 写真や動画はまだありません
+
+< Photos and videos you take or save on this phone will show up here.
+> この端末で撮影または保存した写真や動画が、ここに表示されます。
+
+< Your photos, organised on this phone
+> 写真をこの端末内で整理
+
+< Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for "dog" or "Sophie" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet.
+> アクセスを許可すると、写真や動画をここで見られます。アプリは写真に写っている人物、ペット、場所、ものを見つけるので、「犬」や「Sophie」などで検索できます。処理はすべてこの端末内で行われます。何もアップロードされず、アプリがインターネット上のサーバーに接続することはありません。
+
+< Allow access
+> アクセスを許可
+
+< No albums yet
+> アルバムはまだありません
+
+< Folders with photos or videos appear here.
+> 写真や動画があるフォルダが、ここに表示されます。
+
+< Videos
+> 動画
+
+< Favourites
+> お気に入り
+
+< Screenshots
+> スクリーンショット
+
+< {0} face found · named, unnamed and on their own
+< {0} faces found · named, unnamed and on their own
+> 顔が{0}個見つかりました · 名前あり、名前なし、単独
+
+< Name people
+> 人物に名前を付ける
+
+< {0} group to name, one after another
+< {0} groups to name, one after another
+> 名前を付けるグループ：{0}個（順番に）
+
+< Name people, {0} group to name
+< Name people, {0} groups to name
+> 人物に名前を付ける（名前を付けるグループ：{0}個）
+
+< Finding people…
+> 人物を検出中…
+
+< No people yet
+> 人物はまだいません
+
+< Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos.
+> 顔の検出とグループ化をこの端末内で行っています。同じ顔が数枚の写真に写っていると、人物としてここに表示されます。
+
+< When the same person appears in several photos, they show up here so you can name them.
+> 同じ人物が複数の写真に写っていると、ここに表示され、名前を付けられます。
+
+< Add names
+> 名前を追加
+
+< Looking at your photos…
+> 写真を確認中…
+
+< Nothing recognised yet
+> 認識されたものはまだありません
+
+< Pets, food, places and things appear here as photos are analysed on this phone.
+> この端末で写真が分析されると、ペット、食べ物、場所、ものがここに表示されます。
+
+< Pets, food, vehicles, places and more appear here when photos show them.
+> ペット、食べ物、乗り物、場所などが写真に写っていると、ここに表示されます。
+
+< Resume organising
+> 整理を再開
+
+< Pause organising
+> 整理を一時停止
+
+< About recognition
+> 認識について
+
+< Start over (forget people and names)
+> 最初からやり直す（人物と名前を消去）
+
+< Start over?
+> 最初からやり直しますか？
+
+< Names, people and everything found in your photos are forgotten and the photos are analysed again. Your photos themselves are not touched.
+> 名前、人物、写真から見つかったすべての情報が消去され、写真が再度分析されます。写真そのものには手を加えません。
+
+< Start over
+> やり直す
+
+< on-device AI
+> 端末内AI
+
+< basic mode (the AI model couldn't run on this phone)
+> 基本モード（この端末ではAIモデルを実行できませんでした）
+
+< unavailable
+> 利用不可
+
+< starts with the first photo
+> 最初の写真から開始
+
+< {1} of {0} photo or video analysed.
+< {1} of {0} photos and videos analysed.
+> {0}件の写真と動画のうち{1}件を分析しました。
+
+< Reading your library.
+> ライブラリを読み込み中です。
+
+< Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
+> 以前に見つかった顔を、新しくより正確な顔モデルで再確認しています。名前、確認、修正はそのまま残り、完了すると人物が再グループ化されます。
+
+< Objects and scenes: {0}.
+> 物体とシーン：{0}。
+
+< Faces and people: {0}.
+> 顔と人物：{0}。
+
+< Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
+> すべての処理はこの端末内で、低い優先度で実行されます。端末が温かくなると動作が遅くなり、高温になったりバッテリー残量が少なくなったりすると一時停止して、中断した箇所から再開します。
+
+< Organising your gallery
+> ギャラリーを整理中
+
+< OK
+> OK
+
+< Resume
+> 再開
+
+< Pause
+> 一時停止
+
+< Paused
+> 一時停止中
+
+< {0} left
+< {0} left
+> 残り{0}
+
+< Reading your library…
+> ライブラリを読み込み中…
+
+< Grouping faces into people…
+> 顔を人物ごとにグループ化中…
+
+< Updating face recognition · {0} of {1}
+> 顔認識を更新中 · {0}/{1}
+
+< slower while the phone is warm
+> 端末が温かい間は低速
+
+< names are kept
+> 名前は保持されます
+
+< Finding people and things · {0} of {1}
+> 人物とものを検出中 · {0}/{1}
+
+< on this phone
+> この端末内
+
+< {1}, {0} item
+< {1}, {0} items
+> {1}、{0}件
+
+< Add name
+> 名前を追加
+
+< {1}, {0} photo
+< {1}, {0} photos
+> {1}、{0}枚
+
+@ date pattern: a short month and its year
+< MMM yyyy
+> yyyy年M月
+
+< {0} item
+< {0} items
+> {0}件
+
+@ date pattern: a month and its year
+< MMMM yyyy
+> yyyy年M月
+
+< Today
+> 今日
+
+< Yesterday
+> 昨日
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> M月d日(EEE)
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> yyyy年M月d日
+
+< Video
+> 動画
+
+< Photo
+> 写真
+
+< , not selected
+> 、未選択
+
+< Found on this phone by on-device AI.
+> 端末内のAIで、この端末内で検出されました。
+
+< Cancel selection
+> 選択を解除
+
+< Select all
+> すべて選択
+
+< Use in a tool
+> ツールで使用
+
+< Select items
+> 項目を選択
+
+< {0} selected
+< {0} selected
+> {0}件選択中
+
+< Loading people…
+> 人物を読み込み中…
+
+< {0} of {1}
+> {0}/{1}
+
+< Type a name, then Enter
+> 名前を入力して、Enterを押してください
+
+< Skip
+> スキップ
+
+< No one I know
+> 知らない人
+
+< Some of these aren't the same person…
+> 別の人物が混ざっています…
+
+< {1} faces in {0} photo · long-press a face to see its photo
+< {1} faces in {0} photos · long-press a face to see its photo
+> {0}枚の写真に{1}個の顔 · 顔を長押しすると、その写真を表示します
+
+< Face
+> 顔
+
+< Type a name, or tap Skip.
+> 名前を入力するか、「スキップ」をタップしてください。
+
+< Added to {0}
+> {0}に追加しました
+
+< Everyone is named
+> 全員に名前が付いています
+
+< All done
+> すべて完了
+
+< There are no unnamed groups right now. New ones appear as more photos are looked at.
+> 名前のないグループは今のところありません。写真の確認が進むと、新しいグループが表示されます。
+
+< You went through {0} group and named {1}. Faces are regrouped with your names now.
+< You went through {0} groups and named {1}. Faces are regrouped with your names now.
+> {0}個のグループを確認し、{1}個に名前を付けました。顔は付けた名前に基づいて再グループ化されます。
+
+< You went through {0} group. Faces are regrouped with your names now.
+< You went through {0} groups. Faces are regrouped with your names now.
+> {0}個のグループを確認しました。顔は付けた名前に基づいて再グループ化されます。
+
+< Back to People
+> 「人物」に戻る
+
+< {0} photo or video
+< {0} photos and videos
+> {0}件の写真と動画
+
+< {0} face
+< {0} faces
+> {0}個の顔
+
+< Also {0}?
+> こちらも{0}ですか？
+
+< These groups look similar. Confirm the ones that are {0}.
+> これらのグループは似ています。{0}であるものを確認してください。
+
+< Open this group
+> このグループを開く
+
+< Not {0}
+> {0}ではない
+
+< Yes, {0}
+> はい、{0}です
+
+< Merge with {0}?
+> {0}と統合しますか？
+
+< {0} already exists. Merge {1} into {0}? All their photos will be under {0}.
+> 「{0}」はすでに存在します。「{1}」を「{0}」に統合しますか？すべての写真が「{0}」にまとめられます。
+
+< Merge
+> 統合
+
+< Rename
+> 名前を変更
+
+< Merge with…
+> 統合先を選択…
+
+< Show in People
+> 「人物」に表示
+
+< Hide from People
+> 「人物」から非表示
+
+< Shown in People
+> 「人物」に表示中
+
+< Hidden from People
+> 「人物」で非表示
+
+< Remove name
+> 名前を削除
+
+< Remove {0}?
+> 「{0}」を削除しますか？
+
+< The name is removed and these faces become unnamed again. Photos are not affected.
+> 名前が削除され、これらの顔は再び名前なしになります。写真には影響しません。
+
+< There is no one else to merge with yet.
+> 統合できる相手はまだいません。
+
+< Same person as…
+> 同じ人物…
+
+< People, things, places, dates
+> 人物、もの、場所、日付
+
+< Showing results for {0} (you typed {1})
+> {0}の検索結果を表示しています（入力：{1}）
+
+< still analysing {0} more
+< still analysing {0} more
+> あと{0}件を分析中
+
+< No matches
+> 一致なし
+
+< Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
+> 付けた名前、または「犬」「車」「ビーチ」「食べ物」「夕焼け」「書類」などで検索してみてください。
+
+< No photo has all of these. Remove a word to see more.
+> これらをすべて含む写真はありません。言葉を減らすと、より多く表示されます。
+
+< Nothing found yet.
+> まだ何も見つかっていません。
+
+< Things in your photos
+> 写真に写っているもの
+
+< Try
+> 検索例
+
+< Last month
+> 先月
+
+< This year
+> 今年
+
+< Press search to look for "{0}".
+> 検索を押すと「{0}」を探します。
+
+< Name people in Gallery › People to search for them, like "Sophie" or "John and Sophie".
+> 「ギャラリー › 人物」で名前を付けると、「Sophie」や「JohnとSophie」のように検索できます。
+
+< Show faces
+> 顔を表示
+
+< Details
+> 詳細
+
+< Edit
+> 編集
+
+< Unnamed face, tap to name
+> 名前のない顔。タップして名前を付ける
+
+< Hide faces
+> 顔を非表示
+
+< Found in it: {0}
+> 写っているもの：{0}
+
+< People: {0}
+> 人物：{0}
+
+< {0} unnamed
+< {0} unnamed
+> 名前なし：{0}
+
+< This item hasn't been analysed yet.
+> この項目はまだ分析されていません。
+
+< Open with…
+> アプリで開く…
+
+< Play video
+> 動画を再生
+
+< Preview
+> プレビュー
+
+< Select a photo to see the cut-out.
+> 写真を選択すると、切り抜き結果が表示されます。
+
+< Background
+> 背景
+
+< What goes behind the subject
+> 被写体の後ろに置くもの
+
+< Crop to the subject
+> 被写体に合わせてトリミング
+
+< Trims the empty space around it
+> 周囲の余白を切り取ります
+
+< Works best with one clear subject: a person, pet, product or object. Fine hair and see-through things can keep a little of the background.
+> はっきりした被写体が1つある場合に最適です（人物、ペット、商品、物体など）。細い髪の毛や透けるものは、背景が少し残ることがあります。
+
+< Finding the subject in {0}…
+> {0}の被写体を検出中…
+
+< Preview not available: {0}
+> プレビューを表示できません：{0}
+
+< No clear subject found in this photo.
+> この写真ではっきりした被写体が見つかりませんでした。
+
+< Preview of {0}
+> {0}のプレビュー
+
+< the other {0} photo is done the same way
+< the other {0} photos are done the same way
+> 残りの{0}枚も同じ方法で処理されます
+
+< saved at full resolution
+> フル解像度で保存
+
+< name_cutout.png (transparent) · name_cutout.jpg (with a colour)
+> name_cutout.png（透明） · name_cutout.jpg（色付き）
+
+< Before
+> 変更前
+
+< After
+> 変更後
+
+< Select photos to see what auto enhance does.
+> 写真を選択すると、自動補正の効果を確認できます。
+
+< Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there.
+> 写真ごとに専用の設定が適用されます。顔はやさしく明るく、料理は暖かく鮮やかに、風景は奥行きを深く、書類はすっきりと補正されます。細かく調整したい場合は、フォトエディターで写真を開き、そこで「自動補正」をタップしてください。
+
+< Looking at {0}…
+> {0}を確認中…
+
+< {0}: {1}.
+> {0}：{1}。
+
+< already well balanced, only small touches
+> すでにバランスが取れているため、ごく軽い補正のみ
+
+< name_enhanced.jpg (PNG stays PNG)
+> name_enhanced.jpg（PNGはPNGのまま）
+
+< Pixelate chosen faces
+> 選んだ顔にモザイクをかける
+
+< Blur chosen faces
+> 選んだ顔をぼかす
+
+< People found
+> 見つかった人物
+
+< Select photos or videos; faces are found automatically.
+> 写真または動画を選択してください。顔は自動で検出されます。
+
+< Find faces
+> 顔を検出
+
+< Hide everyone
+> 全員を隠す
+
+< Hide no one
+> 誰も隠さない
+
+< Style
+> スタイル
+
+@ strength
+< Light
+> 弱
+
+@ strength
+< Medium
+> 中
+
+@ strength
+< Strong
+> 強
+
+< Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
+> 顔はフレームごとに追跡され、選択したすべてのファイルにわたって照合されるため、同じ人物は1回だけ表示されます。動画はH.264 MP4として、元に近い画質で再エンコードされ、音声は保持されます。
+
+< Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
+> このステップで見つかったすべての顔が隠されます。人物を選ぶには、写真や動画をスタックに入れてください。
+
+< Watching the video for faces…
+< Watching {0} videos for faces…
+> {0}本の動画から顔を探しています…
+
+< Looking for faces…
+> 顔を探しています…
+
+< Find faces again
+> もう一度顔を検出
+
+< No faces were found.
+> 顔は見つかりませんでした。
+
+< Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
+< Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
+> {0}人が見つかりました。顔をタップすると表示されたままになります。ハイライトされた顔は隠されます。
+
+< Stopped. Tap Find faces to look again.
+> 停止しました。「顔を検出」をタップすると、もう一度探します。
+
+< Faces couldn't be found: {0}
+> 顔を検出できませんでした：{0}
+
+< {0} file couldn't be read: {1}.
+< {0} files couldn't be read: {1}.
+> {0}個のファイルを読み込めませんでした：{1}。
+
+< Stopping…
+> 停止中…
+
+< {0} video
+< {0} videos
+> {0}本の動画
+
+< Hidden
+> 非表示
+
+< Visible
+> 表示
+
+< Person {0}, in {1}, will be hidden
+> 人物{0}（{1}内）は隠されます
+
+< Person {0}, in {1}, stays visible
+> 人物{0}（{1}内）は表示されたままです
+
+< Tap the people you want to hide
+> 隠したい人物をタップしてください
+
+< Tap Find faces first
+> 先に「顔を検出」をタップしてください
+
+< No faces to hide in these files
+> これらのファイルには隠す顔がありません
+
+< name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
+> name_blurred.jpg / .png（Pictures） · name_blurred.mp4（Movies）
+
+< Hides every face
+> すべての顔を隠します
+
+< Hides {1} of {0} person (others stay visible)
+< Hides {1} of {0} people (others stay visible)
+> {0}人中{1}人を隠します（ほかは表示されたまま）
+
+< Find faces first
+> 先に顔を検出してください
+
+< The chosen people don't appear in these files
+> 選んだ人物はこれらのファイルに写っていません
+
+< Output width
+> 出力の幅
+
+< 0 keeps the original width
+> 0にすると元の幅を維持します
+
+< Frame rate
+> フレームレート
+
+< 0 keeps the original timing; lower drops frames
+> 0にすると元のタイミングを維持します。低くするとフレームが間引かれます
+
+< Palette size
+> パレットサイズ
+
+< Fewer colours = smaller file, less detail
+> 色数が少ないほどファイルが小さくなり、細部が減ります
+
+< {0} colour
+< {0} colours
+> {0}色
+
+< 32: tiny files, visible banding · 64: good for simple graphics · 128: balanced · 256: most detail
+> 32：極小ファイル、バンディングが目立つ · 64：シンプルな図に最適 · 128：バランス型 · 256：最も細密
+
+< Dithering
+> ディザリング
+
+< Pattern
+> パターン
+
+@ no dithering
+< None
+> なし
+
+< Diffusion
+> 拡散
+
+< Size, frame rate and colours all trade detail for file size. Results that wouldn't be smaller than the original aren't saved.
+> サイズ、フレームレート、色数はいずれも、細部とファイルサイズのトレードオフです。元より小さくならない結果は保存されません。
+
+< 0 keeps every pixel identical; other widths sample pixels without blending
+> 0にするとすべてのピクセルがそのまま維持されます。それ以外の幅では、ピクセルを混ぜずにサンプリングします
+
+< Playback frame rate
+> 再生フレームレート
+
+< 0 keeps the exact original timing
+> 0にすると元のタイミングを正確に維持します
+
+< Only keep smaller results
+> 小さくなった結果だけを残す
+
+< Re-encodes the GIF more efficiently (changed areas only, exact palettes, frame merging) while every displayed pixel stays identical. This is only possible when each frame fits GIF's limits: up to 256 colours including transparency, and on/off transparency only. Frames that don't fit are reported and the file is rejected rather than altered.
+> GIFをより効率よく再エンコードします（変更部分のみ、正確なパレット、フレームの統合）。表示されるピクセルはすべて同一のままです。これは、各フレームがGIFの制限（透明を含めて最大256色、透明はオン/オフのみ）に収まる場合にのみ可能です。収まらないフレームは報告され、ファイルは変更されずに却下されます。
+
+< Image format
+> 画像形式
+
+< lossless, crisp text
+> 可逆圧縮、くっきりした文字
+
+< smaller files
+> ファイルが小さい
+
+< JPEG quality
+> JPEG画質
+
+< Render scale
+> レンダリング倍率
+
+< 100% = 72 DPI
+> 100% = 72 DPI
+
+< Every page becomes one image that looks exactly like the page on screen (white background). Text isn't extracted; links and selectable text don't carry over. Pages of any size are rendered in strips, so large posters work too.
+> 各ページは、画面上のページと同じ見た目の1枚の画像になります（白い背景）。テキストは抽出されず、リンクや選択可能なテキストは引き継がれません。どんなサイズのページも帯状に分けてレンダリングするため、大きなポスターも扱えます。
+
+< ≈ {0} DPI · an A4 page becomes {1} × {2} px
+> ≈ {0} DPI · A4ページは{1} × {2} pxになります
+
+< name_p001.{0}, name_p002… one image per page
+> name_p001.{0}、name_p002… ページごとに1枚の画像
+
+< Create PDF
+> PDFを作成
+
+< Page orientation
+> ページの向き
+
+< All pages are A4 with a small margin
+> すべてのページはA4で、小さな余白が付きます
+
+< Auto (match image)
+> 自動（画像に合わせる）
+
+< Image quality
+> 画像の画質
+
+< no recompression
+> 再圧縮なし
+
+< smaller PDF
+> PDFを小さく
+
+< Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
+> 「オリジナル」はJPEG写真をバイト単位でそのまま、その他の画像を可逆圧縮で埋め込みます。「コンパクト」は印刷解像度（A4で300 DPI）にリサイズし、JPEGとして埋め込みます。
+
+< File name
+> ファイル名
+
+@ default file name
+< Images
+> 画像
+
+< <date>
+> <日付>
+
+< One image per page, in the order shown above (use Review & order to change it). Pictures are fitted without distortion and keep their displayed orientation. This makes an image PDF — text in photos is not made searchable (no OCR).
+> ページごとに1枚の画像が、上に表示されている順に配置されます（順番は「確認と並べ替え」で変更できます）。画像は歪まないように収められ、表示されている向きが維持されます。画像のPDFが作成されるため、写真内のテキストは検索できません（OCRなし）。
+
+< Merge PDFs
+> PDF結合
+
+@ default file name
+< Merged
+> 結合
+
+< Documents are joined in the order shown above, page by page. Their real content is kept — text stays selectable, vector graphics and links keep working, and every page keeps its own size. Password-protected or damaged PDFs are rejected with the file name.
+> ドキュメントは、上に表示されている順にページ単位で結合されます。内容はそのまま保持され、テキストは選択可能なまま、ベクターグラフィックスとリンクも機能し、各ページは元のサイズを維持します。パスワード保護されたPDFや破損したPDFは、ファイル名とともに却下されます。
+
+< Save PDF
+> PDFを保存
+
+< Pages
+> ページ
+
+< Capture page
+> ページを撮影
+
+< Add from gallery
+> ギャラリーから追加
+
+< Reorder
+> 並べ替え
+
+< Clear pages
+> ページをクリア
+
+< Remove all pages?
+> すべてのページを削除しますか？
+
+< Captured pages are deleted from the app's private storage; gallery photos aren't affected.
+> 撮影したページはアプリの専用ストレージから削除されます。ギャラリーの写真には影響しません。
+
+< Page {0}
+> ページ{0}
+
+< No pages yet
+> ページはまだありません
+
+< {0} page
+< {0} pages
+> {0}ページ
+
+< Capture pages with the camera or add photos. Pages appear here in order.
+> カメラでページを撮影するか、写真を追加してください。ページは順番にここに表示されます。
+
+< Enhancement
+> 補正
+
+< Makes photographed pages look like scans
+> 撮影したページをスキャンしたような見た目にします
+
+< Clean document evens out shadows and boosts contrast (greyscale). Black & white gives crisp text and the smallest files.
+> 「書類補正」は影をならしてコントラストを高めます（グレースケール）。「白黒」は文字がくっきりし、ファイルも最小になります。
+
+< Auto (match photo)
+> 自動（写真に合わせる）
+
+< Portrait
+> 縦向き
+
+@ default file name
+< Scan
+> スキャン
+
+< Each page becomes an A4 page with a small margin, upright as you see it. This is an image scanner: text stays part of the picture and is not searchable or selectable (no OCR).
+> 各ページは小さな余白付きのA4ページになり、見たままの正しい向きで保存されます。これは画像スキャナーです。テキストは画像の一部のままで、検索や選択はできません（OCRなし）。
+
+< Adding pages…
+> ページを追加中…
+
+< Capture or add at least one page
+> ページを1つ以上撮影または追加してください
+
+< Music
+> 音楽
+
+< Written on this phone for your video — always instrumental
+> この端末で動画のために作曲されます。常にインストゥルメンタルです
+
+< No music
+> 音楽なし
+
+< Listen
+> 試聴
+
+< Another tune
+> 別の曲
+
+< Length
+> 長さ
+
+< {0} s
+> {0}秒
+
+< Auto
+> 自動
+
+< Shape
+> 形
+
+< Captions
+> キャプション
+
+< The title at the start and each moment's name
+> 冒頭のタイトルと、各場面の名前
+
+< Sound from your videos
+> 動画の音声
+
+< The music gets quieter while they play
+> 再生中は音楽の音量が下がります
+
+< Title
+> タイトル
+
+< Moments
+> 場面
+
+< Tap a shot to always include it; tap again to leave it out
+> ショットをタップすると必ず含められ、もう一度タップすると除外されます
+
+< Auto ({0})
+> 自動（{0}）
+
+< landscape
+> 横向き
+
+< portrait
+> 縦向き
+
+< square
+> 正方形
+
+< Pick the photos and videos of an event (two or more). They're put in the order they were taken.
+> イベントの写真と動画を選んでください（2つ以上）。撮影した順に並べられます。
+
+< Too few of these files could be read.
+> 読み込めたファイルが少なすぎます。
+
+< {0} of the files couldn't be read and is left out.
+< {0} of the files couldn't be read and are left out.
+> {0}個のファイルを読み込めなかったため、除外されました。
+
+< Looking at your photos with on-device AI… {0} of {1}
+> 端末内AIで写真を確認中… {0}/{1}
+
+< Looking at your videos with on-device AI… {0} of {1}
+> 端末内AIで動画を確認中… {0}/{1}
+
+< Looking at your photos and videos with on-device AI… {0} of {1}
+> 端末内AIで写真と動画を確認中… {0}/{1}
+
+< Everything is left out — tap a shot to bring it back.
+> すべて除外されています。ショットをタップすると戻せます。
+
+< not in the video
+> 動画に含まれません
+
+< {1} of {0} in the video
+< {1} of {0} in the video
+> {0}個中{1}個を動画に使用
+
+< no music
+> 音楽なし
+
+< {0} moment
+< {0} moments
+> {0}場面
+
+< {0} clip
+< {0} clips
+> {0}クリップ
+
+< Name this moment
+> この場面に名前を付ける
+
+< Automatic
+> 自動
+
+< Pick a kind of music first.
+> 先に音楽の種類を選んでください。
+
+< Writing…
+> 作曲中…
+
+< The music can't be played on this phone right now.
+> 今はこの端末で音楽を再生できません。
+
+< Left out
+> 除外
+
+< left out
+> 除外
+
+< always in
+> 常に含める
+
+< in the video
+> 動画に含まれる
+
+< not used
+> 使用しない
+
+< Format
+> 形式
+
+< most compatible
+> 互換性が最も高い
+
+< smaller
+> より小さい
+
+< JPEG works everywhere but has no transparency. WebP is typically 25–35% smaller at similar quality and keeps transparency.
+> JPEGはどこでも使えますが、透明には対応していません。WebPは同程度の画質で通常25〜35%小さくなり、透明も保持されます。
+
+< Lower = smaller file, more artefacts
+> 低いほどファイルが小さくなり、ノイズが増えます
+
+< Maximum width
+> 最大幅
+
+< 0 keeps the original size; never upscales
+> 0にすると元のサイズを維持します。拡大はしません
+
+< Aspect ratio and displayed orientation are always preserved. Metadata such as GPS location is not copied. If a result isn't smaller than the original (and wasn't resized), it isn't saved.
+> 縦横比と表示される向きは常に維持されます。GPS位置情報などのメタデータはコピーされません。結果が元より小さくならない場合（かつリサイズされていない場合）は保存されません。
+
+< Visually lossless for most photos; modest savings.
+> ほとんどの写真で見た目の劣化はなく、削減幅は控えめです。
+
+< Recommended: strong savings with little visible difference.
+> おすすめ：見た目の差が少なく、大きく削減できます。
+
+< Small files; artefacts visible on close inspection.
+> ファイルは小さく、よく見るとノイズが目立ちます。
+
+< Very small files; noticeable artefacts and blur.
+> 非常に小さいファイル。ノイズやぼやけが目立ちます。
+
+< Maximum width must be 0 (original) or at least 16 px
+> 最大幅は0（元のサイズ）または16 px以上にしてください
+
+< name_q{0}.{1} (plus _1920w when resized)
+> name_q{0}.{1}（リサイズ時は_1920wが付きます）
+
+< Lossless format
+> 可逆形式
+
+< usually smallest
+> 通常は最小
+
+< PNG output picks the smallest exact colour mode (palette, greyscale, RGB or RGBA) and maximum compression.
+> PNG出力では、正確さを保てる最小のカラーモード（パレット、グレースケール、RGB、RGBA）と最大圧縮が選ばれます。
+
+< Discard a result that isn't smaller than its original
+> 元より小さくならない結果を破棄
+
+< Every pixel is preserved exactly — this is not lossy compression. Smaller files are not guaranteed: screenshots and graphics often shrink, while JPEG/HEIC photos usually get larger in a lossless format. 16-bit PNGs and animations are rejected rather than altered.
+> すべてのピクセルが正確に保持されます。これは非可逆圧縮ではありません。ファイルが小さくなる保証はなく、スクリーンショットやグラフィックスはよく小さくなりますが、JPEG/HEIC写真は可逆形式にすると通常は大きくなります。16ビットPNGとアニメーションは、変更せずに却下されます。
+
+< name_lossless.{0} (in the same folder as the image compressor's results)
+> name_lossless.{0}（画像圧縮の結果と同じフォルダ内）
+
+< Convert to
+> 変換先
+
+< lossless
+> 可逆
+
+< lossy
+> 非可逆
+
+< Quality (lossy formats)
+> 画質（非可逆形式）
+
+< 90 keeps photos visually identical
+> 90にすると、写真は見た目が同一のままです
+
+< Reads JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG and other RAW previews (when the phone supports them), plus TIFF, PSD (flattened), QOI, PPM/PGM/PBM/PAM and TGA. Animated files use their first frame. Size, aspect ratio and displayed orientation are kept.
+> JPEG、PNG、WebP、HEIC/HEIF、AVIF、GIF、BMP、ICO、WBMP、DNGなどのRAWプレビュー（端末が対応している場合）に加え、TIFF、PSD（統合済み）、QOI、PPM/PGM/PBM/PAM、TGAを読み込めます。アニメーションファイルは最初のフレームが使われます。サイズ、縦横比、表示される向きは維持されます。
+
+< name.{0} (same name, new format)
+> name.{0}（同じ名前、新しい形式）
+
+< Layout
+> レイアウト
+
+< Fills space around images of different sizes
+> サイズの異なる画像のまわりの余白を埋めます
+
+< Spacing between images
+> 画像の間隔
+
+@ no spacing
+< None
+> なし
+
+@ spacing
+< Small
+> 小
+
+@ spacing
+< Medium
+> 中
+
+@ spacing
+< Large
+> 大
+
+< Images are never scaled or cropped — each keeps its exact pixels and correct orientation. The result is a lossless PNG; very large results are written in strips, so they don't need to fit in memory.
+> 画像が拡大縮小やトリミングされることはなく、各画像のピクセルと正しい向きがそのまま維持されます。結果は可逆のPNGで、非常に大きい結果は帯状に分けて書き込まれるため、メモリに収まる必要はありません。
+
+< Left
+> 左
+
+< Center
+> 中央
+
+< Right
+> 右
+
+< Top
+> 上
+
+< Bottom
+> 下
+
+< Alignment
+> 配置
+
+< For images narrower or shorter than the widest one
+> 最も幅の広い画像より、幅が狭い、または高さが低い画像用
+
+< Select at least two images to see the layout.
+> レイアウトを確認するには、画像を2枚以上選択してください。
+
+< Some images couldn't be read.
+> 読み込めなかった画像があります。
+
+< Result: {0} × {1} px ({2} MP)
+> 結果：{0} × {1} px（{2} MP）
+
+< <date and time>
+> <日付と時刻>
+
+< Merge layout preview
+> 結合レイアウトのプレビュー
+
+< AI Assisted Alignment
+> AI補助による位置合わせ
+
+< Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.
+> 小さな画像モデルをこの端末内だけで実行します。画像がアップロードされることはありません。あいまいな位置合わせ（繰り返しパターン、弱い一致）を解決し、模様の少ない写真のつなぎ合わせにも役立ちます。これがなくてもつなぎ合わせは動作します。
+
+< Scene type
+> シーンの種類
+
+< Auto detects how your photos were taken
+> 「自動」では、写真の撮り方を検出します
+
+< Flat surface
+> 平面
+
+< Panorama
+> パノラマ
+
+< Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid.
+> 平面：書類、ホワイトボード、地図、スクリーンショット（カメラを平行に動かして撮影）。パノラマ：同じ場所からカメラの向きを変えて撮影（水平、垂直、グリッド状）。
+
+< Crop to clean edges
+> 端をきれいにトリミング
+
+< Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)
+> 写真で完全に覆われた最大の長方形に切り取ります（オフの場合、空いた角は透明のままです）
+
+< For best results: overlap neighbouring shots by about a third, keep exposure steady and avoid moving subjects. Featureless walls, sky-only frames and repetitive textures (tiles, fences) are hard to align. Any arrangement and selection order works; photos that don't connect are reported.
+> きれいに仕上げるには、隣り合う写真を3分の1ほど重ね、露出を一定に保ち、動く被写体を避けてください。特徴のない壁、空だけの写真、繰り返しの模様（タイル、フェンス）は位置合わせが難しくなります。配置や選択の順番は自由です。つながらない写真は報告されます。
+
+@ default file name
+< Stitched
+> つなぎ合わせ
+
+< lossless, at the photos' native resolution when practical
+> 可能な場合は元の解像度のまま可逆で保存
+
+< Removed
+> 削除される項目
+
+< GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)
+> GPS位置情報 · カメラのメーカー、機種、シリアル番号 · 日付 · ソフトウェア · 作成者 · コメント · XMP/IPTC · 隠れたサムネイルと追加画像（深度、モーション、HDRデータ）
+
+< Kept
+> 保持される項目
+
+< The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
+> 画像データはバイト単位でそのまま、向き（写真が正しい向きのまま保たれます）、カラープロファイル、GIFアニメーション。動画：映像と音声のストリームはビット単位でそのまま、および回転情報。
+
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> JPEG、PNG、WebP、GIF、MP4/MOV/WebM動画に対応しています。HEIC、AVIF、RAWは再エンコードしないとクリーンアップできません。代わりに「画像変換」で変換してください（変換後のコピーにはメタデータが含まれません）。
+
+< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
+> name_clean.jpg / .png / .webp / .gif / .mp4 — 写真はPictures、動画はMovies
+
+< e.g. 1-3, 5, 8-
+> 例：1-3, 5, 8-
+
+< Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
+> ページはカンマで区切ります。範囲は4-9のように指定でき、「8-」は8ページ目から最後までを意味します。ページは書いた順に保存されます。
+
+< Save as
+> 保存形式
+
+< name_pages.pdf
+> name_pages.pdf
+
+< name_p3.pdf, name_p4.pdf …
+> name_p3.pdf, name_p4.pdf …
+
+< Select a video to choose the part to keep.
+> 動画を選択すると、残す部分を選べます。
+
+< Fix videos recorded sideways
+> 横向きで撮影された動画を修正
+
+@ no rotation
+< Keep
+> そのまま
+
+< 90° right
+> 右に90°
+
+< 90° left
+> 左に90°
+
+< Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
+> 劣化なし：ストリームはコピーされ、再エンコードされません。開始位置は直前のキーフレームに移動し（通常は1〜2秒未満）、終了位置は正確です。
+
+< Reading {0}…
+> {0}を読み込み中…
+
+< {0}: the duration couldn't be read.
+> {0}：長さを読み取れませんでした。
+
+< Start {0}
+> 開始 {0}
+
+< End {0} · keeps {1}
+> 終了 {0} · {1}を残します
+
+< Put a video in the stack to choose the part to keep
+> 残す部分を選ぶには、スタックに動画を入れてください
+
+< Select one video (trimming is set per video)
+> 動画を1本選択してください（トリミングは動画ごとに設定します）
+
+< Reading the video…
+> 動画を読み込み中…
+
+< Keep at least a fraction of a second
+> 少なくともわずかな長さは残してください
+
+< Move the handles or pick a rotation
+> ハンドルを動かすか、回転を選んでください
+
+< name_trim.mp4 (WebM stays WebM)
+> name_trim.mp4（WebMはWebMのまま）
+
+< Keep {0}–{1} of {2} ({3}–{4}% of each video)
+> {2}のうち{0}〜{1}を残す（各動画の{3}〜{4}%）
+
+< Keep {0}–{1}% of each video
+> 各動画の{0}〜{1}%を残す
+
+< turn {0}° clockwise
+> 時計回りに{0}°回転
+
+< Part of the video to keep
+> 残す部分
+
+< Select two or more videos. They are joined in the order shown above (tap Review to reorder).
+> 動画を2本以上選択してください。上に表示されている順に結合されます（順番を変えるには「確認」をタップ）。
+
+< Keep sound
+> 音声を残す
+
+< Clips without sound get silence
+> 音声のないクリップは無音になります
+
+< Clips filmed on the same phone with the same settings are joined without re-encoding, in seconds and with no quality loss. Otherwise they're converted to one size (black bars where shapes differ) and format first.
+> 同じ端末で同じ設定で撮影したクリップは、再エンコードなしで数秒で結合され、画質も劣化しません。それ以外の場合は、まず1つのサイズ（形が異なる部分は黒い帯）と形式に変換されます。
+
+< Checking the clips…
+> クリップを確認中…
+
+< One of the files couldn't be read as a video.
+> 動画として読み込めなかったファイルがあります。
+
+< {0} clip · {1} in total
+< {0} clips · {1} in total
+> {0}クリップ · 合計{1}
+
+< these clips can be joined without re-encoding (no quality loss).
+> これらのクリップは再エンコードなしで結合できます（画質の劣化なし）。
+
+< {0}, so they'll be converted to a common format first (slower).
+> {0}。そのため、まず共通の形式に変換されます（時間がかかります）。
+
+< Slow motion
+> スローモーション
+
+< Best with high-frame-rate recordings
+> 高フレームレートの動画に最適
+
+< Faster
+> 高速
+
+< Timelapse
+> タイムラプス
+
+< Hours become minutes
+> 何時間も数分に
+
+< Natural pitch, no chipmunk voices (up to 4×)
+> 自然な音程を維持し、高い声にならない（最大4×）
+
+< Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
+> 音声なしで最大120 fpsの場合、動画はタイミングを変更するだけで、再エンコードも画質劣化もありません。それ以外はH.264 MP4として再エンコードされ、タイムラプスは30 fpsになります。
+
+< {0} becomes {1}
+> {0}が{1}になります
+
+< only {0} frame per second, so it will look choppy
+< only {0} frames per second, so it will look choppy
+> 1秒あたり{0}フレームしかないため、カクカクして見えます
+
+< no re-encoding
+> 再エンコードなし
+
+< Speed {0}
+> 速度 {0}
+
+< Choose a speed
+> 速度を選ぶ
+
+< Segment length
+> 分割の長さ
+
+< Each part will be about this long
+> 各パートはおよそこの長さになります
+
+< Custom length (seconds)
+> カスタムの長さ（秒）
+
+< e.g. 45
+> 例：45
+
+< No re-encoding: parts keep the original quality. Cuts happen at the nearest keyframe (sync point) at or before each boundary, so parts may be slightly shorter than the length you set. Videos with very few keyframes can give some longer parts.
+> 再エンコードなし：各パートは元の画質を保ちます。カットは各区切りの位置か、その直前にある最も近いキーフレーム（同期ポイント）で行われるため、設定した長さより少し短くなることがあります。キーフレームが非常に少ない動画では、長いパートができることがあります。
+
+< Enter a segment length between 1 second and 24 hours
+> 分割の長さは1秒から24時間の間で入力してください
+
+< One file per part: name_part01.mp4, name_part02.mp4 … (WebM sources stay WebM)
+> パートごとに1ファイル：name_part01.mp4、name_part02.mp4 …（WebMはWebMのまま）
+
+< Lossless: video and audio streams are copied bit-for-bit, so quality is exactly the same. This is not compression — the size changes only slightly. Use Video compressor to make files much smaller.
+> 劣化なし：映像と音声のストリームはビット単位でそのままコピーされるため、画質はまったく同じです。これは圧縮ではなく、サイズはわずかしか変わりません。ファイルを大幅に小さくするには「動画圧縮」を使ってください。
+
+< What it improves: the index (moov) is moved to the start so playback and uploads begin immediately, and padding, subtitle and data tracks are removed. Location metadata isn't copied.
+> 改善される点：インデックス（moov）が先頭に移動し、再生やアップロードがすぐに始まります。また、パディング、字幕、データトラックが削除されます。位置情報メタデータはコピーされません。
+
+< Higher quality = larger file
+> 高画質ほどファイルが大きくなります
+
+< Maximum resolution
+> 最大解像度
+
+< Shorter side; never upscales
+> 短辺の長さ。拡大はしません
+
+< Output is H.264 video with AAC audio in MP4, which plays on virtually every device. Audio is kept (converted to AAC if needed). Orientation is preserved. If a result would be larger than the original, it is not saved.
+> 出力はMP4形式のH.264映像とAAC音声で、ほぼすべての機器で再生できます。音声は保持されます（必要に応じてAACに変換）。向きは維持されます。結果が元より大きくなる場合は保存されません。
+
+< ≈ {0} Mbps for {1}p at 30 fps · about {2} MB per minute (lower if the source bitrate is lower)
+> 30 fpsの{1}pで約{0} Mbps · 1分あたり約{2} MB（元のビットレートが低い場合はそれより低くなります）
+
+< The video stream is copied unchanged (no quality loss); only the sound track is left out. Useful for silent clips and to save a little space. Videos that already have no audio are skipped.
+> 映像ストリームは変更せずにコピーされ（画質の劣化なし）、音声トラックだけが除かれます。無音のクリップや、少しだけ容量を節約したいときに便利です。すでに音声のない動画はスキップされます。
+
+< Keep source frame rate and size
+> 元のフレームレートとサイズを維持
+
+< Uses the video's own frame rate (up to 50 fps) and displayed resolution
+> 動画自体のフレームレート（最大50 fps）と表示解像度を使用します
+
+< Fewer frames = much smaller GIF
+> フレームが少ないほど、GIFは大幅に小さくなります
+
+< Width
+> 幅
+
+< Height follows the video's shape
+> 高さは動画の縦横比に合わせて決まります
+
+< Part of the video
+> 動画の一部
+
+< Leave length at 0 to convert to the end
+> 長さを0のままにすると、最後まで変換します
+
+< Start (s)
+> 開始（秒）
+
+< Length (s)
+> 長さ（秒）
+
+< 0 = to the end
+> 0＝最後まで
+
+< Colour dithering
+> カラーディザリング
+
+< How the 256-colour palette blends gradients
+> 256色のパレットでグラデーションをどう表現するか
+
+< Pattern (stable)
+> パターン（安定）
+
+< None (sharpest)
+> なし（最もシャープ）
+
+< Diffusion (smoothest)
+> 拡散（最もなめらか）
+
+< GIF can only show 256 colours per frame, so file size grows quickly with frame rate and resolution. 10–15 fps at 320–480 px is a good start. Colours adapt to each scene; timing follows the video exactly.
+> GIFは1フレームあたり256色しか表示できないため、フレームレートや解像度が上がるとファイルサイズが急速に大きくなります。まずは320〜480 pxで10〜15 fpsがおすすめです。色は各シーンに合わせて調整され、タイミングは動画と正確に一致します。
+
+< Start and length can't be negative
+> 開始と長さはマイナスにできません
+
+< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
+> AAC音声トラックは、再エンコードや音質の劣化なしで、そのまま.m4aファイルにコピーされます。音声がAACでない動画（OpusやAC-3など）や、音声のない動画は、結果に明記されます。
+
+< Watermark preview
+> 透かしのプレビュー
+
+< Select images to preview
+> プレビューする画像を選択
+
+< Watermark text
+> 透かしのテキスト
+
+< e.g. © Your Name {0}
+> 例：© あなたの名前 {0}
+
+< Logo image
+> ロゴ画像
+
+< Optional — PNG with transparency works best
+> 省略可能。透過PNGが最適です
+
+< Size
+> サイズ
+
+< Of each image's shorter side; proportions never stretch
+> 各画像の短辺に対する割合です。縦横比が引き伸ばされることはありません
+
+< Opacity
+> 不透明度
+
+< Text colour
+> 文字の色
+
+< White
+> 白
+
+< Black
+> 黒
+
+< Grey
+> グレー
+
+< Gold
+> ゴールド
+
+< Default position
+> 標準の位置
+
+< Used for every image shape you don't set separately
+> 個別に設定していないすべての画像の形に使われます
+
+< Placement by image shape
+> 画像の形ごとの配置
+
+< Different shapes can use different positions
+> 形ごとに異なる位置を使えます
+
+< Choose logo
+> ロゴを選択
+
+< From files
+> ファイルから
+
+< Remove logo
+> ロゴを削除
+
+< That file isn't an image.
+> そのファイルは画像ではありません。
+
+< Select images to see the shapes in your batch.
+> 画像を選択すると、バッチ内の形が表示されます。
+
+< Set placement for each shape ({0})
+> 形ごとに配置を設定（{0}）
+
+< Set placement for this shape
+> この形の配置を設定
+
+< Reset to default position
+> 標準の位置に戻す
+
+< Add watermark text or choose a logo
+> 透かしのテキストを追加するか、ロゴを選択してください
+
+< name_wm.jpg / .png / .webp (same type of format as each original)
+> name_wm.jpg / .png / .webp（元の画像と同じ種類の形式）
+
+< Watermark placement
+> 透かしの配置
+
+< No image sizes are known yet. Go back and wait for the selection to load.
+> 画像のサイズはまだ不明です。戻って、選択内容の読み込みが終わるまでお待ちください。
+
+< Shape {0} of {1}
+> 形 {0}/{1}
+
+< {0} image with this shape
+< {0} images with this shape
+> この形の画像：{0}枚
+
+< Choose where the watermark goes
+> 透かしを入れる位置を選んでください
+
+< Review plan
+> プランを確認
+
+< Next shape
+> 次の形
+
+< Placement plan
+> 配置プラン
+
+< This is how the watermark will be placed when you export.
+> エクスポート時に、透かしはこのように配置されます。
+
+< {0} image → {1}
+< {0} images → {1}
+> 画像{0}枚 → {1}
+
+< Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
+> サイズは短辺の{0}% · 不透明度{1}%。一覧にない形の画像は、標準の位置（{2}）を使います。
+
+< Queued — it prints when the current job finishes.
+> キューに追加しました。現在の処理が終わると印刷されます。
+
+< Sending to the printer. You can leave the app; progress is shown in the notification.
+> プリンターに送信中です。アプリを閉じても大丈夫です。進行状況は通知に表示されます。
+
+< Only your Wi-Fi
+> Wi-Fiのみ
+
+< No printer app
+> プリンターアプリ不要
+
+< Printer
+> プリンター
+
+< Can't reach the printer
+> プリンターに接続できません
+
+< Choose your printer. It must be on the same Wi-Fi as this phone (or its own Wi-Fi Direct network).
+> プリンターを選んでください。この端末と同じWi-Fi（またはプリンター自身のWi-Fi Directネットワーク）に接続されている必要があります。
+
+< Find printers
+> プリンターを探す
+
+< Connecting…
+> 接続中…
+
+< Printing
+> 印刷中
+
+< Ready · {0}
+> 準備完了 · {0}
+
+< Ready
+> 準備完了
+
+< encrypted
+> 暗号化
+
+< Change
+> 変更
+
+< unknown
+> 不明
+
+< Ink, as the printer estimates it
+> インク残量（プリンターの推定値）
+
+< Some ink is low. If your printer has refillable tanks, check them: the printer can only estimate.
+> インクが少なくなっています。詰め替え式タンクのプリンターの場合は、タンクを確認してください。プリンターは推定しかできません。
+
+< Choose a printer
+> プリンターを選択
+
+< Close
+> 閉じる
+
+@ printers kept in the app
+< Saved
+> 登録済み
+
+< Forget {0}
+> {0}の登録を解除
+
+< On this Wi-Fi
+> このWi-Fi上
+
+< Looking for printers…
+> プリンターを探しています…
+
+< Add by IP address
+> IPアドレスで追加
+
+< If your printer isn't found (its IP address is on its network status page)
+> プリンターが見つからない場合（IPアドレスはプリンターのネットワーク状態ページに表示されます）
+
+< Printer's IP address
+> プリンターのIPアドレス
+
+< No printers answered. Check that the printer is on and connected to this Wi-Fi, or add it by IP address.
+> 応答したプリンターはありません。プリンターの電源が入っていて、このWi-Fiに接続されているか確認するか、IPアドレスで追加してください。
+
+< Found {0}
+< Found {0}
+> 見つかりました：{0}
+
+< Couldn't look for printers
+> プリンターを検索できませんでした
+
+< The paper sizes, paper types and other settings shown are the printer's own once it's connected.
+> 接続すると、表示される用紙サイズ、用紙の種類、その他の設定はプリンター自身のものになります。
+
+< Paper size
+> 用紙サイズ
+
+< Paper type
+> 用紙の種類
+
+< Tell the printer what's loaded: it lays down the right amount of ink
+> セットした用紙を指定すると、プリンターが適切な量のインクを使います
+
+< {0} per sheet
+< {0} per sheet
+> 用紙1枚に{0}面
+
+< Whole photo
+> 写真全体
+
+< Fill (trims edges)
+> 全面に拡大（端を切り取り）
+
+< Borderless
+> フチなし
+
+< Available once the printer is connected
+> プリンターに接続すると利用できます
+
+< Print to the edges of the paper
+> 用紙の端まで印刷
+
+< Not available for {0} on this printer
+> このプリンターでは{0}に対応していません
+
+< Actual size
+> 実寸
+
+< PDF pages at their real size instead of fitted to the paper
+> PDFページを用紙に合わせず、実際のサイズで印刷
+
+< All, or e.g. 1-3, 5, 8-
+> すべて、または 1-3, 5, 8- など
+
+< Colour
+> カラー
+
+< Black & white
+> 白黒
+
+< Draft
+> ドラフト
+
+@ print quality
+< Best
+> 最高
+
+< Normal
+> 標準
+
+< photos
+> 写真
+
+< Two-sided
+> 両面
+
+< Print on both sides of the paper
+> 用紙の両面に印刷
+
+< Select photos or PDFs to see the sheets
+> 写真またはPDFを選択すると、用紙の仕上がりが表示されます
+
+< Couldn't prepare the preview
+> プレビューを準備できませんでした
+
+< {0} sheet
+< {0} sheets
+> 用紙{0}枚
+
+< first {0} shown
+< first {0} shown
+> 先頭{0}枚を表示
+
+< Sheet {0}
+> {0}枚目
+
+< {0} copy
+< {0} copies
+> {0}部
+
+< Connecting to the printer…
+> プリンターに接続中…
+
+< Choose a printer first
+> 先にプリンターを選んでください
+
+< The sheets are drawn on this phone and sent straight to the printer. Progress shows in the notification and in Activity, where you can cancel; problems such as no paper are explained there.
+> 印刷する面はこの端末内で描画され、プリンターに直接送信されます。進行状況は通知とアクティビティに表示され、そこでキャンセルもできます。用紙切れなどの問題もそこで説明されます。
+
+< Your files go only to the printer, over your own network. The app never connects to servers on the internet.
+> ファイルは、お使いのネットワーク経由でプリンターにのみ送信されます。このアプリがインターネット上のサーバーに接続することはありません。
+
+< Couldn't read the shared files.
+> 共有されたファイルを読み込めませんでした。
+
+< No app on this phone can handle this action.
+> この端末には、この操作に対応できるアプリがありません。
+
+< This device has no camera. Add pages from the gallery instead.
+> この端末にはカメラがありません。代わりにギャラリーからページを追加してください。
+
+< No camera app is available on this phone. Add pages from the gallery instead.
+> この端末で使えるカメラアプリがありません。代わりにギャラリーからページを追加してください。
+
+< The camera app didn't return a photo.
+> カメラアプリから写真が返されませんでした。
+
+< This action isn't available on this phone.
+> この操作はこの端末では利用できません。
+
+< Nothing was produced.
+> 何も作成されませんでした。
+
+< Waiting
+> 待機中
+
+< Waiting to start
+> 開始待ち
+
+< Cancelled · {0} saved before cancelling
+< Cancelled · {0} saved before cancelling
+> キャンセル済み · キャンセル前に{0}件を保存
+
+< Cancelled
+> キャンセル済み
+
+< Not printed
+> 未印刷
+
+< {0} file saved
+< {0} files saved
+> {0}ファイルを保存
+
+< {0} failed
+< {0} failed
+> {0}件失敗
+
+< {0} skipped
+< {0} skipped
+> {0}件スキップ
+
+< Export progress
+> エクスポートの進行状況
+
+< Shows the progress of running exports
+> 実行中のエクスポートの進行状況を表示します
+
+< Finished exports
+> 完了したエクスポート
+
+< Tells you when an export finishes or fails
+> エクスポートが完了または失敗したときにお知らせします
+
+< Preparing export…
+> エクスポートを準備中…
+
+< {0} queued
+< {0} queued
+> {0}件待機中
+
+< Workload {0}%
+> 負荷 {0}%
+
+< Export finished
+> エクスポート完了
+
+< Export finished with issues
+> エクスポートが完了しました（問題あり）
+
+< Export cancelled
+> エクスポートをキャンセルしました
+
+< Export failed
+> エクスポート失敗
+
+< Saved to {0}
+> {0}に保存しました
+
+< File {0} of {1}
+> ファイル {0}/{1}
+
+< Processing
+> 処理中
+
+< WebP lossless
+> WebP（可逆）
+
+< {0} supports at most {1} px per side; this image would be {2}×{3}. Choose a smaller width or another format.
+> {0}は1辺あたり最大{1}pxまでですが、この画像は{2}×{3}になります。幅を小さくするか、別の形式を選んでください。
+
+< This image is too large to encode as {0} with the memory available ({1}×{2}). Choose PNG or JPEG, or set a smaller width.
+> 使えるメモリでは、この画像は大きすぎて{0}にエンコードできません（{1}×{2}）。PNGまたはJPEGを選ぶか、幅を小さくしてください。
+
+< This {0} image is too large to process in pieces with the memory available.
+> 使えるメモリでは、この{0}画像は大きすぎて分割処理できません。
+
+< The JPEG encoder failed.
+> JPEGエンコーダーが失敗しました。
+
+< The WebP encoder failed.
+> WebPエンコーダーが失敗しました。
+
+< The lossless WebP encoder failed.
+> 可逆WebPエンコーダーが失敗しました。
+
+< The PNG encoder failed.
+> PNGエンコーダーが失敗しました。
+
+< {0} cannot be written in pieces.
+> {0}は分割して書き込めません。
+
+< This very large image uses the {0} colour profile, which can't be preserved exactly when processing it in pieces.
+> この非常に大きな画像は{0}カラープロファイルを使用しており、分割処理では正確に保持できません。
+
+< The written file failed verification ({0}×{1}, expected {2}×{3}), so it was discarded.
+> 書き込んだファイルが検証に失敗した（{0}×{1}、想定は{2}×{3}）ため、破棄されました。
+
+< This image ({0}×{1}) needs about {2} MB of memory, more than is free right now.
+> この画像（{0}×{1}）には約{2} MBのメモリが必要で、現在の空きを超えています。
+
+< The image data could not be decoded. The file may be damaged or use an unsupported variant of {0}.
+> 画像データをデコードできませんでした。ファイルが破損しているか、{0}の非対応の形式である可能性があります。
+
+< Part of the image could not be decoded; the file may be damaged.
+> 画像の一部をデコードできませんでした。ファイルが破損している可能性があります。
+
+< The file is empty.
+> ファイルが空です。
+
+< This {0} file is damaged or uses an unsupported variant.
+> この{0}ファイルは破損しているか、非対応の形式です。
+
+< This {0} file is incomplete (truncated). Processing it would produce grey or missing areas, so it was not used.
+> この{0}ファイルは不完全（途中で切れている）です。処理すると灰色になったり欠けたりする部分ができるため、使用されませんでした。
+
+< AVIF images can't be decoded on this Android version.
+> このAndroidのバージョンでは、AVIF画像をデコードできません。
+
+< This HEIC/HEIF image can't be decoded on this device.
+> この端末では、このHEIC/HEIF画像をデコードできません。
+
+< This camera RAW format isn't supported by Android's decoder.
+> このカメラRAW形式は、Androidのデコーダーに対応していません。
+
+< This file is not an image format that can be decoded.
+> このファイルは、デコードできる画像形式ではありません。
+
+< This {0} image could not be decoded. It may be damaged.
+> この{0}画像をデコードできませんでした。破損している可能性があります。
+
+< Unsupported {0} file
+> 非対応の{0}ファイル
+
+< Unsupported format
+> 非対応の形式
+
+< The {0} file could not be decoded
+> {0}ファイルをデコードできませんでした
+
+< The {0} file is damaged.
+> {0}ファイルが破損しています。
+
+< Top left
+> 左上
+
+< Top center
+> 上中央
+
+< Top right
+> 右上
+
+< Center left
+> 中央左
+
+< Center right
+> 中央右
+
+< Bottom left
+> 左下
+
+< Bottom center
+> 下中央
+
+< Bottom right
+> 右下
+
+< Landscape
+> 横向き
+
+< Waiting for the phone to cool down
+> 端末が冷めるのを待っています
+
+< Paused to save battery (below 15%)
+> バッテリー節約のため一時停止中（15%未満）
+
+< Paused while Battery Saver is on
+> バッテリーセーバーがオンの間は一時停止中
+
+< Organising the gallery
+> ギャラリーを整理中
+
+< Shows progress while photos are analysed on this phone for search and people
+> 写真を検索や人物認識のためにこの端末内で分析している間、進行状況を表示します
+
+< Grouping faces into people
+> 顔を人物ごとにグループ化中
+
+< {1} of {0} photo or video · on this phone
+< {1} of {0} photos and videos · on this phone
+> {0}件の写真と動画のうち{1}件 · この端末内
+
+< Reading your library
+> ライブラリを読み込み中
+
+< The photo library isn't available right now
+> 現在、写真ライブラリを利用できません
+
+< Other
+> その他
+
+@ search words for videos, separated by commas
+< video,videos,clip,clips,movie,movies
+> 動画,ビデオ,ムービー,映像,クリップ,どうが
+
+@ search words for photos, separated by commas
+< photo,photos,picture,pictures,pic,pics,image,images
+> 写真,しゃしん,フォト,画像,がぞう,ピクチャ,ピクチャー,イメージ,写メ
+
+@ search words for screenshots, separated by commas
+< screenshot,screenshots,screen shot,screen shots,screengrab
+> スクリーンショット,スクショ,スクリーンキャプチャ,画面キャプチャ,画面,キャプチャ
+
+@ search words for GIFs, separated by commas
+< gif,gifs,animation,animations
+> ジフ,アニメーション,アニメ,動く画像
+
+@ search words for favourites, separated by commas
+< favourite,favourites,favorite,favorites,starred
+> お気に入り,おきにいり,スター,スター付き,星付き,いいね
+
+< GIFs
+> GIF
+
+@ search words for today, separated by commas
+< today
+> 今日,きょう,本日
+
+@ search words for yesterday, separated by commas
+< yesterday
+> 昨日,きのう,さくじつ
+
+@ search words for this week, separated by commas
+< this week
+> 今週,こんしゅう
+
+@ search words for last week, separated by commas
+< last week
+> 先週,せんしゅう
+
+@ search words for this month, separated by commas
+< this month
+> 今月,こんげつ
+
+@ search words for last month, separated by commas
+< last month
+> 先月,せんげつ
+
+@ search words for this year, separated by commas
+< this year
+> 今年,ことし,本年
+
+@ search words for last year, separated by commas
+< last year
+> 去年,昨年,きょねん
+
+< This week
+> 今週
+
+< Last week
+> 先週
+
+< This month
+> 今月
+
+< Last year
+> 去年
+
+@ search: words to leave out of a search, separated by commas
+< a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
+> の,と,で,に,を,は,が,や,も,へ,か,ら,て,た,し,い,る,っ,せ,す,べ,く,だ,さ,ね,よ,見,探,写,撮,表,示,検,索,全,部,一,緒,近,私,自,食
+
+< Upbeat
+> アップテンポ
+
+< Bright, with a beat
+> 明るくリズミカル
+
+< Chill
+> チル
+
+< Relaxed, soft electric piano
+> ゆったりとした、やわらかなエレクトリックピアノ
+
+< Cinematic
+> シネマティック
+
+< Slow and wide, piano and strings
+> ゆったりと広がる、ピアノとストリングス
+
+< Upbeat music
+> アップテンポな音楽
+
+< Chill music
+> チルな音楽
+
+< Cinematic music
+> シネマティックな音楽
+
+< Reading your photo library
+> 写真ライブラリを読み込み中
+
+< The scan stopped unexpectedly.
+> スキャンが予期せず停止しました。
+
+< Looking at your photos
+> 写真を確認中
+
+< Comparing
+> 比較中
+
+< Watching {0}
+> {0}を視聴中
+
+< Looking at {0}
+> {0}を確認中
+
+< couldn't be read
+> 読み込めませんでした
+
+< Could not prepare the on-device model {0}
+> 端末内モデル{0}を準備できませんでした
+
+@ kind of photo
+< Portrait
+> ポートレート
+
+@ kind of photo
+< Landscape
+> 風景
+
+< Food
+> 食べ物
+
+< Animal
+> 動物
+
+< Plants & flowers
+> 植物・花
+
+< City & buildings
+> 街・建物
+
+< Document
+> 書類
+
+< Night
+> 夜景
+
+< General
+> 一般
+
+< brightened the faces
+> 顔を明るく補正
+
+< brightened
+> 明るく補正
+
+< toned down the brightness
+> 明るさを抑制
+
+< recovered highlights
+> ハイライトを復元
+
+< lifted shadows
+> シャドウを持ち上げ
+
+< added contrast
+> コントラストを強調
+
+< cooled a yellow cast
+> 黄みを軽減
+
+< warmed a blue cast
+> 青みを軽減
+
+< balanced colours
+> 色のバランスを調整
+
+< removed a green tint
+> 緑かぶりを除去
+
+< removed a magenta tint
+> マゼンタかぶりを除去
+
+< richer colours
+> 色を鮮やかに
+
+< Identical copies
+> 完全に同じコピー
+
+< Byte-for-byte the same file
+> バイト単位で同じファイル
+
+< Duplicates
+> 重複
+
+< The same picture saved again, resized or re-compressed
+> 同じ写真を再保存、リサイズ、再圧縮したもの
+
+< Bursts and retakes of the same moment
+> 連写や、同じ場面の撮り直し
+
+< Best quality
+> 最高画質
+
+< Most pixels, then the sharpest
+> 画素数が最も多いもの、次にシャープなもの
+
+< The oldest file, before it was copied or edited
+> 最も古いファイル（コピーや編集の前のもの）
+
+< The latest file, e.g. your edited version
+> 最新のファイル（編集したバージョンなど）
+
+< Smallest file
+> 最小のファイル
+
+< Saves the most space
+> 最も容量を節約できます
+
+< keeps the best-quality copy
+> 最高画質のコピーを残す
+
+< keeps the original copy
+> オリジナルのコピーを残す
+
+< keeps the newest copy
+> 最新のコピーを残す
+
+< keeps the smallest copy
+> 最小のコピーを残す
+
+< Favourite
+> お気に入り
+
+< Person you keep
+> 残す人物
+
+< Transparent
+> 透明
+
+< Light grey
+> ライトグレー
+
+< Removing the background from {0} photo
+< Removing the background from {0} photos
+> {0}枚の写真から背景を削除中
+
+< Finding the subject
+> 被写体を検出中
+
+< No clear subject was found in this photo, so nothing was saved.
+> この写真ではっきりした被写体が見つからなかったため、何も保存されませんでした。
+
+< The whole photo looks like the subject, so there was no background to remove.
+> 写真全体が被写体のように見えるため、削除する背景がありませんでした。
+
+< Very large photo: saved at {0}×{1}.
+> 非常に大きな写真のため、{0}×{1}で保存しました。
+
+< transparent PNG
+> 透過PNG
+
+< {0} background
+> {0}の背景
+
+@ strength
+< Subtle
+> 控えめ
+
+@ strength
+< Natural
+> 自然
+
+< Enhancing {0} photo
+< Enhancing {0} photos
+> {0}枚の写真を補正中
+
+< Looking at the photo
+> 写真を確認中
+
+< This photo already looks balanced; nothing to improve.
+> この写真はすでにバランスが取れているため、補正する点はありません。
+
+< fine-tuned
+> 微調整
+
+< Pixelating faces in {0} file
+< Pixelating faces in {0} files
+> {0}個のファイルの顔にモザイクをかけています
+
+< Blurring faces in {0} file
+< Blurring faces in {0} files
+> {0}個のファイルの顔をぼかしています
+
+< No faces to hide were found in this file.
+> このファイルには、隠す顔が見つかりませんでした。
+
+< None of the chosen people appear in this file, so it was left as it is.
+> 選んだ人物はこのファイルに写っていないため、そのままにしました。
+
+< Finding faces
+> 顔を検出中
+
+< Photo metadata (location, camera, dates) is not copied.
+> 写真のメタデータ（位置情報、カメラ、日付）はコピーされません。
+
+< {0} face pixelated
+< {0} faces pixelated
+> {0}個の顔にモザイクをかけました
+
+< {0} face blurred
+< {0} faces blurred
+> {0}個の顔をぼかしました
+
+< This file has no video track.
+> このファイルには映像トラックがありません。
+
+< Blurring faces frame by frame
+> フレームごとに顔をぼかしています
+
+< {0} face track pixelated
+< {0} face tracks pixelated
+> {0}個の顔トラックにモザイクをかけました
+
+< {0} face track blurred
+< {0} face tracks blurred
+> {0}個の顔トラックをぼかしました
+
+< H.264 from {0}
+> H.264（元：{0}）
+
+< Vertical
+> 縦
+
+< One image below another
+> 画像を上下に並べます
+
+< Horizontal
+> 横
+
+< Images side by side
+> 画像を左右に並べます
+
+< Smart pack
+> スマート配置
+
+< Compact arrangement of different sizes
+> サイズの異なる画像をコンパクトに配置します
+
+< Merging {0} image ({1})
+< Merging {0} images ({1})
+> {0}枚の画像を結合中（{1}）
+
+< The merged image would be {0}×{1} pixels, which is too large to save.
+> 結合した画像は{0}×{1}ピクセルになり、保存するには大きすぎます。
+
+< The result is very large ({0}×{1}); some gallery apps may not be able to open it.
+> 結果が非常に大きい（{0}×{1}）ため、開けないギャラリーアプリがあるかもしれません。
+
+< {0} image
+< {0} images
+> {0}枚の画像
+
+< Stitching {0} photo (AI assisted)
+< Stitching {0} photos (AI assisted)
+> {0}枚の写真をつなぎ合わせ中（AI補助）
+
+< Stitching {0} photo
+< Stitching {0} photos
+> {0}枚の写真をつなぎ合わせ中
+
+< AI assistance could not start on this device ({0}); stitched without it.
+> この端末ではAI補助を開始できなかった（{0}）ため、AIなしでつなぎ合わせました。
+
+< AI resolved {0} alignment decision on-device.
+< AI resolved {0} alignment decisions on-device.
+> AIが端末内で位置合わせの判断を{0}件解決しました。
+
+< AI assistance was on but no ambiguous decisions needed it.
+> AI補助はオンでしたが、AIを必要とするあいまいな判断はありませんでした。
+
+< {0}% scale
+> 倍率{0}%
+
+< Watermarking {0} image
+< Watermarking {0} images
+> {0}枚の画像に透かしを追加中
+
+< The logo image could not be loaded: {0}
+> ロゴ画像を読み込めませんでした：{0}
+
+< Add watermark text or a logo first.
+> 先に透かしのテキストを追加するか、ロゴを選択してください。
+
+< Saving edited photo
+> 編集した写真を保存中
+
+< cropped/rotated
+> トリミング/回転
+
+< {0} retouch
+< {0} retouches
+> {0}件の修正
+
+< {0} adjustment
+< {0} adjustments
+> {0}件の調整
+
+< {0} look
+> {0}件のフィルター
+
+< Photo metadata (location, camera, dates) is not copied to edited copies.
+> 写真のメタデータ（位置情報、カメラ、日付）は、編集したコピーにはコピーされません。
+
+< Converting {0} video to GIF
+< Converting {0} videos to GIF
+> {0}本の動画をGIFに変換中
+
+< The video's dimensions could not be read.
+> 動画のサイズを読み取れませんでした。
+
+< Frame rate limited to 50 fps, the fastest rate GIF viewers play.
+> フレームレートは、GIFビューアが再生できる最速の50 fpsに制限されました。
+
+< The chosen start time is beyond the end of the video.
+> 選択した開始時間が動画の終わりを過ぎています。
+
+< Analysing colours
+> 色を分析中
+
+< No frames could be decoded from the selected part of the video.
+> 動画の選択した部分から、デコードできるフレームがありませんでした。
+
+< {0} frame used its own colour palette for a scene with different colours.
+< {0} frames used their own colour palette for scenes with different colours.
+> 色が異なるシーンのために、{0}個のフレームが独自のカラーパレットを使用しました。
+
+< {0} frame
+< {0} frames
+> {0}フレーム
+
+< The written GIF failed verification, so it was discarded.
+> 書き込んだGIFが検証に失敗したため、破棄されました。
+
+< The written GIF has no frames, so it was discarded.
+> 書き込んだGIFにフレームがないため、破棄されました。
+
+< Compressing {0} GIF ({1} colours)
+< Compressing {0} GIFs ({1} colours)
+> {0}個のGIFを圧縮中（{1}色）
+
+< Analysing
+> 分析中
+
+< The GIF contains no frames.
+> GIFにフレームがありません。
+
+< The result would not be smaller ({0} vs {1}), so nothing was saved. Try fewer colours, a smaller width or a lower frame rate.
+> 結果が元より小さくならない（{0}、元は{1}）ため、何も保存されませんでした。色数、幅、フレームレートのいずれかを下げてみてください。
+
+< {1} of {0} frame
+< {1} of {0} frames
+> {0}フレーム中{1}フレーム
+
+< Optimizing {0} GIF (pixel-preserving)
+< Optimizing {0} GIFs (pixel-preserving)
+> {0}個のGIFを最適化中（ピクセル保持）
+
+< This GIF is already efficiently encoded (optimized: {0} vs {1}), so nothing was saved.
+> このGIFはすでに効率よくエンコードされている（最適化後：{0}、元は{1}）ため、何も保存されませんでした。
+
+< pixel-identical frames
+> ピクセルが同一のフレーム
+
+< resized with nearest-neighbour sampling (no new colours)
+> 最近傍サンプリングでリサイズ（新しい色は生じません）
+
+< Making a highlight video from {0} photo or video
+< Making a highlight video from {0} photos and videos
+> {0}件の写真と動画からハイライト動画を作成中
+
+< Pick at least two photos or videos.
+> 写真または動画を2つ以上選んでください。
+
+< Looking at the photos and videos ({0} of {1})
+> 写真と動画を確認中（{0}/{1}）
+
+< "{0}" couldn't be read and was left out.
+> 「{0}」を読み込めなかったため、除外しました。
+
+< Too few of the files could be read to make a video.
+> 読み込めたファイルが少なすぎて、動画を作成できません。
+
+< Writing the music
+> 音楽を作曲中
+
+< Preparing the sound
+> 音声を準備中
+
+< Making the video
+> 動画を作成中
+
+< Saving
+> 保存中
+
+< {0} of the files couldn't be read.
+< {0} of the files couldn't be read.
+> {0}個のファイルを読み込めませんでした。
+
+< Compressing {0} image to {1} (quality {2})
+< Compressing {0} images to {1} (quality {2})
+> {0}枚の画像を{1}に圧縮中（画質{2}）
+
+< Already compact: re-encoding at quality {0} would make it larger ({1} vs {2}). Nothing was saved.
+> すでにコンパクトです。画質{0}で再エンコードするとサイズが大きくなる（{1}、元は{2}）ため、何も保存されませんでした。
+
+< Transparent areas were filled with white because JPEG has no transparency.
+> JPEGは透明に対応していないため、透明な部分は白で塗りつぶされました。
+
+< Only the first frame of the animation was used.
+> アニメーションの最初のフレームのみが使用されました。
+
+< Optimizing {0} image losslessly ({1})
+< Optimizing {0} images losslessly ({1})
+> {0}枚の画像を可逆で最適化中（{1}）
+
+< GIFs are optimized with the GIF optimizer tool (this tool would keep only one frame).
+> GIFは「GIF最適化」ツールで最適化してください（このツールでは1フレームしか残りません）。
+
+< Animated WebP can't be optimized here without losing its animation.
+> アニメーションWebPは、アニメーションを失わずにここで最適化することはできません。
+
+< 16-bit-per-channel PNG can't be kept pixel-identical (Android decodes 8 bits per channel). Nothing was saved.
+> チャンネルあたり16ビットのPNGは、ピクセルを同一に保てません（Androidはチャンネルあたり8ビットでデコードします）。何も保存されませんでした。
+
+< {0} photos are already lossy-compressed; storing their pixels losslessly takes more space.
+> {0}の写真はすでに非可逆圧縮されているため、ピクセルを可逆で保存すると容量が増えます。
+
+< Not smaller than the original ({0} vs {1}), so nothing was saved.
+> 元より小さくならない（{0}、元は{1}）ため、何も保存されませんでした。
+
+< orientation applied to pixels
+> 向きをピクセルに反映
+
+< pixel-identical
+> ピクセルが同一
+
+< Converting {0} image to {1}
+< Converting {0} images to {1}
+> {0}枚の画像を{1}に変換中
+
+< {0} supports at most {1} px per side; this image is {2}×{3}. Choose PNG or JPEG.
+> {0}は1辺あたり最大{1}pxまでですが、この画像は{2}×{3}です。PNGまたはJPEGを選んでください。
+
+< Only the first frame of the animation was converted.
+> アニメーションの最初のフレームのみが変換されました。
+
+< quality {0}
+> 画質{0}
+
+< The written file failed verification (missing track), so it was discarded.
+> 書き込んだファイルが検証に失敗した（トラックなし）ため、破棄されました。
+
+< The written file failed verification (no samples), so it was discarded.
+> 書き込んだファイルが検証に失敗した（サンプルなし）ため、破棄されました。
+
+< The written file could not be read back, so it was discarded.
+> 書き込んだファイルを読み戻せなかったため、破棄されました。
+
+< Removing metadata from {0} file
+< Removing metadata from {0} files
+> {0}個のファイルからメタデータを削除中
+
+< {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
+> {0}ファイルは、再エンコードしないとクリーンアップできません。「画像変換」でクリーンなJPEGまたはPNGのコピーを作成してください（変換後のファイルにはメタデータが含まれません）。
+
+< The file is damaged or uses an unusual layout ({0}); nothing was saved.
+> ファイルが破損しているか、特殊な構造を使用しています（{0}）。何も保存されませんでした。
+
+< No metadata found — this file is already clean. Nothing was saved.
+> メタデータが見つかりません。このファイルはすでにクリーンです。何も保存されませんでした。
+
+< The cleaned copy failed verification, so it was discarded.
+> クリーンアップしたコピーが検証に失敗したため、破棄されました。
+
+< orientation
+> 向き
+
+< Removed: {0}.
+> 削除：{0}。
+
+< Kept: {0}.
+> 保持：{0}。
+
+< image data copied unchanged
+> 画像データは変更せずにコピー
+
+< Location, camera, date and other container metadata were not copied. Rotation is kept.
+> 位置情報、カメラ、日付、その他のコンテナのメタデータはコピーされませんでした。回転情報は保持されます。
+
+< video and audio copied bit-for-bit
+> 映像と音声はビット単位でそのままコピー
+
+< Trimming {0}
+> {0}をトリミング中
+
+< Trimming {0} video
+< Trimming {0} videos
+> {0}本の動画をトリミング中
+
+< The selected part is too short.
+> 選択した部分が短すぎます。
+
+< Finding keyframes
+> キーフレームを検出中
+
+< Nothing to change: the whole video is selected and it isn't rotated.
+> 変更する内容がありません。動画全体が選択されており、回転もされていません。
+
+< Starts {0} earlier than chosen, at the previous keyframe (cutting elsewhere would need re-encoding).
+> 直前のキーフレームから開始するため、選択した位置より{0}早く始まります（別の位置でカットするには再エンコードが必要です）。
+
+< Turned {0}° clockwise (players read the rotation flag; pixels are untouched).
+> 時計回りに{0}°回転しました（プレーヤーが回転フラグを読み取るため、ピクセルは変更されません）。
+
+< One PDF
+> 1つのPDF
+
+< One PDF per page
+> ページごとに1つのPDF
+
+< Enter the pages to keep, like 1-3, 5
+> 残すページを入力してください（例：1-3, 5）
+
+< "{0}" isn't a valid page range
+> 「{0}」は有効なページ範囲ではありません
+
+< Page {1} doesn't exist; the PDF has {0} page
+< Page {1} doesn't exist; the PDF has {0} pages
+> {1}ページ目は存在しません。このPDFは{0}ページです
+
+< "{0}" isn't a page number
+> 「{0}」はページ番号ではありません
+
+< Extracting pages from {0} PDF
+< Extracting pages from {0} PDFs
+> {0}個のPDFからページを抽出中
+
+< This PDF is password-protected. Remove the password first.
+> このPDFはパスワードで保護されています。先にパスワードを解除してください。
+
+< Not a valid PDF or damaged ({0}).
+> 有効なPDFではないか、破損しています（{0}）。
+
+< {1} of {0} page
+< {1} of {0} pages
+> {0}ページ中{1}ページ
+
+< {0} PDF
+< {0} PDFs
+> {0}個のPDF
+
+< text and links kept
+> テキストとリンクを保持
+
+< The written PDF could not be read back.
+> 書き込んだPDFを読み戻せませんでした。
+
+< The written PDF failed verification, so it was discarded.
+> 書き込んだPDFが検証に失敗したため、破棄されました。
+
+< The written PDF has {0} pages instead of {1}, so it was discarded.
+> 書き込んだPDFが{1}ページではなく{0}ページだったため、破棄されました。
+
+< Rendering {0} PDF to {1} at {2}%
+< Rendering {0} PDFs to {1} at {2}%
+> {0}個のPDFを{2}%で{1}にレンダリング中
+
+< The PDF has no pages.
+> PDFにページがありません。
+
+< Page {0} of {1}
+> ページ {0}/{1}
+
+< Page {0} could not be opened; the PDF may be damaged.
+> {0}ページ目を開けませんでした。PDFが破損している可能性があります。
+
+< Page {0} would be {1}×{2} px at {3}%, beyond the limit of {4}. Use a lower scale.
+> {0}ページ目は{3}%だと{1}×{2} pxになり、上限の{4}を超えます。倍率を下げてください。
+
+< {0} page image
+< {0} page images
+> {0}枚のページ画像
+
+< last page {0}
+> 最終ページ {0}
+
+< Compact
+> コンパクト
+
+< Original colour
+> 元の色
+
+< Clean document
+> 書類補正
+
+< Creating a {0}-page PDF
+< Creating a {0}-page PDF
+> {0}ページのPDFを作成中
+
+< Page {0} ("{1}"): {2}
+> {0}ページ目（「{1}」）：{2}
+
+< {0} JPEG photo was embedded without recompression.
+< {0} JPEG photos were embedded without recompression.
+> {0}枚のJPEG写真を再圧縮せずに埋め込みました。
+
+< {0} very large image was scaled down to fit in memory.
+< {0} very large images were scaled down to fit in memory.
+> 非常に大きな画像{0}枚を、メモリに収まるよう縮小しました。
+
+< Pages are images; the text is not searchable or selectable.
+> ページは画像です。テキストは検索も選択もできません。
+
+< {0} A4 page
+< {0} A4 pages
+> A4 {0}ページ
+
+< Merging {0} PDF
+< Merging {0} PDFs
+> {0}個のPDFを結合中
+
+< Reading documents
+> ドキュメントを読み込み中
+
+< Added {0} of {1}
+> {1}件中{0}件を追加
+
+< text, links and page sizes kept
+> テキスト、リンク、ページサイズを保持
+
+< videos
+> 動画
+
+< PDFs
+> PDF
+
+< audio files
+> 音声ファイル
+
+< nothing
+> なし
+
+< Edits one photo by hand, so it can't run in a stack
+> 1枚の写真を手動で編集するため、スタックでは実行できません
+
+< Looks through your whole photo library, so it can't run in a stack
+> 写真ライブラリ全体を調べるため、スタックでは実行できません
+
+< Uses the camera; to make a PDF from files in a stack use Images → PDF
+> カメラを使用します。スタックでファイルからPDFを作成するには「画像→PDF」を使ってください
+
+< Prints instead of saving files, so it can't be a step of a stack
+> ファイルを保存せずに印刷するため、スタックのステップにはできません
+
+< Makes one film from the moments you review, so it can't run in a stack
+> 確認した場面から1本の動画を作るため、スタックでは実行できません
+
+< Can't be part of a stack
+> スタックには含められません
+
+< Stack: {0}
+> スタック：{0}
+
+< Saved as it came out of an earlier step
+> 前のステップの結果のまま保存
+
+< No step changed this file.
+> このファイルを変更したステップはありません。
+
+< Step {0} ({1})
+> ステップ{0}（{1}）
+
+< {0} doesn't work on {1}, so it was skipped.
+> {0}は{1}を処理できないため、スキップしました。
+
+< {0} doesn't work on this kind of file, so it was skipped.
+> {0}はこの種類のファイルを処理できないため、スキップしました。
+
+< {1} needs at least {0} file, so it was skipped.
+< {1} needs at least {0} files, so it was skipped.
+> {1}には{0}ファイル以上が必要なため、スキップしました。
+
+< Step {0} of {1}: {2}
+> ステップ{0}/{1}：{2}
+
+< Step {0} of {1} · {2}: {3}
+> ステップ{0}/{1} · {2}：{3}
+
+< {0} · after step {1}
+> {0} · ステップ{1}の後
+
+< {0} failed: {1}
+> {0}が失敗しました：{1}
+
+< unknown error
+> 不明なエラー
+
+< {0} left it unchanged: {1}
+> {0}では変更されませんでした：{1}
+
+< nothing to do
+> 処理することがありません
+
+< it produced no result
+> 結果が得られませんでした
+
+< Stacks
+> スタック
+
+< Run several tools in a row
+> 複数のツールを続けて実行
+
+< Edit & AI
+> 編集とAI
+
+< Retouch, cut out and anonymise with on-device AI
+> 端末内AIで修正・切り抜き・匿名化
+
+< Images
+> 画像
+
+< Compress, convert, combine and brand photos
+> 写真の圧縮・変換・結合・ロゴ入れ
+
+< Trim, cut, repackage and shrink videos
+> 動画のトリミング・カット・再パッケージ・圧縮
+
+< GIF
+> GIF
+
+< Create and slim down animations
+> アニメーションの作成と軽量化
+
+< PDF
+> PDF
+
+< Pages, scans and merges
+> ページ、スキャン、結合
+
+< Photos and documents on your Wi-Fi printer
+> Wi-Fiプリンターで写真やドキュメントを印刷
+
+< Privacy & audio
+> プライバシーと音声
+
+< Clean metadata and extract sound
+> メタデータの削除と音声の抽出
+
+< Tool stack
+> ツールスタック
+
+< Chain tools: each works on the last one's results
+> ツールをつなげて、前のツールの結果を次のツールで処理
+
+< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> ファイルを一度選び、使いたいツールを順に追加します（例：顔ぼかし → 動画圧縮 → 動画→GIF → GIF最適化）。ワンタップですべて実行できます。各ツールの設定はそのまま使え、保存されるのは最終的な結果だけです。
+
+< Photo editor
+> フォトエディター
+
+< Crop, straighten, light, colour and looks
+> トリミング、傾き補正、明るさ、色、フィルター
+
+< Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched.
+> トリミングと傾き補正、明るさと色の微調整、フィルターの適用を行い、フル解像度のコピーを保存します。元の写真は変更されません。
+
+< Magic eraser
+> 消しゴムマジック
+
+< Brush away people and objects with AI
+> AIで人物や物体をなぞって消す
+
+< Brush over what you don't want and an AI model running on this phone fills the gap with matching background. Nothing is uploaded.
+> 不要なものをブラシでなぞると、この端末内で動作するAIモデルが、周囲になじむ背景で自然に埋めます。何もアップロードされません。
+
+< Blur & pixelate
+> ぼかしとモザイク
+
+< Hide faces, plates and private details
+> 顔、ナンバープレート、個人情報を隠す
+
+< Paint over faces, number plates, addresses or screens to blur or pixelate them before you share a photo.
+> 写真を共有する前に、顔、ナンバープレート、住所、画面などをなぞって、ぼかしやモザイクをかけられます。
+
+< Background remover
+> 背景削除
+
+< Cut out the subject as a transparent PNG
+> 被写体を透過PNGとして切り抜き
+
+< An AI model on this phone finds the main subject (people, pets, products, objects) and removes everything behind it. Save as a transparent PNG or on a plain colour.
+> この端末内のAIモデルが主な被写体（人物、ペット、商品、物体）を見つけ、その後ろにあるものをすべて取り除きます。透過PNGとして、または無地の背景色を付けて保存できます。
+
+< One tap: light, colour and detail by AI
+> ワンタップでAIが明るさ・色・ディテールを補正
+
+< On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
+> 端末内AIが顔とシーンの種類（食べ物、風景、夜景、書類など）を認識し、それに合わせて露出、コントラスト、色かぶり、シャープネスを補正します。まとめて処理することもできます。
+
+< Blur faces
+> 顔ぼかし
+
+< Find faces in photos and videos, pick who to hide
+> 写真や動画から顔を検出し、隠す人物を選択
+
+< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
+> 端末内AIが写真や動画に写っているすべての顔を見つけ、人物ごとにグループ化します。ぼかす人物、またはモザイクをかける人物を選べます。動画では顔が最初から最後まで追跡されます。
+
+< Highlight video
+> ハイライト動画
+
+< Your best moments, cut to music, automatically
+> ベストな瞬間を、音楽に合わせて自動で編集
+
+< Pick the photos and videos of a day out, a trip or a party. On-device AI puts them in the order they were taken, finds the moments (setting off, lunch, the beach…), picks the best shots and the liveliest part of each video, and edits them into a short film on the beat of background music it writes for it — always instrumental, and quieter while your videos speak. Review the moments, change anything, then save. Nothing is uploaded.
+> お出かけ、旅行、パーティーの写真と動画を選んでください。端末内AIが撮影順に並べ、場面（出発、ランチ、ビーチなど）を見つけて、ベストショットと各動画のいちばん盛り上がる部分を選び、AIが作曲した背景音楽のビートに合わせて短い動画に編集します。音楽は常にインストゥルメンタルで、動画の音声が流れる間は音量が下がります。場面を確認し、自由に変更してから保存してください。何もアップロードされません。
+
+< Split videos
+> 動画分割
+
+< Cut into equal-length parts without re-encoding
+> 再エンコードなしで、同じ長さに分割
+
+< Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.
+> 各動画を、選んだ長さで連続したパートに分割します。ストリームは再エンコードされずにコピーされるため、どのパートも元の画質を保ちます。
+
+< Trim & rotate video
+> 動画のトリミングと回転
+
+< Cut the start and end, fix sideways videos
+> 最初と最後をカットし、横向きの動画を修正
+
+< Keeps only the part you choose and can turn the video by 90° steps. Streams are copied, not re-encoded, so quality is untouched; the start snaps to the nearest earlier keyframe.
+> 選んだ部分だけを残し、動画を90°単位で回転できます。ストリームは再エンコードされずにコピーされるため画質は変わりません。開始位置は直前の最も近いキーフレームに合わせられます。
+
+< Lossless video optimizer
+> 動画の可逆最適化
+
+< Repackage for fast start; quality untouched
+> ファストスタート用に再パッケージ。画質は変わりません
+
+< Copies the existing video and audio streams bit-for-bit into a clean MP4 with the index at the front (plays and uploads faster). This is not compression: quality is identical and the size changes only slightly.
+> 既存の映像と音声のストリームを、ビット単位でそのまま、インデックスを先頭に置いたクリーンなMP4にコピーします（再生もアップロードも速くなります）。これは圧縮ではなく、画質は同一で、サイズもわずかしか変わりません。
+
+< Video compressor
+> 動画圧縮
+
+< Re-encode to smaller H.264 MP4 files
+> 再エンコードして、より小さなH.264 MP4に
+
+< Re-encodes videos to H.264 + AAC MP4 at the quality you choose. Lower quality gives smaller files.
+> 選んだ画質で、動画をH.264 + AACのMP4に再エンコードします。画質を下げるほどファイルが小さくなります。
+
+< Merge videos
+> 動画結合
+
+< Join clips into one video, in your order
+> クリップを好きな順に1本の動画に結合
+
+< Joins videos end to end. Clips recorded with the same settings are joined without re-encoding (no quality loss); others are converted to a common size and format first.
+> 動画を順につなげて結合します。同じ設定で撮影したクリップは再エンコードなしで結合され（画質の劣化なし）、それ以外はまず共通のサイズと形式に変換されます。
+
+< Speed & timelapse
+> 速度とタイムラプス
+
+< Slow motion, fast forward, timelapses
+> スローモーション、早送り、タイムラプス
+
+< Plays videos from 0.25× to 60× speed. The sound keeps its natural pitch, or can be muted; long recordings become smooth timelapses.
+> 動画を0.25×から60×の速度で再生します。音声は自然な音程を保つか、ミュートにできます。長い録画はなめらかなタイムラプスになります。
+
+< Remove video audio
+> 動画の音声削除
+
+< Silent copies with the video untouched
+> 映像はそのままの無音コピー
+
+< Creates copies of your videos without the sound track. The picture is copied as-is, with no quality loss.
+> 動画から音声トラックを除いたコピーを作成します。映像はそのままコピーされ、画質は劣化しません。
+
+< Image compressor
+> 画像圧縮
+
+< JPEG or WebP with quality and size limits
+> 画質とサイズを指定してJPEGまたはWebPに
+
+< Re-encodes photos as JPEG or WebP at the quality you choose, optionally limiting the width. Aspect ratio and orientation are always preserved.
+> 選んだ画質で写真をJPEGまたはWebPに再エンコードします。幅の上限も指定できます。縦横比と向きは常に維持されます。
+
+< Lossless image optimizer
+> 画像の可逆最適化
+
+< Pixel-identical PNG or lossless WebP
+> ピクセルが同一のPNGまたは可逆WebP
+
+< Stores every pixel exactly as it is in an efficiently compressed lossless file. Savings depend on the source and are not guaranteed.
+> すべてのピクセルをそのまま、効率よく圧縮した可逆形式のファイルに保存します。削減できる量は元のファイルによって異なり、保証されません。
+
+< Convert images
+> 画像変換
+
+< PNG, JPEG or WebP from most formats
+> ほとんどの形式からPNG、JPEG、WebPへ
+
+< Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.
+> 画像（HEIC、AVIF、TIFF、BMP、PSD、RAWプレビューなど）をPNG、JPEG、WebPに変換します。
+
+< Merge images
+> 画像結合
+
+< Stack, line up or pack images into one PNG
+> 画像を縦・横・敷き詰めで1枚のPNGに
+
+< Combines two or more images into a single PNG without scaling or cropping any of them.
+> 2枚以上の画像を、拡大縮小やトリミングをせずに1枚のPNGにまとめます。
+
+< Multi-shot stitcher
+> 複数写真のつなぎ合わせ
+
+< Join overlapping photos into a panorama
+> 重なりのある写真をパノラマにつなぎ合わせ
+
+< Finds where your overlapping photos meet, aligns them and blends them into one high-resolution lossless PNG.
+> 重なり合う写真のつながる位置を見つけて位置合わせし、1枚の高解像度な可逆PNGにブレンドします。
+
+< Bulk watermark
+> 一括透かし
+
+< Text or logo on every photo in a batch
+> まとめて全写真にテキストまたはロゴを
+
+< Adds a text and/or logo watermark to every image, with independent placement for each image shape.
+> すべての画像にテキストやロゴの透かしを追加します。画像の形ごとに配置を個別に設定できます。
+
+< Duplicate finder
+> 重複検出
+
+< Find copies and similar shots, free space
+> 重複や似た写真を探して容量を確保
+
+< Scans your photos on this phone for identical copies, re-saved duplicates and near-identical shots, suggests the best one to keep and moves the rest to the trash when you confirm.
+> この端末内の写真から、完全に同じコピー、再保存された重複、ほぼ同じ写真をスキャンし、残すべきベストの1枚を提案します。確認すると、残りはゴミ箱に移動されます。
+
+< Video → GIF
+> 動画→GIF
+
+< Animated GIFs with adaptive colours
+> 適応型カラーのアニメーションGIF
+
+< Turns videos into animated GIFs with an adaptive colour palette and accurate frame timing.
+> 適応型カラーパレットと正確なフレームタイミングで、動画をアニメーションGIFに変換します。
+
+< GIF compressor
+> GIF圧縮
+
+< Smaller GIFs: size, frame rate, colours
+> GIFを小さく：サイズ、フレームレート、色数
+
+< Shrinks existing GIFs by reducing their dimensions, frame rate and colour palette.
+> 既存のGIFの寸法、フレームレート、カラーパレットを減らして小さくします。
+
+< GIF optimizer
+> GIF最適化
+
+< Re-pack GIFs while keeping every pixel
+> すべてのピクセルを保ったままGIFを再構成
+
+< Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
+> 表示されるピクセルをすべて同一に保ったまま、GIFをより効率よく再エンコードします。
+
+< PDF → images
+> PDF→画像
+
+< Every page as a PNG or JPEG
+> 各ページをPNGまたはJPEGに
+
+< Renders each page of a PDF to an image exactly as it looks on screen.
+> PDFの各ページを、画面での見た目のとおりに画像にレンダリングします。
+
+< Images → PDF
+> 画像→PDF
+
+< One A4 page per image, in your order
+> 画像1枚につきA4を1ページ、好きな順に
+
+< Builds an A4 PDF with one image per page, in the order you choose.
+> ページごとに画像を1枚配置したA4のPDFを、選んだ順に作成します。
+
+< Combine PDFs, keeping text and links
+> PDFを結合（テキストとリンクを保持）
+
+< Joins PDFs into one document, keeping their original text, vector graphics, links and page sizes.
+> PDFを1つのドキュメントに結合し、元のテキスト、ベクターグラフィックス、リンク、ページサイズを保持します。
+
+< Extract PDF pages
+> PDFページ抽出
+
+< Pick pages into a new PDF or separate files
+> ページを選んで新しいPDFまたは個別のファイルに
+
+< Choose page numbers or ranges (like 1-3, 7, 10-) and save them as one new PDF or one PDF per page. Pages are copied as they are: text, links and quality are kept.
+> ページ番号や範囲（1-3, 7, 10-など）を指定して、1つの新しいPDF、またはページごとのPDFとして保存します。ページはそのままコピーされるため、テキスト、リンク、品質が保たれます。
+
+< PDF scanner
+> PDFスキャナー
+
+< Camera or gallery pages into a PDF
+> カメラやギャラリーのページをPDFに
+
+< Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.
+> カメラでページを撮影するか、ギャラリーから写真を追加して、A4のPDFとして保存します。
+
+< Photos and PDFs on your Wi-Fi printer, no printer app
+> プリンターアプリ不要で、Wi-Fiプリンターに写真やPDFを印刷
+
+< Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
+> Wi-Fi上のプリンターに、写真やPDFを直接印刷します。Epson、HP、Canon、Brotherなど、AirPrint、Mopria、IPP Everywhereに対応したプリンターで、メーカーのアプリは不要です。用紙サイズと種類、フチなし、1枚に複数の写真、カラーまたは白黒、画質、部数を選べ、すべての用紙のプレビューも表示されます。アプリが通信するのは、同じネットワーク内のプリンターだけです。
+
+< Remove metadata
+> メタデータ削除
+
+< Strip location, camera and date info
+> 位置情報、カメラ、日付の情報を削除
+
+< Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
+> GPS位置情報、カメラの詳細、日付、コメント、隠れたサムネイルを含まない、写真と動画のクリーンなコピーを作成します。写真のピクセルと動画のストリームは変更せずにコピーされ（画質の劣化なし）、向きとカラープロファイルは保持されます。
+
+< Extract audio
+> 音声抽出
+
+< Save a video's AAC sound as M4A
+> 動画のAAC音声をM4Aで保存
+
+< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
+> 各動画のAAC音声トラックを、再エンコードせずにM4A音声ファイルにコピーします。
+
+< Merging {0} video
+< Merging {0} videos
+> {0}本の動画を結合中
+
+< Reading the clips
+> クリップを読み込み中
+
+< "{0}" has no video track.
+> 「{0}」には映像トラックがありません。
+
+< Joining without re-encoding
+> 再エンコードなしで結合中
+
+< joined without re-encoding
+> 再エンコードなしで結合
+
+< The clips couldn't be joined directly ({0}), so they were converted to one size and format first.
+> クリップを直接結合できなかった（{0}）ため、まず1つのサイズと形式に変換しました。
+
+< Converting clip {0} of {1}
+> クリップ{0}/{1}を変換中
+
+< The converted clips still can't be joined on this device ({0}).
+> 変換後のクリップも、この端末では結合できません（{0}）。
+
+< Joining
+> 結合中
+
+< Finishing
+> 仕上げ中
+
+< Sound was left out, as chosen.
+> 選択どおり、音声は除外されました。
+
+< Changing the speed of {0} video to {1}
+< Changing the speed of {0} videos to {1}
+> {0}本の動画の速度を{1}に変更中
+
+< Sound was left out: above {0} it can't be followed.
+> 音声は除外されました。{0}を超える速度では音声が追従できないためです。
+
+< Slow motion looks smoothest with high-frame-rate recordings (this one has {0} fps).
+> スローモーションは高フレームレートの動画が最もなめらかです（この動画は{0} fpsです）。
+
+< natural-pitch sound
+> 自然な音程の音声
+
+< No suitable container for these tracks.
+> これらのトラックに適したコンテナがありません。
+
+< Splitting {0} video into {1} parts
+< Splitting {0} videos into {1} parts
+> {0}本の動画を{1}パートに分割中
+
+< {0} long — already within one {1} part, nothing to split.
+> 長さ{0}で、すでに1つの{1}パートに収まっているため、分割するものはありません。
+
+< The video has no keyframes after the start, so it can't be split without re-encoding.
+> 動画の開始後にキーフレームがないため、再エンコードなしでは分割できません。
+
+< Part {0} of {1}
+> パート{0}/{1}
+
+< Some parts are longer than {0} because the video has few keyframes (longest {1}).
+> 動画のキーフレームが少ないため、{0}より長いパートがあります（最長{1}）。
+
+< {0} part
+< {0} parts
+> {0}パート
+
+< cuts at keyframes
+> キーフレームでカット
+
+< Optimizing {0} video (lossless)
+< Optimizing {0} videos (lossless)
+> {0}本の動画を最適化中（可逆）
+
+< {0} non-audio/video track (subtitles or metadata) was not copied.
+< {0} non-audio/video tracks (subtitles or metadata) were not copied.
+> 音声・映像以外のトラック（字幕やメタデータ）{0}個はコピーされませんでした。
+
+< Moving the index to the front
+> インデックスを先頭に移動中
+
+< Fast start: the video index is at the beginning, so it starts playing and uploading sooner.
+> ファストスタート：動画のインデックスが先頭にあるため、再生やアップロードがすぐに始まります。
+
+< streams copied bit-for-bit
+> ストリームはビット単位でそのままコピー
+
+< Compressing {0} video (quality {1})
+< Compressing {0} videos (quality {1})
+> {0}本の動画を圧縮中（画質{1}）
+
+< The compressed video would be larger than the original ({0} vs {1}), so nothing was saved. Try a lower quality or resolution.
+> 圧縮後の動画が元より大きくなる（{0}、元は{1}）ため、何も保存されませんでした。画質または解像度を下げてみてください。
+
+< from {0}
+> 元：{0}
+
+< Removing audio from {0} video
+< Removing audio from {0} videos
+> {0}本の動画から音声を削除中
+
+< This video already has no audio track.
+> この動画にはすでに音声トラックがありません。
+
+< video copied as-is
+> 映像はそのままコピー
+
+< Extracting audio from {0} video
+< Extracting audio from {0} videos
+> {0}本の動画から音声を抽出中
+
+< This video has no audio track.
+> この動画には音声トラックがありません。
+
+< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
+> 対応するAAC音声トラックがありません（この動画の音声は{0}です）。何も抽出されませんでした。
+
+< {0} non-AAC audio track was not extracted.
+< {0} non-AAC audio tracks were not extracted.
+> AAC以外の音声トラック{0}個は抽出されませんでした。
+
+< AAC copied without re-encoding
+> AACを再エンコードせずにコピー
+
+< The video encoder stopped taking frames.
+> 動画エンコーダーがフレームを受け付けなくなりました。
+
+< The video encoder produced nothing.
+> 動画エンコーダーが何も出力しませんでした。
+
+< This device has no H.264 encoder for {0}×{1}.
+> この端末には、{0}×{1}に対応するH.264エンコーダーがありません。
+
+< The H.264 encoder rejected {0}×{1}.
+> H.264エンコーダーが{0}×{1}を受け付けませんでした。
+
+< Landscape 16:9
+> 横向き 16:9
+
+< Portrait 9:16
+> 縦向き 9:16
+
+< More {1}
+> {1}（続き）
+
+< Day {0} · {1}
+> {0}日目 · {1}
+
+< The wedding
+> 結婚式
+
+< At the concert
+> コンサート
+
+< At the beach
+> ビーチ
+
+< By the pool
+> プールサイド
+
+< In the snow
+> 雪の中
+
+< At the waterfall
+> 滝
+
+< In the mountains
+> 山
+
+< By the water
+> 水辺
+
+< In the woods
+> 森
+
+< Sunset
+> 夕焼け
+
+< At the castle
+> お城
+
+< The city at night
+> 夜の街
+
+< In the city
+> 街なか
+
+< Late bite
+> 夜食
+
+< Breakfast
+> 朝食
+
+< Lunch
+> ランチ
+
+< Afternoon snack
+> おやつ
+
+< Dinner
+> 夕食
+
+< Setting off
+> 出発
+
+< On the way
+> 移動中
+
+< Game time
+> 試合
+
+< Outdoors
+> アウトドア
+
+< With the animals
+> 動物たちと
+
+< Night out
+> 夜のお出かけ
+
+< Together
+> みんなで
+
+< Late night
+> 深夜
+
+< Morning
+> 朝
+
+< Midday
+> 昼
+
+< Afternoon
+> 午後
+
+< Evening
+> 夕方
+
+@ date pattern: a day, with its weekday
+< EEEE, d MMMM yyyy
+> yyyy年M月d日(EEE)
+
+@ dates from one day to another in one month
+< {0}–{1}
+> {0}〜{1}
+
+@ date pattern: the first day of a range in one month
+< d
+> yyyy年M月d日
+
+@ date pattern: the last day of a range in one month
+< d MMMM yyyy
+> d日
+
+@ dates from one day to another
+< {0} – {1}
+> {0}〜{1}
+
+@ date pattern: the first day of a range in one year
+< d MMMM
+> yyyy年M月d日
+
+@ date pattern: the last day of a range in one year
+< d MMMM yyyy
+> M月d日
+
+@ date pattern: a day
+< d MMMM yyyy
+> yyyy年M月d日
+
+@ time pattern: when a moment starts
+< h:mm a
+> H:mm
+
+< A clip has no video track.
+> 映像トラックのないクリップがあります。
+
+< No media samples were found in these clips.
+> これらのクリップにメディアサンプルが見つかりませんでした。
+
+< a clip has no video
+> 映像のないクリップがあります
+
+< {0} video can't be joined directly
+> {0}の動画は直接結合できません
+
+< the clips use different video formats
+> クリップの映像形式が異なります
+
+< the clips have different picture sizes
+> クリップの画面サイズが異なります
+
+< the clips have different orientations
+> クリップの向きが異なります
+
+< the clips were recorded with different encoder settings
+> クリップが異なるエンコーダー設定で記録されています
+
+< some clips have sound and others don't
+> 音声のあるクリップとないクリップが混在しています
+
+< the clips' sound uses different formats
+> クリップの音声形式が異なります
+
+< the clips' sound uses different settings
+> クリップの音声設定が異なります
+
+< The file has no video track.
+> このファイルには映像トラックがありません。
+
+< This device has no decoder for {0} video.
+> この端末には、{0}動画のデコーダーがありません。
+
+< The video decoder stopped delivering frames.
+> 動画デコーダーがフレームを出力しなくなりました。
+
+< Video decoding stalled.
+> 動画のデコードが停止しました。
+
+< {0} video can't be stored in a {1} file on this device.
+> この端末では、{0}動画を{1}ファイルに保存できません。
+
+< {0} audio can't be stored in a {1} file on this device.
+> この端末では、{0}音声を{1}ファイルに保存できません。
+
+< No media samples were found in this part of the file.
+> ファイルのこの部分にメディアサンプルが見つかりませんでした。
+
+< This file can't be read as a video. It may be damaged or use an unsupported container.
+> このファイルは動画として読み込めません。破損しているか、非対応のコンテナを使用している可能性があります。
+
+< The file contains no audio or video tracks.
+> このファイルには音声トラックも映像トラックもありません。
+
+< HDR video was converted to standard dynamic range (SDR).
+> HDR動画は標準ダイナミックレンジ（SDR）に変換されました。
+
+< HDR video: colours may look different after conversion on this Android version.
+> HDR動画：このAndroidのバージョンでは、変換後に色の見え方が変わる場合があります。
+
+< {0} audio was converted to AAC.
+> {0}音声はAACに変換されました。
+
+< The {0} audio couldn't be converted on this device, so the result has no sound.
+> この端末では{0}音声を変換できなかったため、結果には音声がありません。
+
+< Video processing stalled (the device codec stopped responding).
+> 動画の処理が停止しました（端末のコーデックが応答しなくなりました）。
+
+< No video frames could be decoded from this file.
+> このファイルからデコードできる映像フレームがありませんでした。
+
+< The {0} decoder rejected this video ({1}×{2}).
+> {0}デコーダーがこの動画（{1}×{2}）を受け付けませんでした。
+
+< This device has no H.264 encoder that supports {0}×{1}.
+> この端末には、{0}×{1}に対応するH.264エンコーダーがありません。
+
+< The H.264 encoder rejected the output settings ({0}×{1}).
+> H.264エンコーダーが出力設定（{0}×{1}）を受け付けませんでした。
+
+< Printing {0} file on {1}
+< Printing {0} files on {1}
+> {1}で{0}個のファイルを印刷中
+
+< Connecting to {0}
+> {0}に接続中
+
+< Preparing
+> 準備中
+
+< There's nothing to print (no pages chosen)
+> 印刷するものがありません（ページが選択されていません）
+
+< The printer couldn't be reached
+> プリンターに接続できませんでした
+
+< Not a printer address
+> プリンターのアドレスではありません
+
+< Connect the phone to the same Wi-Fi as the printer to find it.
+> プリンターを見つけるには、この端末をプリンターと同じWi-Fiに接続してください。
+
+< the printer didn't understand the request
+> プリンターがリクエストを理解できませんでした
+
+< the printer refused the request
+> プリンターがリクエストを拒否しました
+
+< the printer asks for a password
+> プリンターがパスワードを要求しています
+
+< the printer refused access
+> プリンターがアクセスを拒否しました
+
+< the printer can't do that
+> プリンターはその操作に対応していません
+
+< the printer has no such job
+> プリンターにそのジョブはありません
+
+< the printer doesn't accept this kind of file
+> プリンターはこの種類のファイルを受け付けません
+
+< the printer doesn't support some of these settings
+> プリンターが一部の設定に対応していません
+
+< the printer isn't accepting jobs right now
+> プリンターは現在ジョブを受け付けていません
+
+< the printer is busy
+> プリンターが使用中です
+
+< the printer had an internal problem (code {0})
+> プリンターで内部的な問題が発生しました（コード{0}）
+
+< the printer answered {0}
+> プリンターが{0}と応答しました
+
+< Not a printer address: {0}
+> プリンターのアドレスではありません：{0}
+
+< Use the printer's IP address (like 192.168.1.20), not a name: "{0}"
+> 名前ではなく、プリンターのIPアドレス（192.168.1.20など）を使用してください：「{0}」
+
+< The printer sent no certificate
+> プリンターが証明書を送信しませんでした
+
+< The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again.
+> 追加後にプリンターの識別情報が変わりました。リセットや交換をした場合は、いったん削除してから追加し直してください。
+
+< Couldn't set up a secure connection to the printer: {0}
+> プリンターとの安全な接続を確立できませんでした：{0}
+
+< Couldn't set up a secure connection to the printer
+> プリンターとの安全な接続を確立できませんでした
+
+< Can't reach the printer at {0}
+> {0}のプリンターに接続できません
+
+< The connection to the printer was lost while sending
+> 送信中にプリンターとの接続が切れました
+
+< The printer stopped answering
+> プリンターが応答しなくなりました
+
+< The connection to the printer was lost
+> プリンターとの接続が切れました
+
+< Can't reach the printer at {0} (is it on, and is the phone on the same Wi-Fi?)
+> {0}のプリンターに接続できません（電源は入っていますか？ この端末は同じWi-Fiに接続されていますか？）
+
+< The printer closed the connection without answering
+> プリンターが応答せずに接続を閉じました
+
+< The printer sent an unexpected answer: {0}
+> プリンターから予期しない応答がありました：{0}
+
+< The printer asks for a password; this app can't print to protected printers
+> プリンターがパスワードを要求しています。このアプリは保護されたプリンターには印刷できません
+
+< The printer only accepts secure connections
+> このプリンターは安全な接続のみ受け付けます
+
+< The printer has no print service at {0}
+> {0}にプリンターの印刷サービスがありません
+
+< The printer answered HTTP {0}
+> プリンターがHTTP {0}と応答しました
+
+< The printer sent an answer that couldn't be read
+> プリンターが読み取れない応答を送信しました
+
+< The printer sent an overlong header
+> プリンターが長すぎるヘッダーを送信しました
+
+< {0} isn't on your local network; this app only talks to devices on it
+> {0}はローカルネットワーク上にありません。このアプリは、ローカルネットワーク上の機器とのみ通信します
+
+< This printer doesn't take any kind of file this app can send (it takes {0})
+> このプリンターは、このアプリが送信できる種類のファイルを受け付けません（対応：{0}）
+
+< nothing it names
+> 記載なし
+
+< Checking with the printer
+> プリンターに確認中
+
+< The printer isn't accepting jobs right now
+> プリンターは現在ジョブを受け付けていません
+
+< The printer says {0}
+> プリンターからのメッセージ：{0}
+
+< The printer accepted the job but gave it no number
+> プリンターはジョブを受け付けましたが、ジョブ番号を割り当てませんでした
+
+< Sending to the printer
+> プリンターに送信中
+
+< Sending sheet {0} of {1}
+> {1}枚中{0}枚目を送信中
+
+< Sent to the printer; it is still working on it
+> プリンターに送信しました。プリンターで処理中です
+
+< The job was cancelled at the printer
+> プリンター側でジョブがキャンセルされました
+
+< The printer gave up on the job: {0}
+> プリンターがジョブを中止しました：{0}
+
+< The printer gave up on the job
+> プリンターがジョブを中止しました
+
+< {0} — printing continues once it's sorted
+> {0} — 解決すると印刷が続行されます
+
+< Waiting for the printer
+> プリンターを待っています
+
+< Printing sheet {0} of {1}
+> {1}枚中{0}枚目を印刷中
+
+< Printed {0} sheet
+< Printed {0} sheets
+> {0}枚を印刷しました
+
+< The printer didn't describe itself ({0})
+> プリンターが自身の情報を返しませんでした（{0}）
+
+< Letter
+> レター
+
+< Legal
+> リーガル
+
+< Card (54 × 86 mm)
+> カード（54 × 86 mm）
+
+< Envelope DL
+> 封筒 DL
+
+< Envelope #10
+> 封筒 #10
+
+< Envelope C6
+> 封筒 C6
+
+< Envelope C5
+> 封筒 C5
+
+< Executive
+> エグゼクティブ
+
+< Square 89 × 89 mm
+> 正方形 89 × 89 mm
+
+< Plain paper
+> 普通紙
+
+< Heavy paper
+> 厚紙
+
+< Light paper
+> 薄紙
+
+< Letterhead
+> レターヘッド
+
+< Inkjet paper
+> インクジェット紙
+
+< Photo paper
+> 写真用紙
+
+< Glossy photo paper
+> 光沢写真用紙
+
+< High-gloss photo paper
+> 高光沢写真用紙
+
+< Semi-gloss photo paper
+> 半光沢写真用紙
+
+< Satin photo paper
+> サテン写真用紙
+
+< Matte photo paper
+> マット写真用紙
+
+< Photo film
+> 写真用フィルム
+
+< Envelope
+> 封筒
+
+@ paper type
+< Card
+> カード用紙
+
+< Labels
+> ラベル紙
+
+< Transparency
+> OHPフィルム
+
+< Add paper
+> 用紙を補給してください
+
+< Paper is running low
+> 用紙が残り少なくなっています
+
+< Paper jam: open the printer and remove the stuck paper
+> 紙詰まり：プリンターを開けて、詰まった用紙を取り除いてください
+
+< The paper didn't feed: check the paper tray
+> 用紙が給紙されませんでした：用紙トレイを確認してください
+
+< Out of ink
+> インク切れ
+
+< Ink is low
+> インクが残り少なくなっています
+
+< The ink pad (maintenance box) is almost full
+> インクパッド（メンテナンスボックス）がほぼいっぱいです
+
+< The ink pad (maintenance box) is full: service needed
+> インクパッド（メンテナンスボックス）がいっぱいです：サービスが必要です
+
+< A cover is open
+> カバーが開いています
+
+< The printer is offline
+> プリンターがオフラインです
+
+< The printer is paused
+> プリンターが一時停止中です
+
+< The printer's memory is full
+> プリンターのメモリがいっぱいです
+
+< Not enough free memory (RAM) to process this file. Close other apps, lower the export workload, or choose a smaller output size.
+> このファイルを処理するための空きメモリ（RAM）が足りません。他のアプリを閉じるか、エクスポート負荷を下げるか、出力サイズを小さくしてください。
+
+< Not enough free storage space to save the result.
+> 結果を保存するための空きストレージ容量が足りません。
+
+< Android no longer allows reading this file. Please select it again.
+> Androidがこのファイルの読み取りを許可しなくなりました。もう一度選択してください。
+
+< The file could not be opened. It may have been moved, deleted or is stored in the cloud only.
+> ファイルを開けませんでした。移動または削除されたか、クラウドにのみ保存されている可能性があります。
+
+< This device's video codec failed while processing the file (temporary codec problem — try again).
+> ファイルの処理中にこの端末の動画コーデックでエラーが発生しました（一時的なコーデックの問題です。もう一度お試しください）。
+
+< This device's video codec failed while processing the file.
+> ファイルの処理中にこの端末の動画コーデックでエラーが発生しました。
+
+< The video file is damaged or incomplete: {0}
+> 動画ファイルが破損しているか不完全です：{0}
+
+< This file's video or audio codec can't be stored in the output container on this device.
+> このファイルの映像または音声コーデックは、この端末では出力コンテナに保存できません。
+
+< Read/write error: {0}
+> 読み書きエラー：{0}
+
+< Audio
+> 音声
+
+< Unknown
+> 不明
+
+< The file is empty
+> ファイルが空です
+
+< Permission to read this file was not granted
+> このファイルを読み取る権限が許可されていません
+
+< The file can't be opened ({0})
+> ファイルを開けません（{0}）
+
+< {0} B
+> {0} B
+
+< {0} KB
+> {0} KB
+
+< {0} MB
+> {0} MB
+
+< {0} GB
+> {0} GB
+
+< {0} min
+> {0}分
+
+< {0} min {1} s
+> {0}分{1}秒
+
+< Could not open the output file for writing
+> 出力ファイルを書き込み用に開けませんでした
+
+< The system media store refused to create "{0}"
+> システムのメディアストアが「{0}」の作成を拒否しました
+
+< Not enough free storage: about {0} is needed but only {1} is free.
+> 空きストレージが足りません：約{0}が必要ですが、空きは{1}だけです。
+
+< Efficient
+> 省電力
+
+< Gentle on battery and heat; exports take longer.
+> バッテリー消費と発熱を抑えます。エクスポートに時間がかかります。
+
+< Balanced
+> バランス
+
+< Good speed while the phone stays responsive.
+> 端末の動作を軽く保ちながら、十分な速さで処理します。
+
+< Fast
+> 高速
+
+< Uses the device fully; best when plugged in.
+> 端末の性能をフルに使います。充電中におすすめです。
+
+< Custom · light
+> カスタム · 軽め
+
+< Custom · moderate
+> カスタム · 標準
+
+< Custom · high
+> カスタム · 高め
+
+< {0} file at a time
+< up to {0} files at once
+> 同時に最大{0}ファイル
+
+< no pauses
+> 休止なし
+
+< short pauses (~{0}% of the time)
+> 短い休止あり（時間の約{0}%）
+
+< Images: {0} · {1} · {2}
+> 画像：{0} · {1} · {2}
+
+< background priority
+> バックグラウンド優先度
+
+< normal priority
+> 通常の優先度
+
+< "{0}" could not be opened.
+> 「{0}」を開けませんでした。
+
+< "{0}" is password-protected. Remove the password before merging.
+> 「{0}」はパスワードで保護されています。結合する前にパスワードを解除してください。
+
+< "{0}" is not a valid PDF or is damaged ({1}).
+> 「{0}」は有効なPDFではないか、破損しています（{1}）。
+
+< "{0}" has no pages.
+> 「{0}」にはページがありません。
+
+< "{0}" had usage restrictions (no password needed to open); they were not carried over.
+> 「{0}」には使用制限（開くのにパスワードは不要）がありましたが、引き継がれませんでした。
+
+< "{0}" has a structure that couldn't be merged ({1}).
+> 「{0}」は結合できない構造になっています（{1}）。
+
+< Merged page count doesn't match the inputs; nothing was saved.
+> 結合後のページ数が元のファイルの合計と一致しないため、何も保存されませんでした。
+
+< The PDF could not be opened.
+> PDFを開けませんでした。
+
+< This PDF is password-protected and can't be opened.
+> このPDFはパスワードで保護されているため、開けません。
+
+< This file is not a valid PDF or is damaged.
+> このファイルは有効なPDFではないか、破損しています。
+
+< Not available: this phone is configured as a low-memory device.
+> 利用できません：この端末は低メモリ端末として設定されています。
+
+< Not available: needs at least 4 GB of RAM (this phone has {0} GB).
+> 利用できません：4 GB以上のRAMが必要です（この端末は{0} GBです）。
+
+< Not available: needs a 64-bit processor.
+> 利用できません：64ビットプロセッサーが必要です。
+
+< Not available: needs at least 4 CPU cores.
+> 利用できません：4コア以上のCPUが必要です。
+
+< Not available: the on-device model is missing from this build.
+> 利用できません：端末内モデルがこのビルドに含まれていません。
+
+< Available on this device · runs fully offline
+> この端末で利用可能 · 完全オフラインで動作
+
+< panorama (rectilinear)
+> パノラマ（直線投影）
+
+< panorama (cylindrical)
+> パノラマ（円筒投影）
+
+< panorama (spherical)
+> パノラマ（球面投影）
+
+< The aligned photos produced an empty result.
+> 位置合わせした写真から、空の結果が生成されました。
+
+< The panorama was reduced to {0}% of full resolution to stay within the size limit.
+> サイズの上限内に収めるため、パノラマはフル解像度の{0}%に縮小されました。
+
+< The panorama was scaled to fit PNG viewers' 65000 px limit.
+> PNGビューアの上限である65000 pxに収まるよう、パノラマは縮小されました。
+
+< Rendering
+> レンダリング中
+
+< {0}↔{1}: ambiguous match (repetitive pattern) rejected
+> {0}↔{1}：あいまいな一致（繰り返しパターン）を除外しました
+
+< {0}↔{1}: AI could not separate two alignments; pair skipped
+> {0}↔{1}：AIが2つの位置合わせを区別できなかったため、このペアをスキップしました
+
+< {0}↔{1}: AI chose between two candidate alignments
+> {0}↔{1}：AIが2つの位置合わせ候補から選択しました
+
+< {0}↔{1}: weak match rejected by AI check
+> {0}↔{1}：AIの確認により、弱い一致を除外しました
+
+< {0}↔{1}: weak match confirmed by AI check
+> {0}↔{1}：AIの確認により、弱い一致を採用しました
+
+< {0}↔{1}: aligned by AI dense matching (low texture)
+> {0}↔{1}：AIの高密度マッチングで位置合わせしました（模様が少ない）
+
+< Select at least two overlapping photos.
+> 重なりのある写真を2枚以上選択してください。
+
+< Finding features ({0}/{1})
+> 特徴点を検出中（{0}/{1}）
+
+< Matching photos ({0}/{1})
+> 写真を照合中（{0}/{1}）
+
+< No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content.
+> これらの写真の間に重なりが見つかりませんでした。隣り合う写真が3分の1ほど重なり、同じ細かい内容が写っていることを確認してください。
+
+< Turning on AI Assisted Alignment may help with low-texture scenes.
+> 「AI補助による位置合わせ」をオンにすると、模様の少ないシーンで改善する場合があります。
+
+< None of the photos overlap clearly enough to be joined.
+> つなぎ合わせられるほどはっきり重なっている写真がありません。
+
+< Not connected to the others, left out: {0}.
+> ほかの写真とつながらないため除外：{0}。
+
+< Aligning
+> 位置合わせ中
+
+< flat (similarity)
+> 平面（相似変換）
+
+< flat (affine)
+> 平面（アフィン変換）
+
+< The photos could not be aligned consistently (the scene may have moved between shots or overlaps are too small).
+> 写真を整合的に位置合わせできませんでした（撮影の間にシーンが動いたか、重なりが小さすぎる可能性があります）。
+
+< perspective
+> 透視投影
+
+< Finding clean edges
+> きれいな端を検出中
+
+@ search words for “People”, separated by commas
+< person,people,human,humans,man,men,woman,women,kid,kids,friends,family
+> 人物,人,ひと,人間,男性,女性,男の人,女の人,男,女,子供,子ども,こども,キッズ,赤ちゃん,友達,友だち,ともだち,家族,かぞく,みんな,人々,ポートレート
+
+< Dogs
+> 犬
+
+< Animals
+> 動物
+
+@ search words for “Dogs”, separated by commas
+< dog,dogs,puppy,puppies,pup,doggy,doggo,canine
+> 犬,いぬ,イヌ,子犬,こいぬ,仔犬,わんこ,ワンコ,わんちゃん,ドッグ,愛犬,柴犬
+
+< Cats
+> 猫
+
+@ search words for “Cats”, separated by commas
+< cat,cats,kitten,kittens,kitty,feline
+> 猫,ねこ,ネコ,子猫,こねこ,仔猫,にゃんこ,ニャンコ,キャット,愛猫,猫ちゃん
+
+< Birds
+> 鳥
+
+@ search words for “Birds”, separated by commas
+< bird,birds,parrot,pigeon,seagull,duck,chicken
+> 鳥,とり,トリ,小鳥,ことり,インコ,オウム,鳩,はと,ハト,カモメ,かもめ,アヒル,あひる,鴨,ニワトリ,にわとり,鶏
+
+< Horses
+> 馬
+
+@ search words for “Horses”, separated by commas
+< horse,horses,pony,ponies
+> 馬,うま,ウマ,子馬,ポニー,ホース
+
+< Fish
+> 魚
+
+@ search words for “Fish”, separated by commas
+< fish,fishes,aquarium
+> 魚,さかな,サカナ,魚類,金魚,熱帯魚,水族館,水槽,アクアリウム
+
+< Insects
+> 昆虫
+
+@ search words for “Insects”, separated by commas
+< insect,insects,bug,bugs,bee,ladybug,beetle,dragonfly
+> 昆虫,虫,むし,ムシ,蜂,ハチ,ミツバチ,てんとう虫,テントウムシ,甲虫,カブトムシ,クワガタ,トンボ,とんぼ
+
+< Butterflies
+> 蝶
+
+@ search words for “Butterflies”, separated by commas
+< butterfly,butterflies,moth
+> 蝶,ちょう,チョウ,蝶々,ちょうちょ,チョウチョ,蛾
+
+< Cows
+> 牛
+
+@ search words for “Cows”, separated by commas
+< cow,cows,cattle,bull,calf,ox
+> 牛,うし,ウシ,乳牛,雄牛,子牛
+
+< Sheep
+> 羊
+
+@ search words for “Sheep”, separated by commas
+< sheep,lamb,lambs
+> 羊,ひつじ,ヒツジ,子羊,小羊,緬羊
+
+< Goats
+> ヤギ
+
+@ search words for “Goats”, separated by commas
+< goat,goats
+> ヤギ,やぎ,山羊,子ヤギ
+
+< Pigs
+> 豚
+
+@ search words for “Pigs”, separated by commas
+< pig,pigs,piglet,hog
+> 豚,ぶた,ブタ,子豚,こぶた
+
+< Elephants
+> ゾウ
+
+@ search words for “Elephants”, separated by commas
+< elephant,elephants
+> ゾウ,象,ぞう,エレファント
+
+< Zebras
+> シマウマ
+
+@ search words for “Zebras”, separated by commas
+< zebra,zebras
+> シマウマ,縞馬,しまうま,ゼブラ
+
+< Giraffes
+> キリン
+
+@ search words for “Giraffes”, separated by commas
+< giraffe,giraffes
+> キリン,麒麟,きりん,ジラフ
+
+< Monkeys
+> サル
+
+@ search words for “Monkeys”, separated by commas
+< monkey,monkeys,ape,apes,gorilla,chimpanzee
+> サル,猿,さる,おサル,ゴリラ,チンパンジー,類人猿,モンキー,エイプ
+
+< Lions
+> ライオン
+
+@ search words for “Lions”, separated by commas
+< lion,lions
+> ライオン,らいおん,獅子
+
+< Tigers
+> トラ
+
+@ search words for “Tigers”, separated by commas
+< tiger,tigers
+> トラ,虎,とら,タイガー
+
+< Rabbits
+> ウサギ
+
+@ search words for “Rabbits”, separated by commas
+< rabbit,rabbits,bunny,bunnies,hare
+> ウサギ,うさぎ,兎,子ウサギ,野ウサギ,バニー,ラビット
+
+< Reptiles
+> 爬虫類
+
+@ search words for “Reptiles”, separated by commas
+< reptile,reptiles,lizard,snake,snakes,turtle,turtles,tortoise,crocodile
+> 爬虫類,トカゲ,とかげ,蜥蜴,ヘビ,へび,蛇,亀,かめ,リクガメ,ウミガメ,ワニ,わに,鰐,クロコダイル
+
+@ search words for “Animals”, separated by commas
+< animal,animals,wildlife,pet,pets
+> 動物,どうぶつ,アニマル,ペット,野生動物,生き物,いきもの
+
+< Cars
+> 車
+
+< Vehicles
+> 乗り物
+
+@ search words for “Cars”, separated by commas
+< car,cars,auto,automobile,vehicle
+> 車,くるま,クルマ,自動車,マイカー,乗用車,トラック,タクシー,乗り物,のりもの
+
+< Buses
+> バス
+
+@ search words for “Buses”, separated by commas
+< bus,buses,coach
+> バス,ばす,路線バス,観光バス,高速バス,スクールバス
+
+< Motorcycles
+> バイク
+
+@ search words for “Motorcycles”, separated by commas
+< motorcycle,motorcycles,motorbike,scooter,moped
+> バイク,ばいく,オートバイ,二輪車,二輪,スクーター,原付,モペット,単車
+
+< Bicycles
+> 自転車
+
+@ search words for “Bicycles”, separated by commas
+< bicycle,bicycles,bike,bikes,cycling
+> 自転車,じてんしゃ,チャリ,チャリンコ,ママチャリ,ロードバイク,クロスバイク,サイクリング
+
+< Trains
+> 電車
+
+@ search words for “Trains”, separated by commas
+< train,trains,railway,locomotive,tram,subway
+> 電車,でんしゃ,列車,汽車,鉄道,地下鉄,機関車,路面電車,新幹線,トラム
+
+< Airplanes
+> 飛行機
+
+@ search words for “Airplanes”, separated by commas
+< airplane,airplanes,plane,planes,aeroplane,aircraft,jet
+> 飛行機,ひこうき,航空機,旅客機,ジェット機,ジェット,エアプレーン
+
+< Helicopters
+> ヘリコプター
+
+@ search words for “Helicopters”, separated by commas
+< helicopter,helicopters
+> ヘリコプター,ヘリ,ヘリコ
+
+< Boats
+> 船
+
+@ search words for “Boats”, separated by commas
+< boat,boats,ship,ships,yacht,sailboat,ferry,canoe,kayak
+> 船,ふね,舟,ボート,ヨット,帆船,フェリー,カヌー,カヤック,客船,漁船,遊覧船
+
+@ search words for “Food”, separated by commas
+< food,meal,dish,dinner,lunch,breakfast,eating
+> 食べ物,たべもの,料理,食事,ごはん,ご飯,ごちそう,グルメ,フード,ランチ,ディナー,朝食,昼食,夕食,朝ごはん,晩ごはん,食卓
+
+< Pizza
+> ピザ
+
+@ search words for “Pizza”, separated by commas
+< pizza,pizzas
+> ピザ,ピッツァ,ピッツア,宅配ピザ
+
+< Cakes
+> ケーキ
+
+@ search words for “Cakes”, separated by commas
+< cake,cakes,birthday cake,cupcake
+> ケーキ,ホールケーキ,バースデーケーキ,誕生日ケーキ,カップケーキ,ショートケーキ,チーズケーキ
+
+< Burgers
+> ハンバーガー
+
+@ search words for “Burgers”, separated by commas
+< burger,burgers,hamburger,cheeseburger
+> ハンバーガー,バーガー,チーズバーガー,ハンバーガ
+
+< Sushi
+> 寿司
+
+@ search words for “Sushi”, separated by commas
+< sushi
+> 寿司,すし,スシ,お寿司,おすし,鮨,握り寿司,にぎり寿司,回転寿司,巻き寿司
+
+< Ice cream
+> アイスクリーム
+
+@ search words for “Ice cream”, separated by commas
+< ice cream,icecream,gelato,sundae
+> アイスクリーム,アイス,ジェラート,ソフトクリーム,サンデー
+
+< Fruit
+> フルーツ
+
+@ search words for “Fruit”, separated by commas
+< fruit,fruits,banana,apple,orange,strawberry,grapes
+> フルーツ,果物,くだもの,果実,バナナ,りんご,リンゴ,林檎,アップル,オレンジ,みかん,ミカン,いちご,イチゴ,苺,ストロベリー,ぶどう,ブドウ,葡萄,グレープ,桃,メロン,スイカ,レモン,キウイ
+
+< Salads
+> サラダ
+
+@ search words for “Salads”, separated by commas
+< salad,salads
+> サラダ,野菜サラダ,シーザーサラダ,グリーンサラダ,サラダボウル
+
+< Desserts
+> デザート
+
+@ search words for “Desserts”, separated by commas
+< dessert,desserts,sweets,pastry,cookies,chocolate,donut
+> デザート,スイーツ,お菓子,菓子,おかし,洋菓子,和菓子,甘いもの,ペストリー,クッキー,チョコレート,チョコ,ドーナツ,ドーナッツ,パフェ,プリン
+
+< Coffee
+> コーヒー
+
+@ search words for “Coffee”, separated by commas
+< coffee,espresso,cappuccino,latte
+> コーヒー,珈琲,カフェ,エスプレッソ,カプチーノ,カフェラテ,ラテ,アイスコーヒー,ホットコーヒー,カフェオレ
+
+< Drinks
+> ドリンク
+
+@ search words for “Drinks”, separated by commas
+< drink,drinks,beverage,juice,tea,soda
+> ドリンク,飲み物,のみもの,飲料,ジュース,お茶,紅茶,緑茶,麦茶,ソーダ,炭酸飲料,コーラ,アイスティー,ミルクティー
+
+< Wine
+> ワイン
+
+@ search words for “Wine”, separated by commas
+< wine,red wine,white wine
+> ワイン,赤ワイン,白ワイン,スパークリングワイン,シャンパン,ワイングラス,ワインボトル
+
+< Beer
+> ビール
+
+@ search words for “Beer”, separated by commas
+< beer,beers,lager
+> ビール,ビア,生ビール,ラガー,黒ビール,クラフトビール,地ビール,ジョッキ,ビアガーデン
+
+< Cocktails
+> カクテル
+
+@ search words for “Cocktails”, separated by commas
+< cocktail,cocktails,mojito,margarita
+> カクテル,モヒート,マルガリータ,マティーニ,サワー,ハイボール,チューハイ,お酒
+
+< Beach
+> ビーチ
+
+< Nature
+> 自然
+
+@ search words for “Beach”, separated by commas
+< beach,beaches,seaside,shore,coast,sand
+> ビーチ,海水浴場,海水浴,砂浜,浜辺,海岸,海辺,渚,砂,シーサイド
+
+< Sea
+> 海
+
+@ search words for “Sea”, separated by commas
+< sea,ocean,waves,seascape
+> 海,うみ,海洋,大海原,海原,オーシャン,波,海面,海景,シースケープ
+
+< Mountains
+> 山
+
+@ search words for “Mountains”, separated by commas
+< mountain,mountains,peak,alps,hills,volcano
+> 山,やま,山々,山脈,山岳,山頂,頂上,峰,連峰,アルプス,丘,丘陵,火山,富士山,登山
+
+< Lakes
+> 湖
+
+@ search words for “Lakes”, separated by commas
+< lake,lakes,pond
+> 湖,みずうみ,湖水,湖畔,池,いけ,沼,ため池
+
+< Rivers
+> 川
+
+@ search words for “Rivers”, separated by commas
+< river,rivers,stream,creek
+> 川,かわ,河川,河,小川,せせらぎ,渓流,清流,大河
+
+< Waterfalls
+> 滝
+
+@ search words for “Waterfalls”, separated by commas
+< waterfall,waterfalls,falls
+> 滝,たき,滝壺,滝つぼ,瀑布,大滝,ウォーターフォール
+
+< Forest
+> 森
+
+@ search words for “Forest”, separated by commas
+< forest,woods,jungle
+> 森,もり,森林,林,雑木林,樹林,木々,ジャングル,密林,フォレスト
+
+< Flowers
+> 花
+
+@ search words for “Flowers”, separated by commas
+< flower,flowers,rose,roses,tulip,sunflower,bouquet,blossom
+> 花,はな,花々,お花,フラワー,バラ,薔薇,ばら,チューリップ,ひまわり,ヒマワリ,向日葵,花束,ブーケ,桜,さくら,サクラ,花びら,満開,あじさい,紫陽花,コスモス,百合
+
+< Snow
+> 雪
+
+@ search words for “Snow”, separated by commas
+< snow,snowy,winter,skiing,ski,snowboard
+> 雪,ゆき,雪景色,雪山,雪原,雪遊び,雪だるま,吹雪,積雪,スノー,冬,ふゆ
+
+< Sky
+> 空
+
+@ search words for “Sky”, separated by commas
+< sky,clouds,cloud,blue sky
+> 空,そら,青空,あおぞら,雲,くも,白い雲,入道雲,雲海,空模様
+
+< Sunsets
+> 夕焼け
+
+@ search words for “Sunsets”, separated by commas
+< sunset,sunsets,sunrise,dusk,dawn,golden hour
+> 夕焼け,夕日,夕陽,ゆうやけ,夕暮れ,夕景,日没,日の入り,サンセット,黄昏,日の出,朝日,朝焼け,サンライズ,夜明け,明け方,マジックアワー,ゴールデンアワー
+
+@ search words for “Night”, separated by commas
+< night,nighttime,night sky,stars
+> 夜,よる,夜間,夜空,星空,星,ほし,星々,ナイト,深夜,夜中
+
+< Desert
+> 砂漠
+
+@ search words for “Desert”, separated by commas
+< desert,dunes,sand dunes
+> 砂漠,さばく,砂丘,さきゅう,サハラ,サハラ砂漠
+
+< Grass & fields
+> 草原・野原
+
+@ search words for “Grass & fields”, separated by commas
+< grass,lawn,field,fields,meadow
+> 草,くさ,草原,草地,野原,のはら,原っぱ,芝生,芝,畑,はたけ,牧草地,草むら,田んぼ
+
+< Rocks & cliffs
+> 岩・崖
+
+@ search words for “Rocks & cliffs”, separated by commas
+< rock,rocks,cliff,cliffs,canyon,cave
+> 岩,いわ,岩場,岩山,岩石,石,崖,がけ,断崖,絶壁,渓谷,峡谷,キャニオン,洞窟,洞穴,ほら穴
+
+< City
+> 街
+
+< Places
+> 場所
+
+@ search words for “City”, separated by commas
+< city,cities,downtown,skyline,cityscape,urban
+> 街,まち,町,都市,市街地,街並み,街角,街中,繁華街,ダウンタウン,スカイライン,都会,シティ,ビル群,高層ビル,摩天楼
+
+< Castles
+> 城
+
+@ search words for “Castles”, separated by commas
+< castle,castles,palace,fortress
+> 城,しろ,お城,おしろ,宮殿,城郭,要塞,砦,天守,天守閣,城跡,キャッスル,パレス
+
+< Bridges
+> 橋
+
+@ search words for “Bridges”, separated by commas
+< bridge,bridges
+> 橋,ブリッジ,大橋,石橋,吊り橋,つり橋,鉄橋,歩道橋,陸橋,アーチ橋
+
+< Streets
+> 道
+
+@ search words for “Streets”, separated by commas
+< street,streets,road,roads,highway
+> 道,みち,道路,通り,大通り,ストリート,街路,路地,ロード,高速道路,ハイウェイ,国道,車道,歩道
+
+< Swimming pools
+> プール
+
+@ search words for “Swimming pools”, separated by commas
+< pool,swimming pool,swimming
+> プール,スイミングプール,プールサイド,水泳,スイミング,泳ぎ,温水プール,屋外プール
+
+< Kitchens
+> キッチン
+
+@ search words for “Kitchens”, separated by commas
+< kitchen,kitchens
+> キッチン,台所,だいどころ,厨房,調理場,システムキッチン
+
+< Bedrooms
+> 寝室
+
+@ search words for “Bedrooms”, separated by commas
+< bedroom,bedrooms
+> 寝室,しんしつ,ベッドルーム
+
+< Bathrooms
+> バスルーム
+
+@ search words for “Bathrooms”, separated by commas
+< bathroom,bathrooms,toilet
+> バスルーム,浴室,風呂,お風呂,風呂場,洗面所,洗面室,トイレ,お手洗い,化粧室,手洗い,便所,ユニットバス
+
+< Towers
+> 塔
+
+@ search words for “Towers”, separated by commas
+< tower,towers
+> 塔,タワー,鉄塔,電波塔,時計塔,展望塔,東京タワー,スカイツリー,エッフェル塔,尖塔,五重塔
+
+< Fountains
+> 噴水
+
+@ search words for “Fountains”, separated by commas
+< fountain,fountains
+> 噴水,ふんすい,噴水広場,泉,いずみ,ファウンテン
+
+< Weddings
+> 結婚式
+
+< Events
+> イベント
+
+@ search words for “Weddings”, separated by commas
+< wedding,weddings,bride,groom
+> 結婚式,結婚,けっこんしき,挙式,披露宴,ウェディング,ウエディング,ブライダル,新郎,新婦,新郎新婦,花嫁,花婿
+
+< Concerts
+> コンサート
+
+@ search words for “Concerts”, separated by commas
+< concert,concerts,gig,festival,stage
+> コンサート,ライブ,演奏会,音楽会,ステージ,舞台,フェス,フェスティバル,音楽フェス,ギグ,祭り,お祭り
+
+< Football
+> サッカー
+
+< Sports
+> スポーツ
+
+@ search words for “Football”, separated by commas
+< football,soccer
+> サッカー,フットボール,フットサル,蹴球
+
+< Tennis
+> テニス
+
+@ search words for “Tennis”, separated by commas
+< tennis
+> テニス,テニスコート,庭球,硬式テニス
+
+< Skiing
+> スキー
+
+@ search words for “Skiing”, separated by commas
+< skiing,ski,skis,snowboarding
+> スキー,スキー場,ゲレンデ,スキー板,スノーボード,スノボ,スノボー,スノーボーディング
+
+< Surfing
+> サーフィン
+
+@ search words for “Surfing”, separated by commas
+< surfing,surf,surfboard
+> サーフィン,サーフ,サーファー,サーフボード,波乗り
+
+< Documents
+> 書類
+
+@ search words for “Documents”, separated by commas
+< document,documents,paper,papers,receipt,text,letter,page
+> 書類,ドキュメント,文書,資料,紙,用紙,レシート,領収書,手紙,ページ,文字,テキスト,メモ,プリント,書面
+
+< Phones
+> スマホ
+
+@ search words for “Phones”, separated by commas
+< phone,phones,smartphone,mobile,cellphone,iphone
+> スマホ,スマートフォン,携帯,携帯電話,ケータイ,けいたい,電話,でんわ,アイフォン,アイホン,モバイル
+
+< Bags
+> バッグ
+
+@ search words for “Bags”, separated by commas
+< bag,bags,handbag,purse,backpack,suitcase,luggage
+> バッグ,鞄,かばん,カバン,ハンドバッグ,手提げ,トートバッグ,リュック,リュックサック,バックパック,スーツケース,キャリーケース,キャリーバッグ,荷物,財布,ポーチ
+
+< Furniture
+> 家具
+
+@ search words for “Furniture”, separated by commas
+< furniture,chair,chairs,sofa,couch,table,bed
+> 家具,かぐ,椅子,いす,イス,チェア,テーブル,机,デスク,棚,本棚,タンス,たんす,箪笥,インテリア
+
+< Sofas
+> ソファ
+
+@ search words for “Sofas”, separated by commas
+< sofa,sofas,couch,couches
+> ソファ,ソファー,長椅子,カウチ,ソファーベッド
+
+< Beds
+> ベッド
+
+@ search words for “Beds”, separated by commas
+< bed,beds
+> ベッド,ベット,寝台,寝床,布団,ふとん,二段ベッド,ダブルベッド,シングルベッド
+
+< Clocks
+> 時計
+
+@ search words for “Clocks”, separated by commas
+< clock,clocks
+> 時計,とけい,置き時計,掛け時計,壁掛け時計,柱時計,目覚まし時計,時計台,クロック
+
+< Bottles
+> ボトル
+
+@ search words for “Bottles”, separated by commas
+< bottle,bottles
+> ボトル,瓶,びん,ビン,ペットボトル,水筒
+
+< Umbrellas
+> 傘
+
+@ search words for “Umbrellas”, separated by commas
+< umbrella,umbrellas
+> 傘,かさ,カサ,アンブレラ,雨傘,日傘,折りたたみ傘,こうもり傘,パラソル
+
+< Guitars
+> ギター
+
+@ search words for “Guitars”, separated by commas
+< guitar,guitars
+> ギター,エレキギター,アコースティックギター,アコギ,エレキ,クラシックギター
+
+< Pianos
+> ピアノ
+
+@ search words for “Pianos”, separated by commas
+< piano,pianos,keyboard
+> ピアノ,グランドピアノ,アップライトピアノ,電子ピアノ,キーボード,鍵盤
+
+@ search words for “Music”, separated by commas
+< music,musical instrument,instruments,drums,violin,guitar,piano
+> 音楽,ミュージック,楽器,がっき,楽器類,ドラム,ドラムス,太鼓,バイオリン,ヴァイオリン,ギター,ピアノ

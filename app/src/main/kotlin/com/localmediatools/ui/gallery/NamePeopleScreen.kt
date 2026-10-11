@@ -40,6 +40,7 @@ import com.localmediatools.ui.style
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.localmediatools.i18n.takeWhole
 
 /**
  * Names people quickly: the unnamed groups one after another, most photos first, with the keyboard
@@ -211,7 +212,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
 
     private fun submit() {
         val g = current() ?: return
-        val name = input.text.toString().trim().replace(Regex("\\s+"), " ").take(60)
+        val name = input.text.toString().trim().replace(Regex("\\s+"), " ").takeWhole(60)
         if (name.isEmpty()) { Toast.makeText(ctx, tr("Type a name, or tap Skip."), Toast.LENGTH_SHORT).show(); return }
         val existing = named.entries.firstOrNull { it.value.equals(name, ignoreCase = true) && it.key != g.person.id }
         if (existing != null) { assign(g, existing.key, existing.value); return }

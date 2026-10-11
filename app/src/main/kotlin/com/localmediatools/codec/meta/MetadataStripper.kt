@@ -8,6 +8,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.zip.CRC32
+import com.localmediatools.i18n.takeWhole
 
 /** What was found and removed (for the results screen), plus what was deliberately kept. */
 class StripReport {
@@ -208,7 +209,7 @@ object MetadataStripper {
                             key.contains("Creation Time", true) -> tr("date & time")
                             key.equals("Software", true) -> tr("software")
                             key.equals("Author", true) || key.equals("Copyright", true) -> tr("author & copyright")
-                            else -> tr("text notes ({0})", key.take(24))
+                            else -> tr("text notes ({0})", key.takeWhole(24))
                         })
                         continue
                     }
