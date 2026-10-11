@@ -7,6 +7,8 @@ import android.util.LruCache
 import android.util.Size
 import android.widget.ImageView
 import com.localmediatools.gallery.GalleryDb
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import com.localmediatools.vision.DupResultGroup
 import com.localmediatools.vision.DuplicateScanner
 import com.localmediatools.vision.GalleryPhoto
@@ -24,8 +26,8 @@ import kotlinx.coroutines.withContext
  * trash and the groups they changed by hand. Shared by the list and the one-by-one review.
  */
 object DupChoices {
-    enum class Sort(val label: String) { SPACE("Most space"), NEWEST("Newest"), OLDEST("Oldest"), PHOTOS("Most photos") }
-    enum class Filter(val label: String) { ALL("All"), COPIES("Copies"), SIMILAR("Similar shots") }
+    enum class Sort(private val en: String) { SPACE(N_("Most space")), NEWEST(N_("Newest")), OLDEST(N_("Oldest")), PHOTOS(N_("Most photos")); val label: String get() = tr(en) }
+    enum class Filter(private val en: String) { ALL(N_("All")), COPIES(N_("Copies")), SIMILAR(N_("Similar shots")); val label: String get() = tr(en) }
 
     var rules = KeepRules(); private set
     var sort = Sort.SPACE

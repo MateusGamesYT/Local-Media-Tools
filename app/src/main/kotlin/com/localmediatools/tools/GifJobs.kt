@@ -18,6 +18,9 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.CountingStream
 import com.localmediatools.video.FrameGrabber
 import com.localmediatools.video.VideoProbe
@@ -38,25 +41,25 @@ class VideoToGifJob(
     private val maxSeconds: Double,    // 0 = until the end
     private val dithering: Dithering,
 ) : ExportJob(ToolId.VIDEO_TO_GIF, inputs) {
-    override val title = "Converting ${plural(inputs.size, "video")} to GIF"
+    override val title = trn(inputs.size, "Converting {0} video to GIF", "Converting {0} videos to GIF")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val info = VideoProbe.probe(ctx.app, item.uri)
-            info.video ?: throw UserFacingException("This file has no video track.")
+            info.video ?: throw UserFacingException(tr("This file has no video track."))
             val dw = info.displayWidth; val dh = info.displayHeight
-            if (dw <= 0 || dh <= 0) throw UserFacingException("The video's dimensions could not be read.")
+            if (dw <= 0 || dh <= 0) throw UserFacingException(tr("The video's dimensions could not be read."))
             val outW = (width ?: dw).coerceIn(16, dw)
             val outH = Math.round(dh.toDouble() * outW / dw).toInt().coerceAtLeast(1)
             val notes = ArrayList<String>()
             val targetFps = (fps ?: info.frameRate).coerceIn(1.0, 50.0)
-            if (fps == null && info.frameRate > 50.5) notes.add("Frame rate limited to 50 fps, the fastest rate GIF viewers play.")
+            if (fps == null && info.frameRate > 50.5) notes.add(tr("Frame rate limited to 50 fps, the fastest rate GIF viewers play."))
             val startUs = (startSec * 1_000_000).toLong().coerceIn(0, maxOf(0, info.durationUs - 1))
             val endUs = if (maxSeconds > 0) minOf(info.durationUs, startUs + (maxSeconds * 1_000_000).toLong()) else info.durationUs
-            if (endUs <= startUs) throw UserFacingException("The chosen start time is beyond the end of the video.")
+            if (endUs <= startUs) throw UserFacingException(tr("The chosen start time is beyond the end of the video."))
 
             // 1. Adaptive global palette from frames sampled across the clip.
-            ctx.status("Analysing colours", item.name)
+            ctx.status(tr("Analysing colours"), item.name)
             val hist = ColorHistogram()
             val mmr = MediaMetadataRetriever()
             try {
@@ -141,7 +144,7 @@ class VideoToGifJob(
                             true
                         },
                         throttle = { ctx.throttle() })
-                    val w = writer ?: throw UserFacingException("No frames could be decoded from the selected part of the video.")
+                    val w = writer ?: throw UserFacingException(tr("No frames could be decoded from the selected part of the video."))
                     val lastDelay = if (fps == null) clock.delay(pendingSlot, minOf(endUs, pendingSlot + (1_000_000 / info.frameRate).roundToLong()))
                     else clock.delay(pendingSlot, (pendingSlot + stepUs).roundToLong())
                     w.addFrame(pending1!!, lastDelay)
@@ -150,9 +153,9 @@ class VideoToGifJob(
                 bytes = counting.count
                 GifVerify.check(ctx, pending.uri, outW, outH)
             }
-            if (localFrames > 0) notes.add("$localFrames frame(s) used their own colour palette for scenes with different colours.")
+            if (localFrames > 0) notes.add(trn(localFrames, "{0} frame used its own colour palette for a scene with different colours.", "{0} frames used their own colour palette for scenes with different colours."))
             ItemResult(item.name, ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "${outW}×$outH · ${"%.1f".format(targetFps)} fps · $frames frames · ${Format.duration((endUs - startUs) / 1000)} · ${Format.bytes(bytes)}")
+                "${outW}×$outH · ${String.format(I18n.locale, "%.1f", targetFps)} fps · " + trn(frames, "{0} frame", "{0} frames") + " · ${Format.duration((endUs - startUs) / 1000)} · ${Format.bytes(bytes)}")
         }
     }
 }
@@ -162,8 +165,8 @@ object GifVerify {
     fun check(ctx: JobContext, uri: android.net.Uri, w: Int, h: Int) {
         MediaProbe.openInput(ctx.app.contentResolver, uri).use { s ->
             val d = GifDecoder(s)
-            if (d.width != w || d.height != h) throw UserFacingException("The written GIF failed verification, so it was discarded.")
-            d.nextFrame() ?: throw UserFacingException("The written GIF has no frames, so it was discarded.")
+            if (d.width != w || d.height != h) throw UserFacingException(tr("The written GIF failed verification, so it was discarded."))
+            d.nextFrame() ?: throw UserFacingException(tr("The written GIF has no frames, so it was discarded."))
         }
     }
 }
@@ -192,13 +195,13 @@ class CompressGifJob(
     private val colors: Int,
     private val dithering: Dithering,
 ) : ExportJob(ToolId.COMPRESS_GIF, inputs) {
-    override val title = "Compressing ${plural(inputs.size, "GIF")} ($colors colours)"
+    override val title = trn(inputs.size, "Compressing {0} GIF ({1} colours)", "Compressing {0} GIFs ({1} colours)", colors)
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = true) { index, item ->
             val maxPixels = (ctx.memoryBudget(ctx.workload.parallelism) / 4 / 8).coerceAtLeast(1L shl 20)
             // Pass 1: dimensions, transparency, histogram, frame count.
-            ctx.status("Analysing", item.name)
+            ctx.status(tr("Analysing"), item.name)
             var sw = 0; var sh = 0; var frames = 0; var hasTransparency = false
             var srcFps = 0.0; var totalCs = 0L
             val hist = ColorHistogram()
@@ -216,7 +219,7 @@ class CompressGifJob(
                 }
                 loop = d.loopCount
             }
-            if (frames == 0) throw UserFacingException("The GIF contains no frames.")
+            if (frames == 0) throw UserFacingException(tr("The GIF contains no frames."))
             if (totalCs > 0) srcFps = frames * 100.0 / totalCs
             val ow = if (width in 1 until sw) width else sw
             val oh = if (ow == sw) sh else Math.round(sh.toDouble() * ow / sw).toInt().coerceAtLeast(1)
@@ -259,12 +262,12 @@ class CompressGifJob(
                 }
                 bytes = counting.count
                 if (item.size > 0 && bytes >= item.size) {
-                    throw SkipItemException("The result would not be smaller (${Format.bytes(bytes)} vs ${Format.bytes(item.size)}), so nothing was saved. Try fewer colours, a smaller width or a lower frame rate.")
+                    throw SkipItemException(tr("The result would not be smaller ({0} vs {1}), so nothing was saved. Try fewer colours, a smaller width or a lower frame rate.", Format.bytes(bytes), Format.bytes(item.size)))
                 }
                 GifVerify.check(ctx, pending.uri, ow, oh)
             }
             ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out),
-                "${Outputs.sizeChange(item.size, out.size)} · ${ow}×$oh · ${palette.size} colours · $kept of $frames frames")
+                "${Outputs.sizeChange(item.size, out.size)} · ${ow}×$oh · " + trn(palette.size, "{0} colour", "{0} colours") + " · " + trn(frames, "{1} of {0} frame", "{1} of {0} frames", kept))
         }
     }
 }
@@ -276,12 +279,12 @@ class OptimizeGifJob(
     private val fps: Double,     // 0 = keep original timing
     private val keepOnlyIfSmaller: Boolean,
 ) : ExportJob(ToolId.OPTIMIZE_GIF, inputs) {
-    override val title = "Optimizing ${plural(inputs.size, "GIF")} (pixel-preserving)"
+    override val title = trn(inputs.size, "Optimizing {0} GIF (pixel-preserving)", "Optimizing {0} GIFs (pixel-preserving)")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = true) { index, item ->
             val maxPixels = (ctx.memoryBudget(ctx.workload.parallelism) / 4 / 8).coerceAtLeast(1L shl 20)
-            ctx.status("Analysing", item.name)
+            ctx.status(tr("Analysing"), item.name)
             var sw = 0; var sh = 0; var frames = 0; var totalCs = 0L
             var loop: Int? = 0
             val union = IntIntMap(512)
@@ -301,7 +304,7 @@ class OptimizeGifJob(
                 }
                 loop = d.loopCount
             }
-            if (frames == 0) throw UserFacingException("The GIF contains no frames.")
+            if (frames == 0) throw UserFacingException(tr("The GIF contains no frames."))
             val srcFps = if (totalCs > 0) frames * 100.0 / totalCs else 10.0
             val ow = if (width in 1 until sw) width else sw
             val oh = if (ow == sw) sh else Math.round(sh.toDouble() * ow / sw).toInt().coerceAtLeast(1)
@@ -342,13 +345,13 @@ class OptimizeGifJob(
                     writer.finish()
                 }
                 if (keepOnlyIfSmaller && item.size > 0 && counting.count >= item.size) {
-                    throw SkipItemException("This GIF is already efficiently encoded (optimized: ${Format.bytes(counting.count)} vs ${Format.bytes(item.size)}), so nothing was saved.")
+                    throw SkipItemException(tr("This GIF is already efficiently encoded (optimized: {0} vs {1}), so nothing was saved.", Format.bytes(counting.count), Format.bytes(item.size)))
                 }
                 GifVerify.check(ctx, pending.uri, ow, oh)
             }
-            val exact = if (ow == sw) "pixel-identical frames" else "resized with nearest-neighbour sampling (no new colours)"
+            val exact = if (ow == sw) tr("pixel-identical frames") else tr("resized with nearest-neighbour sampling (no new colours)")
             ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out),
-                "${Outputs.sizeChange(item.size, out.size)} · $exact · $kept of $frames frames")
+                "${Outputs.sizeChange(item.size, out.size)} · $exact · " + trn(frames, "{1} of {0} frame", "{1} of {0} frames", kept))
         }
     }
 }

@@ -22,6 +22,7 @@ import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
 import com.localmediatools.app.R
+import com.localmediatools.i18n.tr
 import kotlin.math.roundToInt
 
 const val MATCH = ViewGroup.LayoutParams.MATCH_PARENT
@@ -273,7 +274,7 @@ class ChoiceGroup<T>(
             tv.setTextColor(if (!en) Palette.TEXT_3 else if (sel) Palette.TEXT else Palette.TEXT_2)
             tv.alpha = if (en) 1f else 0.5f
             tv.isSelected = sel
-            tv.contentDescription = labelOf(options[i]) + if (sel) ", selected" else ""
+            tv.contentDescription = labelOf(options[i]) + if (sel) tr(", selected") else ""
         }
     }
 }
@@ -307,7 +308,7 @@ class SliderField(
             background = Shapes.rounded(ctx, Palette.SURFACE_2, 12f, Palette.STROKE)
             setPadding(ctx.dp(8), ctx.dp(8), ctx.dp(8), ctx.dp(8))
             minWidth = ctx.dp(72)
-            contentDescription = "$title value"
+            contentDescription = tr("{0} value", title)
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
                 override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
@@ -447,7 +448,7 @@ class ProgressBarView(ctx: Context, private val color: Int = Palette.ACCENT) : V
         fill.color = color
         if (gradientFor != color) updateShader()
         val target = f.coerceIn(0f, 1f)
-        contentDescription = "${(target * 100).roundToInt()} percent"
+        contentDescription = tr("{0} percent", (target * 100).roundToInt())
         anim?.cancel()
         anim = ValueAnimator.ofFloat(shown, target).apply {
             duration = 250
@@ -516,7 +517,7 @@ class PositionGrid(ctx: Context, selected: com.localmediatools.image.WatermarkPo
             val sel = p == selected
             v.background = Shapes.clickable(context, if (sel) Palette.ACCENT_DARK else Palette.SURFACE, 10f, if (sel) Palette.ACCENT else null)
             (v as FrameLayout).findViewWithTag<View>("dot").background = Shapes.circle(if (sel) Palette.ACCENT else Palette.TEXT_3)
-            v.contentDescription = p.label + if (sel) ", selected" else ""
+            v.contentDescription = p.label + if (sel) tr(", selected") else ""
         }
     }
 }

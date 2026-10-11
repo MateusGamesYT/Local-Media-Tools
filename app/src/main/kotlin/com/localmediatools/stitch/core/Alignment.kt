@@ -1,5 +1,6 @@
 package com.localmediatools.stitch.core
 
+import com.localmediatools.i18n.tr
 import kotlin.math.abs
 import kotlin.math.asin
 import kotlin.math.atan
@@ -63,7 +64,7 @@ class RotationWarp(
     private val oy: Double,
 ) : Warp {
     override val description: String
-        get() = when (surface) { Surface.PLANE -> "panorama (rectilinear)"; Surface.CYLINDER -> "panorama (cylindrical)"; Surface.SPHERE -> "panorama (spherical)" }
+        get() = when (surface) { Surface.PLANE -> tr("panorama (rectilinear)"); Surface.CYLINDER -> tr("panorama (cylindrical)"); Surface.SPHERE -> tr("panorama (spherical)") }
 
     override fun outToFull(i: Int, x: Double, y: Double, out: DoubleArray): Boolean {
         val a = x / scale + ox; val b = y / scale + oy

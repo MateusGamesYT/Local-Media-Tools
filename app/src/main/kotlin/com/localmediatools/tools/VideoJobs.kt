@@ -13,6 +13,8 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.video.Container
 import com.localmediatools.video.Remuxer
 import com.localmediatools.video.TrackInfo
@@ -43,30 +45,30 @@ internal fun remuxToOutput(
             if (e.message?.contains("can't be stored") != true) throw e
         }
     }
-    throw last ?: UserFacingException("No suitable container for these tracks.")
+    throw last ?: UserFacingException(tr("No suitable container for these tracks."))
 }
 
 internal fun avTracks(info: VideoInfo): List<TrackInfo> {
-    val v = info.video ?: throw UserFacingException("This file has no video track.")
+    val v = info.video ?: throw UserFacingException(tr("This file has no video track."))
     return listOf(v) + info.audio
 }
 
 // =========================================================================== 1. Split
 class SplitVideoJob(inputs: List<MediaItem>, private val segmentSeconds: Double) : ExportJob(ToolId.SPLIT_VIDEO, inputs) {
-    override val title = "Splitting ${plural(inputs.size, "video")} into ${Format.seconds(segmentSeconds)} parts"
+    override val title = trn(inputs.size, "Splitting {0} video into {1} parts", "Splitting {0} videos into {1} parts", Format.seconds(segmentSeconds))
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val info = VideoProbe.probe(ctx.app, item.uri)
-            val v = info.video ?: throw UserFacingException("This file has no video track.")
+            val v = info.video ?: throw UserFacingException(tr("This file has no video track."))
             val segUs = (segmentSeconds * 1_000_000).toLong()
             if (info.durationUs <= segUs + 250_000) {
-                throw SkipItemException("${Format.duration(info.durationUs / 1000)} long — already within one ${Format.seconds(segmentSeconds)} part, nothing to split.")
+                throw SkipItemException(tr("{0} long — already within one {1} part, nothing to split.", Format.duration(info.durationUs / 1000), Format.seconds(segmentSeconds)))
             }
-            ctx.status("Finding keyframes", item.name)
+            ctx.status(tr("Finding keyframes"), item.name)
             val syncs = Remuxer(ctx.app, item.uri).syncTimes(v.index) { ctx.throttle() }
             val cuts = computeCuts(syncs, segUs, info.durationUs)
-            if (cuts.size < 2) throw SkipItemException("The video has no keyframes after the start, so it can't be split without re-encoding.")
+            if (cuts.size < 2) throw SkipItemException(tr("The video has no keyframes after the start, so it can't be split without re-encoding."))
             OutputStore.ensureSpace(item.size)
             val tracks = avTracks(info)
             val outputs = ArrayList<OutputFile>()
@@ -76,14 +78,14 @@ class SplitVideoJob(inputs: List<MediaItem>, private val segmentSeconds: Double)
                 val start = cuts[k]
                 val end = if (k + 1 < cuts.size) cuts[k + 1] else Long.MAX_VALUE
                 longest = maxOf(longest, (if (end == Long.MAX_VALUE) info.durationUs else end) - start)
-                ctx.status("Part ${k + 1} of ${cuts.size}", item.name)
+                ctx.status(tr("Part {0} of {1}", k + 1, cuts.size), item.name)
                 outputs.add(remuxToOutput(ctx, item, ToolId.SPLIT_VIDEO.area, "${item.baseName}_part${(k + 1).toString().padStart(digits, '0')}",
                     tracks, start, end, info.rotation) { f -> ctx.unitProgress(index, (k + f) / cuts.size) })
             }
             val over = longest > segUs + 500_000
             ItemResult(item.name, ItemOutcome.SUCCESS,
-                if (over) "Some parts are longer than ${Format.seconds(segmentSeconds)} because the video has few keyframes (longest ${Format.duration(longest / 1000)})." else null,
-                outputs, "${outputs.size} parts · cuts at keyframes · no re-encoding")
+                if (over) tr("Some parts are longer than {0} because the video has few keyframes (longest {1}).", Format.seconds(segmentSeconds), Format.duration(longest / 1000)) else null,
+                outputs, trn(outputs.size, "{0} part", "{0} parts") + " · " + tr("cuts at keyframes") + " · " + tr("no re-encoding"))
         }
         Outputs.cleanTemp(ctx)
     }
@@ -116,7 +118,7 @@ class SplitVideoJob(inputs: List<MediaItem>, private val segmentSeconds: Double)
 
 // =========================================================================== 2. Optimize
 class OptimizeVideoJob(inputs: List<MediaItem>) : ExportJob(ToolId.OPTIMIZE_VIDEO, inputs) {
-    override val title = "Optimizing ${plural(inputs.size, "video")} (lossless)"
+    override val title = trn(inputs.size, "Optimizing {0} video (lossless)", "Optimizing {0} videos (lossless)")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
@@ -126,7 +128,7 @@ class OptimizeVideoJob(inputs: List<MediaItem>) : ExportJob(ToolId.OPTIMIZE_VIDE
             val container = Container.candidates(tracks.map { it.mime }).first()
             OutputStore.ensureSpace(item.size * 2)
             val notes = ArrayList<String>()
-            if (dropped > 0) notes.add("$dropped non-audio/video track(s) (subtitles or metadata) were not copied.")
+            if (dropped > 0) notes.add(trn(dropped, "{0} non-audio/video track (subtitles or metadata) was not copied.", "{0} non-audio/video tracks (subtitles or metadata) were not copied."))
             val out: OutputFile
             if (container == Container.MP4) {
                 val tmp = File(Outputs.tempDir(ctx), "opt-$index.mp4")
@@ -134,7 +136,7 @@ class OptimizeVideoJob(inputs: List<MediaItem>) : ExportJob(ToolId.OPTIMIZE_VIDE
                     ParcelFileDescriptor.open(tmp, ParcelFileDescriptor.MODE_READ_WRITE or ParcelFileDescriptor.MODE_CREATE or ParcelFileDescriptor.MODE_TRUNCATE).use { pfd ->
                         Remuxer(ctx.app, item.uri).copy(pfd.fileDescriptor, Container.MP4, tracks, 0, Long.MAX_VALUE, info.rotation, { ctx.throttle() }) { f -> ctx.unitProgress(index, f * 0.7) }
                     }
-                    ctx.status("Moving the index to the front", item.name)
+                    ctx.status(tr("Moving the index to the front"), item.name)
                     out = Outputs.produce(ctx, ToolId.OPTIMIZE_VIDEO.area, "${item.baseName}_optimized.mp4", "video/mp4") { pending ->
                         RandomAccessFile(tmp, "r").use { raf -> pending.openStream().buffered(1 shl 20).use { os -> Mp4FastStart.process(raf, os) } }
                         Outputs.verifyMedia(ctx.app, pending.uri, true, info.hasAudio)
@@ -142,12 +144,12 @@ class OptimizeVideoJob(inputs: List<MediaItem>) : ExportJob(ToolId.OPTIMIZE_VIDE
                 } finally {
                     tmp.delete()
                 }
-                notes.add("Fast start: the video index is at the beginning, so it starts playing and uploading sooner.")
+                notes.add(tr("Fast start: the video index is at the beginning, so it starts playing and uploading sooner."))
             } else {
                 out = remuxToOutput(ctx, item, ToolId.OPTIMIZE_VIDEO.area, "${item.baseName}_optimized", tracks, 0, Long.MAX_VALUE, info.rotation) { f -> ctx.unitProgress(index, f) }
             }
             ItemResult(item.name, ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "${Outputs.sizeChange(item.size, out.size)} · streams copied bit-for-bit")
+                "${Outputs.sizeChange(item.size, out.size)} · " + tr("streams copied bit-for-bit"))
         }
         Outputs.cleanTemp(ctx)
     }
@@ -155,12 +157,12 @@ class OptimizeVideoJob(inputs: List<MediaItem>) : ExportJob(ToolId.OPTIMIZE_VIDE
 
 // =========================================================================== 3. Compress
 class CompressVideoJob(inputs: List<MediaItem>, private val quality: Int, private val maxShortSide: Int) : ExportJob(ToolId.COMPRESS_VIDEO, inputs) {
-    override val title = "Compressing ${plural(inputs.size, "video")} (quality $quality)"
+    override val title = trn(inputs.size, "Compressing {0} video (quality {1})", "Compressing {0} videos (quality {1})", quality)
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val info = VideoProbe.probe(ctx.app, item.uri)
-            val v = info.video ?: throw UserFacingException("This file has no video track.")
+            val v = info.video ?: throw UserFacingException(tr("This file has no video track."))
             val (w, h) = VideoTranscoder.outputSize(info.codedWidth, info.codedHeight, maxShortSide, info.frameRate)
             val audioBits = info.audio.sumOf { t -> if (t.format.containsKey(android.media.MediaFormat.KEY_BIT_RATE)) t.format.getInteger(android.media.MediaFormat.KEY_BIT_RATE) else 128_000 }
             val srcVideoBits = if (info.bitrate > 0) (info.bitrate - audioBits).coerceAtLeast(info.bitrate / 2) else
@@ -175,7 +177,7 @@ class CompressVideoJob(inputs: List<MediaItem>, private val quality: Int, privat
                         ctx.workload, { ctx.throttle() }) { f -> ctx.unitProgress(index, f * 0.95) }
                 }
                 if (item.size > 0 && tmp.length() >= item.size) {
-                    throw SkipItemException("The compressed video would be larger than the original (${Format.bytes(tmp.length())} vs ${Format.bytes(item.size)}), so nothing was saved. Try a lower quality or resolution.")
+                    throw SkipItemException(tr("The compressed video would be larger than the original ({0} vs {1}), so nothing was saved. Try a lower quality or resolution.", Format.bytes(tmp.length()), Format.bytes(item.size)))
                 }
                 val out = Outputs.produce(ctx, ToolId.COMPRESS_VIDEO.area, "${item.baseName}_compressed.mp4", "video/mp4") { pending ->
                     RandomAccessFile(tmp, "r").use { raf -> pending.openStream().buffered(1 shl 20).use { os -> Mp4FastStart.process(raf, os) } }
@@ -183,7 +185,7 @@ class CompressVideoJob(inputs: List<MediaItem>, private val quality: Int, privat
                 }.first
                 val dispW = if (info.rotation % 180 == 0) w else h; val dispH = if (info.rotation % 180 == 0) h else w
                 ItemResult(item.name, ItemOutcome.SUCCESS, result.notes.joinToString(" ").ifBlank { null }, listOf(out),
-                    "${Outputs.sizeChange(item.size, out.size)} · ${dispW}×$dispH · H.264 ${bitrate / 1000} kbps · from ${v.codecLabel}")
+                    "${Outputs.sizeChange(item.size, out.size)} · ${dispW}×$dispH · H.264 ${bitrate / 1000} kbps · " + tr("from {0}", v.codecLabel))
             } finally {
                 tmp.delete()
             }
@@ -194,32 +196,32 @@ class CompressVideoJob(inputs: List<MediaItem>, private val quality: Int, privat
 
 // =========================================================================== 4. Remove audio
 class RemoveAudioJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_AUDIO, inputs) {
-    override val title = "Removing audio from ${plural(inputs.size, "video")}"
+    override val title = trn(inputs.size, "Removing audio from {0} video", "Removing audio from {0} videos")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val info = VideoProbe.probe(ctx.app, item.uri)
-            val v = info.video ?: throw UserFacingException("This file has no video track.")
-            if (!info.hasAudio) throw SkipItemException("This video already has no audio track.")
+            val v = info.video ?: throw UserFacingException(tr("This file has no video track."))
+            if (!info.hasAudio) throw SkipItemException(tr("This video already has no audio track."))
             OutputStore.ensureSpace(item.size)
             val out = remuxToOutput(ctx, item, ToolId.REMOVE_AUDIO.area, "${item.baseName}_noaudio", listOf(v), 0, Long.MAX_VALUE, info.rotation) { f -> ctx.unitProgress(index, f) }
-            ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out), "${Outputs.sizeChange(item.size, out.size)} · video copied as-is")
+            ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out), "${Outputs.sizeChange(item.size, out.size)} · " + tr("video copied as-is"))
         }
     }
 }
 
 // =========================================================================== 18. Extract audio
 class ExtractAudioJob(inputs: List<MediaItem>) : ExportJob(ToolId.EXTRACT_AUDIO, inputs) {
-    override val title = "Extracting audio from ${plural(inputs.size, "video")}"
+    override val title = trn(inputs.size, "Extracting audio from {0} video", "Extracting audio from {0} videos")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val info = VideoProbe.probe(ctx.app, item.uri)
             val audio = info.audio
-            if (audio.isEmpty()) throw SkipItemException("This video has no audio track.")
+            if (audio.isEmpty()) throw SkipItemException(tr("This video has no audio track."))
             val aac = audio.filter { it.isAac }
             if (aac.isEmpty()) {
-                throw SkipItemException("No compatible AAC audio track (this video's audio is ${audio.joinToString { it.codecLabel }}). Nothing was extracted.")
+                throw SkipItemException(tr("No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.", audio.joinToString { it.codecLabel }))
             }
             val outs = ArrayList<OutputFile>()
             for ((k, t) in aac.withIndex()) {
@@ -235,8 +237,8 @@ class ExtractAudioJob(inputs: List<MediaItem>) : ExportJob(ToolId.EXTRACT_AUDIO,
             }
             val skippedOther = audio.size - aac.size
             ItemResult(item.name, ItemOutcome.SUCCESS,
-                if (skippedOther > 0) "$skippedOther non-AAC audio track(s) were not extracted." else null,
-                outs, outs.joinToString { Format.bytes(it.size) } + " · AAC copied without re-encoding")
+                if (skippedOther > 0) trn(skippedOther, "{0} non-AAC audio track was not extracted.", "{0} non-AAC audio tracks were not extracted.") else null,
+                outs, outs.joinToString { Format.bytes(it.size) } + " · " + tr("AAC copied without re-encoding"))
         }
     }
 }

@@ -16,6 +16,9 @@ import com.localmediatools.core.MediaKind
 import com.localmediatools.edit.EditRenderer
 import com.localmediatools.edit.EditState
 import com.localmediatools.export.ExportJob
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.ImageSource
 import com.localmediatools.tools.AutoEnhanceJob
 import com.localmediatools.tools.CutoutBackground
@@ -44,12 +47,12 @@ import com.localmediatools.vision.FaceScanner
 import com.localmediatools.vision.VisionOps
 import com.localmediatools.vision.core.FaceIdentity
 import com.localmediatools.vision.core.Matting
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
 
 /** A round copy of a (square) face picture. */
 private fun circle(b: Bitmap): Bitmap {
@@ -86,27 +89,27 @@ class BackgroundRemoverScreen(a: MainActivity) : ToolScreen(a, ToolId.BACKGROUND
 
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
-        head.addView(UI.text(ctx, "Preview", TextStyle.SUBTITLE), lp(0, WRAP, 1f))
+        head.addView(UI.text(ctx, tr("Preview"), TextStyle.SUBTITLE), lp(0, WRAP, 1f))
         head.addView(badge(ctx, "AI"))
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
         preview = previewBox(ctx)
         container.addView(preview, LinearLayout.LayoutParams(MATCH, ctx.dp(240)).apply { topMargin = ctx.dp(10) })
-        note = UI.text(ctx, "Select a photo to see the cut-out.", TextStyle.CAPTION)
+        note = UI.text(ctx, tr("Select a photo to see the cut-out."), TextStyle.CAPTION)
         container.addView(note, lp().apply { topMargin = ctx.dp(6) })
-        section(container, "Background", "What goes behind the subject")
+        section(container, tr("Background"), tr("What goes behind the subject"))
         container.addView(ChoiceGroup(ctx, CutoutBackground.entries, { it.label }, CutoutPrefs.background) { CutoutPrefs.background = it; render() }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(ToggleRow(ctx, "Crop to the subject", "Trims the empty space around it", CutoutPrefs.crop) { CutoutPrefs.crop = it; render() }, lp().apply { topMargin = ctx.dp(8) })
-        container.addView(UI.note(ctx, "Works best with one clear subject: a person, pet, product or object. Fine hair and see-through things can keep a little of the background.", UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(10) })
+        container.addView(ToggleRow(ctx, tr("Crop to the subject"), tr("Trims the empty space around it"), CutoutPrefs.crop) { CutoutPrefs.crop = it; render() }, lp().apply { topMargin = ctx.dp(8) })
+        container.addView(UI.note(ctx, tr("Works best with one clear subject: a person, pet, product or object. Fine hair and see-through things can keep a little of the background."), UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(10) })
         onSelectionChanged()
     }
 
     override fun onSelectionChanged() {
         if (!::preview.isInitialized) return
         val item = selection.usable.firstOrNull()
-        if (item == null) { previewKey = null; base = null; mask = null; preview.setImageDrawable(null); note.text = "Select a photo to see the cut-out."; return }
+        if (item == null) { previewKey = null; base = null; mask = null; preview.setImageDrawable(null); note.text = tr("Select a photo to see the cut-out."); return }
         if (item.key == previewKey) { render(); return }
         previewKey = item.key
-        note.text = "Finding the subject in ${item.name}…"
+        note.text = tr("Finding the subject in {0}…", item.name)
         previewJob?.cancel()
         previewJob = scope.launch {
             val r = withContext(Dispatchers.Default) {
@@ -119,7 +122,7 @@ class BackgroundRemoverScreen(a: MainActivity) : ToolScreen(a, ToolId.BACKGROUND
             }
             if (previewKey != item.key) return@launch
             r.onSuccess { (b, m) -> base = b; mask = m; render() }
-            r.onFailure { e -> base = null; mask = null; preview.setImageDrawable(null); note.text = "Preview not available: ${Errors.describe(e)}" }
+            r.onFailure { e -> base = null; mask = null; preview.setImageDrawable(null); note.text = tr("Preview not available: {0}", Errors.describe(e)) }
         }
     }
 
@@ -138,7 +141,7 @@ class BackgroundRemoverScreen(a: MainActivity) : ToolScreen(a, ToolId.BACKGROUND
         }
         var out = Bitmap.createBitmap(px, mw, mh, Bitmap.Config.ARGB_8888)
         val box = Matting.bounds(m, mw, mh, 0.25f)
-        if (box == null) { note.text = "No clear subject found in this photo."; preview.setImageBitmap(out); return }
+        if (box == null) { note.text = tr("No clear subject found in this photo."); preview.setImageBitmap(out); return }
         if (CutoutPrefs.crop) {
             val mg = (0.03 * maxOf(mw, mh)).roundToInt()
             val l = (box[0] - mg).coerceAtLeast(0); val t = (box[1] - mg).coerceAtLeast(0)
@@ -147,10 +150,10 @@ class BackgroundRemoverScreen(a: MainActivity) : ToolScreen(a, ToolId.BACKGROUND
         }
         preview.setImageBitmap(out)
         val more = selection.usable.size - 1
-        note.text = "Preview of ${selection.usable.first().name}" + (if (more > 0) " · the other $more ${if (more == 1) "photo is" else "photos are"} done the same way" else "") + " · saved at full resolution"
+        note.text = tr("Preview of {0}", selection.usable.first().name) + (if (more > 0) " · " + trn(more, "the other {0} photo is done the same way", "the other {0} photos are done the same way") else "") + " · " + tr("saved at full resolution")
     }
 
-    override fun outputNaming() = "name_cutout.png (transparent) · name_cutout.jpg (with a colour)"
+    override fun outputNaming() = tr("name_cutout.png (transparent) · name_cutout.jpg (with a colour)")
     override fun createJob(items: List<MediaItem>): ExportJob = RemoveBackgroundJob(items, CutoutPrefs.background, CutoutPrefs.crop)
 }
 
@@ -166,7 +169,7 @@ class AutoEnhanceScreen(a: MainActivity) : ToolScreen(a, ToolId.AUTO_ENHANCE) {
 
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
-        head.addView(UI.text(ctx, "Preview", TextStyle.SUBTITLE), lp(0, WRAP, 1f))
+        head.addView(UI.text(ctx, tr("Preview"), TextStyle.SUBTITLE), lp(0, WRAP, 1f))
         head.addView(badge(ctx, "AI"))
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
         val row = UI.horizontal(ctx, Gravity.TOP)
@@ -177,27 +180,27 @@ class AutoEnhanceScreen(a: MainActivity) : ToolScreen(a, ToolId.AUTO_ENHANCE) {
             c.addView(UI.text(ctx, label, TextStyle.CAPTION).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(6), 0, 0) }, lp())
             return c to iv
         }
-        val (c1, i1) = col("Before"); val (c2, i2) = col("After")
+        val (c1, i1) = col(tr("Before")); val (c2, i2) = col(tr("After"))
         before = i1; after = i2
         row.addView(c1, lp(0, WRAP, 1f).apply { rightMargin = ctx.dp(6) })
         row.addView(c2, lp(0, WRAP, 1f).apply { leftMargin = ctx.dp(6) })
         container.addView(row, lp().apply { topMargin = ctx.dp(10) })
-        note = UI.text(ctx, "Select photos to see what auto enhance does.", TextStyle.CAPTION)
+        note = UI.text(ctx, tr("Select photos to see what auto enhance does."), TextStyle.CAPTION)
         container.addView(note, lp().apply { topMargin = ctx.dp(8) })
-        section(container, "Strength")
+        section(container, tr("Strength"))
         container.addView(ChoiceGroup(ctx, EnhanceStrength.entries, { it.label }, EnhancePrefs.strength) { EnhancePrefs.strength = it; key = null; onSelectionChanged() }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there.", UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(12) })
+        container.addView(UI.note(ctx, tr("Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there."), UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(12) })
         onSelectionChanged()
     }
 
     override fun onSelectionChanged() {
         if (!::before.isInitialized) return
         val item = selection.usable.firstOrNull()
-        if (item == null) { key = null; before.setImageDrawable(null); after.setImageDrawable(null); note.text = "Select photos to see what auto enhance does."; return }
+        if (item == null) { key = null; before.setImageDrawable(null); after.setImageDrawable(null); note.text = tr("Select photos to see what auto enhance does."); return }
         val k = item.key + EnhancePrefs.strength
         if (k == key) return
         key = k
-        note.text = "Looking at ${item.name}…"
+        note.text = tr("Looking at {0}…", item.name)
         job?.cancel()
         job = scope.launch {
             val r = withContext(Dispatchers.Default) {
@@ -214,13 +217,13 @@ class AutoEnhanceScreen(a: MainActivity) : ToolScreen(a, ToolId.AUTO_ENHANCE) {
             if (key != k) return@launch
             r.onSuccess { (b, out, e) ->
                 before.setImageBitmap(b); after.setImageBitmap(out)
-                note.text = "${e.scene.label}: " + (e.notes.joinToString(", ").ifBlank { "already well balanced, only small touches" }) + "."
+                note.text = tr("{0}: {1}.", e.scene.label, e.notes.joinToString(trc("between the items of a list", ", ")).ifBlank { tr("already well balanced, only small touches") })
             }
-            r.onFailure { e -> note.text = "Preview not available: ${Errors.describe(e)}" }
+            r.onFailure { e -> note.text = tr("Preview not available: {0}", Errors.describe(e)) }
         }
     }
 
-    override fun outputNaming() = "name_enhanced.jpg (PNG stays PNG)"
+    override fun outputNaming() = tr("name_enhanced.jpg (PNG stays PNG)")
     override fun createJob(items: List<MediaItem>): ExportJob = AutoEnhanceJob(items, EnhancePrefs.strength)
 }
 
@@ -244,37 +247,37 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
     private lateinit var findButton: ButtonView
     private lateinit var bulk: LinearLayout
 
-    override val startLabel: String get() = if (FaceBlurPrefs.pixelate) "Pixelate chosen faces" else "Blur chosen faces"
+    override val startLabel: String get() = if (FaceBlurPrefs.pixelate) tr("Pixelate chosen faces") else tr("Blur chosen faces")
 
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
-        head.addView(UI.text(ctx, "People found", TextStyle.SUBTITLE), lp(0, WRAP, 1f))
+        head.addView(UI.text(ctx, tr("People found"), TextStyle.SUBTITLE), lp(0, WRAP, 1f))
         head.addView(badge(ctx, "AI"))
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
-        status = UI.text(ctx, "Select photos or videos; faces are found automatically.", TextStyle.BODY_2)
+        status = UI.text(ctx, tr("Select photos or videos; faces are found automatically."), TextStyle.BODY_2)
         container.addView(status, lp().apply { topMargin = ctx.dp(8) })
         progress = ProgressBarView(ctx).apply { visibility = View.GONE }
         container.addView(progress, LinearLayout.LayoutParams(MATCH, ctx.dp(8)).apply { topMargin = ctx.dp(10) })
-        findButton = UI.secondaryButton(ctx, "Find faces", R.drawable.ic_search) { if (scanning) stopScan() else startScan() }
+        findButton = UI.secondaryButton(ctx, tr("Find faces"), R.drawable.ic_search) { if (scanning) stopScan() else startScan() }
         container.addView(findButton, lp().apply { topMargin = ctx.dp(10) })
         people = FlowLayout(ctx, 10, 12)
         container.addView(people, lp().apply { topMargin = ctx.dp(14) })
         bulk = UI.horizontal(ctx).apply { visibility = View.GONE }
-        bulk.addView(UI.ghostButton(ctx, "Hide everyone") { result?.people?.forEach { chosen.add(it.id) }; showPeople(); refreshValidation() })
-        bulk.addView(UI.ghostButton(ctx, "Hide no one") { chosen.clear(); showPeople(); refreshValidation() })
+        bulk.addView(UI.ghostButton(ctx, tr("Hide everyone")) { result?.people?.forEach { chosen.add(it.id) }; showPeople(); refreshValidation() })
+        bulk.addView(UI.ghostButton(ctx, tr("Hide no one")) { chosen.clear(); showPeople(); refreshValidation() })
         container.addView(bulk, lp().apply { topMargin = ctx.dp(6) })
 
-        section(container, "Style")
-        container.addView(ChoiceGroup(ctx, listOf(false, true), { if (it) "Pixelate" else "Blur" }, FaceBlurPrefs.pixelate) { FaceBlurPrefs.pixelate = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(10) })
-        val strengths = listOf(0.4f to "Light", 0.7f to "Medium", 1f to "Strong")
+        section(container, tr("Style"))
+        container.addView(ChoiceGroup(ctx, listOf(false, true), { if (it) tr("Pixelate") else tr("Blur") }, FaceBlurPrefs.pixelate) { FaceBlurPrefs.pixelate = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(10) })
+        val strengths = listOf(0.4f to trc("strength", "Light"), 0.7f to trc("strength", "Medium"), 1f to trc("strength", "Strong"))
         container.addView(ChoiceGroup(ctx, strengths, { it.second }, strengths.minByOrNull { kotlin.math.abs(it.first - FaceBlurPrefs.strength) }) { FaceBlurPrefs.strength = it.first }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        container.addView(UI.note(ctx, tr("Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
         onSelectionChanged()
     }
 
     private fun keys() = selection.usable.map { it.key }
 
-    private val emptyText get() = if (stack != null) "Every face found at this step will be hidden. To choose people, put photos or videos in the stack." else "Select photos or videos; faces are found automatically."
+    private val emptyText get() = if (stack != null) tr("Every face found at this step will be hidden. To choose people, put photos or videos in the stack.") else tr("Select photos or videos; faces are found automatically.")
 
     override fun onSelectionChanged() {
         if (!::status.isInitialized) return
@@ -303,9 +306,9 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         cancelScan = false
         scanning = true
         progress.visibility = View.VISIBLE; progress.setProgress(0f)
-        findButton.label = "Stop"
+        findButton.label = tr("Stop")
         val videos = items.count { it.kind == MediaKind.VIDEO }
-        status.text = if (videos > 0) "Watching ${if (videos == 1) "the video" else "$videos videos"} for faces…" else "Looking for faces…"
+        status.text = if (videos > 0) trn(videos, "Watching the video for faces…", "Watching {0} videos for faces…") else tr("Looking for faces…")
         scanJob = scope.launch {
             val k = items.map { it.key }
             val r = withContext(Dispatchers.Default) {
@@ -317,7 +320,7 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
             }
             scanning = false
             progress.visibility = View.GONE
-            findButton.label = "Find faces again"
+            findButton.label = tr("Find faces again")
             if (k != keys()) {
                 // The selection changed meanwhile: look at the new one instead.
                 r.onSuccess { it.release() }
@@ -329,24 +332,24 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
                 chosen.clear(); res.people.forEach { chosen.add(it.id) }
                 val n = res.people.size
                 status.text = when {
-                    n == 0 -> "No faces were found." + problems(res)
-                    else -> "Found $n ${if (n == 1) "person" else "different people"}. Tap a face to keep it visible; highlighted faces will be hidden." + problems(res)
+                    n == 0 -> tr("No faces were found.") + problems(res)
+                    else -> trn(n, "Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.", "Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.") + problems(res)
                 }
                 showPeople()
             }
             r.onFailure { e ->
-                status.text = if (e is FaceScanner.Cancelled) "Stopped. Tap Find faces to look again." else "Faces couldn't be found: ${Errors.describe(e)}"
+                status.text = if (e is FaceScanner.Cancelled) tr("Stopped. Tap Find faces to look again.") else tr("Faces couldn't be found: {0}", Errors.describe(e))
             }
             refreshValidation()
         }
         refreshValidation()
     }
 
-    private fun problems(r: FaceScanResult) = if (r.problems.isEmpty()) "" else " ${r.problems.size} file(s) couldn't be read: ${r.problems.joinToString { it.first }}."
+    private fun problems(r: FaceScanResult) = if (r.problems.isEmpty()) "" else " " + trn(r.problems.size, "{0} file couldn't be read: {1}.", "{0} files couldn't be read: {1}.", r.problems.joinToString { it.first })
 
     private fun stopScan() {
         cancelScan = true
-        status.text = "Stopping…"
+        status.text = tr("Stopping…")
     }
 
     private fun showPeople() {
@@ -377,11 +380,11 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         col.addView(frame, LinearLayout.LayoutParams(ctx.dp(84), ctx.dp(84)))
         val files = res.itemsOf(p)
         val vids = files.count { it.kind == MediaKind.VIDEO }; val pics = files.size - vids
-        val where = listOfNotNull(if (pics > 0) "$pics photo${if (pics > 1) "s" else ""}" else null, if (vids > 0) "$vids video${if (vids > 1) "s" else ""}" else null).joinToString(" · ")
-        col.addView(UI.text(ctx, if (on) "Hidden" else "Visible", TextStyle.CAPTION, if (on) Palette.ACCENT else Palette.TEXT_2).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(4), 0, 0) })
+        val where = listOfNotNull(if (pics > 0) trn(pics, "{0} photo", "{0} photos") else null, if (vids > 0) trn(vids, "{0} video", "{0} videos") else null).joinToString(" · ")
+        col.addView(UI.text(ctx, if (on) tr("Hidden") else tr("Visible"), TextStyle.CAPTION, if (on) Palette.ACCENT else Palette.TEXT_2).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(4), 0, 0) })
         col.addView(UI.text(ctx, where, TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER; textSize = 11f })
         col.isClickable = true; col.isFocusable = true
-        col.contentDescription = "Person ${p.id + 1}, in $where, ${if (on) "will be hidden" else "stays visible"}"
+        col.contentDescription = if (on) tr("Person {0}, in {1}, will be hidden", p.id + 1, where) else tr("Person {0}, in {1}, stays visible", p.id + 1, where)
         col.setOnClickListener {
             if (!chosen.remove(p.id)) chosen.add(p.id)
             showPeople(); refreshValidation()
@@ -391,16 +394,16 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
 
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (scanning) return "Finding faces…"
-        if (stepMode) return if (result != null && chosen.isEmpty()) "Tap the people you want to hide" else null
+        if (scanning) return tr("Finding faces…")
+        if (stepMode) return if (result != null && chosen.isEmpty()) tr("Tap the people you want to hide") else null
         val r = result
-        if (r == null || scannedKeys != keys()) return "Tap Find faces first"
-        if (r.people.isEmpty()) return "No faces to hide in these files"
-        if (chosen.isEmpty()) return "Tap the people you want to hide"
+        if (r == null || scannedKeys != keys()) return tr("Tap Find faces first")
+        if (r.people.isEmpty()) return tr("No faces to hide in these files")
+        if (chosen.isEmpty()) return tr("Tap the people you want to hide")
         return null
     }
 
-    override fun outputNaming() = "name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)"
+    override fun outputNaming() = tr("name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)")
 
     /**
      * In a stack the files are made by earlier steps, so people are recognised again when the step
@@ -418,15 +421,15 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
 
     override fun stackSummary(): String {
         val r = result?.takeIf { scannedKeys == keys() }
-        val who = if (r == null || chosen.size == r.people.size) "Hides every face" else "Hides ${chosen.size} of ${r.people.size} people (others stay visible)"
-        return "$who · ${if (FaceBlurPrefs.pixelate) "Pixelate" else "Blur"} · ${when { FaceBlurPrefs.strength < 0.55f -> "Light"; FaceBlurPrefs.strength < 0.85f -> "Medium"; else -> "Strong" }}"
+        val who = if (r == null || chosen.size == r.people.size) tr("Hides every face") else trn(r.people.size, "Hides {1} of {0} person (others stay visible)", "Hides {1} of {0} people (others stay visible)", chosen.size)
+        return "$who · ${if (FaceBlurPrefs.pixelate) tr("Pixelate") else tr("Blur")} · ${when { FaceBlurPrefs.strength < 0.55f -> trc("strength", "Light"); FaceBlurPrefs.strength < 0.85f -> trc("strength", "Medium"); else -> trc("strength", "Strong") }}"
     }
 
     override fun createJob(items: List<MediaItem>): ExportJob {
-        val r = result ?: throw IllegalArgumentException("Find faces first")
+        val r = result ?: throw IllegalArgumentException(tr("Find faces first"))
         val plan = r.plan(r.people.filter { it.id in chosen })
         val todo = items.filter { plan.containsKey(it.key) }
-        if (todo.isEmpty()) throw IllegalArgumentException("The chosen people don't appear in these files")
+        if (todo.isEmpty()) throw IllegalArgumentException(tr("The chosen people don't appear in these files"))
         return FaceBlurJob(todo, FaceBlurPlan(plan, FaceBlurPrefs.pixelate, FaceBlurPrefs.strength))
     }
 

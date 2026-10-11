@@ -16,6 +16,9 @@ import com.localmediatools.codec.layout.Align
 import com.localmediatools.codec.layout.PackResult
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportJob
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
 import com.localmediatools.image.ImageOutFormat
 import com.localmediatools.image.ImageSource
 import com.localmediatools.stitch.TfliteEmbedder
@@ -87,20 +90,20 @@ class CompressImagesScreen(a: MainActivity) : ToolScreen(a, ToolId.COMPRESS_IMAG
     private lateinit var maxWidth: SliderField
 
     override fun buildOptions(container: LinearLayout) {
-        section(container, "Format", null, top = 4)
+        section(container, tr("Format"), null, top = 4)
         container.addView(ChoiceGroup(ctx, listOf(ImageOutFormat.JPEG, ImageOutFormat.WEBP), { it.label }, ImagePrefs.compressFormat,
-            badgeOf = { if (it == ImageOutFormat.JPEG) "most compatible" else "smaller" }) { ImagePrefs.compressFormat = it; updateHint() }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.text(ctx, "JPEG works everywhere but has no transparency. WebP is typically 25–35% smaller at similar quality and keeps transparency.", TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
-        container.addView(SliderField(ctx, "Quality", 10, 100, ImagePrefs.compressQuality, subtitle = "Lower = smaller file, more artefacts") { ImagePrefs.compressQuality = it; updateHint() }, lp().apply { topMargin = ctx.dp(16) })
+            badgeOf = { if (it == ImageOutFormat.JPEG) tr("most compatible") else tr("smaller") }) { ImagePrefs.compressFormat = it; updateHint() }, lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.text(ctx, tr("JPEG works everywhere but has no transparency. WebP is typically 25–35% smaller at similar quality and keeps transparency."), TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
+        container.addView(SliderField(ctx, tr("Quality"), 10, 100, ImagePrefs.compressQuality, subtitle = tr("Lower = smaller file, more artefacts")) { ImagePrefs.compressQuality = it; updateHint() }, lp().apply { topMargin = ctx.dp(16) })
         qualityHint = UI.text(ctx, "", TextStyle.CAPTION)
         container.addView(qualityHint)
-        maxWidth = SliderField(ctx, "Maximum width", 0, 8000, ImagePrefs.compressMaxWidth, " px", "0 keeps the original size; never upscales") { ImagePrefs.compressMaxWidth = it; refreshValidation() }
+        maxWidth = SliderField(ctx, tr("Maximum width"), 0, 8000, ImagePrefs.compressMaxWidth, " px", tr("0 keeps the original size; never upscales")) { ImagePrefs.compressMaxWidth = it; refreshValidation() }
         container.addView(maxWidth, lp().apply { topMargin = ctx.dp(16) })
         val presets = listOf(0, 3840, 2560, 1920, 1280, 1080)
-        container.addView(ChoiceGroup(ctx, presets, { if (it == 0) "Original" else "$it px" }, presets.firstOrNull { it == ImagePrefs.compressMaxWidth }) {
+        container.addView(ChoiceGroup(ctx, presets, { if (it == 0) tr("Original") else "$it px" }, presets.firstOrNull { it == ImagePrefs.compressMaxWidth }) {
             maxWidth.setValue(it, fromField = false)
         }, lp().apply { topMargin = ctx.dp(6) })
-        container.addView(UI.note(ctx, "Aspect ratio and displayed orientation are always preserved. Metadata such as GPS location is not copied. If a result isn't smaller than the original (and wasn't resized), it isn't saved.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.note(ctx, tr("Aspect ratio and displayed orientation are always preserved. Metadata such as GPS location is not copied. If a result isn't smaller than the original (and wasn't resized), it isn't saved."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
         updateHint()
     }
 
@@ -108,10 +111,10 @@ class CompressImagesScreen(a: MainActivity) : ToolScreen(a, ToolId.COMPRESS_IMAG
         if (!::qualityHint.isInitialized) return
         val q = ImagePrefs.compressQuality
         qualityHint.text = when {
-            q >= 90 -> "Visually lossless for most photos; modest savings."
-            q >= 75 -> "Recommended: strong savings with little visible difference."
-            q >= 50 -> "Small files; artefacts visible on close inspection."
-            else -> "Very small files; noticeable artefacts and blur."
+            q >= 90 -> tr("Visually lossless for most photos; modest savings.")
+            q >= 75 -> tr("Recommended: strong savings with little visible difference.")
+            q >= 50 -> tr("Small files; artefacts visible on close inspection.")
+            else -> tr("Very small files; noticeable artefacts and blur.")
         }
         qualityHint.setTextColor(if (q < 40) Palette.WARNING else Palette.TEXT_2)
     }
@@ -119,26 +122,26 @@ class CompressImagesScreen(a: MainActivity) : ToolScreen(a, ToolId.COMPRESS_IMAG
     override fun validate(): String? {
         super.validate()?.let { return it }
         val w = ImagePrefs.compressMaxWidth
-        if (w in 1 until 16) return "Maximum width must be 0 (original) or at least 16 px"
+        if (w in 1 until 16) return tr("Maximum width must be 0 (original) or at least 16 px")
         return null
     }
 
-    override fun outputNaming() = "name_q${ImagePrefs.compressQuality}.${ImagePrefs.compressFormat.ext} (plus _1920w when resized)"
+    override fun outputNaming() = tr("name_q{0}.{1} (plus _1920w when resized)", ImagePrefs.compressQuality, ImagePrefs.compressFormat.ext)
     override fun createJob(items: List<MediaItem>): ExportJob = CompressImagesJob(items, ImagePrefs.compressFormat, ImagePrefs.compressQuality, ImagePrefs.compressMaxWidth)
 }
 
 // =========================================================================== Lossless optimizer
 class OptimizeImagesScreen(a: MainActivity) : ToolScreen(a, ToolId.OPTIMIZE_IMAGES) {
     override fun buildOptions(container: LinearLayout) {
-        section(container, "Lossless format", null, top = 4)
+        section(container, tr("Lossless format"), null, top = 4)
         container.addView(ChoiceGroup(ctx, listOf(ImageOutFormat.WEBP_LOSSLESS, ImageOutFormat.PNG), { if (it == ImageOutFormat.PNG) "PNG" else "WebP" },
-            ImagePrefs.losslessFormat, badgeOf = { if (it == ImageOutFormat.PNG) "most compatible" else "usually smallest" }) { ImagePrefs.losslessFormat = it }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.text(ctx, "PNG output picks the smallest exact colour mode (palette, greyscale, RGB or RGBA) and maximum compression.", TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
-        container.addView(ToggleRow(ctx, "Only keep smaller results", "Discard a result that isn't smaller than its original", ImagePrefs.losslessOnlySmaller) { ImagePrefs.losslessOnlySmaller = it }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "Every pixel is preserved exactly — this is not lossy compression. Smaller files are not guaranteed: screenshots and graphics often shrink, while JPEG/HEIC photos usually get larger in a lossless format. 16-bit PNGs and animations are rejected rather than altered.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+            ImagePrefs.losslessFormat, badgeOf = { if (it == ImageOutFormat.PNG) tr("most compatible") else tr("usually smallest") }) { ImagePrefs.losslessFormat = it }, lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.text(ctx, tr("PNG output picks the smallest exact colour mode (palette, greyscale, RGB or RGBA) and maximum compression."), TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
+        container.addView(ToggleRow(ctx, tr("Only keep smaller results"), tr("Discard a result that isn't smaller than its original"), ImagePrefs.losslessOnlySmaller) { ImagePrefs.losslessOnlySmaller = it }, lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.note(ctx, tr("Every pixel is preserved exactly — this is not lossy compression. Smaller files are not guaranteed: screenshots and graphics often shrink, while JPEG/HEIC photos usually get larger in a lossless format. 16-bit PNGs and animations are rejected rather than altered."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
     }
 
-    override fun outputNaming() = "name_lossless.${ImagePrefs.losslessFormat.ext} (in the same folder as the image compressor's results)"
+    override fun outputNaming() = tr("name_lossless.{0} (in the same folder as the image compressor's results)", ImagePrefs.losslessFormat.ext)
     override fun createJob(items: List<MediaItem>): ExportJob = OptimizeImagesJob(items, ImagePrefs.losslessFormat, ImagePrefs.losslessOnlySmaller)
 }
 
@@ -147,13 +150,13 @@ class ConvertScreen(a: MainActivity) : ToolScreen(a, ToolId.CONVERT_IMAGES) {
     private lateinit var quality: SliderField
 
     override fun buildOptions(container: LinearLayout) {
-        section(container, "Convert to", null, top = 4)
+        section(container, tr("Convert to"), null, top = 4)
         val formats = listOf(ImageOutFormat.PNG, ImageOutFormat.JPEG, ImageOutFormat.WEBP, ImageOutFormat.WEBP_LOSSLESS)
         container.addView(ChoiceGroup(ctx, formats, { if (it == ImageOutFormat.WEBP_LOSSLESS) "WebP" else it.label }, ImagePrefs.convertFormat,
-            badgeOf = { if (it.lossless) "lossless" else "lossy" }) { ImagePrefs.convertFormat = it; updateQuality() }, lp().apply { topMargin = ctx.dp(10) })
-        quality = SliderField(ctx, "Quality (lossy formats)", 10, 100, ImagePrefs.convertQuality, subtitle = "90 keeps photos visually identical") { ImagePrefs.convertQuality = it }
+            badgeOf = { if (it.lossless) tr("lossless") else tr("lossy") }) { ImagePrefs.convertFormat = it; updateQuality() }, lp().apply { topMargin = ctx.dp(10) })
+        quality = SliderField(ctx, tr("Quality (lossy formats)"), 10, 100, ImagePrefs.convertQuality, subtitle = tr("90 keeps photos visually identical")) { ImagePrefs.convertQuality = it }
         container.addView(quality, lp().apply { topMargin = ctx.dp(16) })
-        container.addView(UI.note(ctx, "Reads JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG and other RAW previews (when the phone supports them), plus TIFF, PSD (flattened), QOI, PPM/PGM/PBM/PAM and TGA. Animated files use their first frame. Size, aspect ratio and displayed orientation are kept.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.note(ctx, tr("Reads JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG and other RAW previews (when the phone supports them), plus TIFF, PSD (flattened), QOI, PPM/PGM/PBM/PAM and TGA. Animated files use their first frame. Size, aspect ratio and displayed orientation are kept."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
         updateQuality()
     }
 
@@ -169,7 +172,7 @@ class ConvertScreen(a: MainActivity) : ToolScreen(a, ToolId.CONVERT_IMAGES) {
         if (v is android.view.ViewGroup) for (i in 0 until v.childCount) setEnabledDeep(v.getChildAt(i), on)
     }
 
-    override fun outputNaming() = "name.${ImagePrefs.convertFormat.ext} (same name, new format)"
+    override fun outputNaming() = tr("name.{0} (same name, new format)", ImagePrefs.convertFormat.ext)
     override fun createJob(items: List<MediaItem>): ExportJob = ConvertImagesJob(items, ImagePrefs.convertFormat, ImagePrefs.convertQuality)
 }
 
@@ -181,21 +184,21 @@ class MergeScreen(a: MainActivity) : ToolScreen(a, ToolId.MERGE_IMAGES) {
     private lateinit var alignBox: LinearLayout
 
     override fun buildOptions(container: LinearLayout) {
-        section(container, "Layout", null, top = 4)
+        section(container, tr("Layout"), null, top = 4)
         container.addView(ChoiceGroup(ctx, MergeLayout.entries, { it.label }, ImagePrefs.mergeLayout) { ImagePrefs.mergeLayout = it; rebuildAlign(); updatePreview() }, lp().apply { topMargin = ctx.dp(10) })
         alignBox = UI.vertical(ctx)
         container.addView(alignBox)
-        section(container, "Background", "Fills space around images of different sizes")
+        section(container, tr("Background"), tr("Fills space around images of different sizes"))
         container.addView(ChoiceGroup(ctx, MergeBackground.entries, { it.label }, ImagePrefs.mergeBackground) { ImagePrefs.mergeBackground = it; updatePreview() }, lp().apply { topMargin = ctx.dp(10) })
-        section(container, "Spacing between images")
-        val sp = listOf("None" to 0, "Small" to 16, "Medium" to 40, "Large" to 80)
+        section(container, tr("Spacing between images"))
+        val sp = listOf(trc("no spacing", "None") to 0, trc("spacing", "Small") to 16, trc("spacing", "Medium") to 40, trc("spacing", "Large") to 80)
         container.addView(ChoiceGroup(ctx, sp, { it.first }, sp.firstOrNull { it.second == ImagePrefs.mergeSpacing }) { ImagePrefs.mergeSpacing = it.second; updatePreview() }, lp().apply { topMargin = ctx.dp(10) })
-        section(container, "Preview", null)
+        section(container, tr("Preview"), null)
         preview = MergePreview(ctx)
         container.addView(preview, lp(com.localmediatools.ui.MATCH, ctx.dp(240)).apply { topMargin = ctx.dp(10) })
         sizeLine = UI.text(ctx, "", TextStyle.CAPTION)
         container.addView(sizeLine, lp().apply { topMargin = ctx.dp(6) })
-        container.addView(UI.note(ctx, "Images are never scaled or cropped — each keeps its exact pixels and correct orientation. The result is a lossless PNG; very large results are written in strips, so they don't need to fit in memory.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        container.addView(UI.note(ctx, tr("Images are never scaled or cropped — each keeps its exact pixels and correct orientation. The result is a lossless PNG; very large results are written in strips, so they don't need to fit in memory."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
         rebuildAlign()
         updatePreview()
     }
@@ -203,8 +206,8 @@ class MergeScreen(a: MainActivity) : ToolScreen(a, ToolId.MERGE_IMAGES) {
     private fun rebuildAlign() {
         alignBox.removeAllViews()
         if (ImagePrefs.mergeLayout == MergeLayout.SMART) return
-        val labels = if (ImagePrefs.mergeLayout == MergeLayout.VERTICAL) listOf("Left", "Center", "Right") else listOf("Top", "Center", "Bottom")
-        section(alignBox, "Alignment", "For images narrower or shorter than the widest one")
+        val labels = if (ImagePrefs.mergeLayout == MergeLayout.VERTICAL) listOf(tr("Left"), tr("Center"), tr("Right")) else listOf(tr("Top"), tr("Center"), tr("Bottom"))
+        section(alignBox, tr("Alignment"), tr("For images narrower or shorter than the widest one"))
         alignGroup = ChoiceGroup(ctx, Align.entries, { labels[it.ordinal] }, ImagePrefs.mergeAlign) { ImagePrefs.mergeAlign = it; updatePreview() }
         alignBox.addView(alignGroup, lp().apply { topMargin = ctx.dp(10) })
     }
@@ -214,18 +217,18 @@ class MergeScreen(a: MainActivity) : ToolScreen(a, ToolId.MERGE_IMAGES) {
     private fun updatePreview() {
         if (!::preview.isInitialized) return
         val items = selection.usable
-        if (items.size < 2) { preview.set(null, emptyList(), ImagePrefs.mergeBackground); sizeLine.text = "Select at least two images to see the layout."; return }
+        if (items.size < 2) { preview.set(null, emptyList(), ImagePrefs.mergeBackground); sizeLine.text = tr("Select at least two images to see the layout."); return }
         Dims.request(ctx, items) {
             val dims = items.map { Dims.known(it) }
-            if (dims.any { it == null }) { sizeLine.text = "Some images couldn't be read."; return@request }
+            if (dims.any { it == null }) { sizeLine.text = tr("Some images couldn't be read."); return@request }
             val plan = MergePlanner.plan(dims.map { it!![0] to it[1] }, ImagePrefs.mergeLayout, ImagePrefs.mergeSpacing, ImagePrefs.mergeAlign)
             preview.set(plan, items, ImagePrefs.mergeBackground)
             val mp = plan.width.toLong() * plan.height / 1e6
-            sizeLine.text = "Result: ${plan.width} × ${plan.height} px (${String.format(java.util.Locale.US, "%.1f", mp)} MP)"
+            sizeLine.text = tr("Result: {0} × {1} px ({2} MP)", plan.width, plan.height, String.format(I18n.locale, "%.1f", mp))
         }
     }
 
-    override fun outputNaming() = "Merged <date and time>.png"
+    override fun outputNaming() = trc("default file name", "Merged") + " " + tr("<date and time>") + ".png"
     override fun createJob(items: List<MediaItem>): ExportJob = MergeImagesJob(items, ImagePrefs.mergeLayout, ImagePrefs.mergeBackground, ImagePrefs.mergeSpacing, ImagePrefs.mergeAlign)
 }
 
@@ -240,7 +243,7 @@ class MergePreview(ctx: Context) : View(ctx) {
 
     init {
         background = Shapes.rounded(ctx, Palette.SURFACE_2, 16f, Palette.STROKE)
-        contentDescription = "Merge layout preview"
+        contentDescription = tr("Merge layout preview")
     }
 
     fun set(p: PackResult?, its: List<MediaItem>, b: MergeBackground) {
@@ -286,18 +289,18 @@ class StitchScreen(a: MainActivity) : ToolScreen(a, ToolId.STITCH) {
         // AI assistance is only offered when this phone has the resources for it (RAM, 64-bit, cores, model).
         val (available, reason) = TfliteEmbedder.availability(ctx)
         if (available) {
-            container.addView(ToggleRow(ctx, "AI Assisted Alignment", reason, ImagePrefs.stitchAi) { ImagePrefs.stitchAi = it })
-            container.addView(UI.note(ctx, "Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.", UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(6) })
+            container.addView(ToggleRow(ctx, tr("AI Assisted Alignment"), reason, ImagePrefs.stitchAi) { ImagePrefs.stitchAi = it })
+            container.addView(UI.note(ctx, tr("Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it."), UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(6) })
         } else {
             ImagePrefs.stitchAi = false
         }
-        section(container, "Scene type", "Auto detects how your photos were taken", top = if (available) 16 else 4)
-        container.addView(ChoiceGroup(ctx, SceneMode.entries, { when (it) { SceneMode.AUTO -> "Auto"; SceneMode.FLAT -> "Flat surface"; SceneMode.PANORAMA -> "Panorama" } }, ImagePrefs.stitchMode) { ImagePrefs.stitchMode = it }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.text(ctx, "Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid.", TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
-        container.addView(ToggleRow(ctx, "Crop to clean edges", "Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)", ImagePrefs.stitchCrop) { ImagePrefs.stitchCrop = it }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "For best results: overlap neighbouring shots by about a third, keep exposure steady and avoid moving subjects. Featureless walls, sky-only frames and repetitive textures (tiles, fences) are hard to align. Any arrangement and selection order works; photos that don't connect are reported.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        section(container, tr("Scene type"), tr("Auto detects how your photos were taken"), top = if (available) 16 else 4)
+        container.addView(ChoiceGroup(ctx, SceneMode.entries, { when (it) { SceneMode.AUTO -> tr("Auto"); SceneMode.FLAT -> tr("Flat surface"); SceneMode.PANORAMA -> tr("Panorama") } }, ImagePrefs.stitchMode) { ImagePrefs.stitchMode = it }, lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.text(ctx, tr("Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid."), TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(8) })
+        container.addView(ToggleRow(ctx, tr("Crop to clean edges"), tr("Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)"), ImagePrefs.stitchCrop) { ImagePrefs.stitchCrop = it }, lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.note(ctx, tr("For best results: overlap neighbouring shots by about a third, keep exposure steady and avoid moving subjects. Featureless walls, sky-only frames and repetitive textures (tiles, fences) are hard to align. Any arrangement and selection order works; photos that don't connect are reported."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
     }
 
-    override fun outputNaming() = "Stitched <date and time>.png · lossless, at the photos' native resolution when practical"
+    override fun outputNaming() = trc("default file name", "Stitched") + " " + tr("<date and time>") + ".png · " + tr("lossless, at the photos' native resolution when practical")
     override fun createJob(items: List<MediaItem>): ExportJob = StitchJob(items, ImagePrefs.stitchAi, ImagePrefs.stitchMode, ImagePrefs.stitchCrop)
 }

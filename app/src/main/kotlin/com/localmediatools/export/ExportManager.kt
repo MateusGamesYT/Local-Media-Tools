@@ -10,7 +10,9 @@ import com.localmediatools.core.ExportCancelledException
 import com.localmediatools.core.OutputArea
 import com.localmediatools.core.OutputFile
 import com.localmediatools.core.Workload
+import com.localmediatools.i18n.tr
 import com.localmediatools.tools.ToolId
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,7 +21,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
 
 /**
  * Runs exports one at a time in the app process (outside any screen), keeps a queue and a history,
@@ -113,7 +114,7 @@ object ExportManager {
                     ctx.results.all { it.outcome == ItemOutcome.SKIPPED } -> JobStatus.PARTIAL
                     else -> JobStatus.FAILED
                 }
-                if (ctx.results.isEmpty()) error = "Nothing was produced."
+                if (ctx.results.isEmpty()) error = tr("Nothing was produced.")
             } catch (e: ExportCancelledException) {
                 status = JobStatus.CANCELLED
             } catch (e: kotlinx.coroutines.CancellationException) {
@@ -144,7 +145,7 @@ object ExportManager {
         id = job.id, tool = job.tool, title = job.title, status = status,
         unitCount = job.unitCount, unitsDone = ctx?.unitsDone ?: 0,
         fraction = if (status == JobStatus.SUCCEEDED || status == JobStatus.PARTIAL) 1.0 else ctx?.fraction ?: 0.0,
-        currentName = ctx?.currentName, statusText = ctx?.statusText ?: "Waiting",
+        currentName = ctx?.currentName, statusText = ctx?.statusText ?: tr("Waiting"),
         results = ctx?.results?.toList() ?: emptyList(), workloadPercent = Workload.percent.value,
         startedAt = start, finishedAt = end, errorMessage = error,
     )

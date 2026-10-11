@@ -4,12 +4,14 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
 import java.util.Locale
 
 enum class MediaKind { IMAGE, GIF, VIDEO, PDF, AUDIO, OTHER }
 
 /** Container/codec family recognised from the file's leading bytes. */
-enum class SniffedFormat(val kind: MediaKind, val label: String) {
+enum class SniffedFormat(val kind: MediaKind, private val code: String) {
     JPEG(MediaKind.IMAGE, "JPEG"), PNG(MediaKind.IMAGE, "PNG"), WEBP(MediaKind.IMAGE, "WebP"),
     GIF(MediaKind.GIF, "GIF"), BMP(MediaKind.IMAGE, "BMP"), HEIF(MediaKind.IMAGE, "HEIF"),
     AVIF(MediaKind.IMAGE, "AVIF"), TIFF(MediaKind.IMAGE, "TIFF"), DNG(MediaKind.IMAGE, "DNG"),
@@ -21,6 +23,9 @@ enum class SniffedFormat(val kind: MediaKind, val label: String) {
     PDF(MediaKind.PDF, "PDF"),
     AUDIO(MediaKind.AUDIO, "Audio"),
     UNKNOWN(MediaKind.OTHER, "Unknown");
+
+    /** The format's name as shown ("JPEG", "MKV/WebM"; "Audio" and "Unknown" in the app's language). */
+    val label: String get() = when (this) { AUDIO -> tr("Audio"); UNKNOWN -> tr("Unknown"); else -> code }
 
     companion object {
         fun sniff(h: ByteArray, n: Int, name: String, mime: String?): SniffedFormat {
@@ -126,11 +131,11 @@ object MediaProbe {
                     n += k
                 }
             }
-            if (n == 0) error = "The file is empty"
+            if (n == 0) error = tr("The file is empty")
         } catch (e: SecurityException) {
-            error = "Permission to read this file was not granted"
+            error = tr("Permission to read this file was not granted")
         } catch (e: Exception) {
-            error = "The file can't be opened (${e.javaClass.simpleName})"
+            error = tr("The file can't be opened ({0})", e.javaClass.simpleName)
         }
         val format = if (error != null) SniffedFormat.UNKNOWN else SniffedFormat.sniff(head, n, name, mime)
         return MediaItem(uri, name, mime, size, format, error)
@@ -143,12 +148,12 @@ object MediaProbe {
 object Format {
     fun bytes(b: Long): String {
         if (b < 0) return "—"
-        if (b < 1024) return "$b B"
+        if (b < 1024) return tr("{0} B", b)
         val kb = b / 1024.0
-        if (kb < 1024) return String.format(Locale.US, "%.0f KB", kb)
+        if (kb < 1024) return tr("{0} KB", String.format(I18n.locale, "%.0f", kb))
         val mb = kb / 1024.0
-        if (mb < 1024) return String.format(Locale.US, if (mb < 10) "%.1f MB" else "%.0f MB", mb)
-        return String.format(Locale.US, "%.2f GB", mb / 1024.0)
+        if (mb < 1024) return tr("{0} MB", String.format(I18n.locale, if (mb < 10) "%.1f" else "%.0f", mb))
+        return tr("{0} GB", String.format(I18n.locale, "%.2f", mb / 1024.0))
     }
 
     fun duration(ms: Long): String {
@@ -158,13 +163,13 @@ object Format {
     }
 
     fun seconds(sec: Double): String = when {
-        sec >= 60 && sec % 60 == 0.0 -> "${(sec / 60).toInt()} min"
-        sec >= 60 -> String.format(Locale.US, "%d min %d s", (sec / 60).toInt(), (sec % 60).toInt())
-        sec == Math.floor(sec) -> "${sec.toInt()} s"
-        else -> String.format(Locale.US, "%.1f s", sec)
+        sec >= 60 && sec % 60 == 0.0 -> tr("{0} min", (sec / 60).toInt())
+        sec >= 60 -> tr("{0} min {1} s", (sec / 60).toInt(), (sec % 60).toInt())
+        sec == Math.floor(sec) -> tr("{0} s", sec.toInt())
+        else -> tr("{0} s", String.format(I18n.locale, "%.1f", sec))
     }
 
-    fun percent(f: Double) = "${(f * 100).toInt()}%"
+    fun percent(f: Double) = tr("{0}%", (f * 100).toInt())
 
     /** Removes characters that are unsafe in file names and limits the length. */
     fun safeFileName(s: String): String =

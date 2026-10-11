@@ -5,15 +5,19 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Typeface
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 /** The nine placement options. */
-enum class WatermarkPosition(val row: Int, val col: Int, val label: String) {
-    TOP_LEFT(0, 0, "Top left"), TOP_CENTER(0, 1, "Top center"), TOP_RIGHT(0, 2, "Top right"),
-    CENTER_LEFT(1, 0, "Center left"), CENTER(1, 1, "Center"), CENTER_RIGHT(1, 2, "Center right"),
-    BOTTOM_LEFT(2, 0, "Bottom left"), BOTTOM_CENTER(2, 1, "Bottom center"), BOTTOM_RIGHT(2, 2, "Bottom right");
+enum class WatermarkPosition(val row: Int, val col: Int, private val labelEn: String) {
+    TOP_LEFT(0, 0, N_("Top left")), TOP_CENTER(0, 1, N_("Top center")), TOP_RIGHT(0, 2, N_("Top right")),
+    CENTER_LEFT(1, 0, N_("Center left")), CENTER(1, 1, N_("Center")), CENTER_RIGHT(1, 2, N_("Center right")),
+    BOTTOM_LEFT(2, 0, N_("Bottom left")), BOTTOM_CENTER(2, 1, N_("Bottom center")), BOTTOM_RIGHT(2, 2, N_("Bottom right"));
+
+    val label: String get() = tr(labelEn)
 
     companion object { fun at(row: Int, col: Int) = entries.first { it.row == row && it.col == col } }
 }
@@ -120,8 +124,8 @@ object AspectGroups {
     }
 
     fun shapeName(w: Int, h: Int): String = when {
-        abs(w - h) <= max(w, h) * 0.02 -> "Square"
-        w > h -> "Landscape"
-        else -> "Portrait"
+        abs(w - h) <= max(w, h) * 0.02 -> tr("Square")
+        w > h -> tr("Landscape")
+        else -> tr("Portrait")
     }
 }

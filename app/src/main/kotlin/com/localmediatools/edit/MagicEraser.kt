@@ -11,11 +11,8 @@ import android.os.Build
 import com.localmediatools.codec.edit.MaskOps
 import com.localmediatools.codec.edit.MosaicOps
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import com.localmediatools.stitch.OpenCvLoader
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.photo.Photo
-import org.tensorflow.lite.Interpreter
 import java.io.Closeable
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -26,6 +23,10 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.photo.Photo
+import org.tensorflow.lite.Interpreter
 
 /** Fills masked pixels of a [MaskOps.MODEL_SIZE]² ARGB image. */
 interface Inpainter : Closeable {
@@ -39,7 +40,7 @@ interface Inpainter : Closeable {
  * input is the photo with the hole blanked plus the mask, output the completed 512×512 picture.
  */
 class MiganInpainter private constructor(private val interpreter: Interpreter) : Inpainter {
-    override val label = "AI · MI-GAN on-device"
+    override val label get() = tr("AI · MI-GAN on-device")
     override val isAi = true
     private val n = MaskOps.MODEL_SIZE * MaskOps.MODEL_SIZE
     private val input = ByteBuffer.allocateDirect(n * 4 * 4).order(ByteOrder.nativeOrder())
@@ -94,7 +95,7 @@ class MiganInpainter private constructor(private val interpreter: Interpreter) :
 
 /** Classic diffusion-based inpainting (OpenCV Telea): fine for thin or small blemishes. */
 class TeleaInpainter : Inpainter {
-    override val label = "Basic fill (AI unavailable)"
+    override val label get() = tr("Basic fill (AI unavailable)")
     override val isAi = false
 
     override fun inpaint(image: IntArray, hole: BooleanArray): IntArray {
@@ -127,12 +128,12 @@ object Inpainters {
     fun aiAvailability(ctx: Context): Pair<Boolean, String> {
         val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val mi = ActivityManager.MemoryInfo(); am.getMemoryInfo(mi)
-        if (am.isLowRamDevice) return false to "This phone is set up as a low-memory device."
-        if (mi.totalMem in 1 until (2L shl 30)) return false to "Needs at least 2 GB of RAM."
-        if (Build.SUPPORTED_64_BIT_ABIS.isEmpty()) return false to "Needs a 64-bit processor."
+        if (am.isLowRamDevice) return false to tr("This phone is set up as a low-memory device.")
+        if (mi.totalMem in 1 until (2L shl 30)) return false to tr("Needs at least 2 GB of RAM.")
+        if (Build.SUPPORTED_64_BIT_ABIS.isEmpty()) return false to tr("Needs a 64-bit processor.")
         val present = try { ctx.assets.openFd(MiganInpainter.ASSET).use { true } } catch (_: Exception) { false }
-        if (!present) return false to "The on-device model is missing from this build."
-        return true to "On-device AI"
+        if (!present) return false to tr("The on-device model is missing from this build.")
+        return true to tr("On-device AI")
     }
 
     /** The AI model when possible, otherwise the classic fill (always available). */
@@ -195,7 +196,7 @@ object Retouch {
         val holeExtra = d + 3 * f
         val area = clampRect(Stroke.bounds(strokes, holeExtra + 1), w, h)
         if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) {
-            throw UserFacingException("That area is too large to erase in one go with the memory available. Erase it in smaller parts.")
+            throw UserFacingException(tr("That area is too large to erase in one go with the memory available. Erase it in smaller parts."))
         }
         val plan = MaskOps.contextFor(w, h, area.left, area.top, area.right, area.bottom)
         val ctxRect = Rect(plan.left, plan.top, plan.left + plan.width, plan.top + plan.height)
@@ -271,7 +272,7 @@ object Retouch {
             // Align to the block grid of the whole photo so neighbouring strokes match up.
             val area = Rect((floor(b.left / block) * block).toInt().coerceAtLeast(0), (floor(b.top / block) * block).toInt().coerceAtLeast(0),
                 (ceil(b.right / block) * block).toInt().coerceAtMost(w), (ceil(b.bottom / block) * block).toInt().coerceAtMost(h))
-            if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) throw UserFacingException("That area is too large for the memory available. Do it in smaller parts.")
+            if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) throw UserFacingException(tr("That area is too large for the memory available. Do it in smaller parts."))
             val aw = area.width(); val ah = area.height()
             val bmp = rs.decode(area, 1, budget)
             val px = IntArray(aw * ah); bmp.getPixels(px, 0, aw, 0, 0, aw, ah)
@@ -284,7 +285,7 @@ object Retouch {
         val radius = if (featurePx > 0) max(3f, featurePx / 2 * (0.15f + 0.3f * st)) else minSide * (0.006f + 0.03f * st)
         val f = max(1f, radius / 4f)
         val area = clampRect(Stroke.bounds(strokes, radius * 2 + f * 2), w, h)
-        if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) throw UserFacingException("That area is too large for the memory available. Do it in smaller parts.")
+        if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) throw UserFacingException(tr("That area is too large for the memory available. Do it in smaller parts."))
         val aw = area.width(); val ah = area.height()
         val bmp = rs.decode(area, 1, budget)
         // Blur by shrinking and enlarging again (cheap and strong), smoothed by a second pass.

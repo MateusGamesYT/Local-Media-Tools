@@ -6,6 +6,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import com.localmediatools.print.core.FoundPrinter
 import com.localmediatools.print.core.IppClient
 import com.localmediatools.print.core.IppException
@@ -42,7 +43,7 @@ data class SavedPrinter(
 
         /** A printer typed in by IP address (or ipp:// address). */
         fun manual(text: String): SavedPrinter {
-            val a = try { PrinterAddress.parse(text) } catch (e: IllegalArgumentException) { throw UserFacingException(e.message ?: "Not a printer address") }
+            val a = try { PrinterAddress.parse(text) } catch (e: IllegalArgumentException) { throw UserFacingException(e.message ?: tr("Not a printer address")) }
             // A bare IP address: encrypted if the printer offers it, else unencrypted.
             return if (text.contains("://")) SavedPrinter("ip:" + a.hostText, a.hostText, null, a.uri)
                 else SavedPrinter("ip:" + a.hostText, a.hostText, null, a.copy(tls = true).uri, a.uri)
@@ -111,7 +112,7 @@ object Printers {
     /** Looks for printers on the Wi-Fi for [timeoutMs], reporting the growing list. Blocking. */
     fun discover(ctx: Context, timeoutMs: Long = 5000, cancelled: () -> Boolean = { false }, found: (List<FoundPrinter>) -> Unit = {}): List<FoundPrinter> {
         discoverOverride?.let { return it(timeoutMs).also(found) }
-        if (localNetwork(ctx) == null) throw UserFacingException("Connect the phone to the same Wi-Fi as the printer to find it.")
+        if (localNetwork(ctx) == null) throw UserFacingException(tr("Connect the phone to the same Wi-Fi as the printer to find it."))
         val wifi = ctx.applicationContext.getSystemService(WifiManager::class.java)
         val lock = wifi?.createMulticastLock("LocalMediaTools printers")?.apply { setReferenceCounted(false) }
         return try {
@@ -152,6 +153,6 @@ object Printers {
                 return@onLocalNetwork connect(ctx, moved, rediscover = false)
             }
         }
-        throw last ?: IppException("Can't reach the printer")
+        throw last ?: IppException(tr("Can't reach the printer"))
     }
 }

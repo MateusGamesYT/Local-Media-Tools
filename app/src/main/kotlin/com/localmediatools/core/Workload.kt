@@ -3,10 +3,13 @@ package com.localmediatools.core
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Process
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Global "Export workload" setting (10–100 %). It is not a CPU-percentage limiter; it shapes how
@@ -21,10 +24,13 @@ object Workload {
     const val MIN = 10
     const val MAX = 100
 
-    enum class Preset(val label: String, val percent: Int, val summary: String) {
-        EFFICIENT("Efficient", 25, "Gentle on battery and heat; exports take longer."),
-        BALANCED("Balanced", 60, "Good speed while the phone stays responsive."),
-        FAST("Fast", 100, "Uses the device fully; best when plugged in."),
+    enum class Preset(private val labelEn: String, val percent: Int, private val summaryEn: String) {
+        EFFICIENT(N_("Efficient"), 25, N_("Gentle on battery and heat; exports take longer.")),
+        BALANCED(N_("Balanced"), 60, N_("Good speed while the phone stays responsive.")),
+        FAST(N_("Fast"), 100, N_("Uses the device fully; best when plugged in."));
+
+        val label: String get() = tr(labelEn)
+        val summary: String get() = tr(summaryEn)
     }
 
     private const val PREFS = "settings"
@@ -47,9 +53,9 @@ object Workload {
     fun presetFor(percent: Int): Preset? = Preset.entries.firstOrNull { it.percent == percent }
 
     fun describe(percent: Int): String = presetFor(percent)?.label ?: when {
-        percent < 40 -> "Custom · light"
-        percent < 80 -> "Custom · moderate"
-        else -> "Custom · high"
+        percent < 40 -> tr("Custom · light")
+        percent < 80 -> tr("Custom · moderate")
+        else -> tr("Custom · high")
     }
 }
 
@@ -81,9 +87,9 @@ class WorkloadProfile(val percent: Int) {
     val label: String get() = Workload.describe(percent)
 
     fun explain(): String {
-        val par = if (parallelism == 1) "1 file at a time" else "up to $parallelism files at once"
-        val pause = if (dutyCycle >= 0.99) "no pauses" else "short pauses (~${((1 - dutyCycle) * 100).roundToInt()}% of the time)"
-        return "Images: $par · ${if (threadPriority >= 10) "background" else "normal"} priority · $pause"
+        val par = trn(parallelism, "{0} file at a time", "up to {0} files at once")
+        val pause = if (dutyCycle >= 0.99) tr("no pauses") else tr("short pauses (~{0}% of the time)", ((1 - dutyCycle) * 100).roundToInt())
+        return tr("Images: {0} · {1} · {2}", par, if (threadPriority >= 10) tr("background priority") else tr("normal priority"), pause)
     }
 }
 

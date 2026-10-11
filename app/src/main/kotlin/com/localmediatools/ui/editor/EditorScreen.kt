@@ -30,6 +30,11 @@ import com.localmediatools.edit.Inpainters
 import com.localmediatools.edit.PatchKind
 import com.localmediatools.edit.Stroke
 import com.localmediatools.export.ExportManager
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.ImageOutFormat
 import com.localmediatools.tools.EditPhotoJob
 import com.localmediatools.tools.ToolId
@@ -50,17 +55,19 @@ import com.localmediatools.ui.badge
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.icon
 import com.localmediatools.ui.lp
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
 
-enum class EditorMode(val label: String, val icon: Int) {
-    CROP("Crop", R.drawable.ic_crop),
-    ADJUST("Adjust", R.drawable.ic_tune),
-    FILTERS("Looks", R.drawable.ic_filter),
-    ERASE("Erase", R.drawable.ic_wand),
-    BLUR("Blur", R.drawable.ic_tool_redact),
+enum class EditorMode(private val labelEn: String, val icon: Int) {
+    CROP(N_("Crop"), R.drawable.ic_crop),
+    ADJUST(N_("Adjust"), R.drawable.ic_tune),
+    FILTERS(N_("Looks"), R.drawable.ic_filter),
+    ERASE(N_("Erase"), R.drawable.ic_wand),
+    BLUR(N_("Blur"), R.drawable.ic_tool_redact);
+
+    val label: String get() = tr(labelEn)
 }
 
 /** Single-photo editor: crop & straighten, adjustments, looks, AI eraser and blur/pixelate brushes. */
@@ -92,11 +99,11 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
 
         // Top bar.
         val bar = UI.horizontal(ctx).apply { setPadding(ctx.dp(4), ctx.dp(6), ctx.dp(10), ctx.dp(6)) }
-        bar.addView(UI.iconButton(ctx, R.drawable.ic_close, "Close editor") { onBack() })
+        bar.addView(UI.iconButton(ctx, R.drawable.ic_close, tr("Close editor")) { onBack() })
         bar.addView(UI.text(ctx, tool.title, TextStyle.SUBTITLE).apply { maxLines = 1; isAccessibilityHeading = true }, lp(0, WRAP, 1f).apply { leftMargin = ctx.dp(2) })
-        undoBtn = UI.iconButton(ctx, R.drawable.ic_undo, "Undo") { undo() }
-        redoBtn = UI.iconButton(ctx, R.drawable.ic_redo, "Redo") { redo() }
-        val compare = UI.iconButton(ctx, R.drawable.ic_compare, "Hold to compare with the original") {}
+        undoBtn = UI.iconButton(ctx, R.drawable.ic_undo, tr("Undo")) { undo() }
+        redoBtn = UI.iconButton(ctx, R.drawable.ic_redo, tr("Redo")) { redo() }
+        val compare = UI.iconButton(ctx, R.drawable.ic_compare, tr("Hold to compare with the original")) {}
         compare.setOnTouchListener { v, e ->
             when (e.actionMasked) {
                 MotionEvent.ACTION_DOWN -> { canvas.comparing = true; v.isPressed = true }
@@ -105,7 +112,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             true
         }
         bar.addView(undoBtn); bar.addView(redoBtn); bar.addView(compare)
-        saveBtn = UI.primaryButton(ctx, "Save") { showSaveSheet() }
+        saveBtn = UI.primaryButton(ctx, tr("Save")) { showSaveSheet() }
         saveBtn.minimumHeight = ctx.dp(40)
         saveBtn.setPadding(ctx.dp(18), 0, ctx.dp(18), 0)
         bar.addView(saveBtn, LinearLayout.LayoutParams(WRAP, ctx.dp(40)).apply { leftMargin = ctx.dp(6) })
@@ -120,7 +127,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             setBackgroundColor(0x88000000.toInt())
             isClickable = true
             addView(ProgressBar(ctx).apply { indeterminateTintList = android.content.res.ColorStateList.valueOf(Palette.ACCENT) }, LinearLayout.LayoutParams(ctx.dp(44), ctx.dp(44)))
-            busyText = UI.text(ctx, "Opening photo…", TextStyle.SUBTITLE, Color.WHITE).apply { setPadding(0, ctx.dp(12), 0, 0); gravity = Gravity.CENTER }
+            busyText = UI.text(ctx, tr("Opening photo…"), TextStyle.SUBTITLE, Color.WHITE).apply { setPadding(0, ctx.dp(12), 0, 0); gravity = Gravity.CENTER }
             addView(busyText)
         }
         stage.addView(busyOverlay, FrameLayout.LayoutParams(MATCH, MATCH))
@@ -157,7 +164,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
                 busy(null)
                 setMode(mode, force = true)
             } catch (e: Throwable) {
-                Toast.makeText(ctx, "This photo can't be edited: ${Errors.describe(e)}", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, tr("This photo can't be edited: {0}", Errors.describe(e)), Toast.LENGTH_LONG).show()
                 pop()
             }
         }
@@ -181,8 +188,8 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         refreshTabs()
         canvas.mode = when (m) { EditorMode.CROP -> EditorCanvas.Mode.CROP; EditorMode.ERASE, EditorMode.BLUR -> EditorCanvas.Mode.BRUSH; else -> EditorCanvas.Mode.VIEW }
         canvas.hint = when (m) {
-            EditorMode.ERASE -> "Brush over what you want to remove"
-            EditorMode.BLUR -> "Paint over what you want to hide"
+            EditorMode.ERASE -> tr("Brush over what you want to remove")
+            EditorMode.BLUR -> tr("Paint over what you want to hide")
             else -> null
         }
         canvas.brushColor = if (m == EditorMode.ERASE) 0x77FF3D7F else 0x773D8BFF
@@ -191,7 +198,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         if (m == EditorMode.ERASE) scope.launch {
             val engine = withContext(session.worker) { session.ensureInpainter() }
             eraserLabel?.text = engine.label
-            eraserBadge?.let { b -> b.text = if (engine.isAi) "ON-DEVICE AI" else "BASIC FILL"; b.background = badge(ctx, "", if (engine.isAi) Palette.AI else intArrayOf(Palette.SURFACE_3, Palette.SURFACE_3)).background }
+            eraserBadge?.let { b -> b.text = if (engine.isAi) tr("On-device AI").uppercase(I18n.locale) else tr("Basic fill").uppercase(I18n.locale); b.background = badge(ctx, "", if (engine.isAi) Palette.AI else intArrayOf(Palette.SURFACE_3, Palette.SURFACE_3)).background }
         }
     }
 
@@ -202,7 +209,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             (cell.getChildAt(0) as ImageView).drawable.setTint(if (sel) Palette.ACCENT else Palette.TEXT_3)
             (cell.getChildAt(1) as TextView).setTextColor(if (sel) Palette.TEXT else Palette.TEXT_3)
             cell.background = if (sel) Shapes.rounded(ctx, Palette.ACCENT_DARK, 16f) else null
-            cell.contentDescription = (cell.tag as EditorMode).label + if (sel) ", selected" else ""
+            cell.contentDescription = (cell.tag as EditorMode).label + if (sel) tr(", selected") else ""
         }
     }
 
@@ -283,7 +290,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         }
         val stroke = Stroke(src, (radiusBitmap / outScale).toFloat())
         val kind = if (mode == EditorMode.ERASE) PatchKind.ERASE else blurKind
-        busy(if (kind == PatchKind.ERASE) "Erasing…" else "Applying…")
+        busy(if (kind == PatchKind.ERASE) tr("Erasing…") else tr("Applying…"))
         scope.launch {
             try {
                 withContext(session.worker) { session.retouch(kind, listOf(stroke), blurStrength) }
@@ -319,7 +326,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
     }
 
     private data class Aspect(val label: String, val ratio: Double?)
-    private fun aspects(): List<Aspect> = listOf(Aspect("Free", null), Aspect("Original", -1.0), Aspect("Square", 1.0), Aspect("4:5", 0.8),
+    private fun aspects(): List<Aspect> = listOf(Aspect(tr("Free"), null), Aspect(tr("Original"), -1.0), Aspect(tr("Square"), 1.0), Aspect("4:5", 0.8),
         Aspect("3:4", 0.75), Aspect("2:3", 2.0 / 3), Aspect("9:16", 9.0 / 16), Aspect("16:9", 16.0 / 9), Aspect("3:2", 1.5), Aspect("4:3", 4.0 / 3))
 
     private var aspectChoice: Aspect? = null
@@ -346,7 +353,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             }
         })
         val straightenRow = UI.horizontal(ctx)
-        straightenRow.addView(UI.text(ctx, "Straighten", TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
+        straightenRow.addView(UI.text(ctx, tr("Straighten"), TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
         val slider = BipolarSlider(ctx, 45f) { v, done ->
             val s = session.current
             val next = s.copy(geometry = s.geometry.copy(straighten = (v * 10).roundToInt() / 10.0, crop = s.geometry.crop))
@@ -357,16 +364,16 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         straightenRow.addView(slider, lp(0, WRAP, 1f))
         col.addView(straightenRow, lp().apply { topMargin = ctx.dp(6) })
         val actions = UI.horizontal(ctx)
-        actions.addView(UI.secondaryButton(ctx, "Rotate", R.drawable.ic_rotate) {
+        actions.addView(UI.secondaryButton(ctx, tr("Rotate"), R.drawable.ic_rotate) {
             aspectChoice = null; canvas.aspect = null
             val s = session.current; commit(s.copy(geometry = s.geometry.rotatedClockwise()))
         }.apply { minimumHeight = ctx.dp(40) })
         actions.addView(UI.spacer(ctx, wDp = 8))
-        actions.addView(UI.secondaryButton(ctx, "Flip", R.drawable.ic_flip) { val s = session.current; commit(s.copy(geometry = s.geometry.flippedHorizontally())) }.apply { minimumHeight = ctx.dp(40) })
+        actions.addView(UI.secondaryButton(ctx, tr("Flip"), R.drawable.ic_flip) { val s = session.current; commit(s.copy(geometry = s.geometry.flippedHorizontally())) }.apply { minimumHeight = ctx.dp(40) })
         actions.addView(UI.flex(ctx))
         cropInfo = UI.text(ctx, cropLabel(session.current), TextStyle.CAPTION, Palette.TEXT_3)
         actions.addView(cropInfo)
-        actions.addView(UI.ghostButton(ctx, "Reset") { aspectChoice = null; canvas.aspect = null; val s = session.current; commit(s.copy(geometry = com.localmediatools.codec.edit.Geometry())) }.apply { minimumHeight = ctx.dp(40) })
+        actions.addView(UI.ghostButton(ctx, tr("Reset")) { aspectChoice = null; canvas.aspect = null; val s = session.current; commit(s.copy(geometry = com.localmediatools.codec.edit.Geometry())) }.apply { minimumHeight = ctx.dp(40) })
         col.addView(actions, lp().apply { topMargin = ctx.dp(2) })
     }
 
@@ -388,9 +395,9 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         row.addView(value, LinearLayout.LayoutParams(ctx.dp(48), WRAP))
         col.addView(row, lp().apply { topMargin = ctx.dp(10) })
         val auto = UI.horizontal(ctx)
-        auto.addView(pill(R.drawable.ic_sparkle, "Auto enhance") { runAutoEnhance() })
+        auto.addView(pill(R.drawable.ic_sparkle, tr("Auto enhance")) { runAutoEnhance() })
         auto.addView(badge(ctx, "AI"), LinearLayout.LayoutParams(WRAP, WRAP).apply { leftMargin = ctx.dp(8) })
-        autoNote = UI.text(ctx, autoNoteText ?: "Double-tap a slider to reset", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(ctx.dp(10), 0, 0, 0); maxLines = 2 }
+        autoNote = UI.text(ctx, autoNoteText ?: tr("Double-tap a slider to reset"), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(ctx.dp(10), 0, 0, 0); maxLines = 2 }
         auto.addView(autoNote, lp(0, WRAP, 1f))
         col.addView(auto, lp().apply { topMargin = ctx.dp(6) })
     }
@@ -406,7 +413,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             val cell = UI.vertical(ctx).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
                 isClickable = true; isFocusable = true
-                contentDescription = p.label + if (sel) ", selected" else ""
+                contentDescription = p.label + if (sel) tr(", selected") else ""
                 setOnClickListener { val cur = session.current; commit(cur.copy(filter = FilterSpec(p, if (cur.filter.preset == p) cur.filter.intensity else 1f))) }
             }
             val iv = ImageView(ctx).apply {
@@ -423,7 +430,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         col.addView(strip)
         if (s.filter.preset != FilterPreset.NONE) {
             val r = UI.horizontal(ctx)
-            r.addView(UI.text(ctx, "Strength", TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(70), WRAP))
+            r.addView(UI.text(ctx, tr("Strength"), TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(70), WRAP))
             val slider = BipolarSlider(ctx, 100f) { v, done ->
                 val cur = session.current
                 val next = cur.copy(filter = cur.filter.copy(intensity = v / 100f))
@@ -449,7 +456,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
 
     private fun brushSizeRow(col: LinearLayout) {
         val r = UI.horizontal(ctx)
-        r.addView(UI.text(ctx, "Brush size", TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
+        r.addView(UI.text(ctx, tr("Brush size"), TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
         val slider = BipolarSlider(ctx, 100f) { v, _ -> brushSize = v / 100f; canvas.brushRadiusDp = 8f + 52f * brushSize; canvas.previewBrush() }
         slider.bipolar = false
         slider.set(brushSize * 100f)
@@ -461,13 +468,13 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
     private fun erasePanel(col: LinearLayout) {
         val (ai, why) = Inpainters.aiAvailability(ctx)
         val head = UI.horizontal(ctx)
-        eraserBadge = badge(ctx, if (ai) "AI" else "BASIC FILL", if (ai) Palette.AI else intArrayOf(Palette.SURFACE_3, Palette.SURFACE_3))
+        eraserBadge = badge(ctx, if (ai) tr("AI") else tr("Basic fill").uppercase(I18n.locale), if (ai) Palette.AI else intArrayOf(Palette.SURFACE_3, Palette.SURFACE_3))
         head.addView(eraserBadge)
-        eraserLabel = UI.text(ctx, if (ai) "Loading the on-device model…" else why, TextStyle.CAPTION).apply { setPadding(ctx.dp(10), 0, 0, 0); maxLines = 2 }
+        eraserLabel = UI.text(ctx, if (ai) tr("Loading the on-device model…") else why, TextStyle.CAPTION).apply { setPadding(ctx.dp(10), 0, 0, 0); maxLines = 2 }
         session.inpainterLabel?.let { eraserLabel?.text = it }
         head.addView(eraserLabel, lp(0, WRAP, 1f))
         col.addView(head)
-        col.addView(UI.text(ctx, "Paint over a person or object, then lift your finger. Cover its shadow too. Zoom with two fingers for small details.", TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(8); bottomMargin = ctx.dp(4) })
+        col.addView(UI.text(ctx, tr("Paint over a person or object, then lift your finger. Cover its shadow too. Zoom with two fingers for small details."), TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(8); bottomMargin = ctx.dp(4) })
         brushSizeRow(col)
     }
 
@@ -475,12 +482,12 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
     private var autoNoteText: String? = null
 
     private fun runAutoEnhance() {
-        busy("Enhancing…")
+        busy(tr("Enhancing…"))
         scope.launch {
             try {
                 val r = withContext(session.worker) { session.autoEnhance() }
                 val cur = session.current
-                autoNoteText = "${r.scene.label}: ${r.notes.joinToString(", ").ifBlank { "already well balanced" }}"
+                autoNoteText = tr("{0}: {1}", r.scene.label, r.notes.joinToString(trc("between the items of a list", ", ")).ifBlank { tr("already well balanced") })
                 commit(cur.copy(adjust = r.adjust))
                 buildPanel(keepScroll = true)
                 requestRender(full = true)
@@ -491,13 +498,13 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
     }
 
     private fun obscureAllFaces() {
-        busy("Finding faces…")
+        busy(tr("Finding faces…"))
         scope.launch {
             try {
                 val n = withContext(session.worker) { session.obscureFaces(blurKind, blurStrength) }
                 refreshUndo()
                 requestRender(full = true)
-                Toast.makeText(ctx, if (n == 0) "No faces were found in this photo." else "${if (blurKind == PatchKind.PIXELATE) "Pixelated" else "Blurred"} $n ${if (n == 1) "face" else "faces"} · undo to bring them back", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, if (n == 0) tr("No faces were found in this photo.") else if (blurKind == PatchKind.PIXELATE) trn(n, "Pixelated {0} face · undo to bring it back", "Pixelated {0} faces · undo to bring them back") else trn(n, "Blurred {0} face · undo to bring it back", "Blurred {0} faces · undo to bring them back"), Toast.LENGTH_LONG).show()
             } catch (e: Throwable) {
                 Toast.makeText(ctx, Errors.describe(e), Toast.LENGTH_LONG).show()
             } finally { busy(null) }
@@ -518,10 +525,10 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
     private fun blurPanel(col: LinearLayout) {
         val top = UI.horizontal(ctx)
         top.addView(ChoiceGroup(ctx, listOf(PatchKind.BLUR, PatchKind.PIXELATE), { it.label }, blurKind) { blurKind = it }, lp(0, WRAP, 1f))
-        top.addView(pill(R.drawable.ic_tool_faceblur, "Hide all faces") { obscureAllFaces() })
+        top.addView(pill(R.drawable.ic_tool_faceblur, tr("Hide all faces")) { obscureAllFaces() })
         col.addView(top)
         val r = UI.horizontal(ctx)
-        r.addView(UI.text(ctx, "Strength", TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
+        r.addView(UI.text(ctx, tr("Strength"), TextStyle.CAPTION, Palette.TEXT_2), LinearLayout.LayoutParams(ctx.dp(84), WRAP))
         val strength = BipolarSlider(ctx, 100f) { v, _ -> blurStrength = (v / 100f).coerceAtLeast(0.05f) }
         strength.bipolar = false
         strength.set(blurStrength * 100f)
@@ -544,21 +551,21 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         var quality = 92
         val body = UI.vertical(ctx, 20, 8)
         val plan = session.plan(session.current)
-        body.addView(UI.text(ctx, "${plan.outW} × ${plan.outH} px · full resolution", TextStyle.BODY_2))
-        val q = SliderField(ctx, "Quality", 50, 100, quality) { quality = it }
+        body.addView(UI.text(ctx, "${plan.outW} × ${plan.outH} px · " + tr("full resolution"), TextStyle.BODY_2))
+        val q = SliderField(ctx, tr("Quality"), 50, 100, quality) { quality = it }
         val formats = listOf(ImageOutFormat.JPEG, ImageOutFormat.PNG, ImageOutFormat.WEBP)
         body.addView(ChoiceGroup(ctx, formats, { it.label }, format, badgeOf = { if (it == ImageOutFormat.PNG) "lossless" else null }) {
             format = it; q.visibility = if (it.lossless) View.GONE else View.VISIBLE
         }, lp().apply { topMargin = ctx.dp(12) })
         q.visibility = if (format.lossless) View.GONE else View.VISIBLE
         body.addView(q, lp().apply { topMargin = ctx.dp(12) })
-        if (session.hasAlpha) body.addView(UI.note(ctx, "This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
-        body.addView(UI.note(ctx, "A new copy is saved to ${tool.outputPath}. The original is not changed. Location and camera details are not copied.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(10) })
+        if (session.hasAlpha) body.addView(UI.note(ctx, tr("This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
+        body.addView(UI.note(ctx, tr("A new copy is saved to {0}. The original is not changed. Location and camera details are not copied.", tool.outputPath), UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(10) })
         AlertDialog.Builder(activity)
-            .setTitle("Save a copy")
+            .setTitle(tr("Save a copy"))
             .setView(ScrollView(ctx).apply { addView(body) })
-            .setPositiveButton("Save") { _, _ -> save(format, quality) }
-            .setNegativeButton("Cancel", null)
+            .setPositiveButton(tr("Save")) { _, _ -> save(format, quality) }
+            .setNegativeButton(tr("Cancel"), null)
             .show()
     }
 
@@ -569,7 +576,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             session.saved = true
             activity.ensureNotificationPermission {
                 ExportManager.enqueue(job)
-                Toast.makeText(ctx, "Saving in the background…", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, tr("Saving in the background…"), Toast.LENGTH_SHORT).show()
                 pop()
                 push(ResultsScreen(activity, job.id))
             }
@@ -579,10 +586,10 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
     override fun onBack(): Boolean {
         if (loaded && session.changed && !session.saved) {
             AlertDialog.Builder(activity)
-                .setTitle("Discard your edits?")
-                .setMessage("Nothing has been saved yet. Your original photo is not affected.")
-                .setPositiveButton("Discard") { _, _ -> session.saved = false; forceClose() }
-                .setNegativeButton("Keep editing", null)
+                .setTitle(tr("Discard your edits?"))
+                .setMessage(tr("Nothing has been saved yet. Your original photo is not affected."))
+                .setPositiveButton(tr("Discard")) { _, _ -> session.saved = false; forceClose() }
+                .setNegativeButton(tr("Keep editing"), null)
                 .show()
             return true
         }

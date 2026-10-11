@@ -15,6 +15,8 @@ import com.localmediatools.app.MainActivity
 import com.localmediatools.gallery.GFace
 import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import com.localmediatools.ui.ChipRow
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Screen
@@ -36,7 +38,7 @@ import kotlinx.coroutines.withContext
  * faces of one person for review. Tap a face to name or correct it; long-press to see its photo.
  */
 class FacesScreen(activity: MainActivity, private val personId: Long? = null) : Screen(activity) {
-    enum class Filter(val label: String) { ALL("All"), NAMED("Named"), UNNAMED("Unnamed groups"), ALONE("On their own"), IGNORED("Ignored") }
+    enum class Filter(private val en: String) { ALL(N_("All")), NAMED(N_("Named")), UNNAMED(N_("Unnamed groups")), ALONE(N_("On their own")), IGNORED(N_("Ignored")); val label: String get() = tr(en) }
 
     private var filter = Filter.ALL
     private var faces: List<GFace> = emptyList()
@@ -49,13 +51,13 @@ class FacesScreen(activity: MainActivity, private val personId: Long? = null) : 
     override fun createView(): View {
         val root = UI.vertical(ctx).apply { setBackgroundColor(Palette.BG) }
         count = UI.text(ctx, "", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, 0, ctx.dp(10), 0) }
-        root.addView(TopBar(this, if (personId == null) "All faces" else "Review faces", count))
+        root.addView(TopBar(this, if (personId == null) tr("All faces") else tr("Review faces"), count))
         if (personId == null) {
             root.addView(ChipRow(ctx, Filter.entries, { it.label }, filter) { filter = it; load() }.apply {
                 setPadding(ctx.dp(16), 0, ctx.dp(16), 0)
             }, lp().apply { bottomMargin = ctx.dp(8) })
         } else {
-            root.addView(UI.text(ctx, "Tap a face that isn't this person to remove it.", TextStyle.CAPTION).apply { setPadding(ctx.dp(16), 0, ctx.dp(16), ctx.dp(8)) })
+            root.addView(UI.text(ctx, tr("Tap a face that isn't this person to remove it."), TextStyle.CAPTION).apply { setPadding(ctx.dp(16), 0, ctx.dp(16), ctx.dp(8)) })
         }
         list = ListView(ctx).apply {
             divider = null; dividerHeight = 0; selector = Shapes.rounded(ctx, Color.TRANSPARENT, 0f)
@@ -102,10 +104,10 @@ class FacesScreen(activity: MainActivity, private val personId: Long? = null) : 
 
     private fun open(f: GFace) {
         if (f.ignored) {
-            android.app.AlertDialog.Builder(activity).setTitle("Show this face in People again?")
-                .setPositiveButton("Show") { _, _ ->
+            android.app.AlertDialog.Builder(activity).setTitle(tr("Show this face in People again?"))
+                .setPositiveButton(tr("Show")) { _, _ ->
                     scope.launch { withContext(Dispatchers.IO) { GalleryDb.get(ctx).setIgnored(f.id, false) }; GalleryIndex.regroupNow(ctx) }
-                }.setNegativeButton("Cancel", null).show()
+                }.setNegativeButton(tr("Cancel"), null).show()
             return
         }
         FaceSheet.show(activity, f) { load() }
@@ -164,16 +166,16 @@ class FacesScreen(activity: MainActivity, private val personId: Long? = null) : 
             GalleryThumbs.face(context, f, 192, img)
             val name = f.personId?.let { names[it] }
             label.text = when {
-                f.ignored -> "Ignored"
+                f.ignored -> tr("Ignored")
                 name != null -> name
-                f.personId != null -> "Unnamed"
-                !f.good -> "Small or blurry"
-                else -> "On their own"
+                f.personId != null -> tr("Unnamed")
+                !f.good -> tr("Small or blurry")
+                else -> tr("On their own")
             }
             label.setTextColor(if (name != null) Palette.TEXT else Palette.TEXT_3)
             ring.setPadding(dp(2), dp(2), dp(2), dp(2))
             ring.background = Shapes.circle(if (name != null) Palette.ACCENT else Color.TRANSPARENT)
-            contentDescription = "${label.text}. Tap to name or correct, long-press to open the photo."
+            contentDescription = tr("{0}. Tap to name or correct, long-press to open the photo.", label.text)
         }
     }
 }

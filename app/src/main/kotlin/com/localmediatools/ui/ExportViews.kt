@@ -20,13 +20,17 @@ import com.localmediatools.core.WorkloadProfile
 import com.localmediatools.export.ExportManager
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
-import com.localmediatools.export.savedTo
 import com.localmediatools.export.JobSnapshot
 import com.localmediatools.export.JobStatus
+import com.localmediatools.export.savedTo
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.ToolId
-import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
+import kotlinx.coroutines.launch
 
 /** Back arrow + title (+ optional trailing view). */
 class TopBar(screen: Screen, title: String, trailing: View? = null) : LinearLayout(screen.ctx) {
@@ -34,7 +38,7 @@ class TopBar(screen: Screen, title: String, trailing: View? = null) : LinearLayo
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(4), dp(6), dp(8), dp(6))
-        addView(UI.iconButton(context, R.drawable.ic_back, "Back") { screen.activity.navigator.back() })
+        addView(UI.iconButton(context, R.drawable.ic_back, tr("Back")) { screen.activity.navigator.back() })
         addView(UI.text(context, title, TextStyle.TITLE).apply {
             setPadding(dp(4), 0, 0, 0)
             maxLines = 1
@@ -50,9 +54,9 @@ object OutputActions {
     fun open(activity: MainActivity, f: OutputFile) {
         val i = Intent(Intent.ACTION_VIEW).setDataAndType(f.uri, f.mime).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try { activity.startActivity(i) } catch (e: ActivityNotFoundException) {
-            Toast.makeText(activity, "No installed app can open ${f.mime} files.", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, tr("No installed app can open {0} files.", f.mime), Toast.LENGTH_LONG).show()
         } catch (e: SecurityException) {
-            Toast.makeText(activity, "This file is no longer available.", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, tr("This file is no longer available."), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -68,7 +72,7 @@ object OutputActions {
         files.drop(1).forEach { clip.addItem(ClipData.Item(it.uri)) }
         i.clipData = clip
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        try { activity.startActivity(Intent.createChooser(i, "Share")) } catch (_: Exception) { }
+        try { activity.startActivity(Intent.createChooser(i, tr("Share"))) } catch (_: Exception) { }
     }
 }
 
@@ -130,28 +134,28 @@ class ExportStatusCard(private val screen: Screen, private val tool: ToolId?) : 
                 append(snap.statusText)
                 snap.currentName?.let { append(" · ").append(it) }
             }
-            queued -> "Waiting for the current export to finish"
-            else -> snap.summary() + " · " + DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(snap.finishedAt))
+            queued -> tr("Waiting for the current export to finish")
+            else -> snap.summary() + " · " + DateFormat.getTimeInstance(DateFormat.SHORT, I18n.locale).format(Date(snap.finishedAt))
         }
         bar.visibility = if (running || queued) VISIBLE else GONE
         pct.visibility = bar.visibility
         bar.indeterminate = queued || (running && snap.fraction <= 0.0)
         if (running) bar.setProgress(snap.fraction.toFloat(), color)
-        pct.text = if (running) "${(snap.fraction * 100).toInt()}%" else ""
+        pct.text = if (running) tr("{0}%", (snap.fraction * 100).toInt()) else ""
         val wl = WorkloadProfile(Workload.percent.value)
         workloadLine.visibility = if (running || queued) VISIBLE else GONE
-        workloadLine.text = "Export workload: ${wl.label} (${wl.percent}%) · ${if (snap.unitCount > 1) "${snap.unitsDone} of ${snap.unitCount} done" else "1 job"}"
+        workloadLine.text = tr("Export workload: {0} ({1}%)", wl.label, wl.percent) + " · " + if (snap.unitCount > 1) tr("{0} of {1} done", snap.unitsDone, snap.unitCount) else tr("1 job")
         if (shownId != snap.id || shownStatus != snap.status) {
             shownId = snap.id; shownStatus = snap.status
             actions.removeAllViews()
             if (running || queued) {
-                actions.addView(UI.secondaryButton(context, "Cancel", R.drawable.ic_close) { confirmCancel(snap) })
-                actions.addView(UI.ghostButton(context, "Workload", R.drawable.ic_tune) { WorkloadDialog.show(screen.activity) })
+                actions.addView(UI.secondaryButton(context, tr("Cancel"), R.drawable.ic_close) { confirmCancel(snap) })
+                actions.addView(UI.ghostButton(context, tr("Workload"), R.drawable.ic_tune) { WorkloadDialog.show(screen.activity) })
             } else {
-                actions.addView(UI.secondaryButton(context, "View results", R.drawable.ic_chevron) { screen.push(ResultsScreen(screen.activity, snap.id)) })
+                actions.addView(UI.secondaryButton(context, tr("View results"), R.drawable.ic_chevron) { screen.push(ResultsScreen(screen.activity, snap.id)) })
                 val outs = snap.outputs
-                if (outs.size == 1) actions.addView(UI.ghostButton(context, "Open", R.drawable.ic_open) { OutputActions.open(screen.activity, outs[0]) })
-                if (outs.isNotEmpty()) actions.addView(UI.ghostButton(context, "Share", R.drawable.ic_share) { OutputActions.share(screen.activity, outs) })
+                if (outs.size == 1) actions.addView(UI.ghostButton(context, tr("Open"), R.drawable.ic_open) { OutputActions.open(screen.activity, outs[0]) })
+                if (outs.isNotEmpty()) actions.addView(UI.ghostButton(context, tr("Share"), R.drawable.ic_share) { OutputActions.share(screen.activity, outs) })
             }
         }
         contentDescription = "${title.text}. ${status.text}. ${pct.text}"
@@ -159,10 +163,10 @@ class ExportStatusCard(private val screen: Screen, private val tool: ToolId?) : 
 
     private fun confirmCancel(snap: JobSnapshot) {
         AlertDialog.Builder(screen.activity)
-            .setTitle("Cancel this export?")
-            .setMessage("Files already saved are kept. The file being processed is discarded, never left half-written.")
-            .setPositiveButton("Cancel export") { _, _ -> ExportManager.cancel(snap.id) }
-            .setNegativeButton("Keep going", null)
+            .setTitle(tr("Cancel this export?"))
+            .setMessage(tr("Files already saved are kept. The file being processed is discarded, never left half-written."))
+            .setPositiveButton(tr("Cancel export")) { _, _ -> ExportManager.cancel(snap.id) }
+            .setNegativeButton(tr("Keep going"), null)
             .show()
     }
 }
@@ -174,20 +178,20 @@ object WorkloadDialog {
         val root = UI.vertical(ctx)
         val explain = UI.text(ctx, "", TextStyle.CAPTION)
         var slider: SliderField? = null
-        val presets = ChoiceGroup(ctx, Workload.Preset.entries, { "${it.label} ${it.percent}%" }, Workload.presetFor(Workload.percent.value)) { p ->
+        val presets = ChoiceGroup(ctx, Workload.Preset.entries, { it.label + " " + tr("{0}%", it.percent) }, Workload.presetFor(Workload.percent.value)) { p ->
             slider?.setValue(p.percent, fromField = false)
         }
         fun update(v: Int) {
             Workload.set(ctx, v)
             val p = WorkloadProfile(v)
-            explain.text = (Workload.presetFor(v)?.summary ?: "Custom setting.") + "\n" + p.explain()
+            explain.text = (Workload.presetFor(v)?.summary ?: tr("Custom setting.")) + "\n" + p.explain()
             Workload.presetFor(v)?.let { presets.select(it, notify = false) }
         }
-        slider = SliderField(ctx, "Export workload", Workload.MIN, Workload.MAX, Workload.percent.value, "%", "How hard exports may work the phone") { update(it) }
+        slider = SliderField(ctx, tr("Export workload"), Workload.MIN, Workload.MAX, Workload.percent.value, "%", tr("How hard exports may work the phone")) { update(it) }
         root.addView(presets, lp().apply { topMargin = ctx.dp(4) })
         root.addView(slider, lp().apply { topMargin = ctx.dp(14) })
         root.addView(explain, lp().apply { topMargin = ctx.dp(8) })
-        if (withNote) root.addView(UI.note(ctx, "This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        if (withNote) root.addView(UI.note(ctx, tr("This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
         update(Workload.percent.value)
         return root
     }
@@ -196,9 +200,9 @@ object WorkloadDialog {
         val root = content(activity).apply { setPadding(activity.dp(20), activity.dp(8), activity.dp(20), activity.dp(8)) }
         val scroll = ScrollView(activity).apply { addView(root) }
         AlertDialog.Builder(activity)
-            .setTitle("Export workload")
+            .setTitle(tr("Export workload"))
             .setView(scroll)
-            .setPositiveButton("Done", null)
+            .setPositiveButton(tr("Done"), null)
             .show()
     }
 }
@@ -209,7 +213,7 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
 
     override fun createView(): View {
         val root = UI.vertical(ctx).apply { setBackgroundColor(Palette.BG) }
-        root.addView(TopBar(this, "Export results"))
+        root.addView(TopBar(this, tr("Export results")))
         body = UI.vertical(ctx, 16, 4)
         root.addView(ScrollView(ctx).apply { addView(body); isFillViewport = true }, lp(MATCH, 0, 1f))
         scope.launch { ExportManager.state.collect { render(it) } }
@@ -224,27 +228,27 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
         if (key == lastKey && snap?.status != JobStatus.RUNNING) return
         lastKey = key
         body.removeAllViews()
-        if (snap == null) { body.addView(UI.text(ctx, "This export is no longer in the history.", TextStyle.BODY_2)); return }
+        if (snap == null) { body.addView(UI.text(ctx, tr("This export is no longer in the history."), TextStyle.BODY_2)); return }
         body.addView(ExportStatusCardStatic(snap))
         val outs = snap.outputs
         if (outs.isNotEmpty()) {
             val row = FlowLayout(ctx)
-            row.addView(UI.secondaryButton(ctx, "Share ${if (outs.size == 1) "file" else "all ${outs.size}"}", R.drawable.ic_share) { OutputActions.share(activity, outs) })
-            if (outs.all { it.mime.startsWith("image/") || it.mime == "application/pdf" }) row.addView(UI.secondaryButton(ctx, "Print", R.drawable.ic_tool_print) {
+            row.addView(UI.secondaryButton(ctx, if (outs.size == 1) tr("Share file") else trn(outs.size, "Share all {0}", "Share all {0}"), R.drawable.ic_share) { OutputActions.share(activity, outs) })
+            if (outs.all { it.mime.startsWith("image/") || it.mime == "application/pdf" }) row.addView(UI.secondaryButton(ctx, tr("Print"), R.drawable.ic_tool_print) {
                 val sel = Selection.of(com.localmediatools.tools.ToolId.PRINT); sel.clear(); sel.addUris(activity, outs.map { it.uri })
                 activity.navigator.push(com.localmediatools.ui.print.PrintScreen(activity))
             })
             body.addView(row, lp().apply { topMargin = ctx.dp(12) })
-            body.addView(UI.note(ctx, "Saved to ${snap.savedTo}. Find them in your gallery, Files app or the folder named LocalMediaTools.", UI.NoteKind.SUCCESS), lp().apply { topMargin = ctx.dp(12) })
+            body.addView(UI.note(ctx, tr("Saved to {0}. Find them in your gallery, Files app or the folder named LocalMediaTools.", snap.savedTo), UI.NoteKind.SUCCESS), lp().apply { topMargin = ctx.dp(12) })
         }
         val groups = listOf(ItemOutcome.FAILED, ItemOutcome.SKIPPED, ItemOutcome.SUCCESS)
         for (g in groups) {
             val items = snap.results.filter { it.outcome == g }
             if (items.isEmpty()) continue
-            val label = when (g) { ItemOutcome.FAILED -> "Failed (${items.size})"; ItemOutcome.SKIPPED -> "Skipped (${items.size})"; else -> if (snap.tool == com.localmediatools.tools.ToolId.PRINT) "Printed" else "Saved (${items.size})" }
+            val label = when (g) { ItemOutcome.FAILED -> tr("Failed ({0})", items.size); ItemOutcome.SKIPPED -> tr("Skipped ({0})", items.size); else -> if (snap.tool == com.localmediatools.tools.ToolId.PRINT) tr("Printed") else tr("Saved ({0})", items.size) }
             body.addView(UI.label(ctx, label), lp().apply { topMargin = ctx.dp(20); bottomMargin = ctx.dp(8) })
             for (r in items.take(300)) body.addView(resultRow(r), lp().apply { bottomMargin = ctx.dp(8) })
-            if (items.size > 300) body.addView(UI.text(ctx, "…and ${items.size - 300} more", TextStyle.CAPTION))
+            if (items.size > 300) body.addView(UI.text(ctx, trn(items.size - 300, "…and {0} more", "…and {0} more"), TextStyle.CAPTION))
         }
         body.addView(UI.spacer(ctx, 24))
     }
@@ -264,11 +268,11 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
         if (s.status == JobStatus.RUNNING) {
             val bar = ProgressBarView(ctx); bar.setProgress(s.fraction.toFloat())
             c.addView(bar, lp().apply { topMargin = ctx.dp(12) })
-            c.addView(UI.text(ctx, "${(s.fraction * 100).toInt()}% · ${s.statusText}", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, 0) })
+            c.addView(UI.text(ctx, tr("{0}%", (s.fraction * 100).toInt()) + " · ${s.statusText}", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, 0) })
         } else if (s.finishedAt > 0) {
             val secs = ((s.finishedAt - s.startedAt) / 1000).coerceAtLeast(0)
-            c.addView(UI.text(ctx, "Finished ${DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(s.finishedAt))}" +
-                (if (s.startedAt > 0) " · took ${Format.duration(secs * 1000)}" else "") + " · workload ${s.workloadPercent}%", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(10), 0, 0) })
+            c.addView(UI.text(ctx, tr("Finished {0}", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, I18n.locale).format(Date(s.finishedAt))) +
+                (if (s.startedAt > 0) " · " + tr("took {0}", Format.duration(secs * 1000)) else "") + " · " + tr("workload {0}%", s.workloadPercent), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(10), 0, 0) })
         }
         return c
     }
@@ -290,11 +294,11 @@ class ResultsScreen(activity: MainActivity, private val jobId: Long) : Screen(ac
             val row = UI.horizontal(ctx)
             row.setPadding(ctx.dp(30), ctx.dp(8), 0, 0)
             row.addView(UI.text(ctx, "${f.displayName} · ${Format.bytes(f.size)}", TextStyle.CAPTION, Palette.TEXT).apply { maxLines = 2 }, lp(0, WRAP, 1f))
-            row.addView(UI.iconButton(ctx, R.drawable.ic_open, "Open ${f.displayName}", Palette.ACCENT) { OutputActions.open(activity, f) })
-            row.addView(UI.iconButton(ctx, R.drawable.ic_share, "Share ${f.displayName}", Palette.ACCENT) { OutputActions.share(activity, listOf(f)) })
+            row.addView(UI.iconButton(ctx, R.drawable.ic_open, tr("Open {0}", f.displayName), Palette.ACCENT) { OutputActions.open(activity, f) })
+            row.addView(UI.iconButton(ctx, R.drawable.ic_share, tr("Share {0}", f.displayName), Palette.ACCENT) { OutputActions.share(activity, listOf(f)) })
             c.addView(row)
         }
-        if (r.outputs.size > 50) c.addView(UI.text(ctx, "…and ${r.outputs.size - 50} more files", TextStyle.CAPTION).apply { setPadding(ctx.dp(30), ctx.dp(6), 0, 0) })
+        if (r.outputs.size > 50) c.addView(UI.text(ctx, trn(r.outputs.size - 50, "…and {0} more file", "…and {0} more files"), TextStyle.CAPTION).apply { setPadding(ctx.dp(30), ctx.dp(6), 0, 0) })
         return c
     }
 }
@@ -305,13 +309,13 @@ class HistoryScreen(activity: MainActivity) : Screen(activity) {
 
     override fun createView(): View {
         val root = UI.vertical(ctx).apply { setBackgroundColor(Palette.BG) }
-        val clear = UI.ghostButton(ctx, "Clear") {
-            AlertDialog.Builder(activity).setTitle("Clear export history?")
-                .setMessage("Only the list is cleared; saved files stay on your phone.")
-                .setPositiveButton("Clear") { _, _ -> ExportManager.clearHistory() }
-                .setNegativeButton("Cancel", null).show()
+        val clear = UI.ghostButton(ctx, trc("empty the list", "Clear")) {
+            AlertDialog.Builder(activity).setTitle(tr("Clear export history?"))
+                .setMessage(tr("Only the list is cleared; saved files stay on your phone."))
+                .setPositiveButton(trc("empty the list", "Clear")) { _, _ -> ExportManager.clearHistory() }
+                .setNegativeButton(tr("Cancel"), null).show()
         }
-        root.addView(TopBar(this, "Recent exports", clear))
+        root.addView(TopBar(this, tr("Recent exports"), clear))
         body = UI.vertical(ctx, 16, 4)
         root.addView(ScrollView(ctx).apply { addView(body) }, lp(MATCH, 0, 1f))
         scope.launch { ExportManager.state.collect { render(it) } }
@@ -323,7 +327,7 @@ class HistoryScreen(activity: MainActivity) : Screen(activity) {
 
 /** The list of exports (running, queued, finished), shared by the history screen and the Activity tab. */
 object HistoryList {
-    fun render(screen: Screen, body: LinearLayout, s: ExportManager.State, emptyText: String = "No exports yet. Results of every export appear here.") {
+    fun render(screen: Screen, body: LinearLayout, s: ExportManager.State, emptyText: String = tr("No exports yet. Results of every export appear here.")) {
         val ctx = screen.ctx
         body.removeAllViews()
         val all = listOfNotNull(s.active) + s.queued + s.history
@@ -333,7 +337,7 @@ object HistoryList {
                 setPadding(ctx.dp(24), ctx.dp(36), ctx.dp(24), ctx.dp(36))
                 background = Shapes.rounded(ctx, Palette.SURFACE, 22f, Palette.STROKE)
                 addView(UI.iconTile(ctx, R.drawable.ic_activity, Palette.ACCENT, 52, 26))
-                addView(UI.text(ctx, "Nothing here yet", TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(14), 0, 0) })
+                addView(UI.text(ctx, tr("Nothing here yet"), TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(14), 0, 0) })
                 addView(UI.text(ctx, emptyText, TextStyle.BODY_2).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(6), 0, 0) })
             }, lp().apply { topMargin = ctx.dp(8) })
             return
@@ -348,7 +352,7 @@ object HistoryList {
                 setPadding(ctx.dp(12), 0, ctx.dp(6), 0)
                 addView(UI.text(ctx, snap.title, TextStyle.BODY).apply { maxLines = 2 })
                 val running = snap.status == JobStatus.RUNNING
-                addView(UI.text(ctx, if (running) "${(snap.fraction * 100).toInt()}% · ${snap.statusText}" else snap.summary(), TextStyle.CAPTION, color).apply { setPadding(0, ctx.dp(3), 0, 0) })
+                addView(UI.text(ctx, if (running) tr("{0}%", (snap.fraction * 100).toInt()) + " · ${snap.statusText}" else snap.summary(), TextStyle.CAPTION, color).apply { setPadding(0, ctx.dp(3), 0, 0) })
                 if (snap.finishedAt > 0) addView(UI.text(ctx, DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(snap.finishedAt)), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(2), 0, 0) })
             }, lp(0, WRAP, 1f))
             row.addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_3, 18))

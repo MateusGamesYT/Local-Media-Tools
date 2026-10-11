@@ -20,6 +20,11 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.AspectGroups
 import com.localmediatools.image.BitmapOps
 import com.localmediatools.image.EncodeSpec
@@ -41,14 +46,19 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-enum class MergeLayout(val label: String, val hint: String) {
-    VERTICAL("Vertical", "One image below another"),
-    HORIZONTAL("Horizontal", "Images side by side"),
-    SMART("Smart pack", "Compact arrangement of different sizes"),
+enum class MergeLayout(private val labelEn: String, private val hintEn: String) {
+    VERTICAL(N_("Vertical"), N_("One image below another")),
+    HORIZONTAL(N_("Horizontal"), N_("Images side by side")),
+    SMART(N_("Smart pack"), N_("Compact arrangement of different sizes"));
+
+    val label: String get() = tr(labelEn)
+    val hint: String get() = tr(hintEn)
 }
 
-enum class MergeBackground(val label: String, val color: Int) {
-    TRANSPARENT("Transparent", Color.TRANSPARENT), WHITE("White", Color.WHITE), BLACK("Black", Color.BLACK),
+enum class MergeBackground(private val labelEn: String, val color: Int) {
+    TRANSPARENT(N_("Transparent"), Color.TRANSPARENT), WHITE(N_("White"), Color.WHITE), BLACK(N_("Black"), Color.BLACK);
+
+    val label: String get() = tr(labelEn)
 }
 
 object MergePlanner {
@@ -67,7 +77,7 @@ class MergeImagesJob(
     private val spacing: Int,
     private val align: Align,
 ) : ExportJob(ToolId.MERGE_IMAGES, inputs) {
-    override val title = "Merging ${plural(inputs.size, "image")} (${layout.label.lowercase()})"
+    override val title = trn(inputs.size, "Merging {0} image ({1})", "Merging {0} images ({1})", layout.label.lowercase(I18n.locale))
 
     override suspend fun run(ctx: JobContext) {
         val sources = ArrayList<ImageSource>()
@@ -79,7 +89,7 @@ class MergeImagesJob(
             }
             val plan = MergePlanner.plan(sources.map { it.width to it.height }, layout, spacing, align)
             val w = plan.width; val h = plan.height
-            if (w.toLong() * h > 2_000_000_000L) throw UserFacingException("The merged image would be ${w}×$h pixels, which is too large to save.")
+            if (w.toLong() * h > 2_000_000_000L) throw UserFacingException(tr("The merged image would be {0}×{1} pixels, which is too large to save.", w, h))
             OutputStore.ensureSpace(w.toLong() * h * 2)
             val budget = ctx.memoryBudget()
             // How many images can share a row: decide which sources are decoded once and kept.
@@ -88,7 +98,7 @@ class MergeImagesJob(
             val perImage = budget / (2L * concurrency)
             val cacheable = sources.map { it.bytesFor(1) <= perImage }
             val stripRows = (budget / 8 / (w.toLong() * 4)).toInt().coerceIn(16, 1024).coerceAtMost(h)
-            val name = "Merged ${SimpleDateFormat("yyyy-MM-dd HH.mm.ss", Locale.US).format(Date())}.png"
+            val name = trc("default file name", "Merged") + " ${SimpleDateFormat("yyyy-MM-dd HH.mm.ss", Locale.US).format(Date())}.png"
             val transparent = background == MergeBackground.TRANSPARENT
             val (out, _) = Outputs.produce(ctx, ToolId.MERGE_IMAGES.area, name, "image/png") { pending ->
                 pending.openStream().buffered(1 shl 16).use { os ->
@@ -135,13 +145,13 @@ class MergeImagesJob(
                 ImagePipeline.verify(ctx.app, pending, w, h)
             }
             for (k in inputs.indices) ctx.unitDone(k)
-            val note = if (w > 30000 || h > 30000) "The result is very large (${w}×$h); some gallery apps may not be able to open it." else null
-            ctx.addResult(ItemResult("${inputs.size} images", ItemOutcome.SUCCESS, note, listOf(out),
-                "${w}×$h · ${layout.label} · ${background.label} background · ${Format.bytes(out.size)}"))
+            val note = if (w > 30000 || h > 30000) tr("The result is very large ({0}×{1}); some gallery apps may not be able to open it.", w, h) else null
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} image", "{0} images"), ItemOutcome.SUCCESS, note, listOf(out),
+                "${w}×$h · ${layout.label} · " + tr("{0} background", background.label) + " · ${Format.bytes(out.size)}"))
         } catch (e: com.localmediatools.core.ExportCancelledException) {
             throw e
         } catch (e: Throwable) {
-            ctx.addResult(ItemResult("${inputs.size} images", ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} image", "{0} images"), ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
         } finally {
             sources.forEach { it.close() }
         }
@@ -157,7 +167,7 @@ class StitchJob(
     private val mode: SceneMode,
     private val crop: Boolean,
 ) : ExportJob(ToolId.STITCH, inputs) {
-    override val title = "Stitching ${plural(inputs.size, "photo")}" + if (useAi) " (AI assisted)" else ""
+    override val title = if (useAi) trn(inputs.size, "Stitching {0} photo (AI assisted)", "Stitching {0} photos (AI assisted)") else trn(inputs.size, "Stitching {0} photo", "Stitching {0} photos")
     override val unitCount get() = 1
 
     override suspend fun run(ctx: JobContext) {
@@ -171,7 +181,7 @@ class StitchJob(
                 assist = try {
                     TfliteEmbedder.create(ctx.app, ctx.workload.parallelism.coerceIn(1, 4))
                 } catch (e: Throwable) {
-                    notes.add("AI assistance could not start on this device (${e.javaClass.simpleName}); stitched without it.")
+                    notes.add(tr("AI assistance could not start on this device ({0}); stitched without it.", e.javaClass.simpleName))
                     null
                 }
             }
@@ -188,7 +198,7 @@ class StitchJob(
             }
             try {
                 SourceStitchImages(ctx.app, inputs, budget).use { images ->
-                    val name = "Stitched ${SimpleDateFormat("yyyy-MM-dd HH.mm.ss", Locale.US).format(Date())}.png"
+                    val name = trc("default file name", "Stitched") + " ${SimpleDateFormat("yyyy-MM-dd HH.mm.ss", Locale.US).format(Date())}.png"
                     var report: com.localmediatools.stitch.core.StitchReport? = null
                     val (out, _) = Outputs.produce(ctx, ToolId.STITCH.area, name, "image/png") { pending ->
                         pending.openStream().buffered(1 shl 16).use { os ->
@@ -207,11 +217,11 @@ class StitchJob(
                     }
                     val r = report!!
                     notes.addAll(r.notes)
-                    if (assist != null) notes.add(if (r.aiDecisions > 0) "AI resolved ${r.aiDecisions} alignment decision(s) on-device." else "AI assistance was on but no ambiguous decisions needed it.")
+                    if (assist != null) notes.add(if (r.aiDecisions > 0) trn(r.aiDecisions, "AI resolved {0} alignment decision on-device.", "AI resolved {0} alignment decisions on-device.") else tr("AI assistance was on but no ambiguous decisions needed it."))
                     ctx.unitDone(0)
-                    ctx.addResult(ItemResult("${inputs.size} photos", ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
-                        "${r.width}×${r.height} · ${r.usedImages.size} of ${inputs.size} photos · ${r.model}" +
-                            (if (r.outputScale < 0.999) " · ${(r.outputScale * 100).toInt()}% scale" else "") + " · ${Format.bytes(out.size)}"))
+                    ctx.addResult(ItemResult(trn(inputs.size, "{0} photo", "{0} photos"), ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
+                        "${r.width}×${r.height} · " + trn(inputs.size, "{1} of {0} photo", "{1} of {0} photos", r.usedImages.size) + " · ${r.model}" +
+                            (if (r.outputScale < 0.999) " · " + tr("{0}% scale", (r.outputScale * 100).toInt()) else "") + " · ${Format.bytes(out.size)}"))
                 }
             } finally {
                 assist?.close()
@@ -219,7 +229,7 @@ class StitchJob(
         } catch (e: com.localmediatools.core.ExportCancelledException) {
             throw e
         } catch (e: Throwable) {
-            ctx.addResult(ItemResult("${inputs.size} photos", ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} photo", "{0} photos"), ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
         }
     }
 }
@@ -238,18 +248,18 @@ data class WatermarkJobSpec(
 )
 
 class WatermarkJob(inputs: List<MediaItem>, private val spec: WatermarkJobSpec) : ExportJob(ToolId.WATERMARK, inputs) {
-    override val title = "Watermarking ${plural(inputs.size, "image")}"
+    override val title = trn(inputs.size, "Watermarking {0} image", "Watermarking {0} images")
 
     override suspend fun run(ctx: JobContext) {
         val logo: Bitmap? = spec.logoUri?.let { uri ->
             try {
                 ImageSource.open(ctx.app, uri, spec.logoName ?: "logo").use { it.preview(1600) }
             } catch (e: Exception) {
-                throw UserFacingException("The logo image could not be loaded: ${com.localmediatools.core.Errors.describe(e)}")
+                throw UserFacingException(tr("The logo image could not be loaded: {0}", com.localmediatools.core.Errors.describe(e)))
             }
         }
         val style = WatermarkStyle(spec.text, logo, spec.sizePercent, spec.opacityPercent, spec.textColor)
-        if (!style.hasContent) throw UserFacingException("Add watermark text or a logo first.")
+        if (!style.hasContent) throw UserFacingException(tr("Add watermark text or a logo first."))
         val renderer = WatermarkRenderer(style)
         try {
             ctx.forEachItem(inputs, parallel = true) { index, item ->

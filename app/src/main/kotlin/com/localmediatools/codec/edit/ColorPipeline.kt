@@ -1,5 +1,7 @@
 package com.localmediatools.codec.edit
 
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -8,10 +10,12 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 /** One adjustment slider. Values are -1..1 (sharpness 0..1 sharpens, below 0 softens). */
-enum class AdjustKey(val label: String) {
-    EXPOSURE("Exposure"), BRIGHTNESS("Brightness"), CONTRAST("Contrast"), HIGHLIGHTS("Highlights"),
-    SHADOWS("Shadows"), SATURATION("Saturation"), VIBRANCE("Vibrance"), WARMTH("Warmth"), TINT("Tint"),
-    SHARPNESS("Sharpness"), VIGNETTE("Vignette");
+enum class AdjustKey(private val labelEn: String) {
+    EXPOSURE(N_("Exposure")), BRIGHTNESS(N_("Brightness")), CONTRAST(N_("Contrast")), HIGHLIGHTS(N_("Highlights")),
+    SHADOWS(N_("Shadows")), SATURATION(N_("Saturation")), VIBRANCE(N_("Vibrance")), WARMTH(N_("Warmth")), TINT(N_("Tint")),
+    SHARPNESS(N_("Sharpness")), VIGNETTE(N_("Vignette"));
+
+    val label: String get() = tr(labelEn)
 }
 
 data class Adjustments(val values: Map<AdjustKey, Float> = emptyMap()) {
@@ -29,18 +33,20 @@ data class Adjustments(val values: Map<AdjustKey, Float> = emptyMap()) {
  * Look presets. Each one is a set of per-channel tone curves plus a saturation factor, applied
  * after the user's adjustments and blended by the filter intensity.
  */
-enum class FilterPreset(val label: String, val saturation: Float = 1f) {
-    NONE("Original"),
-    VIVID("Vivid", 1.28f),
-    GOLDEN("Golden", 1.08f),
-    NORDIC("Nordic", 0.88f),
-    MATTE("Matte", 0.86f),
-    VINTAGE("Vintage", 0.78f),
-    CINEMA("Cinema", 0.92f),
-    DRAMA("Drama", 0.9f),
-    MONO("Mono", 0f),
-    NOIR("Noir", 0f),
-    SEPIA("Sepia", 0f);
+enum class FilterPreset(private val labelEn: String, val saturation: Float = 1f) {
+    NONE(N_("Original")),
+    VIVID(N_("Vivid"), 1.28f),
+    GOLDEN(N_("Golden"), 1.08f),
+    NORDIC(N_("Nordic"), 0.88f),
+    MATTE(N_("Matte"), 0.86f),
+    VINTAGE(N_("Vintage"), 0.78f),
+    CINEMA(N_("Cinema"), 0.92f),
+    DRAMA(N_("Drama"), 0.9f),
+    MONO(N_("Mono"), 0f),
+    NOIR(N_("Noir"), 0f),
+    SEPIA(N_("Sepia"), 0f);
+
+    val label: String get() = tr(labelEn)
 
     /** Output 0..1 of channel [ch] (0 = R, 1 = G, 2 = B) for input [x] in 0..1. */
     fun curve(ch: Int, x: Double): Double = when (this) {

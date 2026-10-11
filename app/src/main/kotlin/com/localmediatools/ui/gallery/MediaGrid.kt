@@ -19,6 +19,10 @@ import android.widget.TextView
 import com.localmediatools.app.R
 import com.localmediatools.core.Format
 import com.localmediatools.gallery.GMedia
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Shapes
 import com.localmediatools.ui.TextStyle
@@ -121,23 +125,23 @@ class MediaGrid(
 
     private fun monthLabel(cal: Calendar, t: Long): String {
         cal.timeInMillis = t
-        return String.format(Locale.getDefault(), "%tb %d", cal, cal.get(Calendar.YEAR))
+        return I18n.capitalize(I18n.date(t, cal.timeZone, trc("date pattern: a short month and its year", "MMM yyyy")))
     }
 
     private fun groupTitle(cal: Calendar, t: Long, n: Int): Pair<String, String> {
-        val count = "$n ${if (n == 1) "item" else "items"}"
+        val count = trn(n, "{0} item", "{0} items")
         cal.timeInMillis = t
-        if (grouping == Grouping.MONTH) return String.format(Locale.getDefault(), "%tB %d", cal, cal.get(Calendar.YEAR)) to count
+        if (grouping == Grouping.MONTH) return I18n.capitalize(I18n.date(t, cal.timeZone, trc("date pattern: a month and its year", "MMMM yyyy"))) to count
         val now = Calendar.getInstance()
         val sameYear = now.get(Calendar.YEAR) == cal.get(Calendar.YEAR)
         val today = sameYear && now.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR)
         now.add(Calendar.DAY_OF_YEAR, -1)
         val yesterday = now.get(Calendar.YEAR) == cal.get(Calendar.YEAR) && now.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR)
         val title = when {
-            today -> "Today"
-            yesterday -> "Yesterday"
-            sameYear -> String.format(Locale.getDefault(), "%ta, %<te %<tb", cal)
-            else -> String.format(Locale.getDefault(), "%te %<tb %<tY", cal)
+            today -> tr("Today")
+            yesterday -> tr("Yesterday")
+            sameYear -> I18n.capitalize(I18n.date(t, cal.timeZone, trc("date pattern: a day this year, with its weekday", "EEE, d MMM")))
+            else -> I18n.date(t, cal.timeZone, trc("date pattern: a day in another year", "d MMM yyyy"))
         }
         return title to count
     }
@@ -313,8 +317,8 @@ class MediaGrid(
             image.alpha = if (selecting && sel) 0.72f else 1f
             image.scaleX = if (selecting && sel) 0.9f else 1f
             image.scaleY = image.scaleX
-            contentDescription = (if (m.video) "Video" else "Photo") + ", " + android.text.format.DateFormat.getMediumDateFormat(context).format(m.taken) +
-                (if (selecting) if (sel) ", selected" else ", not selected" else "")
+            contentDescription = (if (m.video) tr("Video") else tr("Photo")) + ", " + java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM, I18n.locale).format(m.taken) +
+                (if (selecting) if (sel) tr(", selected") else tr(", not selected") else "")
         }
     }
 

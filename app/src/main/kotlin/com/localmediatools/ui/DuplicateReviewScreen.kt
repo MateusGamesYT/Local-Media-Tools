@@ -10,6 +10,8 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.localmediatools.app.MainActivity
 import com.localmediatools.core.Format
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.vision.DupResultGroup
 import com.localmediatools.vision.DuplicateScanner
 import kotlin.math.abs
@@ -43,9 +45,9 @@ class DuplicateReviewScreen(activity: MainActivity, private val groups: List<Dup
             background = Shapes.rounded(ctx, Palette.SURFACE, 24f, Palette.STROKE)
             elevation = ctx.dp(8).toFloat()
         }
-        bar.addView(UI.ghostButton(ctx, "Keep all") { current()?.let { DupChoices.keepAll(it) }; advance() }, lp(0, WRAP, 1f))
-        bar.addView(UI.ghostButton(ctx, "Suggested") { current()?.let { DupChoices.keepSuggested(it) }; advance() }, lp(0, WRAP, 1f))
-        next = UI.primaryButton(ctx, "Next") { advance() }
+        bar.addView(UI.ghostButton(ctx, tr("Keep all")) { current()?.let { DupChoices.keepAll(it) }; advance() }, lp(0, WRAP, 1f))
+        bar.addView(UI.ghostButton(ctx, tr("Suggested")) { current()?.let { DupChoices.keepSuggested(it) }; advance() }, lp(0, WRAP, 1f))
+        next = UI.primaryButton(ctx, tr("Next")) { advance() }
         bar.addView(next, lp(0, WRAP, 1.2f))
         root.addView(bar, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM).apply { setMargins(ctx.dp(10), 0, ctx.dp(10), ctx.dp(10)) })
         // Swipe left for the next group, right for the previous one.
@@ -73,7 +75,7 @@ class DuplicateReviewScreen(activity: MainActivity, private val groups: List<Dup
     private fun bind() {
         val g = current() ?: run { pop(); return }
         top.removeAllViews()
-        top.addView(TopBar(this, "Group ${index + 1} of ${groups.size}"))
+        top.addView(TopBar(this, tr("Group {0} of {1}", index + 1, groups.size)))
         val sw = activity.resources.displayMetrics.widthPixels / activity.resources.displayMetrics.density
         val cellDp = ((sw - 24 - 12) / 2).toInt().coerceAtLeast(120)
         while (cells.size < g.photos.size) cells.add(PhotoCell(ctx, cellDp))
@@ -88,10 +90,10 @@ class DuplicateReviewScreen(activity: MainActivity, private val groups: List<Dup
             if (row.size == 1) r.addView(View(ctx), LinearLayout.LayoutParams(0, 1, 1f))
             grid.addView(r, lp().apply { bottomMargin = ctx.dp(6) })
         }
-        grid.addView(UI.text(ctx, "Tap a photo to keep or remove it · long-press to open it · swipe for the next group", TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER }, lp().apply { topMargin = ctx.dp(8) })
+        grid.addView(UI.text(ctx, tr("Tap a photo to keep or remove it · long-press to open it · swipe for the next group"), TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER }, lp().apply { topMargin = ctx.dp(8) })
         bindCells()
         scroll.scrollTo(0, 0)
-        next.label = if (index >= groups.size - 1) "Done" else "Next"
+        next.label = if (index >= groups.size - 1) tr("Done") else tr("Next")
     }
 
     private fun bindCells() {
@@ -100,8 +102,8 @@ class DuplicateReviewScreen(activity: MainActivity, private val groups: List<Dup
         for ((i, p) in g.photos.withIndex()) cells[i].bind(this, g, p, suggestion) { bindCells() }
         val going = g.photos.filter { it.uri in DupChoices.remove }
         val all = groups.flatMap { it.photos }.filter { it.uri in DupChoices.remove }
-        status.text = "${g.kind.label} · ${g.photos.size} photos · ${if (going.isEmpty()) "all kept" else "${going.size} to remove (${Format.bytes(going.sumOf { it.size })})"}" +
-            "  —  ${all.size} selected in total"
+        status.text = "${g.kind.label} · " + trn(g.photos.size, "{0} photo", "{0} photos") + " · " + (if (going.isEmpty()) tr("all kept") else trn(going.size, "{0} to remove ({1})", "{0} to remove ({1})", Format.bytes(going.sumOf { it.size }))) +
+            "  —  " + trn(all.size, "{0} selected in total", "{0} selected in total")
     }
 
     override fun onShow() {

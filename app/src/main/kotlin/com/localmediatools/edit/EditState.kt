@@ -10,10 +10,12 @@ import android.util.LruCache
 import com.localmediatools.codec.edit.Adjustments
 import com.localmediatools.codec.edit.FilterSpec
 import com.localmediatools.codec.edit.Geometry
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import java.io.File
 import java.util.UUID
 
-enum class PatchKind(val label: String) { ERASE("Erase"), BLUR("Blur"), PIXELATE("Pixelate") }
+enum class PatchKind(private val en: String) { ERASE(N_("Erase")), BLUR(N_("Blur")), PIXELATE(N_("Pixelate")); val label: String get() = tr(en) }
 
 /** A retouched area in upright-photo pixels. Its pixels (with feathered alpha) live in a PNG file. */
 data class RetouchPatch(val id: String, val kind: PatchKind, val left: Int, val top: Int, val width: Int, val height: Int) {
@@ -86,7 +88,7 @@ class PatchStore(val dir: File) {
 
     fun save(kind: PatchKind, left: Int, top: Int, bmp: Bitmap): RetouchPatch {
         val id = UUID.randomUUID().toString()
-        File(dir, "$id.png").outputStream().buffered().use { if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, it)) throw java.io.IOException("Could not store the retouched area") }
+        File(dir, "$id.png").outputStream().buffered().use { if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, it)) throw java.io.IOException(tr("Could not store the retouched area")) }
         cache.put(id, bmp)
         return RetouchPatch(id, kind, left, top, bmp.width, bmp.height)
     }
@@ -95,7 +97,7 @@ class PatchStore(val dir: File) {
         cache.get(p.id)?.let { if (!it.isRecycled) return it }
         val opts = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888; inPremultiplied = true }
         val bmp = BitmapFactory.decodeFile(File(dir, "${p.id}.png").absolutePath, opts)
-            ?: throw java.io.IOException("A retouched area is missing; please redo it.")
+            ?: throw java.io.IOException(tr("A retouched area is missing; please redo it."))
         cache.put(p.id, bmp)
         return bmp
     }

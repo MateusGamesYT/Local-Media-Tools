@@ -1,11 +1,25 @@
 package com.localmediatools.vision.core
 
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.N_
+
 /** Which copy of a picture to keep. */
-enum class Prefer(val label: String, val explain: String) {
-    QUALITY("Best quality", "Most pixels, then the sharpest"),
-    ORIGINAL("Original", "The oldest file, before it was copied or edited"),
-    NEWEST("Newest", "The latest file, e.g. your edited version"),
-    SMALLEST("Smallest file", "Saves the most space"),
+enum class Prefer(private val labelEn: String, private val explainEn: String) {
+    QUALITY(N_("Best quality"), N_("Most pixels, then the sharpest")),
+    ORIGINAL(N_("Original"), N_("The oldest file, before it was copied or edited")),
+    NEWEST(N_("Newest"), N_("The latest file, e.g. your edited version")),
+    SMALLEST(N_("Smallest file"), N_("Saves the most space"));
+
+    val label: String get() = tr(labelEn)
+    val explain: String get() = tr(explainEn)
+
+    /** For the rules' summary line. */
+    val keeps: String get() = when (this) {
+        QUALITY -> tr("keeps the best-quality copy")
+        ORIGINAL -> tr("keeps the original copy")
+        NEWEST -> tr("keeps the newest copy")
+        SMALLEST -> tr("keeps the smallest copy")
+    }
 }
 
 /**
@@ -37,11 +51,14 @@ class KeepCandidate(
 )
 
 object KeepPlanner {
+    /** What [protectedBy] says of a favourite. */
+    val favourite: String get() = tr("Favourite")
+
     /** Why a photo is protected, or null. */
     fun protectedBy(c: KeepCandidate, rules: KeepRules, names: Map<Long, String> = emptyMap()): String? = when {
         rules.keepRaw && c.raw -> "RAW"
-        rules.keepFavorites && c.favorite -> "Favourite"
-        c.people.any { it in rules.keepPeople } -> c.people.firstOrNull { it in rules.keepPeople }?.let { names[it] } ?: "Person you keep"
+        rules.keepFavorites && c.favorite -> favourite
+        c.people.any { it in rules.keepPeople } -> c.people.firstOrNull { it in rules.keepPeople }?.let { names[it] } ?: tr("Person you keep")
         else -> null
     }
 

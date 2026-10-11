@@ -1,5 +1,7 @@
 package com.localmediatools.vision.core
 
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import kotlin.math.abs
@@ -30,10 +32,13 @@ class PhotoInfo(
     val pixels get() = width.toLong() * height
 }
 
-enum class DupKind(val label: String, val explain: String) {
-    IDENTICAL("Identical copies", "Byte-for-byte the same file"),
-    NEAR_DUPLICATE("Duplicates", "The same picture saved again, resized or re-compressed"),
-    SIMILAR("Similar shots", "Bursts and retakes of the same moment"),
+enum class DupKind(private val labelEn: String, private val explainEn: String) {
+    IDENTICAL(N_("Identical copies"), N_("Byte-for-byte the same file")),
+    NEAR_DUPLICATE(N_("Duplicates"), N_("The same picture saved again, resized or re-compressed")),
+    SIMILAR(N_("Similar shots"), N_("Bursts and retakes of the same moment"));
+
+    val label: String get() = tr(labelEn)
+    val explain: String get() = tr(explainEn)
 }
 
 /**

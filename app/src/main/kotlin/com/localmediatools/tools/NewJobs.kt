@@ -15,6 +15,10 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.video.Remuxer
 import com.localmediatools.video.VideoProbe
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
@@ -25,7 +29,7 @@ import java.io.File
 
 // =========================================================================== Remove metadata
 class RemoveMetadataJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_METADATA, inputs) {
-    override val title = "Removing metadata from ${plural(inputs.size, "file")}"
+    override val title = trn(inputs.size, "Removing metadata from {0} file", "Removing metadata from {0} files")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = true) { index, item ->
@@ -38,7 +42,7 @@ class RemoveMetadataJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_METAD
         val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
         MediaProbe.openInput(resolver, item.uri).use { android.graphics.BitmapFactory.decodeStream(it, null, bounds) }
         val ext = when (item.format) { SniffedFormat.JPEG -> "jpg"; SniffedFormat.PNG -> "png"; SniffedFormat.WEBP -> "webp"; SniffedFormat.GIF -> "gif"; else -> null }
-            ?: throw SkipItemException("${item.format.label} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).")
+            ?: throw SkipItemException(tr("{0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).", item.format.label))
         val mime = when (ext) { "jpg" -> "image/jpeg"; "png" -> "image/png"; "webp" -> "image/webp"; else -> "image/gif" }
         var report: StripReport? = null
         val (out, _) = Outputs.produce(ctx, OutputArea.CLEAN_IMAGES, "${item.baseName}_clean.$ext", mime) { pending ->
@@ -52,31 +56,31 @@ class RemoveMetadataJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_METAD
                         else -> open().use { MetadataStripper.stripGif(it, os) }
                     }
                 } catch (e: java.io.IOException) {
-                    throw UserFacingException("The file is damaged or uses an unusual layout (${e.message}); nothing was saved.", e)
+                    throw UserFacingException(tr("The file is damaged or uses an unusual layout ({0}); nothing was saved.", e.message), e)
                 }
             }
-            if (report!!.clean) throw SkipItemException("No metadata found — this file is already clean. Nothing was saved.")
+            if (report!!.clean) throw SkipItemException(tr("No metadata found — this file is already clean. Nothing was saved."))
             // The cleaned copy must decode to the same picture size.
             val o = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
             resolver.openInputStream(pending.uri)?.use { android.graphics.BitmapFactory.decodeStream(it, null, o) }
             if (bounds.outWidth > 0 && (o.outWidth != bounds.outWidth || o.outHeight != bounds.outHeight)) {
-                throw UserFacingException("The cleaned copy failed verification, so it was discarded.")
+                throw UserFacingException(tr("The cleaned copy failed verification, so it was discarded."))
             }
         }
         ctx.unitProgress(index, 1.0)
         val r = report!!
-        val kept = buildList { if (r.orientation != 1) add("orientation"); addAll(r.kept) }
+        val kept = buildList { if (r.orientation != 1) add(tr("orientation")); addAll(r.kept) }
         return ItemResult(item.name, ItemOutcome.SUCCESS,
-            "Removed: ${r.removed.joinToString(", ")}." + if (kept.isNotEmpty()) " Kept: ${kept.joinToString(", ")}." else "",
-            listOf(out), "${Outputs.sizeChange(item.size, out.size)} · image data copied unchanged")
+            tr("Removed: {0}.", r.removed.joinToString(trc("between the items of a list", ", "))) + if (kept.isNotEmpty()) " " + tr("Kept: {0}.", kept.joinToString(trc("between the items of a list", ", "))) else "",
+            listOf(out), "${Outputs.sizeChange(item.size, out.size)} · " + tr("image data copied unchanged"))
     }
 
     private fun video(ctx: JobContext, index: Int, item: MediaItem): ItemResult {
         val info = VideoProbe.probe(ctx.app, item.uri)
         val out = remuxToOutput(ctx, item, OutputArea.CLEAN_VIDEO, "${item.baseName}_clean", avTracks(info), 0, Long.MAX_VALUE, info.rotation) { f -> ctx.unitProgress(index, f) }
         return ItemResult(item.name, ItemOutcome.SUCCESS,
-            "Location, camera, date and other container metadata were not copied. Rotation is kept.", listOf(out),
-            "${Outputs.sizeChange(item.size, out.size)} · video and audio copied bit-for-bit")
+            tr("Location, camera, date and other container metadata were not copied. Rotation is kept."), listOf(out),
+            "${Outputs.sizeChange(item.size, out.size)} · " + tr("video and audio copied bit-for-bit"))
     }
 }
 
@@ -92,28 +96,28 @@ class TrimVideoJob(
 ) : ExportJob(ToolId.TRIM_VIDEO, items) {
     constructor(item: MediaItem, startUs: Long, endUs: Long, turns: Int) : this(listOf(item), startUs, endUs, turns)
 
-    override val title = if (items.size == 1) "Trimming ${items[0].name}" else "Trimming ${plural(items.size, "video")}"
+    override val title = if (items.size == 1) tr("Trimming {0}", items[0].name) else trn(items.size, "Trimming {0} video", "Trimming {0} videos")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, it ->
             val info = VideoProbe.probe(ctx.app, it.uri)
-            val v = info.video ?: throw UserFacingException("This file has no video track.")
+            val v = info.video ?: throw UserFacingException(tr("This file has no video track."))
             val startUs = fractions?.let { f -> (f.first * info.durationUs).toLong() } ?: startAt
             val endUs = fractions?.let { f -> if (f.second >= 0.9995) Long.MAX_VALUE else (f.second * info.durationUs).toLong() } ?: endAt
             val end = endUs.coerceAtMost(info.durationUs.takeIf { d -> d > 0 } ?: Long.MAX_VALUE)
-            if (end - startUs < 100_000) throw UserFacingException("The selected part is too short.")
-            ctx.status("Finding keyframes", it.name)
+            if (end - startUs < 100_000) throw UserFacingException(tr("The selected part is too short."))
+            ctx.status(tr("Finding keyframes"), it.name)
             val syncs = Remuxer(ctx.app, it.uri).syncTimes(v.index) { ctx.throttle() }
             val start = TrimMath.keyframeAtOrBefore(syncs, startUs)
             val rotation = ((info.rotation + 90 * turns) % 360 + 360) % 360
             val whole = start <= 0 && end >= info.durationUs - 50_000
-            if (whole && turns % 4 == 0) throw SkipItemException("Nothing to change: the whole video is selected and it isn't rotated.")
+            if (whole && turns % 4 == 0) throw SkipItemException(tr("Nothing to change: the whole video is selected and it isn't rotated."))
             val out = remuxToOutput(ctx, it, ToolId.TRIM_VIDEO.area, "${it.baseName}_trim", avTracks(info), start, end, rotation) { f -> ctx.unitProgress(index, f) }
             val notes = ArrayList<String>()
-            if (startUs - start > 50_000) notes.add("Starts ${Format.seconds((startUs - start) / 1e6)} earlier than chosen, at the previous keyframe (cutting elsewhere would need re-encoding).")
-            if (turns % 4 != 0) notes.add("Turned ${(turns % 4) * 90}° clockwise (players read the rotation flag; pixels are untouched).")
+            if (startUs - start > 50_000) notes.add(tr("Starts {0} earlier than chosen, at the previous keyframe (cutting elsewhere would need re-encoding).", Format.seconds((startUs - start) / 1e6)))
+            if (turns % 4 != 0) notes.add(tr("Turned {0}° clockwise (players read the rotation flag; pixels are untouched).", (turns % 4) * 90))
             ItemResult(it.name, ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "${Format.duration(start / 1000)} – ${Format.duration(end / 1000)} · ${Format.duration((end - start) / 1000)} · no re-encoding")
+                "${Format.duration(start / 1000)} – ${Format.duration(end / 1000)} · ${Format.duration((end - start) / 1000)} · " + tr("no re-encoding"))
         }
     }
 }
@@ -129,7 +133,7 @@ object TrimMath {
 }
 
 // =========================================================================== Extract PDF pages
-enum class PageMode(val label: String) { ONE_FILE("One PDF"), EACH_PAGE("One PDF per page") }
+enum class PageMode(private val en: String) { ONE_FILE(N_("One PDF")), EACH_PAGE(N_("One PDF per page")); val label: String get() = tr(en) }
 
 object PageRanges {
     /**
@@ -139,18 +143,18 @@ object PageRanges {
     fun parse(spec: String, pageCount: Int): List<Int> {
         val out = ArrayList<Int>()
         val parts = spec.split(',', ';', ' ').map { it.trim() }.filter { it.isNotEmpty() }
-        if (parts.isEmpty()) throw UserFacingException("Enter the pages to keep, like 1-3, 5")
+        if (parts.isEmpty()) throw UserFacingException(tr("Enter the pages to keep, like 1-3, 5"))
         for (p in parts) {
             val m = Regex("^(\\d*)\\s*[-–]\\s*(\\d*)$").find(p)
             if (m != null) {
                 val a = m.groupValues[1].ifEmpty { "1" }.toInt()
                 val b = m.groupValues[2].ifEmpty { pageCount.toString() }.toInt()
-                if (a < 1 || b < a) throw UserFacingException("\"$p\" isn't a valid page range")
-                if (a > pageCount) throw UserFacingException("Page $a doesn't exist; the PDF has $pageCount page${if (pageCount == 1) "" else "s"}")
+                if (a < 1 || b < a) throw UserFacingException(tr("\"{0}\" isn't a valid page range", p))
+                if (a > pageCount) throw UserFacingException(trn(pageCount, "Page {1} doesn't exist; the PDF has {0} page", "Page {1} doesn't exist; the PDF has {0} pages", a))
                 for (i in a..minOf(b, pageCount)) out.add(i - 1)
             } else {
-                val n = p.toIntOrNull() ?: throw UserFacingException("\"$p\" isn't a page number")
-                if (n < 1 || n > pageCount) throw UserFacingException("Page $n doesn't exist; the PDF has $pageCount page${if (pageCount == 1) "" else "s"}")
+                val n = p.toIntOrNull() ?: throw UserFacingException(tr("\"{0}\" isn't a page number", p))
+                if (n < 1 || n > pageCount) throw UserFacingException(trn(pageCount, "Page {1} doesn't exist; the PDF has {0} page", "Page {1} doesn't exist; the PDF has {0} pages", n))
                 out.add(n - 1)
             }
         }
@@ -162,7 +166,7 @@ object PageRanges {
 }
 
 class ExtractPagesJob(inputs: List<MediaItem>, private val spec: String, private val mode: PageMode) : ExportJob(ToolId.EXTRACT_PDF_PAGES, inputs) {
-    override val title = "Extracting pages from ${plural(inputs.size, "PDF")}"
+    override val title = trn(inputs.size, "Extracting pages from {0} PDF", "Extracting pages from {0} PDFs")
 
     override suspend fun run(ctx: JobContext) {
         PDFBoxResourceLoader.init(ctx.app)
@@ -172,9 +176,9 @@ class ExtractPagesJob(inputs: List<MediaItem>, private val spec: String, private
             val src = try {
                 MediaProbe.openInput(ctx.app.contentResolver, item.uri).use { PDDocument.load(it, memory) }
             } catch (e: InvalidPasswordException) {
-                throw UserFacingException("This PDF is password-protected. Remove the password first.")
+                throw UserFacingException(tr("This PDF is password-protected. Remove the password first."))
             } catch (e: Exception) {
-                throw UserFacingException("Not a valid PDF or damaged (${e.message ?: e.javaClass.simpleName}).", e)
+                throw UserFacingException(tr("Not a valid PDF or damaged ({0}).", e.message ?: e.javaClass.simpleName), e)
             }
             try {
                 if (src.isEncrypted) src.isAllSecurityToBeRemoved = true
@@ -200,7 +204,7 @@ class ExtractPagesJob(inputs: List<MediaItem>, private val spec: String, private
                     ctx.unitProgress(index, (g + 1).toDouble() / groups.size)
                 }
                 ItemResult(item.name, ItemOutcome.SUCCESS, null, outputs,
-                    "${pages.size} of ${src.numberOfPages} pages · ${if (mode == PageMode.ONE_FILE) "1 PDF" else "${outputs.size} PDFs"} · text and links kept")
+                    trn(src.numberOfPages, "{1} of {0} page", "{1} of {0} pages", pages.size) + " · " + trn(outputs.size, "{0} PDF", "{0} PDFs") + " · " + tr("text and links kept"))
             } finally {
                 src.close()
                 tmpDir.deleteRecursively()

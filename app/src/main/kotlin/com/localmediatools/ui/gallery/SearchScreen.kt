@@ -20,9 +20,11 @@ import com.localmediatools.gallery.SearchResult
 import com.localmediatools.gallery.core.Category
 import com.localmediatools.gallery.core.SearchParser
 import com.localmediatools.gallery.core.SearchTerm
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.Palette
-import com.localmediatools.ui.SearchField
 import com.localmediatools.ui.Screen
+import com.localmediatools.ui.SearchField
 import com.localmediatools.ui.Shapes
 import com.localmediatools.ui.TextStyle
 import com.localmediatools.ui.UI
@@ -53,8 +55,8 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
     override fun createView(): View {
         val root = UI.vertical(ctx).apply { setBackgroundColor(Palette.BG) }
         val bar = UI.horizontal(ctx).apply { setPadding(ctx.dp(4), ctx.dp(8), ctx.dp(14), ctx.dp(8)) }
-        bar.addView(UI.iconButton(ctx, R.drawable.ic_back, "Back") { pop() })
-        field = SearchField(ctx, "People, things, places, dates") { q -> onQuery(q) }
+        bar.addView(UI.iconButton(ctx, R.drawable.ic_back, tr("Back")) { pop() })
+        field = SearchField(ctx, tr("People, things, places, dates")) { q -> onQuery(q) }
         bar.addView(field, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         root.addView(bar)
         val body = FrameLayout(ctx)
@@ -117,18 +119,18 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         for (t in r.query.terms) chips.addView(termChip(t), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(8) })
         resultHead.addView(HorizontalScrollView(ctx).apply { isHorizontalScrollBarEnabled = false; addView(chips) })
         if (r.query.corrections.isNotEmpty()) {
-            resultHead.addView(UI.text(ctx, "Showing results for " + r.query.corrections.joinToString(", ") { "\"${it.second}\"" } + " (you typed " +
-                r.query.corrections.joinToString(", ") { "\"${it.first}\"" } + ")", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(8), 0, 0) })
+            resultHead.addView(UI.text(ctx, tr("Showing results for {0} (you typed {1})", r.query.corrections.joinToString(", ") { "\"${it.second}\"" },
+                r.query.corrections.joinToString(", ") { "\"${it.first}\"" }), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(8), 0, 0) })
         }
         val n = r.items.size
         val st = GalleryIndex.state.value
-        val tail = if (st.working && st.total > 0) " · still analysing ${st.total - st.done} more" else ""
-        resultHead.addView(UI.text(ctx, (if (n == 0) "No matches" else "$n ${if (n == 1) "result" else "results"}") + tail, TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(8), 0, ctx.dp(4)) })
+        val tail = if (st.working && st.total > 0) " · " + trn(st.total - st.done, "still analysing {0} more", "still analysing {0} more") else ""
+        resultHead.addView(UI.text(ctx, (if (n == 0) tr("No matches") else trn(n, "{0} result", "{0} results")) + tail, TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(8), 0, ctx.dp(4)) })
         if (n == 0) {
             val why = when {
-                onlyText -> "Try a name you gave someone, or things like dog, car, beach, food, sunset or document."
-                r.query.terms.size > 1 -> "No photo has all of these. Remove a word to see more."
-                else -> "Nothing found yet."
+                onlyText -> tr("Try a name you gave someone, or things like dog, car, beach, food, sunset or document.")
+                r.query.terms.size > 1 -> tr("No photo has all of these. Remove a word to see more.")
+                else -> tr("Nothing found yet.")
             }
             resultHead.addView(UI.text(ctx, why, TextStyle.BODY_2).apply { setPadding(0, ctx.dp(8), 0, 0) })
         }
@@ -165,28 +167,28 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val cats = s.cats.filter { (c, _) -> matches(c.name, *c.words.toTypedArray()) }
         val albums = s.albums.filter { matches(it.second) }
         if (people.isNotEmpty()) {
-            col.addView(UI.label(ctx, "People"), lp().apply { bottomMargin = ctx.dp(8) })
+            col.addView(UI.label(ctx, tr("People")), lp().apply { bottomMargin = ctx.dp(8) })
             val strip = UI.horizontal(ctx)
             for ((person, face) in people) strip.addView(personChip(person, face), LinearLayout.LayoutParams(ctx.dp(76), LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(8) })
             col.addView(HorizontalScrollView(ctx).apply { isHorizontalScrollBarEnabled = false; addView(strip) }, lp().apply { bottomMargin = ctx.dp(18) })
         }
         if (cats.isNotEmpty()) {
-            col.addView(UI.label(ctx, if (lastWord.isEmpty()) "Things in your photos" else "Things"), lp().apply { bottomMargin = ctx.dp(8) })
+            col.addView(UI.label(ctx, if (lastWord.isEmpty()) tr("Things in your photos") else tr("Things")), lp().apply { bottomMargin = ctx.dp(8) })
             col.addView(flow(cats.take(if (lastWord.isEmpty()) 24 else 12).map { (c, n) -> chip(c.name, "$n") { pick(c.name) } }), lp().apply { bottomMargin = ctx.dp(18) })
         }
         if (albums.isNotEmpty()) {
-            col.addView(UI.label(ctx, "Albums"), lp().apply { bottomMargin = ctx.dp(8) })
+            col.addView(UI.label(ctx, tr("Albums")), lp().apply { bottomMargin = ctx.dp(8) })
             col.addView(flow(albums.map { (_, name) -> chip(name, null) { pick(name) } }), lp().apply { bottomMargin = ctx.dp(18) })
         }
         if (lastWord.isEmpty()) {
-            col.addView(UI.label(ctx, "Try"), lp().apply { bottomMargin = ctx.dp(8) })
-            col.addView(flow(listOf("Videos", "Screenshots", "Last month", "This year").map { chip(it, null) { pick(it) } }))
+            col.addView(UI.label(ctx, tr("Try")), lp().apply { bottomMargin = ctx.dp(8) })
+            col.addView(flow(listOf(tr("Videos"), tr("Screenshots"), tr("Last month"), tr("This year")).map { chip(it, null) { pick(it) } }))
         }
         if (people.isEmpty() && cats.isEmpty() && albums.isEmpty() && lastWord.isNotEmpty()) {
-            col.addView(UI.text(ctx, "Press search to look for \"$prefix\".", TextStyle.BODY_2))
+            col.addView(UI.text(ctx, tr("Press search to look for \"{0}\".", prefix), TextStyle.BODY_2))
         }
         if (s.people.isEmpty() && lastWord.isEmpty()) {
-            col.addView(UI.note(ctx, "Name people in Gallery › People to search for them, like \"Sophie\" or \"John and Sophie\".", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(18) })
+            col.addView(UI.note(ctx, tr("Name people in Gallery › People to search for them, like \"Sophie\" or \"John and Sophie\"."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(18) })
         }
         suggestions.addView(col)
     }

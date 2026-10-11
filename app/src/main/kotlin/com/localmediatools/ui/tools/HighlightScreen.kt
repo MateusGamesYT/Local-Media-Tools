@@ -26,6 +26,9 @@ import com.localmediatools.highlight.ShotInfo
 import com.localmediatools.highlight.core.Aspect
 import com.localmediatools.highlight.core.Plan
 import com.localmediatools.highlight.core.Planner
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.music.core.Mood
 import com.localmediatools.tools.HighlightJob
 import com.localmediatools.tools.HighlightSettings
@@ -43,13 +46,13 @@ import com.localmediatools.ui.ToolScreen
 import com.localmediatools.ui.UI
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.lp
+import java.util.Locale
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
-import kotlin.math.roundToInt
 
 /** The highlight video's settings, kept while the app runs; choices about shots belong to one selection. */
 object HighlightPrefs {
@@ -108,14 +111,14 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         head.addView(bar, lp().apply { topMargin = ctx.dp(8) })
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
 
-        section(container, "Music", "Written on this phone for your video — always instrumental")
-        container.addView(ChoiceGroup(ctx, listOf(Mood.UPBEAT, Mood.CHILL, Mood.CINEMATIC, null), { it?.label ?: "No music" }, HighlightPrefs.mood) {
+        section(container, tr("Music"), tr("Written on this phone for your video — always instrumental"))
+        container.addView(ChoiceGroup(ctx, listOf(Mood.UPBEAT, Mood.CHILL, Mood.CINEMATIC, null), { it?.label ?: tr("No music") }, HighlightPrefs.mood) {
             HighlightPrefs.mood = it; stopMusic(); refresh()
         }, lp().apply { topMargin = ctx.dp(8) })
         val musicRow = UI.horizontal(ctx)
-        playButton = UI.secondaryButton(ctx, "Listen", R.drawable.ic_play) { toggleMusic() }
+        playButton = UI.secondaryButton(ctx, tr("Listen"), R.drawable.ic_play) { toggleMusic() }
         musicRow.addView(playButton, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        musicRow.addView(UI.secondaryButton(ctx, "Another tune", R.drawable.ic_music) {
+        musicRow.addView(UI.secondaryButton(ctx, tr("Another tune"), R.drawable.ic_music) {
             HighlightPrefs.seed++
             val wasPlaying = player != null
             stopMusic(); refresh()
@@ -123,23 +126,23 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = ctx.dp(10) })
         container.addView(musicRow, lp().apply { topMargin = ctx.dp(10) })
 
-        section(container, "Length")
-        container.addView(ChoiceGroup(ctx, listOf(null, 15.0, 30.0, 60.0, 90.0), { it?.let { s -> "${s.roundToInt()} s" } ?: "Auto" }, HighlightPrefs.seconds) {
+        section(container, tr("Length"))
+        container.addView(ChoiceGroup(ctx, listOf(null, 15.0, 30.0, 60.0, 90.0), { it?.let { s -> tr("{0} s", s.roundToInt()) } ?: tr("Auto") }, HighlightPrefs.seconds) {
             HighlightPrefs.seconds = it; refresh()
         }, lp().apply { topMargin = ctx.dp(8) })
 
-        section(container, "Shape")
+        section(container, tr("Shape"))
         shapes = ChoiceGroup(ctx, listOf(null, Aspect.LANDSCAPE, Aspect.PORTRAIT, Aspect.SQUARE), { shapeLabel(it) }, HighlightPrefs.aspect) {
             HighlightPrefs.aspect = it; refresh()
         }
         container.addView(shapes, lp().apply { topMargin = ctx.dp(8) })
 
-        container.addView(ToggleRow(ctx, "Captions", "The title at the start and each moment's name", HighlightPrefs.captions) { HighlightPrefs.captions = it; refresh() }, lp().apply { topMargin = ctx.dp(14) })
-        container.addView(ToggleRow(ctx, "Sound from your videos", "The music gets quieter while they play", HighlightPrefs.clipSound) { HighlightPrefs.clipSound = it; refresh() }, lp().apply { topMargin = ctx.dp(8) })
-        titleField = TextField(ctx, "Title", "", HighlightPrefs.title ?: "") { HighlightPrefs.title = it.ifBlank { null }; refresh() }
+        container.addView(ToggleRow(ctx, tr("Captions"), tr("The title at the start and each moment's name"), HighlightPrefs.captions) { HighlightPrefs.captions = it; refresh() }, lp().apply { topMargin = ctx.dp(14) })
+        container.addView(ToggleRow(ctx, tr("Sound from your videos"), tr("The music gets quieter while they play"), HighlightPrefs.clipSound) { HighlightPrefs.clipSound = it; refresh() }, lp().apply { topMargin = ctx.dp(8) })
+        titleField = TextField(ctx, tr("Title"), "", HighlightPrefs.title ?: "") { HighlightPrefs.title = it.ifBlank { null }; refresh() }
         container.addView(titleField, lp().apply { topMargin = ctx.dp(14) })
 
-        section(container, "Moments", "Tap a shot to always include it; tap again to leave it out")
+        section(container, tr("Moments"), tr("Tap a shot to always include it; tap again to leave it out"))
         summary = UI.text(ctx, "", TextStyle.CAPTION)
         container.addView(summary, lp().apply { topMargin = ctx.dp(6) })
         moments = UI.vertical(ctx)
@@ -148,10 +151,10 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
     }
 
     private fun shapeLabel(a: Aspect?): String = when (a) {
-        null -> plan?.let { p -> "Auto (${shapeLabel(p.aspect).substringBefore(' ').lowercase(Locale.UK)})" } ?: "Auto"
-        Aspect.LANDSCAPE -> "Landscape 16:9"
-        Aspect.PORTRAIT -> "Portrait 9:16"
-        Aspect.SQUARE -> "Square"
+        null -> plan?.let { p -> tr("Auto ({0})", when (p.aspect) { Aspect.LANDSCAPE -> tr("landscape"); Aspect.PORTRAIT -> tr("portrait"); Aspect.SQUARE -> tr("square") }) } ?: tr("Auto")
+        Aspect.LANDSCAPE -> Aspect.LANDSCAPE.label
+        Aspect.PORTRAIT -> Aspect.PORTRAIT.label
+        Aspect.SQUARE -> Aspect.SQUARE.label
     }
 
     override fun onSelectionChanged() {
@@ -170,7 +173,7 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         plan = null; items = emptyList(); infos = emptyList()
         moments.removeAllViews(); cells.clear(); headers.clear()
         if (list.size < 2) {
-            status.text = "Pick the photos and videos of an event (two or more). They're put in the order they were taken."
+            status.text = tr("Pick the photos and videos of an event (two or more). They're put in the order they were taken.")
             bar.visibility = View.GONE; summary.text = ""
             return
         }
@@ -178,7 +181,7 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         analysis = scope.launch {
             val found = ArrayList<MediaItem>(); val got = ArrayList<ShotInfo>()
             for ((k, item) in list.withIndex()) {
-                status.text = "Looking at your ${noun(list)} with on-device AI… ${k + 1} of ${list.size}"
+                status.text = looking(list, k)
                 bar.setProgress(k.toFloat() / list.size)
                 val info = HighlightAnalyzer.cached(item) ?: withContext(Dispatchers.Default) {
                     try { HighlightAnalyzer.analyze(ctx, item) { !isActive } } catch (e: Exception) { if (e is kotlinx.coroutines.CancellationException) throw e; null }
@@ -188,17 +191,21 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             }
             bar.visibility = View.GONE
             withContext(Dispatchers.Default) { HighlightAnalyzer.releaseModels() }
-            if (found.size < 2) { status.text = "Too few of these files could be read."; return@launch }
+            if (found.size < 2) { status.text = tr("Too few of these files could be read."); return@launch }
             items = found; infos = got
-            status.text = if (found.size < list.size) "${list.size - found.size} of the files couldn't be read and are left out." else ""
+            status.text = if (found.size < list.size) trn(list.size - found.size, "{0} of the files couldn't be read and is left out.", "{0} of the files couldn't be read and are left out.") else ""
             status.visibility = if (status.text.isEmpty()) View.GONE else View.VISIBLE
             buildMoments()
         }
     }
 
-    private fun noun(list: List<MediaItem>): String {
+    private fun looking(list: List<MediaItem>, k: Int): String {
         val v = list.count { it.kind == MediaKind.VIDEO }; val p = list.size - v
-        return when { v == 0 -> "photos"; p == 0 -> "videos"; else -> "photos and videos" }
+        return when {
+            v == 0 -> tr("Looking at your photos with on-device AI… {0} of {1}", k + 1, list.size)
+            p == 0 -> tr("Looking at your videos with on-device AI… {0} of {1}", k + 1, list.size)
+            else -> tr("Looking at your photos and videos with on-device AI… {0} of {1}", k + 1, list.size)
+        }
     }
 
     /** One row per moment, its shots in the order they were taken. */
@@ -214,7 +221,7 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             val info = UI.text(ctx, "", TextStyle.CAPTION)
             val texts = UI.vertical(ctx).apply { addView(name); addView(info) }
             top.addView(texts, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            top.addView(UI.secondaryButton(ctx, "Rename") { rename(m.index) })
+            top.addView(UI.secondaryButton(ctx, tr("Rename")) { rename(m.index) })
             card.addView(top)
             headers[m.index] = name to info
             val strip = UI.horizontal(ctx)
@@ -236,7 +243,7 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
     private fun refresh() {
         if (items.size < 2) return
         val p = makePlan()
-        if (p == null) { summary.text = "Everything is left out — tap a shot to bring it back."; cells.values.forEach { it.show(false, false, true, 0) }; return }
+        if (p == null) { summary.text = tr("Everything is left out — tap a shot to bring it back."); cells.values.forEach { it.show(false, false, true, 0) }; return }
         plan = p
         update(p)
     }
@@ -249,10 +256,10 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             val (name, info) = headers[m.index] ?: continue
             name.text = m.label
             val n = p.clips.count { it.moment == m.index }
-            info.text = "${clock(m.startMs)}–${clock(m.endMs)} · ${if (n == 0) "not in the video" else "$n of ${m.shots.size} in the video"}"
+            info.text = "${clock(m.startMs)}–${clock(m.endMs)} · " + if (n == 0) tr("not in the video") else trn(m.shots.size, "{1} of {0} in the video", "{1} of {0} in the video", n)
         }
-        val music = HighlightPrefs.mood?.let { "${it.label} music" } ?: "no music"
-        summary.text = "${p.moments.size} ${if (p.moments.size == 1) "moment" else "moments"} · ${p.clips.size} clips · ${Format.duration(p.durationMs)} · $music · ${shapeLabel(p.aspect)}"
+        val music = HighlightPrefs.mood?.musicLabel ?: tr("no music")
+        summary.text = trn(p.moments.size, "{0} moment", "{0} moments") + " · " + trn(p.clips.size, "{0} clip", "{0} clips") + " · ${Format.duration(p.durationMs)} · $music · ${shapeLabel(p.aspect)}"
         shapes.relabel()
         titleField.edit.hint = Planner.title(infos.mapIndexed { i, s -> s.shot(i) }, java.util.TimeZone.getDefault())
     }
@@ -277,21 +284,21 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
             setPadding(ctx.dp(20), ctx.dp(12), ctx.dp(20), ctx.dp(12))
         }
-        AlertDialog.Builder(activity).setTitle("Name this moment").setView(input)
-            .setPositiveButton("Save") { _, _ -> val t = input.text.toString().trim(); if (t.isEmpty()) HighlightPrefs.names.remove(index) else HighlightPrefs.names[index] = t; refresh() }
-            .setNeutralButton("Automatic") { _, _ -> HighlightPrefs.names.remove(index); refresh() }
-            .setNegativeButton("Cancel", null).show()
+        AlertDialog.Builder(activity).setTitle(tr("Name this moment")).setView(input)
+            .setPositiveButton(tr("Save")) { _, _ -> val t = input.text.toString().trim(); if (t.isEmpty()) HighlightPrefs.names.remove(index) else HighlightPrefs.names[index] = t; refresh() }
+            .setNeutralButton(tr("Automatic")) { _, _ -> HighlightPrefs.names.remove(index); refresh() }
+            .setNegativeButton(tr("Cancel"), null).show()
     }
 
     // ------------------------------------------------------------------ listening to the music
     private fun toggleMusic() {
         if (player != null || playJob?.isActive == true) { stopMusic(); return }
-        val mood = HighlightPrefs.mood ?: run { android.widget.Toast.makeText(ctx, "Pick a kind of music first.", android.widget.Toast.LENGTH_SHORT).show(); return }
-        playButton.label = "Writing…"
+        val mood = HighlightPrefs.mood ?: run { android.widget.Toast.makeText(ctx, tr("Pick a kind of music first."), android.widget.Toast.LENGTH_SHORT).show(); return }
+        playButton.label = tr("Writing…")
         val seconds = (plan?.durationMs?.div(1000.0) ?: 20.0).coerceIn(10.0, 30.0)
         playJob = scope.launch {
             val pcm = withContext(Dispatchers.Default) { try { HighlightAudio.music(ctx, mood, seconds, HighlightPrefs.seed) } catch (e: Exception) { null } }
-            if (pcm == null || !isActive) { playButton.label = "Listen"; return@launch }
+            if (pcm == null || !isActive) { playButton.label = tr("Listen"); return@launch }
             // Streamed in small pieces: phones limit how much one static buffer may hold.
             val track = try {
                 val min = AudioTrack.getMinBufferSize(HighlightAudio.RATE, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_FLOAT)
@@ -301,9 +308,9 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
                     .setTransferMode(AudioTrack.MODE_STREAM).setBufferSizeInBytes(maxOf(min, HighlightAudio.RATE * 8 / 4)).build()
                     .also { it.play() }
             } catch (e: Exception) { null }
-            if (track == null) { playButton.label = "Listen"; android.widget.Toast.makeText(ctx, "The music can't be played on this phone right now.", android.widget.Toast.LENGTH_SHORT).show(); return@launch }
+            if (track == null) { playButton.label = tr("Listen"); android.widget.Toast.makeText(ctx, tr("The music can't be played on this phone right now."), android.widget.Toast.LENGTH_SHORT).show(); return@launch }
             player = track
-            playButton.label = "Stop"
+            playButton.label = tr("Stop")
             previewFrames = 0
             withContext(Dispatchers.IO) {
                 val buf = java.nio.ByteBuffer.allocateDirect(8192 * 4).order(java.nio.ByteOrder.nativeOrder())
@@ -325,13 +332,13 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         playJob?.cancel(); playJob = null
         player?.let { try { it.stop() } catch (_: Exception) { }; it.release() }
         player = null
-        if (::playButton.isInitialized) playButton.label = "Listen"
+        if (::playButton.isInitialized) playButton.label = tr("Listen")
     }
 
     override fun onHide() { stopMusic(); super.onHide() }
     override fun onDestroy() { stopMusic(); analysis?.cancel(); super.onDestroy() }
 
-    override fun outputNaming() = "highlight_<date>.mp4"
+    override fun outputNaming() = "highlight_" + tr("<date>") + ".mp4"
     override fun createJob(items: List<MediaItem>): ExportJob = HighlightJob(items, HighlightPrefs.settings())
 
     // ------------------------------------------------------------------ one shot on the timeline
@@ -357,13 +364,13 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             val color = when { out -> Palette.STROKE; must -> Palette.ACCENT; used -> Palette.SUCCESS; else -> Palette.STROKE }
             background = Shapes.rounded(ctx, Palette.SURFACE_2, 14f, color, if (used || must) 2.5f else 1f)
             image.alpha = if (out) 0.3f else if (used) 1f else 0.7f
-            val text = when { out -> "Left out"; must && used -> "★ ${seconds(ms)}"; used -> seconds(ms); else -> null }
+            val text = when { out -> tr("Left out"); must && used -> "★ ${seconds(ms)}"; used -> seconds(ms); else -> null }
             badge.text = text ?: ""
             badge.visibility = if (text != null) VISIBLE else GONE
             badge.background = Shapes.rounded(ctx, if (out) 0xCC333333.toInt() else if (must) Palette.ACCENT else Palette.SUCCESS, 100f)
-            contentDescription = "${item.name}, " + when { out -> "left out"; must -> "always in"; used -> "in the video"; else -> "not used" }
+            contentDescription = "${item.name}, " + when { out -> tr("left out"); must -> tr("always in"); used -> tr("in the video"); else -> tr("not used") }
         }
 
-        private fun seconds(ms: Long) = String.format(Locale.US, "%.1f s", ms / 1000.0)
+        private fun seconds(ms: Long) = tr("{0} s", String.format(I18n.locale, "%.1f", ms / 1000.0))
     }
 }

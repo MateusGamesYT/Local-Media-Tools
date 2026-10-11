@@ -10,6 +10,8 @@ import com.localmediatools.core.OutputStore
 import com.localmediatools.core.PendingOutput
 import com.localmediatools.core.UserFacingException
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -69,15 +71,15 @@ object Outputs {
                 if (mime.startsWith("audio/")) a = true
                 if (f.containsKey(android.media.MediaFormat.KEY_DURATION)) dur = maxOf(dur, f.getLong(android.media.MediaFormat.KEY_DURATION))
             }
-            if ((expectVideo && !v) || (expectAudio && !a)) throw UserFacingException("The written file failed verification (missing track), so it was discarded.")
+            if ((expectVideo && !v) || (expectAudio && !a)) throw UserFacingException(tr("The written file failed verification (missing track), so it was discarded."))
             if (dur <= 0) {
                 ex.selectTrack(0)
-                if (ex.sampleTime < 0) throw UserFacingException("The written file failed verification (no samples), so it was discarded.")
+                if (ex.sampleTime < 0) throw UserFacingException(tr("The written file failed verification (no samples), so it was discarded."))
             }
         } catch (e: UserFacingException) {
             throw e
         } catch (e: Exception) {
-            throw UserFacingException("The written file could not be read back, so it was discarded.", e)
+            throw UserFacingException(tr("The written file could not be read back, so it was discarded."), e)
         } finally {
             ex.release()
         }
@@ -87,6 +89,6 @@ object Outputs {
         if (before <= 0 || after < 0) return Format.bytes(after)
         val pct = ((after - before) * 100.0 / before)
         val sign = if (pct > 0) "+" else ""
-        return "${Format.bytes(before)} → ${Format.bytes(after)} ($sign${String.format(java.util.Locale.US, "%.0f", pct)}%)"
+        return "${Format.bytes(before)} → ${Format.bytes(after)} (" + tr("{0}%", sign + String.format(I18n.locale, "%.0f", pct)) + ")"
     }
 }

@@ -9,14 +9,16 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import com.localmediatools.app.R
+import com.localmediatools.gallery.EngineMode
 import com.localmediatools.gallery.GMedia
 import com.localmediatools.gallery.GPerson
-import com.localmediatools.gallery.EngineMode
 import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.GalleryRepo
 import com.localmediatools.gallery.core.Category
 import com.localmediatools.gallery.core.MediaFilter
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.MainShell
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.ProgressBarView
@@ -57,9 +59,9 @@ class GalleryTab(private val shell: MainShell) {
         val col = UI.vertical(ctx)
         // Header: title, search and menu.
         val head = UI.horizontal(ctx).apply { setPadding(ctx.dp(18), ctx.dp(14), ctx.dp(8), ctx.dp(4)) }
-        head.addView(UI.text(ctx, "Gallery", TextStyle.DISPLAY).apply { isAccessibilityHeading = true }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        head.addView(UI.iconButton(ctx, R.drawable.ic_search, "Search photos") { openSearch() })
-        head.addView(UI.iconButton(ctx, R.drawable.ic_more, "Gallery options") { menu() })
+        head.addView(UI.text(ctx, tr("Gallery"), TextStyle.DISPLAY).apply { isAccessibilityHeading = true }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        head.addView(UI.iconButton(ctx, R.drawable.ic_search, tr("Search photos")) { openSearch() })
+        head.addView(UI.iconButton(ctx, R.drawable.ic_more, tr("Gallery options")) { menu() })
         col.addView(head)
         // A search pill too: search is the point of all this.
         col.addView(UI.horizontal(ctx).apply {
@@ -67,19 +69,19 @@ class GalleryTab(private val shell: MainShell) {
             setPadding(ctx.dp(14), 0, ctx.dp(14), 0)
             minimumHeight = ctx.dp(46)
             addView(UI.iconView(ctx, R.drawable.ic_search, Palette.TEXT_3, 18))
-            addView(UI.text(ctx, "Search people, things, places…", TextStyle.BODY, Palette.TEXT_3).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+            addView(UI.text(ctx, tr("Search people, things, places…"), TextStyle.BODY, Palette.TEXT_3).apply { setPadding(ctx.dp(10), 0, 0, 0) })
             isClickable = true; isFocusable = true
-            contentDescription = "Search photos"
+            contentDescription = tr("Search photos")
             setOnClickListener { openSearch() }
         }, lp().apply { leftMargin = ctx.dp(18); rightMargin = ctx.dp(18); topMargin = ctx.dp(6) })
-        segments = Segments(ctx, listOf("Photos", "Albums", "People", "Things")) { show(it) }
+        segments = Segments(ctx, listOf(tr("Photos"), tr("Albums"), tr("People"), tr("Things"))) { show(it) }
         col.addView(segments, lp().apply { leftMargin = ctx.dp(18); rightMargin = ctx.dp(18); topMargin = ctx.dp(12) })
         status = IndexStatusBar(ctx) { statusDetails() }
         col.addView(status, lp().apply { leftMargin = ctx.dp(18); rightMargin = ctx.dp(18); topMargin = ctx.dp(10) })
         // Android 14+: the user may have allowed only some photos; offer to choose more.
-        partial = UI.note(ctx, "Showing only the photos you allowed. Tap to allow more.", UI.NoteKind.INFO).apply {
+        partial = UI.note(ctx, tr("Showing only the photos you allowed. Tap to allow more."), UI.NoteKind.INFO).apply {
             isClickable = true; isFocusable = true
-            contentDescription = "Allow more photos"
+            contentDescription = tr("Allow more photos")
             setOnClickListener { activity.ensureMediaAccess { ok -> if (ok) GalleryIndex.start(ctx) } }
             visibility = View.GONE
         }
@@ -179,7 +181,7 @@ class GalleryTab(private val shell: MainShell) {
         if (pane != 0) return
         val current = (0 until body.childCount).map { body.getChildAt(it) }.firstOrNull { it.tag == "empty" }
         if (empty && current == null) {
-            body.addView(emptyState(R.drawable.ic_image, "No photos or videos yet", "Photos and videos you take or save on this phone will show up here.").apply { tag = "empty" })
+            body.addView(emptyState(R.drawable.ic_image, tr("No photos or videos yet"), tr("Photos and videos you take or save on this phone will show up here.")).apply { tag = "empty" })
         } else if (!empty && current != null) body.removeView(current)
         g.visibility = if (empty) View.INVISIBLE else View.VISIBLE
     }
@@ -197,11 +199,11 @@ class GalleryTab(private val shell: MainShell) {
         panes.clear(); grid = null
         val col = UI.vertical(ctx).apply { tag = "permission"; gravity = Gravity.CENTER_HORIZONTAL; setPadding(ctx.dp(28), ctx.dp(48), ctx.dp(28), ctx.dp(140)) }
         col.addView(UI.gradientTile(ctx, R.drawable.ic_gallery, Palette.BRAND, 64, 32))
-        col.addView(UI.text(ctx, "Your photos, organised on this phone", TextStyle.TITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(18), 0, 0) })
-        col.addView(UI.text(ctx, "Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for \"dog\" or \"Sophie\" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet.", TextStyle.BODY_2).apply {
+        col.addView(UI.text(ctx, tr("Your photos, organised on this phone"), TextStyle.TITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(18), 0, 0) })
+        col.addView(UI.text(ctx, tr("Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for \"dog\" or \"Sophie\" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet."), TextStyle.BODY_2).apply {
             gravity = Gravity.CENTER; setPadding(0, ctx.dp(10), 0, 0)
         })
-        col.addView(UI.primaryButton(ctx, "Allow access") {
+        col.addView(UI.primaryButton(ctx, tr("Allow access")) {
             activity.ensureMediaAccess { ok -> if (ok) { show(pane); GalleryIndex.start(ctx) } }
         }, lp().apply { topMargin = ctx.dp(22) })
         body.addView(ScrollView(ctx).apply { tag = "permission"; addView(col) })
@@ -233,10 +235,10 @@ class GalleryTab(private val shell: MainShell) {
     private fun renderAlbums(scroll: ScrollView, d: AlbumData) {
         scroll.removeAllViews()
         val col = UI.vertical(ctx).apply { setPadding(ctx.dp(14), ctx.dp(8), ctx.dp(14), ctx.dp(130)) }
-        if (d.albums.isEmpty() && d.special.isEmpty()) { col.addView(emptyState(R.drawable.ic_folder, "No albums yet", "Folders with photos or videos appear here.")); scroll.addView(col); return }
+        if (d.albums.isEmpty() && d.special.isEmpty()) { col.addView(emptyState(R.drawable.ic_folder, tr("No albums yet"), tr("Folders with photos or videos appear here."))); scroll.addView(col); return }
         val tiles = ArrayList<View>()
         for ((k, n, cover) in d.special) {
-            val name = when (k) { MediaFilter.VIDEOS -> "Videos"; MediaFilter.FAVOURITES -> "Favourites"; else -> "Screenshots" }
+            val name = when (k) { MediaFilter.VIDEOS -> tr("Videos"); MediaFilter.FAVOURITES -> tr("Favourites"); else -> tr("Screenshots") }
             tiles.add(AlbumTile(ctx, name, n, cover) { shell.push(MediaListScreen(activity, name, MediaListScreen.Source.Kind(k))) })
         }
         for ((id, name, info) in d.albums) {
@@ -263,7 +265,7 @@ class GalleryTab(private val shell: MainShell) {
             background = Shapes.clickable(ctx, Palette.SURFACE, 18f, Palette.STROKE)
             setPadding(ctx.dp(14), ctx.dp(12), ctx.dp(12), ctx.dp(12))
             addView(UI.iconTile(ctx, R.drawable.ic_tool_faceblur, Palette.ACCENT, 38, 20))
-            addView(UI.titled(ctx, "All faces", "${d.faces} faces found · named, unnamed and on their own").apply { setPadding(ctx.dp(12), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(UI.titled(ctx, tr("All faces"), trn(d.faces, "{0} face found · named, unnamed and on their own", "{0} faces found · named, unnamed and on their own")).apply { setPadding(ctx.dp(12), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_3, 18))
             isClickable = true; isFocusable = true
             setOnClickListener { shell.push(FacesScreen(activity)) }
@@ -276,25 +278,25 @@ class GalleryTab(private val shell: MainShell) {
                 background = Shapes.clickable(ctx, Palette.ACCENT_DARK, 18f, Palette.ACCENT)
                 setPadding(ctx.dp(14), ctx.dp(12), ctx.dp(12), ctx.dp(12))
                 addView(UI.iconTile(ctx, R.drawable.ic_add, Palette.ACCENT, 38, 20))
-                addView(UI.titled(ctx, "Name people", "${unnamed.size} ${if (unnamed.size == 1) "group" else "groups"} to name, one after another").apply { setPadding(ctx.dp(12), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+                addView(UI.titled(ctx, tr("Name people"), trn(unnamed.size, "{0} group to name, one after another", "{0} groups to name, one after another")).apply { setPadding(ctx.dp(12), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
                 addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_2, 18))
                 isClickable = true; isFocusable = true
-                contentDescription = "Name people, ${unnamed.size} groups to name"
+                contentDescription = trn(unnamed.size, "Name people, {0} group to name", "Name people, {0} groups to name")
                 setOnClickListener { shell.push(NamePeopleScreen(activity)) }
             }, lp().apply { bottomMargin = ctx.dp(14); leftMargin = ctx.dp(4); rightMargin = ctx.dp(4) })
         }
         if (d.people.isEmpty()) {
             val st = GalleryIndex.state.value
-            col.addView(emptyState(R.drawable.ic_tool_faceblur, if (st.working) "Finding people…" else "No people yet",
-                if (st.working) "Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos."
-                else "When the same person appears in several photos, they show up here so you can name them."))
+            col.addView(emptyState(R.drawable.ic_tool_faceblur, if (st.working) tr("Finding people…") else tr("No people yet"),
+                if (st.working) tr("Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos.")
+                else tr("When the same person appears in several photos, they show up here so you can name them.")))
         }
         if (named.isNotEmpty()) {
-            col.addView(UI.label(ctx, "Named"), lp().apply { leftMargin = ctx.dp(6); bottomMargin = ctx.dp(8) })
+            col.addView(UI.label(ctx, tr("Named")), lp().apply { leftMargin = ctx.dp(6); bottomMargin = ctx.dp(8) })
             gridOf(col, named.map { (p, f) -> PersonTile(ctx, p, f) { shell.push(PersonScreen(activity, p.id)) } }, 3)
         }
         if (unnamed.isNotEmpty()) {
-            col.addView(UI.label(ctx, "Add names"), lp().apply { leftMargin = ctx.dp(6); topMargin = ctx.dp(18); bottomMargin = ctx.dp(8) })
+            col.addView(UI.label(ctx, tr("Add names")), lp().apply { leftMargin = ctx.dp(6); topMargin = ctx.dp(18); bottomMargin = ctx.dp(8) })
             gridOf(col, unnamed.map { (p, f) -> PersonTile(ctx, p, f) { shell.push(PersonScreen(activity, p.id)) } }, 3)
         }
         scroll.addView(col)
@@ -317,9 +319,9 @@ class GalleryTab(private val shell: MainShell) {
         val col = UI.vertical(ctx).apply { setPadding(ctx.dp(14), ctx.dp(8), ctx.dp(14), ctx.dp(130)) }
         if (d.groups.isEmpty()) {
             val st = GalleryIndex.state.value
-            col.addView(emptyState(R.drawable.ic_sparkle, if (st.working) "Looking at your photos…" else "Nothing recognised yet",
-                if (st.working) "Pets, food, places and things appear here as photos are analysed on this phone."
-                else "Pets, food, vehicles, places and more appear here when photos show them."))
+            col.addView(emptyState(R.drawable.ic_sparkle, if (st.working) tr("Looking at your photos…") else tr("Nothing recognised yet"),
+                if (st.working) tr("Pets, food, places and things appear here as photos are analysed on this phone.")
+                else tr("Pets, food, vehicles, places and more appear here when photos show them.")))
         }
         for ((g, list) in d.groups) {
             col.addView(UI.label(ctx, g), lp().apply { leftMargin = ctx.dp(6); topMargin = ctx.dp(14); bottomMargin = ctx.dp(8) })
@@ -340,15 +342,15 @@ class GalleryTab(private val shell: MainShell) {
     // ------------------------------------------------------------------ menu and status
     private fun menu() {
         val paused = GalleryIndex.isPausedByUser(ctx)
-        val items = arrayOf(if (paused) "Resume organising" else "Pause organising", "About recognition", "Start over (forget people and names)")
+        val items = arrayOf(if (paused) tr("Resume organising") else tr("Pause organising"), tr("About recognition"), tr("Start over (forget people and names)"))
         AlertDialog.Builder(activity).setItems(items) { _, w ->
             when (w) {
                 0 -> GalleryIndex.setPaused(ctx, !paused)
                 1 -> statusDetails()
-                2 -> AlertDialog.Builder(activity).setTitle("Start over?")
-                    .setMessage("Names, people and everything found in your photos are forgotten and the photos are analysed again. Your photos themselves are not touched.")
-                    .setPositiveButton("Start over") { _, _ -> resetIndex() }
-                    .setNegativeButton("Cancel", null).show()
+                2 -> AlertDialog.Builder(activity).setTitle(tr("Start over?"))
+                    .setMessage(tr("Names, people and everything found in your photos are forgotten and the photos are analysed again. Your photos themselves are not touched."))
+                    .setPositiveButton(tr("Start over")) { _, _ -> resetIndex() }
+                    .setNegativeButton(tr("Cancel"), null).show()
             }
         }.show()
     }
@@ -365,18 +367,18 @@ class GalleryTab(private val shell: MainShell) {
     private fun statusDetails() {
         val s = GalleryIndex.state.value
         fun mode(m: EngineMode?) = when (m) {
-            EngineMode.AI -> "on-device AI"
-            EngineMode.BASIC -> "basic mode (the AI model couldn't run on this phone)"
-            EngineMode.OFF -> "unavailable"
-            null -> "starts with the first photo"
+            EngineMode.AI -> tr("on-device AI")
+            EngineMode.BASIC -> tr("basic mode (the AI model couldn't run on this phone)")
+            EngineMode.OFF -> tr("unavailable")
+            null -> tr("starts with the first photo")
         }
-        val progress = if (s.total > 0) "${s.done} of ${s.total} photos and videos analysed." else "Reading your library."
-        val update = if (s.updatingFaces) "\n\nFaces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes." else ""
-        val msg = "$progress$update\n\nObjects and scenes: ${mode(s.objectMode)}.\nFaces and people: ${mode(s.faceMode)}.\n\n" +
-            "Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off."
-        AlertDialog.Builder(activity).setTitle("Organising your gallery").setMessage(msg)
-            .setPositiveButton("OK", null)
-            .setNeutralButton(if (GalleryIndex.isPausedByUser(ctx)) "Resume" else "Pause") { _, _ -> GalleryIndex.setPaused(ctx, !GalleryIndex.isPausedByUser(ctx)) }
+        val progress = if (s.total > 0) trn(s.total, "{1} of {0} photo or video analysed.", "{1} of {0} photos and videos analysed.", s.done) else tr("Reading your library.")
+        val update = if (s.updatingFaces) "\n\n" + tr("Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.") else ""
+        val msg = "$progress$update\n\n" + tr("Objects and scenes: {0}.", mode(s.objectMode)) + "\n" + tr("Faces and people: {0}.", mode(s.faceMode)) + "\n\n" +
+            tr("Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.")
+        AlertDialog.Builder(activity).setTitle(tr("Organising your gallery")).setMessage(msg)
+            .setPositiveButton(tr("OK"), null)
+            .setNeutralButton(if (GalleryIndex.isPausedByUser(ctx)) tr("Resume") else tr("Pause")) { _, _ -> GalleryIndex.setPaused(ctx, !GalleryIndex.isPausedByUser(ctx)) }
             .show()
     }
 }
@@ -410,7 +412,7 @@ class Segments(ctx: android.content.Context, private val labels: List<String>, p
             val on = k == i
             v.background = if (on) Shapes.pill(context, Palette.ACCENT_DARK, Palette.ACCENT) else null
             v.setTextColor(if (on) Palette.TEXT else Palette.TEXT_2)
-            v.contentDescription = labels[k] + if (on) ", selected" else ""
+            v.contentDescription = labels[k] + if (on) tr(", selected") else ""
         }
     }
 }
@@ -439,11 +441,11 @@ class IndexStatusBar(ctx: android.content.Context, onClick: () -> Unit) : Linear
         visibility = if (show && (s.total > 0 || s.phase == GalleryIndex.Phase.READING)) VISIBLE else GONE
         val left = (s.total - s.done).coerceAtLeast(0)
         text.text = when {
-            s.phase == GalleryIndex.Phase.PAUSED -> "${s.pausedWhy ?: "Paused"} · $left left"
-            s.phase == GalleryIndex.Phase.READING -> "Reading your library…"
-            s.phase == GalleryIndex.Phase.GROUPING -> "Grouping faces into people…"
-            s.updatingFaces -> "Updating face recognition · ${s.done} of ${s.total} · " + if (s.warm) "slower while the phone is warm" else "names are kept"
-            else -> "Finding people and things · ${s.done} of ${s.total} · " + if (s.warm) "slower while the phone is warm" else "on this phone"
+            s.phase == GalleryIndex.Phase.PAUSED -> (s.pausedWhy ?: tr("Paused")) + " · " + trn(left, "{0} left", "{0} left")
+            s.phase == GalleryIndex.Phase.READING -> tr("Reading your library…")
+            s.phase == GalleryIndex.Phase.GROUPING -> tr("Grouping faces into people…")
+            s.updatingFaces -> tr("Updating face recognition · {0} of {1}", s.done, s.total) + " · " + if (s.warm) tr("slower while the phone is warm") else tr("names are kept")
+            else -> tr("Finding people and things · {0} of {1}", s.done, s.total) + " · " + if (s.warm) tr("slower while the phone is warm") else tr("on this phone")
         }
         bar.setProgress(s.fraction, if (s.phase == GalleryIndex.Phase.PAUSED) Palette.WARNING else Palette.ACCENT)
         contentDescription = text.text
@@ -466,7 +468,7 @@ class AlbumTile(ctx: android.content.Context, name: String, count: Int, cover: G
         addView(UI.text(ctx, name, TextStyle.SUBTITLE).apply { textSize = 14f; maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END; setPadding(ctx.dp(2), ctx.dp(7), 0, 0) })
         addView(UI.text(ctx, "$count", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(ctx.dp(2), ctx.dp(1), 0, 0) })
         isClickable = true; isFocusable = true
-        contentDescription = "$name, $count items"
+        contentDescription = trn(count, "{1}, {0} item", "{1}, {0} items", name)
         setOnClickListener { onClick() }
     }
 }
@@ -486,12 +488,12 @@ class PersonTile(ctx: android.content.Context, p: GPerson, face: com.localmediat
         }
         if (face != null) GalleryThumbs.face(ctx, face, 256, img)
         addView(img, lp(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply { leftMargin = ctx.dp(6); rightMargin = ctx.dp(6) })
-        addView(UI.text(ctx, p.name ?: "Add name", TextStyle.SUBTITLE, if (p.named) Palette.TEXT else Palette.ACCENT).apply {
+        addView(UI.text(ctx, p.name ?: tr("Add name"), TextStyle.SUBTITLE, if (p.named) Palette.TEXT else Palette.ACCENT).apply {
             textSize = 14f; gravity = Gravity.CENTER; maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END; setPadding(0, ctx.dp(7), 0, 0)
         })
-        addView(UI.text(ctx, "${p.mediaCount} ${if (p.mediaCount == 1) "photo" else "photos"}", TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER })
+        addView(UI.text(ctx, trn(p.mediaCount, "{0} photo", "{0} photos"), TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER })
         isClickable = true; isFocusable = true
-        contentDescription = (p.name ?: "Unnamed person") + ", ${p.mediaCount} photos"
+        contentDescription = trn(p.mediaCount, "{1}, {0} photo", "{1}, {0} photos", p.name ?: tr("Unnamed person"))
         setOnClickListener { onClick() }
     }
 }

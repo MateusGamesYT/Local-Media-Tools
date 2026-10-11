@@ -18,6 +18,8 @@ import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.GalleryRepo
 import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceClustering
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Screen
 import com.localmediatools.ui.Shapes
@@ -93,7 +95,7 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         }
         person = p
         topBar.removeAllViews()
-        topBar.addView(TopBar(this@PersonScreen, p.name ?: "Unnamed person", UI.iconButton(ctx, R.drawable.ic_more, "Options") { menu() }))
+        topBar.addView(TopBar(this@PersonScreen, p.name ?: tr("Unnamed person"), UI.iconButton(ctx, R.drawable.ic_more, tr("Options")) { menu() }))
         renderHeader(d)
         grid.setItems(d.items)
     }
@@ -130,18 +132,18 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         d.cover?.let { GalleryThumbs.face(ctx, it, 256, img) }
         row.addView(img, LinearLayout.LayoutParams(ctx.dp(76), ctx.dp(76)))
         val info = UI.vertical(ctx).apply { setPadding(ctx.dp(14), 0, 0, 0) }
-        info.addView(UI.text(ctx, p.name ?: "Who is this?", TextStyle.TITLE))
+        info.addView(UI.text(ctx, p.name ?: tr("Who is this?"), TextStyle.TITLE))
         val n = d.items.size
-        info.addView(UI.text(ctx, "$n ${if (n == 1) "photo or video" else "photos and videos"} · ${p.faceCount} ${if (p.faceCount == 1) "face" else "faces"}", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
+        info.addView(UI.text(ctx, trn(n, "{0} photo or video", "{0} photos and videos") + " · " + trn(p.faceCount, "{0} face", "{0} faces"), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
         row.addView(info, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         header.addView(row)
         val actions = UI.horizontal(ctx).apply { setPadding(0, ctx.dp(12), 0, 0) }
-        if (!p.named) actions.addView(UI.primaryButton(ctx, "Add name") { rename() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(8) })
-        actions.addView(UI.secondaryButton(ctx, "Review faces", R.drawable.ic_tool_faceblur) { push(FacesScreen(activity, personId)) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        if (!p.named) actions.addView(UI.primaryButton(ctx, tr("Add name")) { rename() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(8) })
+        actions.addView(UI.secondaryButton(ctx, tr("Review faces"), R.drawable.ic_tool_faceblur) { push(FacesScreen(activity, personId)) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         header.addView(actions)
         if (d.similar.isNotEmpty()) {
-            header.addView(UI.label(ctx, "Also ${p.name}?"), lp().apply { topMargin = ctx.dp(18); bottomMargin = ctx.dp(6) })
-            header.addView(UI.text(ctx, "These groups look similar. Confirm the ones that are ${p.name}.", TextStyle.CAPTION), lp().apply { bottomMargin = ctx.dp(8) })
+            header.addView(UI.label(ctx, tr("Also {0}?", p.name)), lp().apply { topMargin = ctx.dp(18); bottomMargin = ctx.dp(6) })
+            header.addView(UI.text(ctx, tr("These groups look similar. Confirm the ones that are {0}.", p.name), TextStyle.CAPTION), lp().apply { bottomMargin = ctx.dp(8) })
             val strip = UI.horizontal(ctx)
             for ((o, f) in d.similar) strip.addView(suggestion(p, o, f), LinearLayout.LayoutParams(ctx.dp(112), LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(10) })
             header.addView(HorizontalScrollView(ctx).apply { isHorizontalScrollBarEnabled = false; addView(strip) })
@@ -156,12 +158,12 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         val img = ImageView(ctx).apply { scaleType = ImageView.ScaleType.CENTER_CROP; background = Shapes.circle(Palette.SURFACE_2); clipToOutline = true }
         f?.let { GalleryThumbs.face(ctx, it, 192, img) }
         img.setOnClickListener { push(PersonScreen(activity, o.id)) }
-        img.contentDescription = "Open this group"
+        img.contentDescription = tr("Open this group")
         addView(img, LinearLayout.LayoutParams(ctx.dp(64), ctx.dp(64)))
-        addView(UI.text(ctx, "${o.mediaCount} ${if (o.mediaCount == 1) "photo" else "photos"}", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
+        addView(UI.text(ctx, trn(o.mediaCount, "{0} photo", "{0} photos"), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
         val row = UI.horizontal(ctx)
-        row.addView(UI.iconButton(ctx, R.drawable.ic_close, "Not ${p.name}", Palette.DANGER) { notSame(p, o) })
-        row.addView(UI.iconButton(ctx, R.drawable.ic_check, "Yes, ${p.name}", Palette.SUCCESS) { merge(p.id, o.id) })
+        row.addView(UI.iconButton(ctx, R.drawable.ic_close, tr("Not {0}", p.name), Palette.DANGER) { notSame(p, o) })
+        row.addView(UI.iconButton(ctx, R.drawable.ic_check, tr("Yes, {0}", p.name), Palette.SUCCESS) { merge(p.id, o.id) })
         addView(row)
     }
 
@@ -190,44 +192,44 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
     }
 
     private fun askMerge(p: GPerson, other: GPerson) {
-        AlertDialog.Builder(activity).setTitle("Merge with ${other.name}?")
-            .setMessage("${other.name} already exists. Merge ${p.name} into ${other.name}? All their photos will be under ${other.name}.")
-            .setPositiveButton("Merge") { _, _ ->
+        AlertDialog.Builder(activity).setTitle(tr("Merge with {0}?", other.name))
+            .setMessage(tr("{0} already exists. Merge {1} into {0}? All their photos will be under {0}.", other.name, p.name))
+            .setPositiveButton(tr("Merge")) { _, _ ->
                 scope.launch {
                     withContext(Dispatchers.IO) { GalleryDb.get(ctx).mergePeople(other.id, p.id) }
                     GalleryIndex.regroupNow(ctx); pop(); push(PersonScreen(activity, other.id))
                 }
-            }.setNegativeButton("Cancel", null).show()
+            }.setNegativeButton(tr("Cancel"), null).show()
     }
 
     private fun menu() {
         val p = person ?: return
         val opts = ArrayList<Pair<String, () -> Unit>>()
-        opts.add((if (p.named) "Rename" else "Add name") to { rename() })
-        opts.add("Merge with…" to { pickMerge(p) })
-        opts.add("Review faces" to { push(FacesScreen(activity, personId)) })
-        opts.add((if (p.hidden) "Show in People" else "Hide from People") to {
+        opts.add((if (p.named) tr("Rename") else tr("Add name")) to { rename() })
+        opts.add(tr("Merge with…") to { pickMerge(p) })
+        opts.add(tr("Review faces") to { push(FacesScreen(activity, personId)) })
+        opts.add((if (p.hidden) tr("Show in People") else tr("Hide from People")) to {
             scope.launch {
                 withContext(Dispatchers.IO) { GalleryDb.get(ctx).setHidden(p.id, !p.hidden) }
                 GalleryIndex.notifyChanged()
-                Toast.makeText(ctx, if (p.hidden) "Shown in People" else "Hidden from People", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, if (p.hidden) tr("Shown in People") else tr("Hidden from People"), Toast.LENGTH_SHORT).show()
             }
         })
-        if (p.named) opts.add("Remove name" to {
-            AlertDialog.Builder(activity).setTitle("Remove ${p.name}?")
-                .setMessage("The name is removed and these faces become unnamed again. Photos are not affected.")
-                .setPositiveButton("Remove") { _, _ ->
+        if (p.named) opts.add(tr("Remove name") to {
+            AlertDialog.Builder(activity).setTitle(tr("Remove {0}?", p.name))
+                .setMessage(tr("The name is removed and these faces become unnamed again. Photos are not affected."))
+                .setPositiveButton(tr("Remove")) { _, _ ->
                     scope.launch { withContext(Dispatchers.IO) { GalleryDb.get(ctx).deletePerson(p.id) }; GalleryIndex.regroupNow(ctx); pop() }
-                }.setNegativeButton("Cancel", null).show()
+                }.setNegativeButton(tr("Cancel"), null).show()
         })
         AlertDialog.Builder(activity).setItems(opts.map { it.first }.toTypedArray()) { _, w -> opts[w].second() }.show()
     }
 
     private fun pickMerge(p: GPerson) = scope.launch {
         val others = withContext(Dispatchers.IO) { GalleryDb.get(ctx).people(includeHidden = true).filter { it.id != p.id && (it.named || it.faceCount >= 2) } }
-        if (others.isEmpty()) { Toast.makeText(ctx, "There is no one else to merge with yet.", Toast.LENGTH_SHORT).show(); return@launch }
-        val labels = others.map { (it.name ?: "Unnamed") + " · ${it.mediaCount} photos" }.toTypedArray()
-        AlertDialog.Builder(activity).setTitle("Same person as…").setItems(labels) { _, w ->
+        if (others.isEmpty()) { Toast.makeText(ctx, tr("There is no one else to merge with yet."), Toast.LENGTH_SHORT).show(); return@launch }
+        val labels = others.map { (it.name ?: tr("Unnamed")) + " · " + trn(it.mediaCount, "{0} photo", "{0} photos") }.toTypedArray()
+        AlertDialog.Builder(activity).setTitle(tr("Same person as…")).setItems(labels) { _, w ->
             val o = others[w]
             // Keep the named one (this one when both or neither are named).
             val (into, from) = if (!p.named && o.named) o.id to p.id else p.id to o.id
@@ -236,7 +238,7 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
                 GalleryIndex.regroupNow(ctx)
                 if (into != personId) { pop(); push(PersonScreen(activity, into)) }
             }
-        }.setNegativeButton("Cancel", null).show()
+        }.setNegativeButton(tr("Cancel"), null).show()
     }
 
     override fun onBack(): Boolean {

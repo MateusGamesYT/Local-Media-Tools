@@ -1,5 +1,7 @@
 package com.localmediatools.print.core
 
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import java.io.File
 import java.io.OutputStream
 
@@ -60,7 +62,7 @@ class PrintRun(
     val format: String = caps.rasterFormat?.mime ?: when {
         caps.jpeg -> "image/jpeg"
         caps.pdf -> "application/pdf"
-        else -> throw IppException("This printer doesn't take any kind of file this app can send (it takes ${caps.formats.joinToString().ifEmpty { "nothing it names" }})")
+        else -> throw IppException(tr("This printer doesn't take any kind of file this app can send (it takes {0})", caps.formats.joinToString().ifEmpty { tr("nothing it names") }))
     }
     private val raster: RasterFormat? = caps.rasterFormat
 
@@ -82,7 +84,7 @@ class PrintRun(
     private var dropped = HashSet<String>()
 
     fun run(): PrintResult {
-        listener.update(PrintStage.CHECKING, 0.0, "Checking with the printer")
+        listener.update(PrintStage.CHECKING, 0.0, tr("Checking with the printer"))
         check()
         validate()
         val ids = if (format == "image/jpeg") sendJpegs() else listOf(sendOne())
@@ -91,7 +93,7 @@ class PrintRun(
 
     private fun check() {
         if (cancelled()) throw PrintCancelled()
-        if (!caps.acceptingJobs) throw IppException("The printer isn't accepting jobs right now")
+        if (!caps.acceptingJobs) throw IppException(tr("The printer isn't accepting jobs right now"))
     }
 
     // ------------------------------------------------------------------ requests
@@ -131,12 +133,12 @@ class PrintRun(
 
     private fun message(r: IppMessage): String {
         val printerSays = r["status-message"]?.string?.takeIf { it.isNotBlank() }
-        return "The printer says " + (printerSays?.let { "\"$it\"" } ?: IppStatus.describe(r.code))
+        return tr("The printer says {0}", printerSays?.let { "\"$it\"" } ?: IppStatus.describe(r.code))
     }
 
     private fun jobId(r: IppMessage): Int {
         if (!IppStatus.successful(r.code)) throw IppException(message(r), r.code)
-        return r.group(IppTag.JOB)?.get("job-id")?.int ?: r["job-id"]?.int ?: throw IppException("The printer accepted the job but gave it no number")
+        return r.group(IppTag.JOB)?.get("job-id")?.int ?: r["job-id"]?.int ?: throw IppException(tr("The printer accepted the job but gave it no number"))
     }
 
     // ------------------------------------------------------------------ sending
@@ -163,7 +165,7 @@ class PrintRun(
                     override val length: Long = f.length()
                     override fun writeTo(out: OutputStream) { f.inputStream().use { it.copyTo(out, 64 * 1024) } }
                 }
-                listener.update(PrintStage.SENDING, 0.9, "Sending to the printer")
+                listener.update(PrintStage.SENDING, 0.9, tr("Sending to the printer"))
                 client.send(request(IppOp.PRINT_JOB), fileDoc, readTimeoutMs = 180_000)
             } finally { f.delete() }
         }
@@ -212,7 +214,7 @@ class PrintRun(
                     w.writeRow(rowBuf)
                 }
                 listener.update(PrintStage.SENDING, (n + (bi + 1).toDouble() / order.size) / pages.size * 0.9,
-                    if (pages.size > 1) "Sending sheet ${n + 1} of ${pages.size}" else "Sending to the printer")
+                    if (pages.size > 1) tr("Sending sheet {0} of {1}", n + 1, pages.size) else tr("Sending to the printer"))
             }
             w.endPage()
         }
@@ -237,7 +239,7 @@ class PrintRun(
         val list = (1..streamCopies).flatMap { 0 until sheets }
         for ((n, s) in list.withIndex()) {
             if (cancelled()) throw PrintCancelled()
-            listener.update(PrintStage.SENDING, n.toDouble() / list.size * 0.9, if (list.size > 1) "Sending sheet ${n + 1} of ${list.size}" else "Sending to the printer")
+            listener.update(PrintStage.SENDING, n.toDouble() / list.size * 0.9, if (list.size > 1) tr("Sending sheet {0} of {1}", n + 1, list.size) else tr("Sending to the printer"))
             val bytes = renderer.jpeg(s, widthPx, heightPx)
             val doc = object : IppDocument {
                 override val length: Long = bytes.size.toLong()
@@ -255,7 +257,7 @@ class PrintRun(
         for ((k, id) in ids.withIndex()) {
             while (true) {
                 if (cancelled()) { cancel(ids.drop(k)); throw PrintCancelled() }
-                if (System.currentTimeMillis() - start > watchLimitMs) return PrintResult(true, "Sent to the printer; it is still working on it", ids, sheetsTotal)
+                if (System.currentTimeMillis() - start > watchLimitMs) return PrintResult(true, tr("Sent to the printer; it is still working on it"), ids, sheetsTotal)
                 val r = try {
                     client.send(IppMessage.request(IppOp.GET_JOB_ATTRIBUTES, client.nextId(), client.address.uri) {
                         integer("job-id", id)
@@ -271,25 +273,25 @@ class PrintRun(
                 val reasons = job["job-state-reasons"]?.strings.orEmpty()
                 when (state) {
                     9 -> break
-                    7 -> return PrintResult(false, "The job was cancelled at the printer", ids, sheetsTotal)
-                    8 -> return PrintResult(false, "The printer gave up on the job" + (problem()?.let { ": $it" } ?: reasons.firstNotNullOfOrNull { MediaNames.reason(it) }?.let { ": $it" } ?: ""), ids, sheetsTotal)
+                    7 -> return PrintResult(false, tr("The job was cancelled at the printer"), ids, sheetsTotal)
+                    8 -> return PrintResult(false, (problem() ?: reasons.firstNotNullOfOrNull { MediaNames.reason(it) })?.let { tr("The printer gave up on the job: {0}", it) } ?: tr("The printer gave up on the job"), ids, sheetsTotal)
                 }
                 val done = job["job-media-sheets-completed"]?.int ?: job["job-impressions-completed"]?.int
                 val issue = problem()
                 val text = when {
-                    issue != null -> "$issue — printing continues once it's sorted"
-                    state == 3 || state == 4 -> "Waiting for the printer"
-                    done != null && sheetsTotal > 1 -> "Printing sheet ${(done + 1).coerceAtMost(sheetsTotal)} of $sheetsTotal"
-                    else -> "Printing"
+                    issue != null -> tr("{0} — printing continues once it's sorted", issue)
+                    state == 3 || state == 4 -> tr("Waiting for the printer")
+                    done != null && sheetsTotal > 1 -> tr("Printing sheet {0} of {1}", (done + 1).coerceAtMost(sheetsTotal), sheetsTotal)
+                    else -> tr("Printing")
                 }
                 val f = 0.9 + 0.1 * ((k + ((done ?: 0).toDouble() / sheetsTotal.coerceAtLeast(1)).coerceAtMost(1.0)) / ids.size)
                 listener.update(PrintStage.PRINTING, f, text)
                 Thread.sleep(pollMs)
             }
         }
-        listener.update(PrintStage.DONE, 1.0, "Printed")
-        val copies = if (settings.copies > 1) " (${settings.copies} copies)" else ""
-        return PrintResult(true, (if (sheetsTotal == 1) "Printed 1 sheet" else "Printed $sheetsTotal sheets") + copies, ids, sheetsTotal)
+        listener.update(PrintStage.DONE, 1.0, tr("Printed"))
+        val copies = if (settings.copies > 1) " (" + trn(settings.copies, "{0} copy", "{0} copies") + ")" else ""
+        return PrintResult(true, trn(sheetsTotal, "Printed {0} sheet", "Printed {0} sheets") + copies, ids, sheetsTotal)
     }
 
     /** What the printer reports as holding things up, in plain words. */
@@ -315,7 +317,7 @@ class PrintRun(
             val r = client.send(IppMessage.request(IppOp.GET_PRINTER_ATTRIBUTES, client.nextId(), client.address.uri) {
                 keyword("requested-attributes", "all", "media-col-database")
             }, readTimeoutMs = 20_000)
-            if (!IppStatus.successful(r.code)) throw IppException("The printer didn't describe itself (${IppStatus.describe(r.code)})", r.code)
+            if (!IppStatus.successful(r.code)) throw IppException(tr("The printer didn't describe itself ({0})", IppStatus.describe(r.code)), r.code)
             return PrinterCaps(r)
         }
     }

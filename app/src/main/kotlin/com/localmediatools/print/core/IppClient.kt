@@ -1,5 +1,6 @@
 package com.localmediatools.print.core
 
+import com.localmediatools.i18n.tr
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
@@ -31,12 +32,12 @@ data class PrinterAddress(val tls: Boolean, val host: InetAddress, val port: Int
             val scheme = t.substringBefore("://", "").lowercase()
             val rest = if (scheme.isEmpty()) t else t.substringAfter("://")
             val tls = scheme == "ipps" || scheme == "https"
-            if (scheme.isNotEmpty() && scheme !in setOf("ipp", "ipps", "http", "https")) throw IllegalArgumentException("Not a printer address: $text")
+            if (scheme.isNotEmpty() && scheme !in setOf("ipp", "ipps", "http", "https")) throw IllegalArgumentException(tr("Not a printer address: {0}", text))
             val authority = rest.substringBefore('/')
             val path = "/" + rest.substringAfter('/', "ipp/print").ifEmpty { "ipp/print" }
             val (hostPart, portPart) = if (authority.startsWith("[")) authority.substringAfter('[').substringBefore(']') to authority.substringAfter("]:", "")
                 else if (authority.count { it == ':' } == 1) authority.substringBefore(':') to authority.substringAfter(':') else authority to ""
-            val host = LocalNetwork.parseLiteral(hostPart) ?: throw IllegalArgumentException("Use the printer's IP address (like 192.168.1.20), not a name: \"$hostPart\"")
+            val host = LocalNetwork.parseLiteral(hostPart) ?: throw IllegalArgumentException(tr("Use the printer's IP address (like 192.168.1.20), not a name: \"{0}\"", hostPart))
             val port = portPart.toIntOrNull() ?: 631
             return PrinterAddress(tls, host, port, path)
         }
@@ -58,11 +59,11 @@ class IppException(message: String, val status: Int = -1, cause: Throwable? = nu
 class PinnedTrust(@Volatile var pin: String?) : X509TrustManager {
     override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) = throw CertificateException("not a server")
     override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
-        val leaf = chain?.firstOrNull() ?: throw CertificateException("The printer sent no certificate")
+        val leaf = chain?.firstOrNull() ?: throw CertificateException(tr("The printer sent no certificate"))
         val fp = fingerprint(leaf)
         val p = pin
         if (p == null) pin = fp
-        else if (!p.equals(fp, ignoreCase = true)) throw CertificateException("The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again.")
+        else if (!p.equals(fp, ignoreCase = true)) throw CertificateException(tr("The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again."))
     }
     override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
 
@@ -96,9 +97,9 @@ class IppClient(
     fun send(request: IppMessage, document: IppDocument? = null, sent: ((Long) -> Unit)? = null, readTimeoutMs: Int = this.readTimeoutMs): IppMessage {
         LocalNetwork.check(address.host)
         val socket = try { open(readTimeoutMs) } catch (e: IppException) { throw e } catch (e: javax.net.ssl.SSLException) {
-            throw IppException("Couldn't set up a secure connection to the printer: ${e.message}", cause = e)
+            throw IppException(tr("Couldn't set up a secure connection to the printer: {0}", e.message), cause = e)
         } catch (e: IOException) {
-            throw IppException(if (address.tls) "Couldn't set up a secure connection to the printer" else "Can't reach the printer at ${address.hostText}", cause = e)
+            throw IppException(if (address.tls) tr("Couldn't set up a secure connection to the printer") else tr("Can't reach the printer at {0}", address.hostText), cause = e)
         }
         live = socket
         try {
@@ -130,16 +131,16 @@ class IppClient(
                 writeError = e
             }
             val response = try { readResponse(BufferedInputStream(socket.getInputStream())) } catch (e: IOException) {
-                throw writeError?.let { IppException("The connection to the printer was lost while sending", cause = it, lostWhileSending = true) } ?: e
+                throw writeError?.let { IppException(tr("The connection to the printer was lost while sending"), cause = it, lostWhileSending = true) } ?: e
             }
             return response
         } catch (e: java.net.SocketTimeoutException) {
-            throw IppException("The printer stopped answering", cause = e)
+            throw IppException(tr("The printer stopped answering"), cause = e)
         } catch (e: javax.net.ssl.SSLException) {
-            throw IppException("Couldn't set up a secure connection to the printer: ${e.message}", cause = e)
+            throw IppException(tr("Couldn't set up a secure connection to the printer: {0}", e.message), cause = e)
         } catch (e: IOException) {
             if (e is IppException) throw e
-            throw IppException("The connection to the printer was lost", cause = e)
+            throw IppException(tr("The connection to the printer was lost"), cause = e)
         } finally {
             live = null
             try { socket.close() } catch (_: IOException) { }
@@ -152,7 +153,7 @@ class IppClient(
             plain.connect(InetSocketAddress(address.host, address.port), connectTimeoutMs)
         } catch (e: IOException) {
             plain.close()
-            throw IppException("Can't reach the printer at ${address.hostText} (is it on, and is the phone on the same Wi-Fi?)", cause = e)
+            throw IppException(tr("Can't reach the printer at {0} (is it on, and is the phone on the same Wi-Fi?)", address.hostText), cause = e)
         }
         plain.soTimeout = readTimeoutMs
         plain.tcpNoDelay = true
@@ -170,9 +171,9 @@ class IppClient(
         var status: Int
         var headers: Map<String, String>
         while (true) {
-            val line = readLine(input) ?: throw IppException("The printer closed the connection without answering")
+            val line = readLine(input) ?: throw IppException(tr("The printer closed the connection without answering"))
             val parts = line.split(' ', limit = 3)
-            status = parts.getOrNull(1)?.toIntOrNull() ?: throw IppException("The printer sent an unexpected answer: $line")
+            status = parts.getOrNull(1)?.toIntOrNull() ?: throw IppException(tr("The printer sent an unexpected answer: {0}", line))
             headers = readHeaders(input)
             if (status !in 100..199) break
         }
@@ -182,12 +183,12 @@ class IppClient(
             else -> input.readBytes()
         }
         if (status != 200) throw IppException(when (status) {
-            401, 403 -> "The printer asks for a password; this app can't print to protected printers"
-            426 -> "The printer only accepts secure connections"
-            404 -> "The printer has no print service at ${address.path}"
-            else -> "The printer answered HTTP $status"
+            401, 403 -> tr("The printer asks for a password; this app can't print to protected printers")
+            426 -> tr("The printer only accepts secure connections")
+            404 -> tr("The printer has no print service at {0}", address.path)
+            else -> tr("The printer answered HTTP {0}", status)
         }, status)
-        return try { IppMessage.decode(body) } catch (e: IllegalArgumentException) { throw IppException("The printer sent an answer that couldn't be read", cause = e) }
+        return try { IppMessage.decode(body) } catch (e: IllegalArgumentException) { throw IppException(tr("The printer sent an answer that couldn't be read"), cause = e) }
     }
 
     private fun readLine(input: InputStream): String? {
@@ -197,7 +198,7 @@ class IppClient(
             if (c < 0) return if (b.size() == 0) null else b.toString("US-ASCII")
             if (c == '\n'.code) return b.toString("US-ASCII").trimEnd('\r')
             b.write(c)
-            if (b.size() > 16 * 1024) throw IppException("The printer sent an overlong header")
+            if (b.size() > 16 * 1024) throw IppException(tr("The printer sent an overlong header"))
         }
     }
 

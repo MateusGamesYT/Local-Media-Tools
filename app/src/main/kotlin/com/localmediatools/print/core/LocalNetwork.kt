@@ -1,5 +1,6 @@
 package com.localmediatools.print.core
 
+import com.localmediatools.i18n.tr
 import java.io.IOException
 import java.net.Inet4Address
 import java.net.Inet6Address
@@ -37,7 +38,7 @@ object LocalNetwork {
 
     /** Throws unless [a] is local. */
     fun check(a: InetAddress): InetAddress {
-        if (!isLocal(a)) throw NotLocalException("${a.hostAddress} isn't on your local network; this app only talks to devices on it")
+        if (!isLocal(a)) throw NotLocalException(tr("{0} isn't on your local network; this app only talks to devices on it", a.hostAddress))
         return a
     }
 

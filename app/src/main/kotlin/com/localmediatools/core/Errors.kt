@@ -1,6 +1,7 @@
 package com.localmediatools.core
 
 import android.media.MediaCodec
+import com.localmediatools.i18n.tr
 import java.io.FileNotFoundException
 import java.io.IOException
 
@@ -19,20 +20,20 @@ object Errors {
         return when {
             t is UserFacingException -> msg
             t is SkipItemException -> msg
-            t is OutOfMemoryError -> "Not enough free memory (RAM) to process this file. Close other apps, lower the export workload, or choose a smaller output size."
-            isNoSpace(t) -> "Not enough free storage space to save the result."
-            t is SecurityException -> "Android no longer allows reading this file. Please select it again."
-            t is FileNotFoundException -> "The file could not be opened. It may have been moved, deleted or is stored in the cloud only."
-            t is MediaCodec.CodecException -> "This device's video codec failed while processing the file" +
-                (if (t.isRecoverable || t.isTransient) " (temporary codec problem — try again)." else ".")
+            t is OutOfMemoryError -> tr("Not enough free memory (RAM) to process this file. Close other apps, lower the export workload, or choose a smaller output size.")
+            isNoSpace(t) -> tr("Not enough free storage space to save the result.")
+            t is SecurityException -> tr("Android no longer allows reading this file. Please select it again.")
+            t is FileNotFoundException -> tr("The file could not be opened. It may have been moved, deleted or is stored in the cloud only.")
+            t is MediaCodec.CodecException -> if (t.isRecoverable || t.isTransient) tr("This device's video codec failed while processing the file (temporary codec problem — try again).")
+                else tr("This device's video codec failed while processing the file.")
             t is com.localmediatools.codec.gif.GifFormatException -> msg
             t is com.localmediatools.stitch.core.StitchException -> msg
             t is com.localmediatools.codec.image.SoftDecodeException -> msg
             t is com.localmediatools.codec.gif.GifUnrepresentableException -> msg
-            t is com.localmediatools.codec.mp4.Mp4FormatException -> "The video file is damaged or incomplete: $msg"
+            t is com.localmediatools.codec.mp4.Mp4FormatException -> tr("The video file is damaged or incomplete: {0}", msg)
             t is IllegalStateException && msg.contains("Failed to add the track", true) ->
-                "This file's video or audio codec can't be stored in the output container on this device."
-            t is IOException -> "Read/write error: ${msg.ifBlank { t.javaClass.simpleName }}"
+                tr("This file's video or audio codec can't be stored in the output container on this device.")
+            t is IOException -> tr("Read/write error: {0}", msg.ifBlank { t.javaClass.simpleName })
             else -> "${t.javaClass.simpleName}${if (msg.isNotBlank()) ": $msg" else ""}"
         }
     }

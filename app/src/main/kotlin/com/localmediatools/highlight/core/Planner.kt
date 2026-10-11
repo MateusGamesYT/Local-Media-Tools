@@ -1,7 +1,11 @@
 package com.localmediatools.highlight.core
 
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.Language
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.max
 import kotlin.math.min
@@ -66,10 +70,13 @@ class Shot(
 }
 
 /** A part of the event: shots close together in time and scene, with a name ("Lunch", "At the beach"). */
-class Moment(val index: Int, val shots: List<Shot>, val label: String, val startMs: Long, val endMs: Long)
+class Moment(val index: Int, val shots: List<Shot>, val label: String, val startMs: Long, val endMs: Long,
+    /** The name without the day it is on ("Lunch" for "Day 2 · Lunch"), for the title card. */
+    val theme: String = label)
 
-enum class Aspect(val label: String, val width: Int, val height: Int) {
-    LANDSCAPE("Landscape 16:9", 1920, 1080), PORTRAIT("Portrait 9:16", 1080, 1920), SQUARE("Square", 1080, 1080);
+enum class Aspect(private val labelEn: String, val width: Int, val height: Int) {
+    LANDSCAPE(N_("Landscape 16:9"), 1920, 1080), PORTRAIT(N_("Portrait 9:16"), 1080, 1920), SQUARE(N_("Square"), 1080, 1080);
+    val label: String get() = tr(labelEn)
     val ratio get() = width.toFloat() / height
 }
 
@@ -182,11 +189,12 @@ object Planner {
         var previous: String? = null
         for ((i, g) in groups.withIndex()) {
             var label = label(g, i == 0, zone)
-            if (label == previous) label = "More ${label.replaceFirstChar { it.lowercase() }}"
+            if (label == previous) label = tr("More {1}", label, label.replaceFirstChar { it.lowercase(I18n.locale) })
             previous = label
             val d = dayIndex(g[0].takenMs, firstDay, zone)
-            if (multiDay && (i == 0 || dayIndex(groups[i - 1][0].takenMs, firstDay, zone) != d)) label = "Day ${d + 1} · $label"
-            out.add(Moment(i, g, label, g.first().takenMs, g.last().takenMs))
+            val theme = label
+            if (multiDay && (i == 0 || dayIndex(groups[i - 1][0].takenMs, firstDay, zone) != d)) label = tr("Day {0} · {1}", d + 1, label)
+            out.add(Moment(i, g, label, g.first().takenMs, g.last().takenMs, theme))
         }
         return out
     }
@@ -221,28 +229,28 @@ object Planner {
     private val MEAL = setOf("food", "pizza", "cake", "burger", "sushi", "icecream", "fruit", "salad", "dessert", "coffee", "drink", "wine", "beer", "cocktail")
     private val TRAVEL = setOf("airplane", "train", "bus", "car", "helicopter")
     private val THEMES = listOf(
-        Theme("wedding", setOf("wedding")) { _, _ -> "The wedding" },
-        Theme("concert", setOf("concert")) { _, _ -> "At the concert" },
-        Theme("beach", setOf("beach", "sea", "surfing")) { _, _ -> "At the beach" },
-        Theme("pool", setOf("pool")) { _, _ -> "By the pool" },
-        Theme("snow", setOf("snow", "skiing")) { _, _ -> "In the snow" },
-        Theme("waterfall", setOf("waterfall")) { _, _ -> "At the waterfall" },
-        Theme("mountain", setOf("mountain", "rock")) { _, _ -> "In the mountains" },
-        Theme("water", setOf("lake", "river", "boat")) { _, _ -> "By the water" },
-        Theme("forest", setOf("forest")) { _, _ -> "In the woods" },
-        Theme("sunset", setOf("sunset")) { _, _ -> "Sunset" },
-        Theme("castle", setOf("castle")) { _, _ -> "At the castle" },
-        Theme("city", setOf("city", "street", "tower", "bridge", "fountain")) { h, _ -> if (h >= 19) "The city at night" else "In the city" },
+        Theme("wedding", setOf("wedding")) { _, _ -> tr("The wedding") },
+        Theme("concert", setOf("concert")) { _, _ -> tr("At the concert") },
+        Theme("beach", setOf("beach", "sea", "surfing")) { _, _ -> tr("At the beach") },
+        Theme("pool", setOf("pool")) { _, _ -> tr("By the pool") },
+        Theme("snow", setOf("snow", "skiing")) { _, _ -> tr("In the snow") },
+        Theme("waterfall", setOf("waterfall")) { _, _ -> tr("At the waterfall") },
+        Theme("mountain", setOf("mountain", "rock")) { _, _ -> tr("In the mountains") },
+        Theme("water", setOf("lake", "river", "boat")) { _, _ -> tr("By the water") },
+        Theme("forest", setOf("forest")) { _, _ -> tr("In the woods") },
+        Theme("sunset", setOf("sunset")) { _, _ -> tr("Sunset") },
+        Theme("castle", setOf("castle")) { _, _ -> tr("At the castle") },
+        Theme("city", setOf("city", "street", "tower", "bridge", "fountain")) { h, _ -> if (h >= 19) tr("The city at night") else tr("In the city") },
         Theme("meal", MEAL) { h, _ ->
             when {
-                h < 5 -> "Late bite"; h < 10.75 -> "Breakfast"; h < 15.5 -> "Lunch"; h < 17.75 -> "Afternoon snack"; else -> "Dinner"
+                h < 5 -> tr("Late bite"); h < 10.75 -> tr("Breakfast"); h < 15.5 -> tr("Lunch"); h < 17.75 -> tr("Afternoon snack"); else -> tr("Dinner")
             }
         },
-        Theme("travel", TRAVEL) { _, first -> if (first) "Setting off" else "On the way" },
-        Theme("sports", setOf("soccer", "tennis")) { _, _ -> "Game time" },
-        Theme("garden", setOf("flower", "grass")) { _, _ -> "Outdoors" },
-        Theme("animals", setOf("dog", "cat", "horse", "bird", "animal", "cow", "sheep", "goat", "elephant", "zebra", "giraffe", "monkey", "lion", "tiger")) { _, _ -> "With the animals" },
-        Theme("night", setOf("night")) { _, _ -> "Night out" },
+        Theme("travel", TRAVEL) { _, first -> if (first) tr("Setting off") else tr("On the way") },
+        Theme("sports", setOf("soccer", "tennis")) { _, _ -> tr("Game time") },
+        Theme("garden", setOf("flower", "grass")) { _, _ -> tr("Outdoors") },
+        Theme("animals", setOf("dog", "cat", "horse", "bird", "animal", "cow", "sheep", "goat", "elephant", "zebra", "giraffe", "monkey", "lion", "tiger")) { _, _ -> tr("With the animals") },
+        Theme("night", setOf("night")) { _, _ -> tr("Night out") },
     )
 
     /** A moment's name: its main theme (if at least a third of its shots show it) or the time of day. */
@@ -257,10 +265,10 @@ object Planner {
             if (share > bestShare + 1e-9) { best = t; bestShare = share }
         }
         if (best != null && bestShare >= 1.0 / 3) return best.label(h, first)
-        if (first && shots.any { s -> TRAVEL.any { s.tagged(it) } }) return "Setting off"
+        if (first && shots.any { s -> TRAVEL.any { s.tagged(it) } }) return tr("Setting off")
         val people = shots.count { s -> s.faces.size >= 3 }.toDouble() / shots.size
-        if (people >= 0.5) return "Together"
-        return when { h < 5 -> "Late night"; h < 11 -> "Morning"; h < 14 -> "Midday"; h < 18 -> "Afternoon"; h < 21 -> "Evening"; else -> "Night" }
+        if (people >= 0.5) return tr("Together")
+        return when { h < 5 -> tr("Late night"); h < 11 -> tr("Morning"); h < 14 -> tr("Midday"); h < 18 -> tr("Afternoon"); h < 21 -> tr("Evening"); else -> tr("Night") }
     }
 
     // ------------------------------------------------------------------ scores
@@ -351,7 +359,7 @@ object Planner {
         require(shots.isNotEmpty()) { "nothing to put in the video" }
         // Moments come from everything picked, so leaving a shot out doesn't reshuffle them.
         val found = moments(all, o.zone)
-        val moments = found.map { m -> o.names[m.index]?.trim()?.takeIf { it.isNotEmpty() }?.let { Moment(m.index, m.shots, it, m.startMs, m.endMs) } ?: m }
+        val moments = found.map { m -> o.names[m.index]?.trim()?.takeIf { it.isNotEmpty() }?.let { Moment(m.index, m.shots, it, m.startMs, m.endMs, it) } ?: m }
         val score = scores(shots)
         val beatMs = (o.beatSeconds * 1000).roundToLong().coerceIn(250, 1500)
         fun beats(sec: Double) = max(2, (sec * 1000 / beatMs).roundToInt())
@@ -424,7 +432,7 @@ object Planner {
         val fadeOut = 1000L
         val duration = t
         val title = o.title?.trim()?.takeIf { it.isNotEmpty() } ?: title(shots, o.zone)
-        val themes = moments.map { it.label.substringAfter(" · ") }.distinct()
+        val themes = moments.map { it.theme }.distinct()
         val subtitle = themes.take(3).joinToString(" · ")
         val captions = ArrayList<Caption>()
         if (o.captions) {
@@ -454,23 +462,29 @@ object Planner {
         }
     }
 
-    /** "Saturday, 14 June 2026", "14–16 June 2026", "28 June – 3 July 2026". */
+    /**
+     * "Saturday, 14 June 2026", "14–16 June 2026", "28 June – 3 July 2026", in the app's language
+     * (the date patterns are translated: "sábado, 14 de junho de 2026", "2026年6月14日–16日").
+     */
     fun title(shots: List<Shot>, zone: TimeZone): String {
-        val a = cal(shots.minOf { it.takenMs }, zone); val b = cal(shots.maxOf { it.takenMs }, zone)
-        fun month(c: Calendar) = c.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.UK)!!
-        fun dd(c: Calendar) = c.get(Calendar.DAY_OF_MONTH)
-        return when {
-            day(a.timeInMillis, zone) == day(b.timeInMillis, zone) -> "${a.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.UK)}, ${dd(a)} ${month(a)} ${a.get(Calendar.YEAR)}"
-            a.get(Calendar.MONTH) == b.get(Calendar.MONTH) && a.get(Calendar.YEAR) == b.get(Calendar.YEAR) -> "${dd(a)}–${dd(b)} ${month(a)} ${a.get(Calendar.YEAR)}"
-            a.get(Calendar.YEAR) == b.get(Calendar.YEAR) -> "${dd(a)} ${month(a)} – ${dd(b)} ${month(b)} ${b.get(Calendar.YEAR)}"
-            else -> "${dd(a)} ${month(a)} ${a.get(Calendar.YEAR)} – ${dd(b)} ${month(b)} ${b.get(Calendar.YEAR)}"
-        }
+        val a = shots.minOf { it.takenMs }; val b = shots.maxOf { it.takenMs }
+        val ca = cal(a, zone); val cb = cal(b, zone)
+        fun f(ms: Long, pattern: String) = I18n.date(ms, zone, pattern)
+        val sameYear = ca.get(Calendar.YEAR) == cb.get(Calendar.YEAR)
+        return I18n.capitalize(when {
+            day(a, zone) == day(b, zone) -> f(a, trc("date pattern: a day, with its weekday", "EEEE, d MMMM yyyy"))
+            sameYear && ca.get(Calendar.MONTH) == cb.get(Calendar.MONTH) -> trc("dates from one day to another in one month", "{0}–{1}",
+                f(a, trc("date pattern: the first day of a range in one month", "d")), f(b, trc("date pattern: the last day of a range in one month", "d MMMM yyyy")))
+            sameYear -> trc("dates from one day to another", "{0} – {1}",
+                f(a, trc("date pattern: the first day of a range in one year", "d MMMM")), f(b, trc("date pattern: the last day of a range in one year", "d MMMM yyyy")))
+            else -> trc("dates from one day to another", "{0} – {1}", f(a, trc("date pattern: a day", "d MMMM yyyy")), f(b, trc("date pattern: a day", "d MMMM yyyy")))
+        })
     }
 
+    /** A moment's start in its caption ("1:05 pm"). */
     private fun time(ms: Long, zone: TimeZone): String {
-        val c = cal(ms, zone)
-        val h = c.get(Calendar.HOUR); val m = c.get(Calendar.MINUTE)
-        return String.format(Locale.US, "%d:%02d %s", if (h == 0) 12 else h, m, if (c.get(Calendar.AM_PM) == Calendar.AM) "am" else "pm")
+        val s = I18n.date(ms, zone, trc("time pattern: when a moment starts", "h:mm a"))
+        return if (I18n.language == Language.ENGLISH) s.replace("AM", "am").replace("PM", "pm") else s
     }
 
     // ------------------------------------------------------------------ framing

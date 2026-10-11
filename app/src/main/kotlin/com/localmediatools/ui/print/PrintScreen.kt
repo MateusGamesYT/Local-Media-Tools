@@ -19,14 +19,17 @@ import com.localmediatools.core.MediaItem
 import com.localmediatools.core.MediaKind
 import com.localmediatools.core.UserFacingException
 import com.localmediatools.export.ExportJob
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.print.AndroidSheetRenderer
 import com.localmediatools.print.PrintJob
 import com.localmediatools.print.PrintSource
 import com.localmediatools.print.PrinterConnection
 import com.localmediatools.print.Printers
 import com.localmediatools.print.SavedPrinter
-import com.localmediatools.print.core.FoundPrinter
 import com.localmediatools.print.core.Fit
+import com.localmediatools.print.core.FoundPrinter
 import com.localmediatools.print.core.LayoutOptions
 import com.localmediatools.print.core.Margins
 import com.localmediatools.print.core.MediaNames
@@ -51,12 +54,12 @@ import com.localmediatools.ui.WRAP
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.listRow
 import com.localmediatools.ui.lp
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 /** Print settings, kept while the app runs (the printer itself is remembered across runs). */
 object PrintPrefs {
@@ -92,21 +95,21 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     private val previews = ArrayList<Bitmap>()
     private val caps: PrinterCaps? get() = conn?.caps
 
-    override val startLabel: String get() = "Print"
+    override val startLabel: String get() = tr("Print")
     override fun outputNaming() = ""
-    override fun startedText(queued: Boolean) = if (queued) "Queued — it prints when the current job finishes." else "Sending to the printer. You can leave the app; progress is shown in the notification."
+    override fun startedText(queued: Boolean) = if (queued) tr("Queued — it prints when the current job finishes.") else tr("Sending to the printer. You can leave the app; progress is shown in the notification.")
 
     override fun heroChips(): List<View> = listOf(
-        chip(R.drawable.ic_shield, "Only your Wi-Fi", Palette.SUCCESS),
-        chip(R.drawable.ic_tool_print, "No printer app", Palette.TEXT_2),
-        chip(R.drawable.ic_clock, "Runs in background", Palette.TEXT_2),
+        chip(R.drawable.ic_shield, tr("Only your Wi-Fi"), Palette.SUCCESS),
+        chip(R.drawable.ic_tool_print, tr("No printer app"), Palette.TEXT_2),
+        chip(R.drawable.ic_clock, tr("Runs in background"), Palette.TEXT_2),
     )
 
     override fun buildOptions(container: LinearLayout) {
-        section(container, "Printer", null, top = 4)
+        section(container, tr("Printer"), null, top = 4)
         printerBox = UI.vertical(ctx)
         container.addView(printerBox, lp().apply { topMargin = ctx.dp(8) })
-        section(container, "Preview")
+        section(container, tr("Preview"))
         previewLabel = UI.text(ctx, "", TextStyle.CAPTION)
         container.addView(previewLabel, lp().apply { topMargin = ctx.dp(4) })
         previewRow = UI.horizontal(ctx, Gravity.TOP)
@@ -126,7 +129,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         connectJob = scope.launch {
             val r = withContext(Dispatchers.IO) { runCatching { Printers.connect(ctx, p) } }
             connecting = false
-            r.onSuccess { c -> conn = c; printer = c.printer }.onFailure { e -> problem = e.message ?: "Can't reach the printer" }
+            r.onSuccess { c -> conn = c; printer = c.printer }.onFailure { e -> problem = e.message ?: tr("Can't reach the printer") }
             renderPrinter(); renderSettings(); schedulePreview(); refreshValidation()
         }
     }
@@ -136,13 +139,13 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         printerBox.removeAllViews()
         val p = printer
         if (p == null) {
-            printerBox.addView(UI.text(ctx, "Choose your printer. It must be on the same Wi-Fi as this phone (or its own Wi-Fi Direct network).", TextStyle.BODY_2))
-            printerBox.addView(UI.primaryButton(ctx, "Find printers") { pick() }, lp().apply { topMargin = ctx.dp(10) })
+            printerBox.addView(UI.text(ctx, tr("Choose your printer. It must be on the same Wi-Fi as this phone (or its own Wi-Fi Direct network)."), TextStyle.BODY_2))
+            printerBox.addView(UI.primaryButton(ctx, tr("Find printers")) { pick() }, lp().apply { topMargin = ctx.dp(10) })
             return
         }
         val c = caps
         val (line, color) = when {
-            connecting -> "Connecting…" to Palette.TEXT_2
+            connecting -> tr("Connecting…") to Palette.TEXT_2
             problem != null -> problem!! to Palette.WARNING
             c == null -> "" to Palette.TEXT_2
             else -> {
@@ -150,9 +153,9 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
                 val note = c.reasons.firstNotNullOfOrNull { MediaNames.reason(it) }
                 when {
                     issue != null -> issue to Palette.WARNING
-                    c.state == PrinterState.PROCESSING -> "Printing" to Palette.ACCENT
-                    note != null -> "Ready · $note" to Palette.WARNING
-                    else -> "Ready" to Palette.SUCCESS
+                    c.state == PrinterState.PROCESSING -> tr("Printing") to Palette.ACCENT
+                    note != null -> tr("Ready · {0}", note) to Palette.WARNING
+                    else -> tr("Ready") to Palette.SUCCESS
                 }
             }
         }
@@ -161,23 +164,23 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         val texts = UI.vertical(ctx).apply { setPadding(ctx.dp(12), 0, ctx.dp(8), 0) }
         texts.addView(UI.text(ctx, c?.name ?: p.name, TextStyle.SUBTITLE))
         texts.addView(UI.text(ctx, line, TextStyle.CAPTION, color).apply { setPadding(0, ctx.dp(2), 0, 0) })
-        texts.addView(UI.text(ctx, p.host + if (p.uri.startsWith("ipps")) " · encrypted" else "", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(2), 0, 0) })
+        texts.addView(UI.text(ctx, p.host + if (p.uri.startsWith("ipps")) " · " + tr("encrypted") else "", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(2), 0, 0) })
         row.addView(texts, lp(0, WRAP, 1f))
-        row.addView(UI.ghostButton(ctx, "Change") { pick() })
+        row.addView(UI.ghostButton(ctx, tr("Change")) { pick() })
         printerBox.addView(row)
-        if (problem != null) printerBox.addView(UI.secondaryButton(ctx, "Try again", R.drawable.ic_redo) { choose(p) }, lp().apply { topMargin = ctx.dp(10) })
+        if (problem != null) printerBox.addView(UI.secondaryButton(ctx, tr("Try again"), R.drawable.ic_redo) { choose(p) }, lp().apply { topMargin = ctx.dp(10) })
         val markers = c?.markers.orEmpty()
         if (markers.isNotEmpty()) {
             val inks = UI.horizontal(ctx)
             for (m in markers) {
                 val dot = View(ctx).apply { background = Shapes.circle(parseColor(m.color)) }
                 inks.addView(dot, LinearLayout.LayoutParams(ctx.dp(10), ctx.dp(10)).apply { rightMargin = ctx.dp(5) })
-                inks.addView(UI.text(ctx, (if (m.known) "${m.level}%" else "?"), TextStyle.CAPTION, if (m.low) Palette.WARNING else Palette.TEXT_2), lp(WRAP, WRAP).apply { rightMargin = ctx.dp(14) })
-                inks.contentDescription = markers.joinToString { "${it.name} ${if (it.known) "${it.level}%" else "unknown"}" }
+                inks.addView(UI.text(ctx, (if (m.known) tr("{0}%", m.level) else "?"), TextStyle.CAPTION, if (m.low) Palette.WARNING else Palette.TEXT_2), lp(WRAP, WRAP).apply { rightMargin = ctx.dp(14) })
+                inks.contentDescription = markers.joinToString { "${it.name} ${if (it.known) tr("{0}%", it.level) else tr("unknown")}" }
             }
-            printerBox.addView(UI.text(ctx, "Ink, as the printer estimates it", TextStyle.LABEL), lp().apply { topMargin = ctx.dp(12) })
+            printerBox.addView(UI.text(ctx, tr("Ink, as the printer estimates it"), TextStyle.LABEL), lp().apply { topMargin = ctx.dp(12) })
             printerBox.addView(inks, lp().apply { topMargin = ctx.dp(6) })
-            if (markers.any { it.low }) printerBox.addView(UI.note(ctx, "Some ink is low. If your printer has refillable tanks, check them: the printer can only estimate.", UI.NoteKind.WARN), lp().apply { topMargin = ctx.dp(8) })
+            if (markers.any { it.low }) printerBox.addView(UI.note(ctx, tr("Some ink is low. If your printer has refillable tanks, check them: the printer can only estimate."), UI.NoteKind.WARN), lp().apply { topMargin = ctx.dp(8) })
         }
     }
 
@@ -187,14 +190,14 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     /** The printer list: remembered printers, the ones found on the Wi-Fi now, and adding one by IP address. */
     private fun pick() {
         val col = UI.vertical(ctx, 20, 16)
-        col.addView(UI.text(ctx, "Choose a printer", TextStyle.TITLE))
-        val dialog = AlertDialog.Builder(activity).setView(ScrollView(ctx).apply { addView(col) }).setNegativeButton("Close", null).create()
+        col.addView(UI.text(ctx, tr("Choose a printer"), TextStyle.TITLE))
+        val dialog = AlertDialog.Builder(activity).setView(ScrollView(ctx).apply { addView(col) }).setNegativeButton(tr("Close"), null).create()
         fun use(p: SavedPrinter) { dialog.dismiss(); choose(p) }
         val saved = Printers.all(ctx)
         if (saved.isNotEmpty()) {
-            col.addView(UI.label(ctx, "Saved"), lp().apply { topMargin = ctx.dp(16) })
+            col.addView(UI.label(ctx, trc("printers kept in the app", "Saved")), lp().apply { topMargin = ctx.dp(16) })
             for (p in saved) {
-                val remove = UI.iconButton(ctx, R.drawable.ic_trash, "Forget ${p.name}", Palette.TEXT_3) {
+                val remove = UI.iconButton(ctx, R.drawable.ic_trash, tr("Forget {0}", p.name), Palette.TEXT_3) {
                     Printers.remove(ctx, p.id)
                     if (printer?.id == p.id) { printer = null; conn = null; renderPrinter(); refreshValidation() }
                     dialog.dismiss(); pick()
@@ -202,17 +205,17 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
                 col.addView(listRow(ctx, R.drawable.ic_tool_print, accent, p.name, p.host, remove) { use(p) }, lp().apply { topMargin = ctx.dp(6) })
             }
         }
-        col.addView(UI.label(ctx, "On this Wi-Fi"), lp().apply { topMargin = ctx.dp(16) })
+        col.addView(UI.label(ctx, tr("On this Wi-Fi")), lp().apply { topMargin = ctx.dp(16) })
         val foundBox = UI.vertical(ctx)
-        val status = UI.text(ctx, "Looking for printers…", TextStyle.CAPTION)
+        val status = UI.text(ctx, tr("Looking for printers…"), TextStyle.CAPTION)
         col.addView(status, lp().apply { topMargin = ctx.dp(6) })
         col.addView(foundBox)
-        col.addView(listRow(ctx, R.drawable.ic_add, Palette.ACCENT, "Add by IP address", "If your printer isn't found (its IP address is on its network status page)") {
+        col.addView(listRow(ctx, R.drawable.ic_add, Palette.ACCENT, tr("Add by IP address"), tr("If your printer isn't found (its IP address is on its network status page)")) {
             val input = EditText(ctx).apply { hint = "e.g. 192.168.1.37"; inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI; setSingleLine() }
-            AlertDialog.Builder(activity).setTitle("Printer's IP address").setView(input.apply { setPadding(ctx.dp(20), ctx.dp(12), ctx.dp(20), ctx.dp(12)) })
-                .setPositiveButton("Add") { _, _ ->
+            AlertDialog.Builder(activity).setTitle(tr("Printer's IP address")).setView(input.apply { setPadding(ctx.dp(20), ctx.dp(12), ctx.dp(20), ctx.dp(12)) })
+                .setPositiveButton(tr("Add")) { _, _ ->
                     try { use(SavedPrinter.manual(input.text.toString())) } catch (e: UserFacingException) { Toast.makeText(ctx, e.message, Toast.LENGTH_LONG).show() }
-                }.setNegativeButton("Cancel", null).show()
+                }.setNegativeButton(tr("Cancel"), null).show()
         }, lp().apply { topMargin = ctx.dp(16) })
         var shown = emptyList<FoundPrinter>()
         fun show(list: List<FoundPrinter>) {
@@ -232,8 +235,8 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
             }
             r.onSuccess { list ->
                 show(list)
-                status.text = if (list.isEmpty()) "No printers answered. Check that the printer is on and connected to this Wi-Fi, or add it by IP address." else "Found ${list.size}"
-            }.onFailure { e -> status.text = e.message ?: "Couldn't look for printers"; status.setTextColor(Palette.WARNING) }
+                status.text = if (list.isEmpty()) tr("No printers answered. Check that the printer is on and connected to this Wi-Fi, or add it by IP address.") else trn(list.size, "Found {0}", "Found {0}")
+            }.onFailure { e -> status.text = e.message ?: tr("Couldn't look for printers"); status.setTextColor(Palette.WARNING) }
         }
         dialog.setOnDismissListener { search.cancel() }
         dialog.show()
@@ -265,46 +268,46 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         val box = settingsBox
         box.removeAllViews()
         val c = caps
-        if (c == null) box.addView(UI.note(ctx, "The paper sizes, paper types and other settings shown are the printer's own once it's connected.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        if (c == null) box.addView(UI.note(ctx, tr("The paper sizes, paper types and other settings shown are the printer's own once it's connected."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
 
-        section(box, "Paper size")
+        section(box, tr("Paper size"))
         val sizes = paperChoices()
         box.addView(ChoiceGroup(ctx, sizes, { it.label }, paper()) { PrintPrefs.paper = it.name; renderSettings(); schedulePreview() }, lp().apply { topMargin = ctx.dp(10) })
 
         val types = c?.mediaTypes.orEmpty()
         if (types.isNotEmpty()) {
-            section(box, "Paper type", "Tell the printer what's loaded: it lays down the right amount of ink")
+            section(box, tr("Paper type"), tr("Tell the printer what's loaded: it lays down the right amount of ink"))
             box.addView(ChoiceGroup(ctx, types, { MediaNames.mediaType(it) }, mediaType()) {
                 PrintPrefs.mediaType = it
                 if (MediaNames.isPhotoPaper(it) && PrintPrefs.quality < 5 && 5 in c!!.qualities) { PrintPrefs.quality = 5; renderSettings() }
             }, lp().apply { topMargin = ctx.dp(10) })
         }
 
-        section(box, "Layout")
-        box.addView(ChoiceGroup(ctx, SheetLayout.PER_SHEET, { if (it == 1) "1 per sheet" else "$it per sheet" }, PrintPrefs.perSheet) { PrintPrefs.perSheet = it; schedulePreview() }, lp().apply { topMargin = ctx.dp(10) })
-        box.addView(ChoiceGroup(ctx, Fit.entries, { if (it == Fit.FIT) "Whole photo" else "Fill (trims edges)" }, PrintPrefs.fit) { PrintPrefs.fit = it; schedulePreview() }, lp().apply { topMargin = ctx.dp(8) })
+        section(box, tr("Layout"))
+        box.addView(ChoiceGroup(ctx, SheetLayout.PER_SHEET, { trn(it, "{0} per sheet", "{0} per sheet") }, PrintPrefs.perSheet) { PrintPrefs.perSheet = it; schedulePreview() }, lp().apply { topMargin = ctx.dp(10) })
+        box.addView(ChoiceGroup(ctx, Fit.entries, { if (it == Fit.FIT) tr("Whole photo") else tr("Fill (trims edges)") }, PrintPrefs.fit) { PrintPrefs.fit = it; schedulePreview() }, lp().apply { topMargin = ctx.dp(8) })
         val canBorderless = c?.borderless(paper()) == true
-        box.addView(ToggleRow(ctx, "Borderless", if (c == null) "Available once the printer is connected" else if (canBorderless) "Print to the edges of the paper" else "Not available for ${paper().label} on this printer", borderless()) {
+        box.addView(ToggleRow(ctx, tr("Borderless"), if (c == null) tr("Available once the printer is connected") else if (canBorderless) tr("Print to the edges of the paper") else tr("Not available for {0} on this printer", paper().label), borderless()) {
             PrintPrefs.borderless = it; schedulePreview()
         }.apply { setAvailable(canBorderless) }, lp().apply { topMargin = ctx.dp(4) })
         if (hasPdf()) {
-            box.addView(ToggleRow(ctx, "Actual size", "PDF pages at their real size instead of fitted to the paper", PrintPrefs.actualSize) { PrintPrefs.actualSize = it; schedulePreview() }, lp())
-            box.addView(TextField(ctx, "Pages", "All, or e.g. 1-3, 5, 8-", PrintPrefs.pages) { PrintPrefs.pages = it; refreshValidation(); schedulePreview() }, lp().apply { topMargin = ctx.dp(8) })
+            box.addView(ToggleRow(ctx, tr("Actual size"), tr("PDF pages at their real size instead of fitted to the paper"), PrintPrefs.actualSize) { PrintPrefs.actualSize = it; schedulePreview() }, lp())
+            box.addView(TextField(ctx, tr("Pages"), tr("All, or e.g. 1-3, 5, 8-"), PrintPrefs.pages) { PrintPrefs.pages = it; refreshValidation(); schedulePreview() }, lp().apply { topMargin = ctx.dp(8) })
         }
 
-        section(box, "Colour")
+        section(box, tr("Colour"))
         val colors = buildList { if (c?.canColor != false) add(true); if (c?.canMonochrome != false) add(false) }
         if (PrintPrefs.color && true !in colors) PrintPrefs.color = false
-        box.addView(ChoiceGroup(ctx, colors, { if (it) "Colour" else "Black & white" }, PrintPrefs.color) { PrintPrefs.color = it; schedulePreview() }, lp().apply { topMargin = ctx.dp(10) })
+        box.addView(ChoiceGroup(ctx, colors, { if (it) tr("Colour") else tr("Black & white") }, PrintPrefs.color) { PrintPrefs.color = it; schedulePreview() }, lp().apply { topMargin = ctx.dp(10) })
 
-        section(box, "Quality")
+        section(box, tr("Quality"))
         val qualities = (c?.qualities ?: listOf(3, 4, 5)).filter { it in 3..5 }.ifEmpty { listOf(4) }
         if (PrintPrefs.quality !in qualities) PrintPrefs.quality = qualities.firstOrNull { it == 4 } ?: qualities.first()
-        box.addView(ChoiceGroup(ctx, qualities, { when (it) { 3 -> "Draft"; 5 -> "Best"; else -> "Normal" } }, PrintPrefs.quality,
-            badgeOf = { if (it == 5) "photos" else null }) { PrintPrefs.quality = it }, lp().apply { topMargin = ctx.dp(10) })
+        box.addView(ChoiceGroup(ctx, qualities, { when (it) { 3 -> tr("Draft"); 5 -> trc("print quality", "Best"); else -> tr("Normal") } }, PrintPrefs.quality,
+            badgeOf = { if (it == 5) tr("photos") else null }) { PrintPrefs.quality = it }, lp().apply { topMargin = ctx.dp(10) })
 
-        if (c?.canTwoSided == true) box.addView(ToggleRow(ctx, "Two-sided", "Print on both sides of the paper", PrintPrefs.twoSided) { PrintPrefs.twoSided = it }, lp().apply { topMargin = ctx.dp(4) })
-        box.addView(SliderField(ctx, "Copies", 1, 50, PrintPrefs.copies) { PrintPrefs.copies = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(12) })
+        if (c?.canTwoSided == true) box.addView(ToggleRow(ctx, tr("Two-sided"), tr("Print on both sides of the paper"), PrintPrefs.twoSided) { PrintPrefs.twoSided = it }, lp().apply { topMargin = ctx.dp(4) })
+        box.addView(SliderField(ctx, tr("Copies"), 1, 50, PrintPrefs.copies) { PrintPrefs.copies = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(12) })
     }
 
     private fun layoutOptions() = LayoutOptions(PrintPrefs.perSheet, PrintPrefs.fit, PrintPrefs.actualSize, borderless())
@@ -321,7 +324,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         if (!::previewRow.isInitialized) return
         previewJob?.cancel()
         val items = selection.usable
-        if (items.isEmpty()) { showPreview(emptyList(), 0, "Select photos or PDFs to see the sheets"); return }
+        if (items.isEmpty()) { showPreview(emptyList(), 0, tr("Select photos or PDFs to see the sheets")); return }
         val paper = paper()
         val margins = if (borderless()) Margins.NONE else caps?.margins ?: Margins(300, 300, 300, 300)
         val layout = layoutOptions()
@@ -338,7 +341,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
                     }
                 }
             }
-            r.onSuccess { (n, imgs) -> showPreview(imgs, n, null) }.onFailure { e -> showPreview(emptyList(), 0, e.message ?: "Couldn't prepare the preview") }
+            r.onSuccess { (n, imgs) -> showPreview(imgs, n, null) }.onFailure { e -> showPreview(emptyList(), 0, e.message ?: tr("Couldn't prepare the preview")) }
         }
     }
 
@@ -353,8 +356,8 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         previewRow.removeAllViews()
         previews.forEach { it.recycle() }; previews.clear(); previews.addAll(imgs)
         previewLabel.text = message ?: when (sheets) {
-            1 -> "1 sheet" + copiesText()
-            else -> "$sheets sheets" + copiesText() + if (sheets > imgs.size) " · first ${imgs.size} shown" else ""
+            1 -> trn(1, "{0} sheet", "{0} sheets") + copiesText()
+            else -> trn(sheets, "{0} sheet", "{0} sheets") + copiesText() + if (sheets > imgs.size) " · " + trn(imgs.size, "first {0} shown", "first {0} shown") else ""
         }
         previewLabel.setTextColor(if (message != null && selection.usable.isNotEmpty()) Palette.WARNING else Palette.TEXT_2)
         for ((i, b) in imgs.withIndex()) {
@@ -364,7 +367,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
                 setImageBitmap(b); scaleType = ImageView.ScaleType.FIT_XY
                 background = Shapes.rounded(ctx, Color.WHITE, 2f, Palette.STROKE_2)
                 elevation = ctx.dp(2).toFloat()
-                contentDescription = "Sheet ${i + 1}"
+                contentDescription = tr("Sheet {0}", i + 1)
             }, LinearLayout.LayoutParams(w, h))
             frame.addView(UI.text(ctx, "${i + 1}", TextStyle.CAPTION).apply { gravity = Gravity.CENTER }, lp().apply { topMargin = ctx.dp(4) })
             previewRow.addView(frame, LinearLayout.LayoutParams(WRAP, WRAP).apply { rightMargin = ctx.dp(10); bottomMargin = ctx.dp(4) })
@@ -372,21 +375,21 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         refreshValidation()
     }
 
-    private fun copiesText() = if (PrintPrefs.copies > 1) " × ${PrintPrefs.copies} copies" else ""
+    private fun copiesText() = if (PrintPrefs.copies > 1) " × " + trn(PrintPrefs.copies, "{0} copy", "{0} copies") else ""
 
     override fun onSelectionChanged() { renderSettings(); schedulePreview() }
 
     // ------------------------------------------------------------------ printing
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (printer == null) return "Choose a printer"
-        if (conn == null) return if (connecting) "Connecting to the printer…" else problem ?: "Can't reach the printer"
+        if (printer == null) return tr("Choose a printer")
+        if (conn == null) return if (connecting) tr("Connecting to the printer…") else problem ?: tr("Can't reach the printer")
         if (hasPdf() && PrintPrefs.pages.isNotBlank()) PageRanges.validateSyntax(PrintPrefs.pages)?.let { return it }
         return null
     }
 
     override fun createJob(items: List<MediaItem>): ExportJob {
-        val c = conn ?: throw IllegalArgumentException("Choose a printer first")
+        val c = conn ?: throw IllegalArgumentException(tr("Choose a printer first"))
         return PrintJob(items, c.printer, settings(items), layoutOptions(), PrintPrefs.pages.takeIf { hasPdf() && it.isNotBlank() })
     }
 
@@ -394,10 +397,10 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         val c = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 3))
-        head.addView(UI.text(ctx, "Printing", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        head.addView(UI.text(ctx, tr("Printing"), TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         c.addView(head)
-        c.addView(UI.text(ctx, "The sheets are drawn on this phone and sent straight to the printer. Progress shows in the notification and in Activity, where you can cancel; problems such as no paper are explained there.", TextStyle.BODY_2).apply { setPadding(0, ctx.dp(10), 0, 0) })
-        c.addView(UI.note(ctx, "Your files go only to the printer, over your own network. The app never connects to servers on the internet.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
+        c.addView(UI.text(ctx, tr("The sheets are drawn on this phone and sent straight to the printer. Progress shows in the notification and in Activity, where you can cancel; problems such as no paper are explained there."), TextStyle.BODY_2).apply { setPadding(0, ctx.dp(10), 0, 0) })
+        c.addView(UI.note(ctx, tr("Your files go only to the printer, over your own network. The app never connects to servers on the internet."), UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
         return c
     }
 

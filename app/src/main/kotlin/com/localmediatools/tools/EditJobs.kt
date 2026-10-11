@@ -2,14 +2,17 @@ package com.localmediatools.tools
 
 import com.localmediatools.core.Format
 import com.localmediatools.core.MediaItem
-import com.localmediatools.export.ExportJob
-import com.localmediatools.export.ItemOutcome
-import com.localmediatools.export.ItemResult
-import com.localmediatools.export.JobContext
 import com.localmediatools.edit.EditRenderer
 import com.localmediatools.edit.EditState
 import com.localmediatools.edit.PatchStore
 import com.localmediatools.edit.RetouchedSource
+import com.localmediatools.export.ExportJob
+import com.localmediatools.export.ItemOutcome
+import com.localmediatools.export.ItemResult
+import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.CountingStream
 import com.localmediatools.image.EncodeSpec
 import com.localmediatools.image.ImageOutFormat
@@ -29,7 +32,7 @@ class EditPhotoJob(
     private val quality: Int,
     private val keepAlpha: Boolean,
 ) : ExportJob(tool, listOf(item)) {
-    override val title = "Saving edited photo"
+    override val title = tr("Saving edited photo")
 
     override suspend fun run(ctx: JobContext) {
         try {
@@ -45,14 +48,14 @@ class EditPhotoJob(
                         ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                     }
                     val changes = buildList {
-                        if (!state.geometry.isIdentity) add("cropped/rotated")
-                        if (state.patches.isNotEmpty()) add("${state.patches.size} retouch${if (state.patches.size == 1) "" else "es"}")
-                        if (!state.adjust.isIdentity) add("${state.adjust.values.size} adjustment${if (state.adjust.values.size == 1) "" else "s"}")
-                        if (!state.filter.isIdentity) add("${state.filter.preset.label} look")
+                        if (!state.geometry.isIdentity) add(tr("cropped/rotated"))
+                        if (state.patches.isNotEmpty()) add(trn(state.patches.size, "{0} retouch", "{0} retouches"))
+                        if (!state.adjust.isIdentity) add(trn(state.adjust.values.size, "{0} adjustment", "{0} adjustments"))
+                        if (!state.filter.isIdentity) add(tr("{0} look", state.filter.preset.label))
                     }
-                    ItemResult(it.name, ItemOutcome.SUCCESS, "Photo metadata (location, camera, dates) is not copied to edited copies.", listOf(out),
+                    ItemResult(it.name, ItemOutcome.SUCCESS, tr("Photo metadata (location, camera, dates) is not copied to edited copies."), listOf(out),
                         "${size.first}×${size.second} · ${format.label}${if (format.lossless) "" else " q$quality"} · ${Format.bytes(out.size)}" +
-                            if (changes.isNotEmpty()) " · " + changes.joinToString(", ") else "")
+                            if (changes.isNotEmpty()) " · " + changes.joinToString(trc("between the items of a list", ", ")) else "")
                 }
             }
         } finally {

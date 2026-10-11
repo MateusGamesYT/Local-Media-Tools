@@ -1,11 +1,11 @@
 package com.localmediatools.tools
 
 import android.os.ParcelFileDescriptor
+import com.localmediatools.codec.mp4.Mp4FastStart
 import com.localmediatools.core.Format
 import com.localmediatools.core.MediaItem
 import com.localmediatools.core.OutputStore
 import com.localmediatools.core.UserFacingException
-import com.localmediatools.codec.mp4.Mp4FastStart
 import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
@@ -19,6 +19,8 @@ import com.localmediatools.highlight.core.Plan
 import com.localmediatools.highlight.core.PlanOptions
 import com.localmediatools.highlight.core.Planner
 import com.localmediatools.highlight.core.Shot
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.music.core.Mood
 import com.localmediatools.video.VideoTranscoder
 import java.io.File
@@ -61,11 +63,11 @@ data class HighlightSettings(
  * did), plans it, writes and mixes the sound, draws it on the GPU and saves one MP4.
  */
 class HighlightJob(inputs: List<MediaItem>, private val settings: HighlightSettings) : ExportJob(ToolId.HIGHLIGHT_VIDEO, inputs) {
-    override val title = "Making a highlight video from ${plural(inputs.size, "photo or video", "photos and videos")}"
+    override val title = trn(inputs.size, "Making a highlight video from {0} photo or video", "Making a highlight video from {0} photos and videos")
     override val unitCount: Int get() = 1
 
     override suspend fun run(ctx: JobContext) {
-        val label = "Highlight video"
+        val label = tool.title
         try {
             val r = ctx.runItem(inputs.first().copy(name = label, readError = null)) { make(ctx, label) }
             if (r != null) ctx.addResult(r)
@@ -77,30 +79,30 @@ class HighlightJob(inputs: List<MediaItem>, private val settings: HighlightSetti
 
     private fun make(ctx: JobContext, label: String): ItemResult {
         val usable = inputs.filter { it.readError == null }
-        if (usable.size < 2) throw UserFacingException("Pick at least two photos or videos.")
+        if (usable.size < 2) throw UserFacingException(tr("Pick at least two photos or videos."))
         val notes = ArrayList<String>()
         // 1. Look at everything (the timeline usually has already).
         val infos = ArrayList<ShotInfo>()
         val items = ArrayList<MediaItem>()
         for ((k, item) in usable.withIndex()) {
             ctx.checkCancelled()
-            ctx.status("Looking at the photos and videos (${k + 1} of ${usable.size})", item.name)
+            ctx.status(tr("Looking at the photos and videos ({0} of {1})", k + 1, usable.size), item.name)
             try {
                 infos.add(HighlightAnalyzer.analyze(ctx.app, item) { ctx.cancelled })
                 items.add(item)
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException || e is com.localmediatools.core.ExportCancelledException) throw e
-                notes.add("\"${item.name}\" couldn't be read and was left out.")
+                notes.add(tr("\"{0}\" couldn't be read and was left out.", item.name))
             }
             ctx.unitProgress(0, 0.15 * (k + 1) / usable.size)
             ctx.throttle()
         }
         HighlightAnalyzer.releaseModels()
-        if (items.size < 2) throw UserFacingException("Too few of the files could be read to make a video.")
+        if (items.size < 2) throw UserFacingException(tr("Too few of the files could be read to make a video."))
         // 2. The plan.
         val plan = settings.plan(items, infos)
         // 3. The sound.
-        ctx.status(if (settings.mood != null) "Writing the music" else "Preparing the sound")
+        ctx.status(if (settings.mood != null) tr("Writing the music") else tr("Preparing the sound"))
         val audio = HighlightAudio.build(ctx.app, plan, settings.mood, settings.seed, { items[it].uri }, { f -> ctx.unitProgress(0, 0.15 + 0.1 * f) }) { ctx.cancelled }
         ctx.checkCancelled()
         // 4. The picture.
@@ -108,22 +110,22 @@ class HighlightJob(inputs: List<MediaItem>, private val settings: HighlightSetti
         val bitrate = VideoTranscoder.bitrateFor(85, w, h, 30.0, 0)
         OutputStore.ensureSpace((bitrate.toLong() + 192_000) * plan.durationMs / 8_000 * 2)
         val tmp = File(Outputs.tempDir(ctx), "highlight.mp4")
-        ctx.status("Making the video")
+        ctx.status(tr("Making the video"))
         try {
             ParcelFileDescriptor.open(tmp, ParcelFileDescriptor.MODE_READ_WRITE or ParcelFileDescriptor.MODE_CREATE or ParcelFileDescriptor.MODE_TRUNCATE).use { pfd ->
                 HighlightRenderer(ctx.app, plan, { id -> items[id].uri to items[id].name }, audio)
                     .run(pfd.fileDescriptor, w, h, bitrate, { ctx.throttle() }, { ctx.cancelled }) { f -> ctx.unitProgress(0, 0.25 + 0.72 * f) }
             }
-            ctx.status("Saving")
+            ctx.status(tr("Saving"))
             val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date(plan.moments.first().startMs))
             val out = Outputs.produce(ctx, tool.area, "highlight_$day.mp4", "video/mp4") { pending ->
                 RandomAccessFile(tmp, "r").use { raf -> pending.openStream().buffered(1 shl 20).use { os -> Mp4FastStart.process(raf, os) } }
                 Outputs.verifyMedia(ctx.app, pending.uri, true, audio != null)
             }.first
-            if (inputs.size > usable.size) notes.add("${inputs.size - usable.size} of the files couldn't be read.")
-            val music = settings.mood?.let { "${it.label} music" } ?: "no music"
+            if (inputs.size > usable.size) notes.add(trn(inputs.size - usable.size, "{0} of the files couldn't be read.", "{0} of the files couldn't be read."))
+            val music = settings.mood?.musicLabel ?: tr("no music")
             return ItemResult(label, ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "${Format.duration(plan.durationMs)} · ${plural(plan.clips.size, "clip")} · ${plural(plan.moments.count { m -> plan.clips.any { it.moment == m.index } }, "moment")} · $music · ${w}×$h · ${Format.bytes(out.size)}")
+                "${Format.duration(plan.durationMs)} · " + trn(plan.clips.size, "{0} clip", "{0} clips") + " · " + trn(plan.moments.count { m -> plan.clips.any { it.moment == m.index } }, "{0} moment", "{0} moments") + " · $music · ${w}×$h · ${Format.bytes(out.size)}")
         } finally {
             tmp.delete()
         }

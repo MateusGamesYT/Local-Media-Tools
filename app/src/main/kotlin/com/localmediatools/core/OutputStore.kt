@@ -8,6 +8,7 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.os.StatFs
 import android.provider.MediaStore
+import com.localmediatools.i18n.tr
 import java.io.OutputStream
 
 /** Where each tool's results are saved. All locations live under a "LocalMediaTools" folder. */
@@ -74,10 +75,10 @@ class MediaStorePendingOutput internal constructor(
     private var done = false
 
     override fun openStream(): OutputStream = ctx.contentResolver.openOutputStream(uri, "w")
-        ?: throw java.io.IOException("Could not open the output file for writing")
+        ?: throw java.io.IOException(tr("Could not open the output file for writing"))
 
     override fun openFd(mode: String): ParcelFileDescriptor = ctx.contentResolver.openFileDescriptor(uri, mode)
-        ?: throw java.io.IOException("Could not open the output file for writing")
+        ?: throw java.io.IOException(tr("Could not open the output file for writing"))
 
     override fun commit(): OutputFile {
         check(!done)
@@ -136,7 +137,7 @@ object OutputStore {
                 }
             }
         }
-        uri ?: throw java.io.IOException("The system media store refused to create \"$name\"")
+        uri ?: throw java.io.IOException(tr("The system media store refused to create \"{0}\"", name))
         return MediaStorePendingOutput(ctx, uri, name, mime, area)
     }
 
@@ -150,7 +151,7 @@ object OutputStore {
     fun ensureSpace(estimate: Long) {
         val free = freeBytes()
         if (free >= 0 && estimate > 0 && free < estimate + 64L * 1024 * 1024) {
-            throw UserFacingException("Not enough free storage: about ${Format.bytes(estimate)} is needed but only ${Format.bytes(free)} is free.")
+            throw UserFacingException(tr("Not enough free storage: about {0} is needed but only {1} is free.", Format.bytes(estimate), Format.bytes(free)))
         }
     }
 

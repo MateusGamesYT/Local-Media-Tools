@@ -12,6 +12,10 @@ import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportManager
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.FlowKind
 import com.localmediatools.tools.StackJob
 import com.localmediatools.tools.StackRules
@@ -59,7 +63,7 @@ object OptionSummary {
                 is ChoiceGroup<*> -> v.selectedLabel()?.let { add(it) }
                 is ToggleRow -> if (v.switch.isChecked && v.switch.isEnabled) add(v.title)
                 // 0 means "keep the original" for the sliders that allow it.
-                is SliderField -> add(if (v.value == 0) "${v.title}: original" else "${v.title} ${v.value}${v.unit}")
+                is SliderField -> add(if (v.value == 0) tr("{0}: original", v.title) else "${v.title} ${v.value}${v.unit}")
                 is TextField -> v.edit.text?.toString()?.trim()?.takeIf { it.isNotBlank() && it.toDoubleOrNull() != 0.0 }?.let { add("${v.title}: $it") }
                 is ViewGroup -> for (i in 0 until v.childCount) walk(v.getChildAt(i))
             }
@@ -98,20 +102,20 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
         row.addView(UI.toolTile(ctx, ToolId.TOOL_STACK, 52, 28))
         row.addView(UI.vertical(ctx).apply {
             setPadding(ctx.dp(14), 0, 0, 0)
-            addView(UI.text(ctx, "Run several tools in a row. Each tool works on the results of the one before; only the final files are saved.", TextStyle.BODY_2))
-            addView(UI.text(ctx, "Example: Blur faces → Video compressor → Video → GIF → GIF optimizer", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(8), 0, 0) })
+            addView(UI.text(ctx, tr("Run several tools in a row. Each tool works on the results of the one before; only the final files are saved."), TextStyle.BODY_2))
+            addView(UI.text(ctx, tr("Example: {0}", listOf(ToolId.FACE_BLUR, ToolId.COMPRESS_VIDEO, ToolId.VIDEO_TO_GIF, ToolId.OPTIMIZE_GIF).joinToString(" → ") { it.title }), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(8), 0, 0) })
         }, lp(0, WRAP, 1f))
         hero.addView(row)
         content.addView(hero)
 
-        val p = SelectionPanel(this, selection, "Pick your files")
+        val p = SelectionPanel(this, selection, tr("Pick your files"))
         panel = p
         content.addView(p, lp().apply { topMargin = ctx.dp(14) })
 
         val steps = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 2))
-        head.addView(UI.titled(ctx, "Steps", "Tap a step to change its settings").apply { setPadding(ctx.dp(10), 0, 0, 0) }, lp(0, WRAP, 1f))
+        head.addView(UI.titled(ctx, tr("Steps"), tr("Tap a step to change its settings")).apply { setPadding(ctx.dp(10), 0, 0, 0) }, lp(0, WRAP, 1f))
         steps.addView(head)
         stepsBox = UI.vertical(ctx)
         steps.addView(stepsBox, lp().apply { topMargin = ctx.dp(12) })
@@ -120,12 +124,12 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
         val opts = UI.card(ctx)
         val oh = UI.horizontal(ctx)
         oh.addView(StepBadge(ctx, 3))
-        oh.addView(UI.text(ctx, "Results", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        oh.addView(UI.text(ctx, tr("Results"), TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         opts.addView(oh)
         endInfo = UI.text(ctx, "", TextStyle.BODY_2)
         opts.addView(endInfo, lp().apply { topMargin = ctx.dp(10) })
-        opts.addView(ToggleRow(ctx, "Also save the in-between results", "Off: only the final files are saved; the rest are temporary", state.keepInBetween) { state.keepInBetween = it }, lp().apply { topMargin = ctx.dp(6) })
-        opts.addView(UI.note(ctx, "If a step has nothing to do for a file (for example it's already small), or can't work on that kind of file, the file goes on to the next step unchanged, so nothing is lost.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(8) })
+        opts.addView(ToggleRow(ctx, tr("Also save the in-between results"), tr("Off: only the final files are saved; the rest are temporary"), state.keepInBetween) { state.keepInBetween = it }, lp().apply { topMargin = ctx.dp(6) })
+        opts.addView(UI.note(ctx, tr("If a step has nothing to do for a file (for example it's already small), or can't work on that kind of file, the file goes on to the next step unchanged, so nothing is lost."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(8) })
         content.addView(opts, lp().apply { topMargin = ctx.dp(14) })
         content.addView(ExportStatusCard(this, ToolId.TOOL_STACK), lp().apply { topMargin = ctx.dp(14) })
 
@@ -134,7 +138,7 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
         bar.elevation = ctx.dp(8).toFloat()
         helper = UI.text(ctx, "", TextStyle.CAPTION).apply { gravity = Gravity.CENTER; setPadding(0, 0, 0, ctx.dp(8)) }
         bar.addView(helper)
-        runButton = UI.primaryButton(ctx, "Run stack") { run() }
+        runButton = UI.primaryButton(ctx, tr("Run stack")) { run() }
         bar.addView(runButton, lp())
         root.addView(bar, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM).apply { setMargins(ctx.dp(10), 0, ctx.dp(10), ctx.dp(10)) })
 
@@ -155,19 +159,19 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
         stepsBox.removeAllViews()
         val files = selection.usable
         var kinds = state.startKinds()
-        stepsBox.addView(flowLabel(if (files.isEmpty()) "Starts with the files you pick" else "Starts with ${files.size} ${if (files.size == 1) "file" else "files"}: ${FlowKind.describe(kinds)}"))
+        stepsBox.addView(flowLabel(if (files.isEmpty()) tr("Starts with the files you pick") else trn(files.size, "Starts with {0} file: {1}", "Starts with {0} files: {1}", FlowKind.describe(kinds))))
         for ((i, step) in state.steps.withIndex()) {
             val usable = StackRules.accepts(step.tool).intersect(kinds)
-            stepsBox.addView(stepRow(i, step, if (usable.isEmpty()) "Gets no files it can work on: it needs ${FlowKind.describe(StackRules.accepts(step.tool))}" else null))
+            stepsBox.addView(stepRow(i, step, if (usable.isEmpty()) tr("Gets no files it can work on: it needs {0}", FlowKind.describe(StackRules.accepts(step.tool))) else null))
             kinds = StackRules.after(step.tool, kinds)
-            stepsBox.addView(flowLabel(if (i == state.steps.lastIndex) "Saved: ${FlowKind.describe(kinds)}" else "then ${FlowKind.describe(kinds)}"))
+            stepsBox.addView(flowLabel(if (i == state.steps.lastIndex) tr("Saved: {0}", FlowKind.describe(kinds)) else tr("then {0}", FlowKind.describe(kinds))))
         }
-        stepsBox.addView(UI.secondaryButton(ctx, if (state.steps.isEmpty()) "Add the first step" else "Add a step", R.drawable.ic_add) {
+        stepsBox.addView(UI.secondaryButton(ctx, if (state.steps.isEmpty()) tr("Add the first step") else tr("Add a step"), R.drawable.ic_add) {
             push(StackToolPicker(activity, state.steps.size + 1, kinds) { t -> openStep(t, state.steps.size, editing = false) })
         }, lp().apply { topMargin = ctx.dp(6) })
         val last = state.steps.lastOrNull()
-        endInfo.text = if (last == null) "Add steps to see where the results go." else
-            "The final files are saved where step ${state.steps.size} saves them: ${last.tool.outputPath.replace("\n", " and ")}. Files that the last step doesn't change are saved by the last step that did."
+        endInfo.text = if (last == null) tr("Add steps to see where the results go.") else
+            tr("The final files are saved where step {0} saves them: {1}. Files that the last step doesn't change are saved by the last step that did.", state.steps.size, I18n.andList(last.tool.outputPath.split("\n")))
         refresh()
     }
 
@@ -183,11 +187,11 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
             addView(UI.text(ctx, step.summary, TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0); maxLines = 4 })
             if (problem != null) addView(UI.text(ctx, problem, TextStyle.CAPTION, Palette.WARNING).apply { setPadding(0, ctx.dp(4), 0, 0) })
         }, lp(0, WRAP, 1f))
-        if (i > 0) row.addView(UI.iconButton(ctx, R.drawable.ic_up, "Move step ${i + 1} up", Palette.TEXT_2) { move(i, i - 1) })
-        if (i < state.steps.lastIndex) row.addView(UI.iconButton(ctx, R.drawable.ic_down, "Move step ${i + 1} down", Palette.TEXT_2) { move(i, i + 1) })
-        row.addView(UI.iconButton(ctx, R.drawable.ic_close, "Remove step ${i + 1}", Palette.TEXT_2) { state.steps.removeAt(i); renderSteps() })
+        if (i > 0) row.addView(UI.iconButton(ctx, R.drawable.ic_up, tr("Move step {0} up", i + 1), Palette.TEXT_2) { move(i, i - 1) })
+        if (i < state.steps.lastIndex) row.addView(UI.iconButton(ctx, R.drawable.ic_down, tr("Move step {0} down", i + 1), Palette.TEXT_2) { move(i, i + 1) })
+        row.addView(UI.iconButton(ctx, R.drawable.ic_close, tr("Remove step {0}", i + 1), Palette.TEXT_2) { state.steps.removeAt(i); renderSteps() })
         row.isClickable = true; row.isFocusable = true
-        row.contentDescription = "Step ${i + 1}: ${step.tool.title}. ${step.summary}. Tap to change"
+        row.contentDescription = tr("Step {0}: {1}. {2}. Tap to change", i + 1, step.tool.title, step.summary)
         row.setOnClickListener { openStep(step.tool, i, editing = true) }
         return LinearLayout(ctx).apply { orientation = LinearLayout.VERTICAL; addView(row, lp()) }
     }
@@ -202,10 +206,10 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
     private fun openStep(t: ToolId, index: Int, editing: Boolean) {
         val files = selection.usable
         val input = if (index == 0) {
-            if (files.isEmpty()) "the files you pick" else "the ${files.size} ${if (files.size == 1) "file" else "files"} you picked"
+            if (files.isEmpty()) tr("Works on the files you pick.") else trn(files.size, "Works on the {0} file you picked.", "Works on the {0} files you picked.")
         } else {
             val k = StackRules.accepts(t).intersect(state.kindsBefore(index))
-            "the ${FlowKind.describe(k)} coming from step $index (${state.steps[index - 1].tool.title})"
+            tr("Works on the {0} coming from step {1} ({2}).", FlowKind.describe(k), index, state.steps[index - 1].tool.title)
         }
         val screen = ToolScreens.create(activity, t)
         screen.stack = StackMode(index + 1, input, files, editing) { step ->
@@ -216,12 +220,12 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
     }
 
     private fun validate(): String? {
-        if (selection.loading > 0) return "Reading the selected files…"
-        if (selection.usable.isEmpty()) return "Pick files to continue"
-        if (state.steps.isEmpty()) return "Add at least one step"
+        if (selection.loading > 0) return tr("Reading the selected files…")
+        if (selection.usable.isEmpty()) return tr("Pick files to continue")
+        if (state.steps.isEmpty()) return tr("Add at least one step")
         var kinds = state.startKinds()
         for ((i, s) in state.steps.withIndex()) {
-            if (StackRules.accepts(s.tool).intersect(kinds).isEmpty()) return "Step ${i + 1} (${s.tool.title}) gets no files it can work on"
+            if (StackRules.accepts(s.tool).intersect(kinds).isEmpty()) return tr("Step {0} ({1}) gets no files it can work on", i + 1, s.tool.title)
             kinds = StackRules.after(s.tool, kinds)
         }
         return null
@@ -232,10 +236,10 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
         val msg = validate()
         runButton.isEnabled = msg == null
         val busy = ExportManager.state.value.busy
-        helper.text = msg ?: "${selection.usable.size} ${if (selection.usable.size == 1) "file" else "files"} · ${state.steps.size} ${if (state.steps.size == 1) "step" else "steps"}" +
-            if (busy) " · starts after the current export" else " · you can leave the app while it runs"
+        helper.text = msg ?: trn(selection.usable.size, "{0} file", "{0} files") + " · " + trn(state.steps.size, "{0} step", "{0} steps") + " · " +
+            if (busy) tr("starts after the current export") else tr("you can leave the app while it runs")
         helper.setTextColor(if (msg == null) Palette.TEXT_2 else Palette.WARNING)
-        runButton.label = if (msg == null && busy) "Add to queue" else "Run stack"
+        runButton.label = if (msg == null && busy) tr("Add to queue") else tr("Run stack")
     }
 
     private fun run() {
@@ -244,7 +248,7 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
         activity.ensureNotificationPermission {
             val wasBusy = ExportManager.state.value.busy
             ExportManager.enqueue(job)
-            Toast.makeText(ctx, if (wasBusy) "Queued — it starts when the current export finishes." else "Stack started. You can leave the app; progress is shown in the notification.", Toast.LENGTH_LONG).show()
+            Toast.makeText(ctx, if (wasBusy) tr("Queued — it starts when the current export finishes.") else tr("Stack started. You can leave the app; progress is shown in the notification."), Toast.LENGTH_LONG).show()
             refresh()
         }
     }
@@ -267,8 +271,8 @@ class StackToolPicker(activity: MainActivity, private val stepNumber: Int, priva
         col.setPadding(ctx.dp(16), 0, ctx.dp(16), ctx.dp(40))
         scroll.addView(col)
         root.addView(scroll, FrameLayout.LayoutParams(MATCH, MATCH))
-        col.addView(TopBar(this, "Add step $stepNumber").apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
-        col.addView(UI.text(ctx, "This step gets ${FlowKind.describe(kinds)}. Pick a tool; you'll set its options next.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
+        col.addView(TopBar(this, tr("Add step {0}", stepNumber)).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
+        col.addView(UI.text(ctx, tr("This step gets {0}. Pick a tool; you'll set its options next.", FlowKind.describe(kinds)), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
         for (sec in ToolSection.entries) {
             val tools = ToolId.entries.filter { it.section == sec && StackRules.stackable(it) }
             if (tools.isEmpty()) continue
@@ -276,17 +280,17 @@ class StackToolPicker(activity: MainActivity, private val stepNumber: Int, priva
             for (t in tools) {
                 val ok = StackRules.accepts(t).intersect(kinds).isNotEmpty()
                 val row = listRow(ctx, Icons.tool(t), Palette.section(t.section), t.title,
-                    if (ok) t.shortDescription else "Works on ${FlowKind.describe(StackRules.accepts(t))}, which this step doesn't get",
+                    if (ok) t.shortDescription else tr("Works on {0}, which this step doesn't get", FlowKind.describe(StackRules.accepts(t))),
                     UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_3, 18)) {
                     if (ok) { pop(); onPick(t) }
                 }
                 row.alpha = if (ok) 1f else 0.45f
-                row.contentDescription = "${t.title}${if (ok) "" else ", not available at this step"}"
+                row.contentDescription = if (ok) t.title else tr("{0}, not available at this step", t.title)
                 col.addView(row, lp().apply { topMargin = ctx.dp(8) })
             }
         }
         val other = ToolId.entries.filter { !StackRules.stackable(it) && it != ToolId.TOOL_STACK }
-        col.addView(UI.note(ctx, "Not available in stacks: " + other.joinToString(", ") { it.title } + ". They work on one photo by hand, look through your library or use the camera.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(22) })
+        col.addView(UI.note(ctx, tr("Not available in stacks: {0}. They work on one photo by hand, look through your library or use the camera.", other.joinToString(trc("between the items of a list", ", ")) { it.title }), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(22) })
         return root
     }
 }

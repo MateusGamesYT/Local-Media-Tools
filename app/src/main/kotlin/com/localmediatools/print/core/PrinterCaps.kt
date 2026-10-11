@@ -1,5 +1,8 @@
 package com.localmediatools.print.core
 
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -48,7 +51,7 @@ class PrinterCaps(val attrs: IppMessage) {
     private fun strings(name: String) = a(name)?.strings.orEmpty()
     private fun ints(name: String) = a(name)?.ints.orEmpty()
 
-    val name: String get() = a("printer-info")?.string?.takeIf { it.isNotBlank() } ?: a("printer-make-and-model")?.string ?: a("printer-name")?.string ?: "Printer"
+    val name: String get() = a("printer-info")?.string?.takeIf { it.isNotBlank() } ?: a("printer-make-and-model")?.string ?: a("printer-name")?.string ?: tr("Printer")
     val makeAndModel: String? get() = a("printer-make-and-model")?.string
     val location: String? get() = a("printer-location")?.string?.takeIf { it.isNotBlank() }
     val uuid: String? get() = a("printer-uuid")?.string?.lowercase()?.removePrefix("urn:uuid:")
@@ -172,19 +175,19 @@ class PrinterCaps(val attrs: IppMessage) {
 /** Readable names for paper sizes, paper types and printer conditions. */
 object MediaNames {
     private val known = listOf(
-        "iso_a4_210x297mm" to "A4", "na_letter_8.5x11in" to "Letter", "na_legal_8.5x14in" to "Legal",
+        "iso_a4_210x297mm" to "A4", "na_letter_8.5x11in" to N_("Letter"), "na_legal_8.5x14in" to N_("Legal"),
         "iso_a5_148x210mm" to "A5", "iso_a6_105x148mm" to "A6", "iso_a3_297x420mm" to "A3", "iso_b5_176x250mm" to "B5",
         "jis_b5_182x257mm" to "B5 (JIS)", "na_index-4x6_4x6in" to "10 × 15 cm (4 × 6 in)", "na_5x7_5x7in" to "13 × 18 cm (5 × 7 in)",
-        "oe_photo-l_3.5x5in" to "9 × 13 cm (L)", "na_govt-letter_8x10in" to "20 × 25 cm (8 × 10 in)", "om_card_54x86mm" to "Card (54 × 86 mm)",
-        "iso_dl_110x220mm" to "Envelope DL", "na_number-10_4.125x9.5in" to "Envelope #10", "iso_c6_114x162mm" to "Envelope C6",
-        "iso_c5_162x229mm" to "Envelope C5", "na_executive_7.25x10.5in" to "Executive", "om_hagaki_100x148mm" to "Hagaki (100 × 148 mm)",
-        "jpn_hagaki_100x148mm" to "Hagaki (100 × 148 mm)", "om_square-photo_89x89mm" to "Square 89 × 89 mm", "na_index-3x5_3x5in" to "3 × 5 in",
+        "oe_photo-l_3.5x5in" to "9 × 13 cm (L)", "na_govt-letter_8x10in" to "20 × 25 cm (8 × 10 in)", "om_card_54x86mm" to N_("Card (54 × 86 mm)"),
+        "iso_dl_110x220mm" to N_("Envelope DL"), "na_number-10_4.125x9.5in" to N_("Envelope #10"), "iso_c6_114x162mm" to N_("Envelope C6"),
+        "iso_c5_162x229mm" to N_("Envelope C5"), "na_executive_7.25x10.5in" to N_("Executive"), "om_hagaki_100x148mm" to "Hagaki (100 × 148 mm)",
+        "jpn_hagaki_100x148mm" to "Hagaki (100 × 148 mm)", "om_square-photo_89x89mm" to N_("Square 89 × 89 mm"), "na_index-3x5_3x5in" to "3 × 5 in",
         "na_index-5x8_5x8in" to "5 × 8 in", "om_16k_195x270mm" to "16K", "na_foolscap_8.5x13in" to "Folio (8.5 × 13 in)",
         "om_folio_210x330mm" to "Oficio (210 × 330 mm)", "na_oficio_8.5x13.4in" to "Oficio (8.5 × 13.4 in)",
     ).mapNotNull { (n, l) -> MediaSize.fromName(n)?.let { it to l } }
 
-    fun size(m: MediaSize): String = known.firstOrNull { it.first.name == m.name }?.second
-        ?: known.firstOrNull { it.first.same(m) }?.second
+    fun size(m: MediaSize): String = (known.firstOrNull { it.first.name == m.name }?.second
+        ?: known.firstOrNull { it.first.same(m) }?.second)?.let { tr(it) }
         ?: "%s × %s mm".format(trim(m.widthMm), trim(m.heightMm))
 
     /** A PWG name for a size given in hundredths of a millimetre. */
@@ -194,23 +197,23 @@ object MediaNames {
     private fun trim(v: Float) = if (v == v.toInt().toFloat()) v.toInt().toString() else "%.1f".format(java.util.Locale.ROOT, v)
 
     fun mediaType(t: String): String = when (t) {
-        "stationery" -> "Plain paper"
-        "stationery-heavyweight" -> "Heavy paper"
-        "stationery-lightweight" -> "Light paper"
-        "stationery-letterhead" -> "Letterhead"
-        "stationery-inkjet" -> "Inkjet paper"
-        "photographic" -> "Photo paper"
-        "photographic-glossy" -> "Glossy photo paper"
-        "photographic-high-gloss" -> "High-gloss photo paper"
-        "photographic-semi-gloss" -> "Semi-gloss photo paper"
-        "photographic-satin" -> "Satin photo paper"
-        "photographic-matte" -> "Matte photo paper"
-        "photographic-film" -> "Photo film"
-        "envelope" -> "Envelope"
-        "cardstock" -> "Card"
-        "labels" -> "Labels"
-        "transparency" -> "Transparency"
-        "auto" -> "Automatic"
+        "stationery" -> tr("Plain paper")
+        "stationery-heavyweight" -> tr("Heavy paper")
+        "stationery-lightweight" -> tr("Light paper")
+        "stationery-letterhead" -> tr("Letterhead")
+        "stationery-inkjet" -> tr("Inkjet paper")
+        "photographic" -> tr("Photo paper")
+        "photographic-glossy" -> tr("Glossy photo paper")
+        "photographic-high-gloss" -> tr("High-gloss photo paper")
+        "photographic-semi-gloss" -> tr("Semi-gloss photo paper")
+        "photographic-satin" -> tr("Satin photo paper")
+        "photographic-matte" -> tr("Matte photo paper")
+        "photographic-film" -> tr("Photo film")
+        "envelope" -> tr("Envelope")
+        "cardstock" -> trc("paper type", "Card")
+        "labels" -> tr("Labels")
+        "transparency" -> tr("Transparency")
+        "auto" -> tr("Automatic")
         else -> t.substringAfter("com.").substringAfter('-', t.substringAfter("com.")).replace('-', ' ').replace('_', ' ').replaceFirstChar { it.uppercase() }
     }
 
@@ -221,20 +224,20 @@ object MediaNames {
         val k = r.removeSuffix("-error").removeSuffix("-warning").removeSuffix("-report")
         return when {
             k == "none" || k == "other" || k == "moving-to-paused" -> null
-            k == "media-empty" || k == "media-needed" -> "Add paper"
-            k == "media-low" -> "Paper is running low"
-            k == "media-jam" -> "Paper jam: open the printer and remove the stuck paper"
-            k == "media-feed-failure" || k == "input-tray-missing" -> "The paper didn't feed: check the paper tray"
-            k == "marker-supply-empty" || k == "toner-empty" -> "Out of ink"
-            k == "marker-supply-low" || k == "toner-low" -> "Ink is low"
-            k == "marker-waste-almost-full" -> "The ink pad (maintenance box) is almost full"
-            k == "marker-waste-full" -> "The ink pad (maintenance box) is full: service needed"
-            k == "cover-open" || k == "door-open" || k == "interlock-open" -> "A cover is open"
-            k == "offline" || k == "shutdown" -> "The printer is offline"
-            k == "paused" -> "The printer is paused"
-            k == "spool-area-full" -> "The printer's memory is full"
+            k == "media-empty" || k == "media-needed" -> tr("Add paper")
+            k == "media-low" -> tr("Paper is running low")
+            k == "media-jam" -> tr("Paper jam: open the printer and remove the stuck paper")
+            k == "media-feed-failure" || k == "input-tray-missing" -> tr("The paper didn't feed: check the paper tray")
+            k == "marker-supply-empty" || k == "toner-empty" -> tr("Out of ink")
+            k == "marker-supply-low" || k == "toner-low" -> tr("Ink is low")
+            k == "marker-waste-almost-full" -> tr("The ink pad (maintenance box) is almost full")
+            k == "marker-waste-full" -> tr("The ink pad (maintenance box) is full: service needed")
+            k == "cover-open" || k == "door-open" || k == "interlock-open" -> tr("A cover is open")
+            k == "offline" || k == "shutdown" -> tr("The printer is offline")
+            k == "paused" -> tr("The printer is paused")
+            k == "spool-area-full" -> tr("The printer's memory is full")
             k == "printer-restarted" || k == "printer-shutdown" -> null
-            k.startsWith("connecting-to-device") -> "Connecting…"
+            k.startsWith("connecting-to-device") -> tr("Connecting…")
             else -> null
         }
     }

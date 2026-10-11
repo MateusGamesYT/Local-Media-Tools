@@ -10,6 +10,8 @@ import android.widget.Toast
 import com.localmediatools.app.MainActivity
 import com.localmediatools.gallery.GMedia
 import com.localmediatools.gallery.GalleryIndex
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.ToolId
 import com.localmediatools.tools.ToolSection
 import com.localmediatools.ui.PickKind
@@ -28,14 +30,14 @@ object GalleryActions {
      */
     const val MAX_AT_ONCE = 500
 
-    private fun tooMany(activity: MainActivity, items: List<GMedia>, what: String): Boolean {
+    private fun tooMany(activity: MainActivity, items: List<GMedia>, share: Boolean): Boolean {
         if (items.size <= MAX_AT_ONCE) return false
-        Toast.makeText(activity, "You can $what up to $MAX_AT_ONCE items at a time (${items.size} selected).", Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, if (share) tr("You can share up to {0} items at a time ({1} selected).", MAX_AT_ONCE, items.size) else tr("You can delete up to {0} items at a time ({1} selected).", MAX_AT_ONCE, items.size), Toast.LENGTH_LONG).show()
         return true
     }
 
     fun share(activity: MainActivity, items: List<GMedia>) {
-        if (items.isEmpty() || tooMany(activity, items, "share")) return
+        if (items.isEmpty() || tooMany(activity, items, share = true)) return
         val uris = items.map { it.uri }
         val mime = items.map { it.mime }.distinct().singleOrNull()
             ?: items.map { it.mime.substringBefore('/') }.distinct().singleOrNull()?.let { "$it/*" } ?: "*/*"
@@ -45,20 +47,20 @@ object GalleryActions {
         uris.drop(1).forEach { clip.addItem(ClipData.Item(it)) }
         i.clipData = clip
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        try { activity.startActivity(Intent.createChooser(i, "Share")) } catch (_: Exception) { }
+        try { activity.startActivity(Intent.createChooser(i, tr("Share"))) } catch (_: Exception) { }
     }
 
     /** Moves items to the system trash (Android asks the user to confirm). */
     fun trash(activity: MainActivity, items: List<GMedia>, done: () -> Unit) {
-        if (items.isEmpty() || tooMany(activity, items, "delete")) return
+        if (items.isEmpty() || tooMany(activity, items, share = false)) return
         if (Build.VERSION.SDK_INT < 30) { deleteOnAndroid10(activity, items, done); return }
         val pi = try { MediaStore.createTrashRequest(activity.contentResolver, items.map { it.uri }, true) } catch (e: Exception) {
-            Toast.makeText(activity, "These items can't be moved to the trash: ${e.message}", Toast.LENGTH_LONG).show(); return
+            Toast.makeText(activity, tr("These items can't be moved to the trash: {0}", e.message), Toast.LENGTH_LONG).show(); return
         }
         activity.launchIntentSender(pi.intentSender) { rc ->
             if (rc == android.app.Activity.RESULT_OK) {
                 val n = items.size
-                Toast.makeText(activity, "Moved $n ${if (n == 1) "item" else "items"} to the trash. You can restore ${if (n == 1) "it" else "them"} for 30 days.", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, trn(n, "Moved {0} item to the trash. You can restore it for 30 days.", "Moved {0} items to the trash. You can restore them for 30 days."), Toast.LENGTH_LONG).show()
                 GalleryIndex.start(activity)
                 done()
             }
@@ -71,36 +73,36 @@ object GalleryActions {
      */
     private fun deleteOnAndroid10(activity: MainActivity, items: List<GMedia>, done: () -> Unit) {
         if (items.size > 1) {
-            Toast.makeText(activity, "On Android 10, photos can be deleted one at a time (there is no trash).", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, tr("On Android 10, photos can be deleted one at a time (there is no trash)."), Toast.LENGTH_LONG).show()
             return
         }
         val m = items[0]
-        AlertDialog.Builder(activity).setTitle("Delete for good?")
-            .setMessage("Android 10 has no trash, so ${m.name} can't be restored afterwards.")
-            .setPositiveButton("Delete") { _, _ -> deleteNow(activity, m, done, askedOnce = false) }
-            .setNegativeButton("Cancel", null).show()
+        AlertDialog.Builder(activity).setTitle(tr("Delete for good?"))
+            .setMessage(tr("Android 10 has no trash, so {0} can't be restored afterwards.", m.name))
+            .setPositiveButton(tr("Delete")) { _, _ -> deleteNow(activity, m, done, askedOnce = false) }
+            .setNegativeButton(tr("Cancel"), null).show()
     }
 
     private fun deleteNow(activity: MainActivity, m: GMedia, done: () -> Unit, askedOnce: Boolean) {
         try {
             activity.contentResolver.delete(m.uri, null, null)
-            Toast.makeText(activity, "Deleted.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, tr("Deleted."), Toast.LENGTH_SHORT).show()
             GalleryIndex.start(activity)
             done()
         } catch (e: android.app.RecoverableSecurityException) {
-            if (askedOnce) { Toast.makeText(activity, "This item can't be deleted.", Toast.LENGTH_LONG).show(); return }
+            if (askedOnce) { Toast.makeText(activity, tr("This item can't be deleted."), Toast.LENGTH_LONG).show(); return }
             activity.launchIntentSender(e.userAction.actionIntent.intentSender) { rc ->
                 if (rc == android.app.Activity.RESULT_OK) deleteNow(activity, m, done, askedOnce = true)
             }
         } catch (e: Exception) {
-            Toast.makeText(activity, "This item can't be deleted: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, tr("This item can't be deleted: {0}", e.message), Toast.LENGTH_LONG).show()
         }
     }
 
     /** Opens the system viewer (e.g. to play a format this app can't). */
     fun openExternally(activity: MainActivity, m: GMedia) {
         val i = Intent(Intent.ACTION_VIEW).setDataAndType(m.uri, m.mime).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        try { activity.startActivity(i) } catch (_: Exception) { Toast.makeText(activity, "No app can open this file.", Toast.LENGTH_LONG).show() }
+        try { activity.startActivity(i) } catch (_: Exception) { Toast.makeText(activity, tr("No app can open this file."), Toast.LENGTH_LONG).show() }
     }
 
     /** Tools that can work on these items. */
@@ -129,18 +131,18 @@ object GalleryActions {
     /** Opens printing with the photos among [items] (videos can't be printed). */
     fun print(activity: MainActivity, items: List<GMedia>) {
         val photos = items.filter { !it.video }
-        if (photos.isEmpty()) { Toast.makeText(activity, "Videos can't be printed.", Toast.LENGTH_SHORT).show(); return }
-        if (photos.size < items.size) Toast.makeText(activity, "Videos are left out: only photos can be printed.", Toast.LENGTH_SHORT).show()
+        if (photos.isEmpty()) { Toast.makeText(activity, tr("Videos can't be printed."), Toast.LENGTH_SHORT).show(); return }
+        if (photos.size < items.size) Toast.makeText(activity, tr("Videos are left out: only photos can be printed."), Toast.LENGTH_SHORT).show()
         openIn(activity, ToolId.PRINT, photos)
     }
 
     fun chooseTool(activity: MainActivity, items: List<GMedia>) {
         val tools = toolsFor(items)
-        if (tools.isEmpty()) { Toast.makeText(activity, "No tool works on this selection.", Toast.LENGTH_SHORT).show(); return }
+        if (tools.isEmpty()) { Toast.makeText(activity, tr("No tool works on this selection."), Toast.LENGTH_SHORT).show(); return }
         AlertDialog.Builder(activity)
-            .setTitle(if (items.size == 1) "Open in a tool" else "Use ${items.size} items in a tool")
+            .setTitle(if (items.size == 1) tr("Open in a tool") else trn(items.size, "Use {0} item in a tool", "Use {0} items in a tool"))
             .setItems(tools.map { it.title }.toTypedArray()) { _, which -> openIn(activity, tools[which], items) }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(tr("Cancel"), null)
             .show()
     }
 

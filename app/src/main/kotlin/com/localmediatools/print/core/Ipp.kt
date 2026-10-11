@@ -1,5 +1,6 @@
 package com.localmediatools.print.core
 
+import com.localmediatools.i18n.tr
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.nio.ByteBuffer
@@ -64,17 +65,17 @@ object IppStatus {
     fun successful(code: Int) = code in 0x0000..0x00FF
 
     fun describe(code: Int): String = when (code) {
-        CLIENT_ERROR_BAD_REQUEST -> "the printer didn't understand the request"
-        0x0401 -> "the printer refused the request"
-        0x0402 -> "the printer asks for a password"
-        0x0403 -> "the printer refused access"
-        CLIENT_ERROR_NOT_POSSIBLE -> "the printer can't do that"
-        0x0406 -> "the printer has no such job"
-        CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED -> "the printer doesn't accept this kind of file"
-        CLIENT_ERROR_ATTRIBUTES_OR_VALUES -> "the printer doesn't support some of these settings"
-        SERVER_ERROR_NOT_ACCEPTING_JOBS -> "the printer isn't accepting jobs right now"
-        SERVER_ERROR_BUSY -> "the printer is busy"
-        else -> if (code >= 0x0500) "the printer had an internal problem (code 0x%04x)".format(code) else "the printer answered 0x%04x".format(code)
+        CLIENT_ERROR_BAD_REQUEST -> tr("the printer didn't understand the request")
+        0x0401 -> tr("the printer refused the request")
+        0x0402 -> tr("the printer asks for a password")
+        0x0403 -> tr("the printer refused access")
+        CLIENT_ERROR_NOT_POSSIBLE -> tr("the printer can't do that")
+        0x0406 -> tr("the printer has no such job")
+        CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED -> tr("the printer doesn't accept this kind of file")
+        CLIENT_ERROR_ATTRIBUTES_OR_VALUES -> tr("the printer doesn't support some of these settings")
+        SERVER_ERROR_NOT_ACCEPTING_JOBS -> tr("the printer isn't accepting jobs right now")
+        SERVER_ERROR_BUSY -> tr("the printer is busy")
+        else -> if (code >= 0x0500) tr("the printer had an internal problem (code {0})", "0x%04x".format(code)) else tr("the printer answered {0}", "0x%04x".format(code))
     }
 }
 

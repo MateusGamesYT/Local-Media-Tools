@@ -22,6 +22,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.localmediatools.app.R
+import com.localmediatools.i18n.tr
 import com.localmediatools.tools.ToolId
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -61,7 +62,7 @@ class SearchField(ctx: Context, hint: String, private val onChange: (String) -> 
             }
         }
         addView(edit, lp(0, WRAP, 1f))
-        clear = UI.iconButton(ctx, R.drawable.ic_close, "Clear search", Palette.TEXT_2) { edit.setText("") }
+        clear = UI.iconButton(ctx, R.drawable.ic_close, tr("Clear search"), Palette.TEXT_2) { edit.setText("") }
         clear.visibility = GONE
         addView(clear)
     }
@@ -123,7 +124,7 @@ class ChipRow<T>(
             val marked = markOf?.invoke(o) == true
             dot.visibility = if (marked) VISIBLE else GONE
             dot.background = Shapes.circle(Palette.ACCENT)
-            v.contentDescription = labelOf(o) + (if (sel) ", selected" else "") + (if (marked) ", changed" else "")
+            v.contentDescription = labelOf(o) + (if (sel) tr(", selected") else "") + (if (marked) tr(", changed") else "")
         }
     }
 }
@@ -255,7 +256,7 @@ class BottomNav(ctx: Context, private val items: List<Triple<String, Int, String
                 typeface = typeface(if (sel) 650 else 500)
             }
             c.isSelected = sel
-            c.contentDescription = items[i].first + if (sel) ", selected" else ""
+            c.contentDescription = items[i].first + if (sel) tr(", selected") else ""
         }
     }
 }
@@ -282,7 +283,7 @@ class BipolarSlider(ctx: Context, private val range: Float = 100f, private val o
 
     fun set(v: Float, notify: Boolean = false) {
         value = v.coerceIn(if (bipolar) -range else 0f, range)
-        contentDescription = "Value ${value.roundToInt()}"
+        contentDescription = tr("Value {0}", value.roundToInt())
         invalidate()
         if (notify) onChange(value, true)
     }
@@ -332,7 +333,7 @@ class BipolarSlider(ctx: Context, private val range: Float = 100f, private val o
         val crossed = (value != 0f && v == 0f)
         value = v
         if (crossed) performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-        contentDescription = "Value ${value.roundToInt()}"
+        contentDescription = tr("Value {0}", value.roundToInt())
         invalidate()
         onChange(value, done)
     }

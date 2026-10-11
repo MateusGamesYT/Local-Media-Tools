@@ -12,6 +12,7 @@ import com.localmediatools.codec.edit.ColorPipeline
 import com.localmediatools.codec.edit.GeometryPlan
 import com.localmediatools.core.UserFacingException
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.tr
 import com.localmediatools.image.BitmapOps
 import com.localmediatools.image.EncodeSpec
 import com.localmediatools.image.ImagePipeline
@@ -93,7 +94,7 @@ object EditRenderer {
         val plan = GeometryPlan(rs.width, rs.height, state.geometry)
         val outW = plan.outW; val outH = plan.outH
         if (outW > spec.format.maxDimension || outH > spec.format.maxDimension) {
-            throw UserFacingException("${spec.format.label} supports at most ${spec.format.maxDimension} px per side; the edited photo is ${outW}×$outH. Choose PNG or JPEG.")
+            throw UserFacingException(tr("{0} supports at most {1} px per side; the edited photo is {2}×{3}. Choose PNG or JPEG.", spec.format.label, spec.format.maxDimension, outW, outH))
         }
         val pipe = ColorPipeline(state.adjust, state.filter)
         val sharp = pipe.sharpness
@@ -106,12 +107,12 @@ object EditRenderer {
         var stripRows = ((budget / 3) / max(1L, bandPerRow) - extraRows).toInt()
         stripRows = stripRows.coerceIn(8, 1024).coerceAtMost(outH)
         if ((probe[2] - probe[0]).toLong() * (extraRows + stripRows) * 4 > budget) {
-            throw UserFacingException("This photo is too large to edit with the memory available right now. Close other apps or raise the export workload and try again.")
+            throw UserFacingException(tr("This photo is too large to edit with the memory available right now. Close other apps or raise the export workload and try again."))
         }
         val streaming = spec.format.streamable
         val hasAlpha = spec.format.supportsAlpha && keepAlpha
         val whole: Bitmap? = if (streaming) null else {
-            if (outW.toLong() * outH * 4 * 2 > budget) throw UserFacingException("${spec.format.label} can't be written in pieces and this photo is too large for memory; choose JPEG or PNG.")
+            if (outW.toLong() * outH * 4 * 2 > budget) throw UserFacingException(tr("{0} can't be written in pieces and this photo is too large for memory; choose JPEG or PNG.", spec.format.label))
             Bitmap.createBitmap(outW, outH, Bitmap.Config.ARGB_8888)
         }
         val enc = if (streaming) ImagePipeline.stripEncoder(spec, outW, outH, hasAlpha, out) else null

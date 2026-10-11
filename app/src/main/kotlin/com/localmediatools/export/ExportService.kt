@@ -13,6 +13,8 @@ import android.os.IBinder
 import android.os.PowerManager
 import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -113,12 +115,12 @@ object ExportNotifications {
 
     fun createChannels(ctx: Context) {
         val nm = manager(ctx)
-        nm.createNotificationChannel(NotificationChannel(CHANNEL_PROGRESS, "Export progress", NotificationManager.IMPORTANCE_LOW).apply {
-            description = "Shows the progress of running exports"
+        nm.createNotificationChannel(NotificationChannel(CHANNEL_PROGRESS, tr("Export progress"), NotificationManager.IMPORTANCE_LOW).apply {
+            description = tr("Shows the progress of running exports")
             setShowBadge(false)
         })
-        nm.createNotificationChannel(NotificationChannel(CHANNEL_RESULTS, "Finished exports", NotificationManager.IMPORTANCE_DEFAULT).apply {
-            description = "Tells you when an export finishes or fails"
+        nm.createNotificationChannel(NotificationChannel(CHANNEL_RESULTS, tr("Finished exports"), NotificationManager.IMPORTANCE_DEFAULT).apply {
+            description = tr("Tells you when an export finishes or fails")
         })
     }
 
@@ -140,17 +142,17 @@ object ExportNotifications {
             .setContentIntent(openApp(ctx, a?.id))
             .setColor(0xFF4DA3FF.toInt())
         if (a == null) {
-            b.setContentTitle("Preparing export…").setProgress(0, 0, true)
+            b.setContentTitle(tr("Preparing export…")).setProgress(0, 0, true)
         } else {
             val pct = (a.fraction * 100).toInt()
-            val queued = if (s.queued.isNotEmpty()) " · ${s.queued.size} queued" else ""
+            val queued = if (s.queued.isNotEmpty()) " · " + trn(s.queued.size, "{0} queued", "{0} queued") else ""
             b.setContentTitle(a.title)
-                .setContentText("$pct% · ${a.statusText}${a.currentName?.let { " · $it" } ?: ""}$queued")
+                .setContentText(tr("{0}%", pct) + " · ${a.statusText}${a.currentName?.let { " · $it" } ?: ""}$queued")
                 .setProgress(100, pct, a.fraction <= 0.0)
-                .setSubText("Workload ${a.workloadPercent}%")
+                .setSubText(tr("Workload {0}%", a.workloadPercent))
             val cancel = Intent(ctx, ExportService::class.java).setAction(ExportService.ACTION_CANCEL)
             val pi = PendingIntent.getService(ctx, 7, cancel, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            b.addAction(Notification.Action.Builder(null, "Cancel", pi).build())
+            b.addAction(Notification.Action.Builder(null, tr("Cancel"), pi).build())
         }
         if (Build.VERSION.SDK_INT >= 31) b.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
         return b.build()
@@ -158,16 +160,16 @@ object ExportNotifications {
 
     fun showFinished(ctx: Context, s: JobSnapshot) {
         val title = when (s.status) {
-            JobStatus.SUCCEEDED -> "Export finished"
-            JobStatus.PARTIAL -> "Export finished with issues"
-            JobStatus.CANCELLED -> "Export cancelled"
-            else -> "Export failed"
+            JobStatus.SUCCEEDED -> tr("Export finished")
+            JobStatus.PARTIAL -> tr("Export finished with issues")
+            JobStatus.CANCELLED -> tr("Export cancelled")
+            else -> tr("Export failed")
         }
         val n = Notification.Builder(ctx, CHANNEL_RESULTS)
             .setSmallIcon(R.drawable.ic_stat_export)
             .setContentTitle("$title · ${s.tool.title}")
             .setContentText(s.summary())
-            .setStyle(Notification.BigTextStyle().bigText(s.summary() + if (s.tool == com.localmediatools.tools.ToolId.PRINT) "" else "\nSaved to ${s.savedTo}"))
+            .setStyle(Notification.BigTextStyle().bigText(s.summary() + if (s.tool == com.localmediatools.tools.ToolId.PRINT) "" else "\n" + tr("Saved to {0}", s.savedTo)))
             .setAutoCancel(true)
             .setContentIntent(openApp(ctx, s.id))
             .setColor(0xFF4DA3FF.toInt())

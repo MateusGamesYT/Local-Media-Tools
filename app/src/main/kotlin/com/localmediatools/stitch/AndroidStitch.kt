@@ -7,20 +7,22 @@ import android.graphics.Rect
 import android.media.ExifInterface
 import android.os.Build
 import com.localmediatools.core.MediaItem
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
 import com.localmediatools.image.BitmapOps
 import com.localmediatools.image.ImageSource
 import com.localmediatools.stitch.core.AlignmentAssist
 import com.localmediatools.stitch.core.StitchImages
-import org.opencv.android.Utils
-import org.opencv.core.Mat
-import org.opencv.core.Size
-import org.opencv.imgproc.Imgproc
-import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import org.opencv.android.Utils
+import org.opencv.core.Mat
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
+import org.tensorflow.lite.Interpreter
 
 object OpenCvLoader {
     @Volatile private var loaded = false
@@ -145,13 +147,13 @@ class TfliteEmbedder private constructor(private val interpreter: Interpreter) :
             val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val mi = ActivityManager.MemoryInfo(); am.getMemoryInfo(mi)
             val gb = mi.totalMem / (1024.0 * 1024 * 1024)
-            if (am.isLowRamDevice) return false to "Not available: this phone is configured as a low-memory device."
-            if (gb < 3.5) return false to "Not available: needs at least 4 GB of RAM (this phone has ${String.format("%.1f", gb)} GB)."
-            if (Build.SUPPORTED_64_BIT_ABIS.isEmpty()) return false to "Not available: needs a 64-bit processor."
-            if (Runtime.getRuntime().availableProcessors() < 4) return false to "Not available: needs at least 4 CPU cores."
+            if (am.isLowRamDevice) return false to tr("Not available: this phone is configured as a low-memory device.")
+            if (gb < 3.5) return false to tr("Not available: needs at least 4 GB of RAM (this phone has {0} GB).", String.format(I18n.locale, "%.1f", gb))
+            if (Build.SUPPORTED_64_BIT_ABIS.isEmpty()) return false to tr("Not available: needs a 64-bit processor.")
+            if (Runtime.getRuntime().availableProcessors() < 4) return false to tr("Not available: needs at least 4 CPU cores.")
             val present = try { ctx.assets.openFd(ASSET).use { true } } catch (_: Exception) { false }
-            if (!present) return false to "Not available: the on-device model is missing from this build."
-            return true to "Available on this device · runs fully offline"
+            if (!present) return false to tr("Not available: the on-device model is missing from this build.")
+            return true to tr("Available on this device · runs fully offline")
         }
 
         fun create(ctx: Context, threads: Int): TfliteEmbedder {

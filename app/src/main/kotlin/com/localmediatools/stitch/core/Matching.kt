@@ -1,5 +1,10 @@
 package com.localmediatools.stitch.core
 
+import com.localmediatools.i18n.tr
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 import org.opencv.calib3d.Calib3d
 import org.opencv.core.Core
 import org.opencv.core.CvType
@@ -16,10 +21,6 @@ import org.opencv.features2d.DescriptorMatcher
 import org.opencv.features2d.SIFT
 import org.opencv.imgproc.Imgproc
 import org.opencv.video.Video
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sqrt
 
 /** Work-resolution image with its features. */
 class WorkImage(
@@ -122,7 +123,7 @@ class PairMatcher(private val assist: AlignmentAssist?, private val monitor: Sti
         var confidence = in1.toDouble() / (8 + 0.3 * src.size)
         if (competitor != null) {
             if (assist == null) {
-                log.add("${a.index + 1}↔${b.index + 1}: ambiguous match (repetitive pattern) rejected")
+                log.add(tr("{0}↔{1}: ambiguous match (repetitive pattern) rejected", a.index + 1, b.index + 1))
                 return null
             }
             val s1 = overlapScore(a, b, h1)
@@ -132,19 +133,19 @@ class PairMatcher(private val assist: AlignmentAssist?, private val monitor: Sti
                 chosen = competitor.first; chosenMask = competitor.second; chosenSrc = restS; chosenDst = restD
                 confidence = competitor.second.count { it }.toDouble() / (8 + 0.3 * src.size)
             } else if (abs(s1 - s2) <= 0.03) {
-                log.add("${a.index + 1}↔${b.index + 1}: AI could not separate two alignments; pair skipped")
+                log.add(tr("{0}↔{1}: AI could not separate two alignments; pair skipped", a.index + 1, b.index + 1))
                 return null
             }
-            log.add("${a.index + 1}↔${b.index + 1}: AI chose between two candidate alignments")
+            log.add(tr("{0}↔{1}: AI chose between two candidate alignments", a.index + 1, b.index + 1))
         } else if (!strong) {
             if (assist == null) return null
             val s = overlapScore(a, b, h1)
             aiDecisions++
             if (s < 0.80) {
-                log.add("${a.index + 1}↔${b.index + 1}: weak match rejected by AI check")
+                log.add(tr("{0}↔{1}: weak match rejected by AI check", a.index + 1, b.index + 1))
                 return null
             }
-            log.add("${a.index + 1}↔${b.index + 1}: weak match confirmed by AI check")
+            log.add(tr("{0}↔{1}: weak match confirmed by AI check", a.index + 1, b.index + 1))
         }
         val corr = FloatArray(chosenMask.count { it } * 4)
         var o = 0
@@ -355,7 +356,7 @@ class PairMatcher(private val assist: AlignmentAssist?, private val monitor: Sti
             }
         }
         if (corr.size < 4 * 6) return null
-        log.add("${a.index + 1}↔${b.index + 1}: aligned by AI dense matching (low texture)")
+        log.add(tr("{0}↔{1}: aligned by AI dense matching (low texture)", a.index + 1, b.index + 1))
         return PairLink(a.index, b.index, h, corr.toFloatArray(), cc, "ai-dense")
     }
 }

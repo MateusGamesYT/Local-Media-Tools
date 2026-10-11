@@ -23,6 +23,10 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.CountingStream
 import com.localmediatools.image.EncodeSpec
 import com.localmediatools.image.ImageOutFormat
@@ -47,15 +51,17 @@ import kotlin.math.roundToInt
 private fun photoFormat(item: MediaItem) = if (item.format == SniffedFormat.PNG || item.format == SniffedFormat.WEBP) ImageOutFormat.PNG else ImageOutFormat.JPEG
 
 // =========================================================================== Background remover
-enum class CutoutBackground(val label: String, val color: Int?) {
-    TRANSPARENT("Transparent", null),
-    WHITE("White", 0xFFFFFFFF.toInt()),
-    BLACK("Black", 0xFF000000.toInt()),
-    GREY("Light grey", 0xFFEDEFF2.toInt()),
+enum class CutoutBackground(private val labelEn: String, val color: Int?) {
+    TRANSPARENT(N_("Transparent"), null),
+    WHITE(N_("White"), 0xFFFFFFFF.toInt()),
+    BLACK(N_("Black"), 0xFF000000.toInt()),
+    GREY(N_("Light grey"), 0xFFEDEFF2.toInt());
+
+    val label: String get() = tr(labelEn)
 }
 
 class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: CutoutBackground, private val crop: Boolean) : ExportJob(ToolId.BACKGROUND_REMOVER, inputs) {
-    override val title = "Removing the background from ${plural(inputs.size, "photo")}"
+    override val title = trn(inputs.size, "Removing the background from {0} photo", "Removing the background from {0} photos")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
@@ -64,15 +70,15 @@ class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: Cutou
                 // Two full copies (picture and result) must fit; very large photos are reduced.
                 var sample = 1
                 while (sample < 16 && (src.bytesFor(sample) * 3 > budget || max(src.width, src.height) / sample > 8000)) sample *= 2
-                ctx.status("Finding the subject", item.name)
+                ctx.status(tr("Finding the subject"), item.name)
                 val bmp = src.decode(sample, budget)
                 try {
                     val (mask, mw, mh) = VisionOps.subjectMask(ctx.app, bmp)
                     ctx.unitProgress(index, 0.5)
                     val box = Matting.bounds(mask, mw, mh, 0.25f)
                     val covered = mask.count { it > 0.5f }.toDouble() / mask.size
-                    if (box == null || covered < 0.003) throw SkipItemException("No clear subject was found in this photo, so nothing was saved.")
-                    if (covered > 0.97) throw SkipItemException("The whole photo looks like the subject, so there was no background to remove.")
+                    if (box == null || covered < 0.003) throw SkipItemException(tr("No clear subject was found in this photo, so nothing was saved."))
+                    if (covered > 0.97) throw SkipItemException(tr("The whole photo looks like the subject, so there was no background to remove."))
                     val w = bmp.width; val h = bmp.height
                     // Crop rectangle in output pixels, with a small margin around the subject.
                     var l = 0; var t = 0; var r = w; var b = h
@@ -116,8 +122,8 @@ class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: Cutou
                             CountingStream(pending.openStream().buffered(1 shl 16)).use { os -> ImagePipeline.encodeBitmap(out, EncodeSpec(format, 95), os) }
                             ImagePipeline.verify(ctx.app, pending, ow, oh)
                         }
-                        ItemResult(item.name, ItemOutcome.SUCCESS, if (sample > 1) "Very large photo: saved at ${w}×$h." else null, listOf(file),
-                            "${ow}×$oh · ${if (bg == null) "transparent PNG" else "${background.label.lowercase()} background"} · ${Format.bytes(file.size)}")
+                        ItemResult(item.name, ItemOutcome.SUCCESS, if (sample > 1) tr("Very large photo: saved at {0}×{1}.", w, h) else null, listOf(file),
+                            "${ow}×$oh · ${if (bg == null) tr("transparent PNG") else tr("{0} background", background.label)} · ${Format.bytes(file.size)}")
                     } finally { out.recycle() }
                 } finally { bmp.recycle() }
             }
@@ -126,18 +132,18 @@ class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: Cutou
 }
 
 // =========================================================================== Auto enhance
-enum class EnhanceStrength(val label: String, val value: Float) { SUBTLE("Subtle", 0.6f), NATURAL("Natural", 1f), STRONG("Strong", 1.35f) }
+enum class EnhanceStrength(private val labelEn: String, val value: Float) { SUBTLE(N_("Subtle"), 0.6f), NATURAL(N_("Natural"), 1f), STRONG(N_("Strong"), 1.35f); val label: String get() = trc("strength", labelEn) }
 
 class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStrength) : ExportJob(ToolId.AUTO_ENHANCE, inputs) {
-    override val title = "Enhancing ${plural(inputs.size, "photo")}"
+    override val title = trn(inputs.size, "Enhancing {0} photo", "Enhancing {0} photos")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             ImageSource.open(ctx.app, item).use { src ->
-                ctx.status("Looking at the photo", item.name)
+                ctx.status(tr("Looking at the photo"), item.name)
                 val preview = src.preview(1024)
                 val r = try { VisionOps.enhance(ctx.app, preview, strength.value) } finally { preview.recycle() }
-                if (r.adjust.isIdentity) throw SkipItemException("This photo already looks balanced; nothing to improve.")
+                if (r.adjust.isIdentity) throw SkipItemException(tr("This photo already looks balanced; nothing to improve."))
                 ctx.unitProgress(index, 0.15)
                 val state = EditState(adjust = r.adjust)
                 val format = photoFormat(item)
@@ -149,7 +155,7 @@ class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStren
                     ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                 }
                 ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out),
-                    "${r.scene.label}: ${r.notes.joinToString(", ").ifBlank { "fine-tuned" }} · ${size.first}×${size.second}")
+                    tr("{0}: {1}", r.scene.label, r.notes.joinToString(trc("between the items of a list", ", ")).ifBlank { tr("fine-tuned") }) + " · ${size.first}×${size.second}")
             }
         }
     }
@@ -172,12 +178,12 @@ class FaceBlurPlan(
 )
 
 class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : ExportJob(ToolId.FACE_BLUR, inputs) {
-    override val title = "${if (plan.pixelate) "Pixelating" else "Blurring"} faces in ${plural(inputs.size, "file")}"
+    override val title = if (plan.pixelate) trn(inputs.size, "Pixelating faces in {0} file", "Pixelating faces in {0} files") else trn(inputs.size, "Blurring faces in {0} file", "Blurring faces in {0} files")
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val tracks = plan.tracks[item.key] ?: (if (plan.scanOthers) findNow(ctx, index, item) else null).orEmpty()
-            if (tracks.isEmpty()) throw SkipItemException(if (plan.scanOthers && plan.tracks[item.key] == null) "No faces to hide were found in this file." else "None of the chosen people appear in this file, so it was left as it is.")
+            if (tracks.isEmpty()) throw SkipItemException(if (plan.scanOthers && plan.tracks[item.key] == null) tr("No faces to hide were found in this file.") else tr("None of the chosen people appear in this file, so it was left as it is."))
             if (item.kind == MediaKind.VIDEO) video(ctx, index, item, tracks) else photo(ctx, index, item, tracks)
         }
         Outputs.cleanTemp(ctx)
@@ -185,12 +191,12 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
 
     /** Scans a file now and returns the tracks to hide (everyone except people to keep visible). */
     private fun findNow(ctx: JobContext, index: Int, item: MediaItem): List<FaceTrack> {
-        ctx.status("Finding faces", item.name)
+        ctx.status(tr("Finding faces"), item.name)
         val res = try {
             FaceScanner.scan(ctx.app, listOf(item), { ctx.cancelled }) { f, _ -> ctx.unitProgress(index, f * 0.3) }
         } catch (e: FaceScanner.Cancelled) { throw ExportCancelledException() }
         try {
-            res.problems.firstOrNull()?.let { throw UserFacingException("Faces couldn't be found: ${it.second}") }
+            res.problems.firstOrNull()?.let { throw UserFacingException(tr("Faces couldn't be found: {0}", it.second)) }
             return res.people.filter { p ->
                 val f = FaceTrack(-1).apply { p.tracks.forEach { samples.addAll(it.samples) } }.meanFeature() ?: return@filter true
                 val k = plan.keep.maxOfOrNull { FaceEngine.cosine(it, f) } ?: -1f
@@ -227,8 +233,8 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
                     }
                     ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                 }
-                return ItemResult(item.name, ItemOutcome.SUCCESS, "Photo metadata (location, camera, dates) is not copied.", listOf(out),
-                    "${plural(regions.size, "face")} ${if (plan.pixelate) "pixelated" else "blurred"} · ${size.first}×${size.second} · ${Format.bytes(out.size)}")
+                return ItemResult(item.name, ItemOutcome.SUCCESS, tr("Photo metadata (location, camera, dates) is not copied."), listOf(out),
+                    (if (plan.pixelate) trn(regions.size, "{0} face pixelated", "{0} faces pixelated") else trn(regions.size, "{0} face blurred", "{0} faces blurred")) + " · ${size.first}×${size.second} · ${Format.bytes(out.size)}")
             }
         } finally {
             store.deleteAll()
@@ -237,13 +243,13 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
 
     private fun video(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>): ItemResult {
         val info = VideoProbe.probe(ctx.app, item.uri)
-        val v = info.video ?: throw SkipItemException("This file has no video track.")
+        val v = info.video ?: throw SkipItemException(tr("This file has no video track."))
         val (w, h) = VideoTranscoder.outputSize(info.codedWidth, info.codedHeight, 0, info.frameRate)
         val bitrate = keepQualityBitrate(info, item.size, w, h)
         OutputStore.ensureSpace((bitrate.toLong() + 192_000) * info.durationUs / 8_000_000 * 2)
         val tmp = File(Outputs.tempDir(ctx), "faces-$index.mp4")
         try {
-            ctx.status("Blurring faces frame by frame", item.name)
+            ctx.status(tr("Blurring faces frame by frame"), item.name)
             val effect = VideoTranscoder.FrameEffect(plan.pixelate, plan.strength) { pts ->
                 FaceTracker.trackRegionsAt(tracks, pts).map { ObscureRegion(it.cx, it.cy, it.rx, it.ry) }
             }
@@ -257,7 +263,7 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
             }.first
             val people = tracks.size
             return ItemResult(item.name, ItemOutcome.SUCCESS, result.notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "${plural(people, "face track")} ${if (plan.pixelate) "pixelated" else "blurred"} · ${info.displayWidth}×${info.displayHeight} · H.264 from ${v.codecLabel} · ${Format.bytes(out.size)}")
+                (if (plan.pixelate) trn(people, "{0} face track pixelated", "{0} face tracks pixelated") else trn(people, "{0} face track blurred", "{0} face tracks blurred")) + " · ${info.displayWidth}×${info.displayHeight} · " + tr("H.264 from {0}", v.codecLabel) + " · ${Format.bytes(out.size)}")
         } finally {
             tmp.delete()
         }

@@ -19,19 +19,84 @@ import com.localmediatools.core.MediaItem
 import com.localmediatools.core.MediaKind
 import com.localmediatools.core.MediaProbe
 import com.localmediatools.core.SniffedFormat
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.ToolId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class PickKind(val mimes: Array<String>, val noun: String, val galleryType: String?) {
-    IMAGES(arrayOf("image/*"), "images", "image/*"),
-    VIDEOS(arrayOf("video/*"), "videos", "video/*"),
-    GIFS(arrayOf("image/gif"), "GIFs", "image/gif"),
-    PDFS(arrayOf("application/pdf"), "PDFs", null),
-    MEDIA(arrayOf("image/*", "video/*"), "photos or videos", "*/*"),
-    ANY(arrayOf("image/*", "video/*", "application/pdf"), "files", "*/*"),
-    PRINTABLE(arrayOf("image/*", "application/pdf"), "photos or PDFs", "image/*"),
+enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
+    IMAGES(arrayOf("image/*"), "image/*"),
+    VIDEOS(arrayOf("video/*"), "video/*"),
+    GIFS(arrayOf("image/gif"), "image/gif"),
+    PDFS(arrayOf("application/pdf"), null),
+    MEDIA(arrayOf("image/*", "video/*"), "*/*"),
+    ANY(arrayOf("image/*", "video/*", "application/pdf"), "*/*"),
+    PRINTABLE(arrayOf("image/*", "application/pdf"), "image/*");
+
+    /** The empty selection card's title ([one]: a tool that works on one file). */
+    fun choose(one: Boolean): String = when (this) {
+        IMAGES -> if (one) tr("Choose an image") else tr("Choose images")
+        VIDEOS -> if (one) tr("Choose a video") else tr("Choose videos")
+        GIFS -> if (one) tr("Choose a GIF") else tr("Choose GIFs")
+        PDFS -> if (one) tr("Choose a PDF") else tr("Choose PDFs")
+        MEDIA -> if (one) tr("Choose a photo or video") else tr("Choose photos or videos")
+        ANY -> if (one) tr("Choose a file") else tr("Choose files")
+        PRINTABLE -> if (one) tr("Choose a photo or PDF") else tr("Choose photos or PDFs")
+    }
+
+    /** The selection card's heading. */
+    fun select(): String = when (this) {
+        IMAGES -> tr("Select images")
+        VIDEOS -> tr("Select videos")
+        GIFS -> tr("Select GIFs")
+        PDFS -> tr("Select PDFs")
+        MEDIA -> tr("Select photos or videos")
+        ANY -> tr("Select files")
+        PRINTABLE -> tr("Select photos or PDFs")
+    }
+
+    fun selectToContinue(): String = when (this) {
+        IMAGES -> tr("Select images to continue")
+        VIDEOS -> tr("Select videos to continue")
+        GIFS -> tr("Select GIFs to continue")
+        PDFS -> tr("Select PDFs to continue")
+        MEDIA -> tr("Select photos or videos to continue")
+        ANY -> tr("Select files to continue")
+        PRINTABLE -> tr("Select photos or PDFs to continue")
+    }
+
+    fun selectAtLeast(min: Int): String = when (this) {
+        IMAGES -> trn(min, "Select at least {0} image", "Select at least {0} images")
+        VIDEOS -> trn(min, "Select at least {0} video", "Select at least {0} videos")
+        GIFS -> trn(min, "Select at least {0} GIF", "Select at least {0} GIFs")
+        PDFS -> trn(min, "Select at least {0} PDF", "Select at least {0} PDFs")
+        MEDIA -> trn(min, "Select at least {0} photo or video", "Select at least {0} photos or videos")
+        ANY -> trn(min, "Select at least {0} file", "Select at least {0} files")
+        PRINTABLE -> trn(min, "Select at least {0} photo or PDF", "Select at least {0} photos or PDFs")
+    }
+
+    fun selected(n: Int): String = when (this) {
+        IMAGES -> trn(n, "{0} image selected", "{0} images selected")
+        VIDEOS -> trn(n, "{0} video selected", "{0} videos selected")
+        GIFS -> trn(n, "{0} GIF selected", "{0} GIFs selected")
+        PDFS -> trn(n, "{0} PDF selected", "{0} PDFs selected")
+        MEDIA -> trn(n, "{0} photo or video selected", "{0} photos and videos selected")
+        ANY -> trn(n, "{0} file selected", "{0} files selected")
+        PRINTABLE -> trn(n, "{0} photo or PDF selected", "{0} photos and PDFs selected")
+    }
+
+    fun noneInFolder(): String = when (this) {
+        IMAGES -> tr("No images found in that folder.")
+        VIDEOS -> tr("No videos found in that folder.")
+        GIFS -> tr("No GIFs found in that folder.")
+        PDFS -> tr("No PDFs found in that folder.")
+        MEDIA -> tr("No photos or videos found in that folder.")
+        ANY -> tr("No files found in that folder.")
+        PRINTABLE -> tr("No photos or PDFs found in that folder.")
+    }
 }
 
 /** Which files each tool accepts and how selection behaves. */
@@ -58,16 +123,16 @@ object ToolRules {
     fun issue(t: ToolId, item: MediaItem): String? {
         item.readError?.let { return it }
         return when (pickKind(t)) {
-            PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else "Not a video file"
-            PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else "Not a GIF file"
-            PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else "Not a PDF file"
-            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO)) null else "Not a photo or video"
-            PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else "Not a photo, video, GIF or PDF"
-            PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF) null else "Not a photo or PDF"
+            PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else tr("Not a video file")
+            PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else tr("Not a GIF file")
+            PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else tr("Not a PDF file")
+            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO)) null else tr("Not a photo or video")
+            PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else tr("Not a photo, video, GIF or PDF")
+            PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF) null else tr("Not a photo or PDF")
             PickKind.IMAGES -> when {
                 item.kind == MediaKind.IMAGE -> null
-                item.kind == MediaKind.GIF -> if (t == ToolId.OPTIMIZE_IMAGES) "Use the GIF optimizer for GIFs" else null
-                else -> "Not an image file"
+                item.kind == MediaKind.GIF -> if (t == ToolId.OPTIMIZE_IMAGES) tr("Use the GIF optimizer for GIFs") else null
+                else -> tr("Not an image file")
             }
         }
     }
@@ -121,7 +186,7 @@ class Selection(val tool: ToolId) {
 class SelectionPanel(
     private val screen: Screen,
     private val selection: Selection,
-    private val title: String = "Select files",
+    private val title: String = tr("Select files"),
 ) : LinearLayout(screen.ctx) {
     private val kind = ToolRules.pickKind(selection.tool)
     private val summary = UI.text(context, "", TextStyle.BODY_2)
@@ -151,14 +216,14 @@ class SelectionPanel(
             setPadding(dp(16), dp(22), dp(16), dp(22))
             addView(UI.iconView(context, when (kind) { PickKind.VIDEOS -> R.drawable.ic_video; PickKind.PDFS -> R.drawable.ic_file; else -> R.drawable.ic_gallery }, Palette.ACCENT, 30))
             val one = ToolRules.single(selection.tool)
-            addView(UI.text(context, if (one) "Choose a ${kind.noun.removeSuffix("s")}" else "Choose ${kind.noun}", TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, dp(10), 0, dp(2)) })
+            addView(UI.text(context, kind.choose(one), TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, dp(10), 0, dp(2)) })
             addView(UI.text(context, when {
-                one -> "One at a time"
-                ToolRules.orderMatters(selection.tool) -> "They'll be used in the order you select them"
-                else -> "Select as many as you like"
+                one -> tr("One at a time")
+                ToolRules.orderMatters(selection.tool) -> tr("They'll be used in the order you select them")
+                else -> tr("Select as many as you like")
             }, TextStyle.CAPTION).apply { gravity = Gravity.CENTER })
             isClickable = true; isFocusable = true
-            contentDescription = "Choose ${kind.noun}"
+            contentDescription = kind.choose(one)
             setOnClickListener { if (kind.galleryType != null) pickGallery() else pickFiles() }
         }
         addView(empty, lp().apply { topMargin = dp(12) })
@@ -169,13 +234,13 @@ class SelectionPanel(
         addView(stripScroll, lp().apply { topMargin = dp(12) })
         addView(issues, lp().apply { topMargin = dp(8) })
 
-        if (kind.galleryType != null) actions.addView(UI.secondaryButton(context, "Gallery", R.drawable.ic_gallery) { pickGallery() })
-        actions.addView(UI.secondaryButton(context, "Files", R.drawable.ic_file) { pickFiles() })
-        if (!ToolRules.single(selection.tool)) actions.addView(UI.secondaryButton(context, "Folder", R.drawable.ic_folder) { pickFolder() })
-        reviewBtn = UI.secondaryButton(context, if (ToolRules.orderMatters(selection.tool)) "Review & order" else "Review", R.drawable.ic_reorder) {
+        if (kind.galleryType != null) actions.addView(UI.secondaryButton(context, tr("Gallery"), R.drawable.ic_gallery) { pickGallery() })
+        actions.addView(UI.secondaryButton(context, tr("Files"), R.drawable.ic_file) { pickFiles() })
+        if (!ToolRules.single(selection.tool)) actions.addView(UI.secondaryButton(context, tr("Folder"), R.drawable.ic_folder) { pickFolder() })
+        reviewBtn = UI.secondaryButton(context, if (ToolRules.orderMatters(selection.tool)) tr("Review & order") else tr("Review"), R.drawable.ic_reorder) {
             screen.push(SelectionReviewScreen(screen.activity, selection))
         }
-        clearBtn = UI.ghostButton(context, "Clear", R.drawable.ic_trash) { selection.clear() }
+        clearBtn = UI.ghostButton(context, trc("empty the list", "Clear"), R.drawable.ic_trash) { selection.clear() }
         actions.addView(reviewBtn)
         actions.addView(clearBtn)
         addView(actions, lp().apply { topMargin = dp(12) })
@@ -200,12 +265,12 @@ class SelectionPanel(
         val bad = selection.unsupported
         val total = usable.sumOf { it.size.coerceAtLeast(0) }
         summary.text = when {
-            selection.loading > 0 -> "Reading selected files…"
-            items.isEmpty() -> "Nothing selected yet."
+            selection.loading > 0 -> tr("Reading the selected files…")
+            items.isEmpty() -> tr("Nothing selected yet.")
             else -> buildString {
-                append("${usable.size} ${if (usable.size == 1) kind.noun.removeSuffix("s") else kind.noun} selected")
+                append(kind.selected(usable.size))
                 if (total > 0) append(" · ${Format.bytes(total)}")
-                if (bad.isNotEmpty()) append(" · ${bad.size} can't be used")
+                if (bad.isNotEmpty()) append(" · ").append(trn(bad.size, "{0} can't be used", "{0} can't be used"))
             }
         }
         empty.visibility = if (items.isEmpty()) VISIBLE else GONE
@@ -225,7 +290,7 @@ class SelectionPanel(
         issues.removeAllViews()
         if (bad.isNotEmpty()) {
             val names = bad.take(3).joinToString { "${it.name} (${ToolRules.issue(selection.tool, it)})" }
-            issues.addView(UI.note(context, "${bad.size} file(s) will be skipped: $names${if (bad.size > 3) "…" else ""}", UI.NoteKind.WARN))
+            issues.addView(UI.note(context, trn(bad.size, "{0} file will be skipped: {1}", "{0} files will be skipped: {1}", names + if (bad.size > 3) "…" else ""), UI.NoteKind.WARN))
         }
     }
 
@@ -246,7 +311,7 @@ class SelectionPanel(
             }, FrameLayout.LayoutParams(WRAP, WRAP, Gravity.TOP or Gravity.START).apply { setMargins(dp(5), dp(5), 0, 0) })
         }
         if (bad) f.addView(UI.iconView(context, R.drawable.ic_warning, Palette.DANGER, 18), FrameLayout.LayoutParams(dp(18), dp(18), Gravity.BOTTOM or Gravity.END).apply { setMargins(0, 0, dp(5), dp(5)) })
-        f.contentDescription = "${index + 1}: ${item.name}${if (bad) ", can't be used" else ""}"
+        f.contentDescription = if (bad) tr("{0}: {1}, can't be used", index + 1, item.name) else "${index + 1}: ${item.name}"
         return f
     }
 
@@ -281,11 +346,11 @@ class SelectionReviewScreen(activity: MainActivity, private val selection: Selec
     override fun createView(): View {
         val root = UI.vertical(ctx)
         root.setBackgroundColor(Palette.BG)
-        root.addView(TopBar(this, "Selected files"))
+        root.addView(TopBar(this, tr("Selected files")))
         header = UI.text(ctx, "", TextStyle.BODY_2).apply { setPadding(ctx.dp(20), ctx.dp(4), ctx.dp(20), ctx.dp(8)) }
         root.addView(header)
         val order = ToolRules.orderMatters(selection.tool)
-        if (order) root.addView(UI.note(ctx, "Files are processed from top to bottom. Use the arrows to change the order.", UI.NoteKind.INFO).apply { margins(16, 0, 16, 8) })
+        if (order) root.addView(UI.note(ctx, tr("Files are processed from top to bottom. Use the arrows to change the order."), UI.NoteKind.INFO).apply { margins(16, 0, 16, 8) })
         val list = ListView(ctx).apply {
             divider = null
             dividerHeight = 0
@@ -312,7 +377,7 @@ class SelectionReviewScreen(activity: MainActivity, private val selection: Selec
 
     private fun updateHeader() {
         val bad = selection.unsupported.size
-        header.text = "${selection.items.size} file(s)" + if (bad > 0) " · $bad will be skipped" else ""
+        header.text = trn(selection.items.size, "{0} file", "{0} files") + if (bad > 0) " · " + trn(bad, "{0} will be skipped", "{0} will be skipped") else ""
     }
 
     override fun onDestroy() {
@@ -326,9 +391,9 @@ class SelectionReviewScreen(activity: MainActivity, private val selection: Selec
         val info = UI.text(ctx, "", TextStyle.CAPTION)
         val num = UI.text(ctx, "", TextStyle.CAPTION, Palette.TEXT_3).apply { minWidth = ctx.dp(24) }
         var index = 0
-        val up = UI.iconButton(ctx, R.drawable.ic_up, "Move up") { selection.move(index, index - 1) }
-        val down = UI.iconButton(ctx, R.drawable.ic_down, "Move down") { selection.move(index, index + 1) }
-        val remove = UI.iconButton(ctx, R.drawable.ic_close, "Remove", Palette.TEXT_2) { selection.remove(index) }
+        val up = UI.iconButton(ctx, R.drawable.ic_up, tr("Move up")) { selection.move(index, index - 1) }
+        val down = UI.iconButton(ctx, R.drawable.ic_down, tr("Move down")) { selection.move(index, index + 1) }
+        val remove = UI.iconButton(ctx, R.drawable.ic_close, tr("Remove"), Palette.TEXT_2) { selection.remove(index) }
 
         init {
             orientation = HORIZONTAL

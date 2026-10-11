@@ -16,6 +16,8 @@ import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceClustering
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Shapes
 import com.localmediatools.ui.TextStyle
@@ -50,14 +52,14 @@ object FaceSheet {
             head.addView(img, LinearLayout.LayoutParams(ctx.dp(64), ctx.dp(64)))
             val who = when {
                 person?.named == true -> person.name!!
-                person != null -> "Unnamed person"
-                else -> "Who is this?"
+                person != null -> tr("Unnamed person")
+                else -> tr("Who is this?")
             }
             val sub = when {
-                person != null && person.confirmed(face) -> "You confirmed this · in ${person.mediaCount} ${if (person.mediaCount == 1) "photo" else "photos"}"
-                person != null -> "Recognised automatically · in ${person.mediaCount} ${if (person.mediaCount == 1) "photo" else "photos"}"
-                !face.good -> "This face is small, blurry or turned, so it's only grouped when it clearly matches someone"
-                else -> "Not grouped with anyone yet"
+                person != null && person.confirmed(face) -> trn(person.mediaCount, "You confirmed this · in {0} photo", "You confirmed this · in {0} photos")
+                person != null -> trn(person.mediaCount, "Recognised automatically · in {0} photo", "Recognised automatically · in {0} photos")
+                !face.good -> tr("This face is small, blurry or turned, so it's only grouped when it clearly matches someone")
+                else -> tr("Not grouped with anyone yet")
             }
             head.addView(UI.titled(ctx, who, sub).apply { setPadding(ctx.dp(14), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             col.addView(head)
@@ -67,26 +69,26 @@ object FaceSheet {
             }
             col.addView(View(ctx), lp(1, ctx.dp(10)))
             if (person != null && !person.named) {
-                row(R.drawable.ic_add, Palette.ACCENT, "Name this person", "Names all ${person.faceCount} faces in this group") {
+                row(R.drawable.ic_add, Palette.ACCENT, tr("Name this person"), trn(person.faceCount, "Names the {0} face in this group", "Names all {0} faces in this group")) {
                     askName(activity, people, null) { name -> nameGroup(activity, person, name, people, changed) }
                 }
             }
             if (person == null) {
-                for (s in suggestions) row(R.drawable.ic_check, Palette.SUCCESS, "This is ${s.name}", "Looks similar") { assign(activity, face, s.id, null, changed) }
-                row(R.drawable.ic_add, Palette.ACCENT, "Add a name", "Start a person, or pick one you named") {
+                for (s in suggestions) row(R.drawable.ic_check, Palette.SUCCESS, tr("This is {0}", s.name), tr("Looks similar")) { assign(activity, face, s.id, null, changed) }
+                row(R.drawable.ic_add, Palette.ACCENT, tr("Add a name"), tr("Start a person, or pick one you named")) {
                     askName(activity, people, null) { name -> assignByName(activity, face, name, people, null, changed) }
                 }
             } else {
-                if (person.named) row(R.drawable.ic_close, Palette.DANGER, "This isn't ${person.name}", "Removes it from ${person.name} for good") { reject(activity, face, person.id, changed) }
-                else row(R.drawable.ic_close, Palette.DANGER, "Not the same person", "Takes this face out of the group") { reject(activity, face, person.id, changed) }
-                row(R.drawable.ic_tool_faceblur, Palette.ACCENT, "This is someone else…", "Pick or type their name") {
+                if (person.named) row(R.drawable.ic_close, Palette.DANGER, tr("This isn't {0}", person.name), tr("Removes it from {0} for good", person.name)) { reject(activity, face, person.id, changed) }
+                else row(R.drawable.ic_close, Palette.DANGER, tr("Not the same person"), tr("Takes this face out of the group")) { reject(activity, face, person.id, changed) }
+                row(R.drawable.ic_tool_faceblur, Palette.ACCENT, tr("This is someone else…"), tr("Pick or type their name")) {
                     askName(activity, people.filter { it.id != person.id }, null) { name -> assignByName(activity, face, name, people, person.id, changed) }
                 }
-                if (person.named || person.faceCount >= 2) row(R.drawable.ic_image, Palette.ACCENT, "Use as ${if (person.named) person.name + "'s" else "the group's"} picture", null) {
+                if (person.named || person.faceCount >= 2) row(R.drawable.ic_image, Palette.ACCENT, if (person.named) tr("Use as {0}'s picture", person.name) else tr("Use as the group's picture"), null) {
                     activity.lifecycleScope.launch { withContext(Dispatchers.IO) { db.setCover(person.id, face.id) }; GalleryIndex.notifyChanged(); changed() }
                 }
             }
-            row(R.drawable.ic_trash, Palette.TEXT_2, "Ignore this face", "For strangers, posters or statues: it won't appear in People") {
+            row(R.drawable.ic_trash, Palette.TEXT_2, tr("Ignore this face"), tr("For strangers, posters or statues: it won't appear in People")) {
                 activity.lifecycleScope.launch {
                     withContext(Dispatchers.IO) { db.setIgnored(face.id, true) }
                     GalleryIndex.notifyChanged(); changed()
@@ -121,7 +123,7 @@ object FaceSheet {
             style(TextStyle.BODY)
             setTextColor(Palette.TEXT)
             setHintTextColor(Palette.TEXT_3)
-            hint = "Name"
+            hint = tr("Name")
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
             isSingleLine = true
             threshold = 1
@@ -129,12 +131,12 @@ object FaceSheet {
             setAdapter(ArrayAdapter(ctx, android.R.layout.simple_dropdown_item_1line, people.mapNotNull { it.name }.distinct()))
         }
         val box = UI.vertical(ctx, 20, 8).apply { addView(input) }
-        val d = AlertDialog.Builder(activity).setTitle("Who is this?").setView(box)
-            .setPositiveButton("Save") { _, _ ->
+        val d = AlertDialog.Builder(activity).setTitle(tr("Who is this?")).setView(box)
+            .setPositiveButton(tr("Save")) { _, _ ->
                 val name = input.text.toString().trim().replace(Regex("\\s+"), " ")
                 if (name.isNotEmpty()) done(name.take(60))
             }
-            .setNegativeButton("Cancel", null).create()
+            .setNegativeButton(tr("Cancel"), null).create()
         d.setOnShowListener { input.requestFocus(); d.window?.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE) }
         d.show()
     }
@@ -144,14 +146,14 @@ object FaceSheet {
         val db = GalleryDb.get(activity)
         val existing = people.firstOrNull { it.name.equals(name, ignoreCase = true) && it.id != group.id }
         if (existing != null) {
-            AlertDialog.Builder(activity).setTitle("Add to ${existing.name}?")
-                .setMessage("${existing.name} already exists. These ${group.faceCount} faces will be added to ${existing.name}.")
-                .setPositiveButton("Add") { _, _ ->
+            AlertDialog.Builder(activity).setTitle(tr("Add to {0}?", existing.name))
+                .setMessage(trn(group.faceCount, "{1} already exists. This face will be added to {1}.", "{1} already exists. These {0} faces will be added to {1}.", existing.name))
+                .setPositiveButton(tr("Add")) { _, _ ->
                     activity.lifecycleScope.launch {
                         withContext(Dispatchers.IO) { db.mergePeople(existing.id, group.id) }
                         GalleryIndex.regroupNow(activity); changed()
                     }
-                }.setNegativeButton("Cancel", null).show()
+                }.setNegativeButton(tr("Cancel"), null).show()
             return
         }
         activity.lifecycleScope.launch {
@@ -160,7 +162,7 @@ object FaceSheet {
                 // Naming confirms the group: these faces now anchor the person.
                 db.confirm(db.faces("f.person_id = ?", arrayOf(group.id.toString())).map { it.id }, group.id)
             }
-            Toast.makeText(activity, "Named $name", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, tr("Named {0}", name), Toast.LENGTH_SHORT).show()
             GalleryIndex.regroupNow(activity); changed()
         }
     }

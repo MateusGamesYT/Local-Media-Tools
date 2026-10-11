@@ -17,6 +17,8 @@ import com.localmediatools.app.MainActivity
 import com.localmediatools.core.Format
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportJob
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
 import com.localmediatools.tools.ExtractPagesJob
 import com.localmediatools.tools.PageMode
 import com.localmediatools.tools.PageRanges
@@ -34,24 +36,24 @@ import com.localmediatools.ui.WRAP
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.lp
 import com.localmediatools.video.VideoProbe
+import kotlin.math.abs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 
 // =========================================================================== Remove metadata
 class RemoveMetadataScreen(a: MainActivity) : ToolScreen(a, ToolId.REMOVE_METADATA) {
     override fun buildOptions(container: LinearLayout) {
-        container.addView(UI.text(ctx, "Removed", TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(4) })
-        container.addView(UI.text(ctx, "GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
-        container.addView(UI.text(ctx, "Kept", TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(14) })
-        container.addView(UI.text(ctx, "The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
-        container.addView(UI.note(ctx, "Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.text(ctx, tr("Removed"), TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(4) })
+        container.addView(UI.text(ctx, tr("GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)"), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
+        container.addView(UI.text(ctx, tr("Kept"), TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.text(ctx, tr("The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
+        container.addView(UI.note(ctx, tr("Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata)."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
     }
 
-    override fun outputNaming() = "name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies"
+    override fun outputNaming() = tr("name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies")
     override fun createJob(items: List<MediaItem>): ExportJob = RemoveMetadataJob(items)
 }
 
@@ -63,9 +65,9 @@ object PagesPrefs {
 
 class ExtractPagesScreen(a: MainActivity) : ToolScreen(a, ToolId.EXTRACT_PDF_PAGES) {
     override fun buildOptions(container: LinearLayout) {
-        container.addView(TextField(ctx, "Pages", "e.g. 1-3, 5, 8-", PagesPrefs.spec) { PagesPrefs.spec = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(4) })
-        container.addView(UI.text(ctx, "Use commas between pages; ranges like 4-9; \"8-\" means page 8 to the end. Pages are saved in the order you write them.", TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(6) })
-        section(container, "Save as")
+        container.addView(TextField(ctx, tr("Pages"), tr("e.g. 1-3, 5, 8-"), PagesPrefs.spec) { PagesPrefs.spec = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(4) })
+        container.addView(UI.text(ctx, tr("Use commas between pages; ranges like 4-9; \"8-\" means page 8 to the end. Pages are saved in the order you write them."), TextStyle.CAPTION), lp().apply { topMargin = ctx.dp(6) })
+        section(container, tr("Save as"))
         container.addView(ChoiceGroup(ctx, PageMode.entries, { it.label }, PagesPrefs.mode) { PagesPrefs.mode = it }, lp().apply { topMargin = ctx.dp(10) })
     }
 
@@ -74,7 +76,7 @@ class ExtractPagesScreen(a: MainActivity) : ToolScreen(a, ToolId.EXTRACT_PDF_PAG
         return PageRanges.validateSyntax(PagesPrefs.spec)
     }
 
-    override fun outputNaming() = if (PagesPrefs.mode == PageMode.ONE_FILE) "name_pages.pdf" else "name_p3.pdf, name_p4.pdf …"
+    override fun outputNaming() = if (PagesPrefs.mode == PageMode.ONE_FILE) tr("name_pages.pdf") else tr("name_p3.pdf, name_p4.pdf …")
     override fun createJob(items: List<MediaItem>): ExportJob = ExtractPagesJob(items, PagesPrefs.spec, PagesPrefs.mode)
 }
 
@@ -94,7 +96,7 @@ class TrimScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_VIDEO) {
     private var frameJob: Job? = null
 
     override fun buildOptions(container: LinearLayout) {
-        info = UI.text(ctx, "Select a video to choose the part to keep.", TextStyle.BODY_2)
+        info = UI.text(ctx, tr("Select a video to choose the part to keep."), TextStyle.BODY_2)
         container.addView(info, lp().apply { topMargin = ctx.dp(4) })
         val frames = UI.horizontal(ctx, Gravity.TOP)
         fun frameCol(): Triple<LinearLayout, ImageView, TextView> {
@@ -116,26 +118,26 @@ class TrimScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_VIDEO) {
             if (done) loadFrames()
         }
         container.addView(range, lp().apply { topMargin = ctx.dp(8) })
-        section(container, "Rotate", "Fix videos recorded sideways")
-        val rot = listOf(0 to "Keep", 1 to "90° right", 2 to "180°", 3 to "90° left")
+        section(container, tr("Rotate"), tr("Fix videos recorded sideways"))
+        val rot = listOf(0 to trc("no rotation", "Keep"), 1 to tr("90° right"), 2 to "180°", 3 to tr("90° left"))
         container.addView(ChoiceGroup(ctx, rot, { it.second }, rot.first { it.first == turns }) { turns = it.first; refreshValidation() }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        container.addView(UI.note(ctx, tr("Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
         onSelectionChanged()
     }
 
     override fun onSelectionChanged() {
         if (!::info.isInitialized) return
         val item = selection.usable.firstOrNull()
-        if (item == null) { durationUs = 0; loadedKey = null; info.text = "Select a video to choose the part to keep."; startImg.setImageDrawable(null); endImg.setImageDrawable(null); updateLabels(); return }
+        if (item == null) { durationUs = 0; loadedKey = null; info.text = tr("Select a video to choose the part to keep."); startImg.setImageDrawable(null); endImg.setImageDrawable(null); updateLabels(); return }
         if (item.key == loadedKey) return
         loadedKey = item.key
-        info.text = "Reading ${item.name}…"
+        info.text = tr("Reading {0}…", item.name)
         scope.launch {
             val d = withContext(Dispatchers.IO) { try { VideoProbe.probe(ctx, item.uri).durationUs } catch (_: Exception) { -1L } }
             if (loadedKey != item.key) return@launch
             durationUs = d.coerceAtLeast(0)
             startF = 0.0; endF = 1.0; range.set(0.0, 1.0)
-            info.text = if (d > 0) "${item.name} · ${Format.duration(d / 1000)}" else "${item.name}: the duration couldn't be read."
+            info.text = if (d > 0) "${item.name} · ${Format.duration(d / 1000)}" else tr("{0}: the duration couldn't be read.", item.name)
             updateLabels(); loadFrames(); refreshValidation()
         }
     }
@@ -143,8 +145,8 @@ class TrimScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_VIDEO) {
     private fun updateLabels() {
         if (!::startLbl.isInitialized) return
         val s = (startF * durationUs).toLong(); val e = (endF * durationUs).toLong()
-        startLbl.text = "Start ${Format.duration(s / 1000)}"
-        endLbl.text = "End ${Format.duration(e / 1000)} · keeps ${Format.duration((e - s).coerceAtLeast(0) / 1000)}"
+        startLbl.text = tr("Start {0}", Format.duration(s / 1000))
+        endLbl.text = tr("End {0} · keeps {1}", Format.duration(e / 1000), Format.duration((e - s).coerceAtLeast(0) / 1000))
         refreshValidation()
     }
 
@@ -170,25 +172,25 @@ class TrimScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_VIDEO) {
 
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (stepMode && selection.usable.isEmpty()) return "Put a video in the stack to choose the part to keep"
-        if (!stepMode && selection.usable.size > 1) return "Select one video (trimming is set per video)"
-        if (durationUs <= 0) return "Reading the video…"
+        if (stepMode && selection.usable.isEmpty()) return tr("Put a video in the stack to choose the part to keep")
+        if (!stepMode && selection.usable.size > 1) return tr("Select one video (trimming is set per video)")
+        if (durationUs <= 0) return tr("Reading the video…")
         val len = (endF - startF) * durationUs
-        if (len < 300_000) return "Keep at least a fraction of a second"
-        if (startF <= 0.0005 && endF >= 0.9995 && turns == 0) return "Move the handles or pick a rotation"
+        if (len < 300_000) return tr("Keep at least a fraction of a second")
+        if (startF <= 0.0005 && endF >= 0.9995 && turns == 0) return tr("Move the handles or pick a rotation")
         return null
     }
 
-    override fun outputNaming() = "name_trim.mp4 (WebM stays WebM)"
+    override fun outputNaming() = tr("name_trim.mp4 (WebM stays WebM)")
 
     /** In a stack the same part (as a share of the length) is kept from every video that arrives. */
     override fun createStepJob(): ExportJob = TrimVideoJob(selection.usable.take(1), 0, 0, turns, startF to endF)
 
     override fun stackSummary(): String {
         val s = (startF * durationUs).toLong(); val e = (endF * durationUs).toLong()
-        val range = if (durationUs > 0) "Keep ${Format.duration(s / 1000)}–${Format.duration(e / 1000)} of ${Format.duration(durationUs / 1000)} (${(startF * 100).toInt()}–${(endF * 100).toInt()}% of each video)"
-            else "Keep ${(startF * 100).toInt()}–${(endF * 100).toInt()}% of each video"
-        return range + if (turns % 4 != 0) " · turn ${(turns % 4) * 90}° clockwise" else ""
+        val range = if (durationUs > 0) tr("Keep {0}–{1} of {2} ({3}–{4}% of each video)", Format.duration(s / 1000), Format.duration(e / 1000), Format.duration(durationUs / 1000), (startF * 100).toInt(), (endF * 100).toInt())
+            else tr("Keep {0}–{1}% of each video", (startF * 100).toInt(), (endF * 100).toInt())
+        return range + if (turns % 4 != 0) " · " + tr("turn {0}° clockwise", (turns % 4) * 90) else ""
     }
     override fun createJob(items: List<MediaItem>): ExportJob =
         TrimVideoJob(items.first(), (startF * durationUs).toLong(), if (endF >= 0.9995) Long.MAX_VALUE else (endF * durationUs).toLong(), turns)
@@ -204,7 +206,7 @@ class RangeSlider(ctx: Context, private val onChange: (Double, Double, Boolean) 
     private val knob = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
     private val r = RectF()
 
-    init { contentDescription = "Part of the video to keep"; minimumHeight = ctx.dp(48) }
+    init { contentDescription = tr("Part of the video to keep"); minimumHeight = ctx.dp(48) }
 
     fun set(s: Double, e: Double) { a = s; b = e; invalidate() }
 

@@ -1,9 +1,10 @@
 package com.localmediatools.stitch.core
 
-import org.opencv.core.Mat
-import org.opencv.imgproc.Imgproc
+import com.localmediatools.i18n.tr
 import kotlin.math.max
 import kotlin.math.min
+import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 
 /**
  * Multi-shot stitching pipeline:
@@ -24,13 +25,13 @@ class Stitcher(
 ) {
     fun run(sink: StitchSink): StitchReport {
         val n = images.count
-        if (n < 2) throw StitchException("Select at least two overlapping photos.")
+        if (n < 2) throw StitchException(tr("Select at least two overlapping photos."))
         val notes = ArrayList<String>()
         // 1. Work images and features.
         val work = HashMap<Int, WorkImage>()
         try {
             for (i in 0 until n) {
-                monitor.stage("Finding features (${i + 1}/$n)", i.toDouble() / n * 0.3)
+                monitor.stage(tr("Finding features ({0}/{1})", i + 1, n), i.toDouble() / n * 0.3)
                 monitor.checkpoint()
                 val full = images.fullSize(i)
                 val rgba = images.workImage(i, options.workMaxSide)
@@ -45,24 +46,24 @@ class Stitcher(
             val matcher = PairMatcher(assist, monitor)
             val links = ArrayList<PairLink>()
             for ((k, pr) in pairs.withIndex()) {
-                monitor.stage("Matching photos (${k + 1}/${pairs.size})", 0.3 + 0.3 * k / pairs.size)
+                monitor.stage(tr("Matching photos ({0}/{1})", k + 1, pairs.size), 0.3 + 0.3 * k / pairs.size)
                 val l = matcher.match(work[pr.first]!!, work[pr.second]!!)
                 if (l != null) links.add(l)
             }
             if (links.isEmpty()) {
-                throw StitchException("No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content." +
-                    if (assist == null && options.aiOffered) " Turning on AI Assisted Alignment may help with low-texture scenes." else "")
+                throw StitchException(tr("No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content.") +
+                    if (assist == null && options.aiOffered) " " + tr("Turning on AI Assisted Alignment may help with low-texture scenes.") else "")
             }
             // 3. Graph.
             val aligner = GlobalAligner((0 until n).map { work[it]!! }, (0 until n).map { images.fullSize(it) }, DoubleArray(n) { images.focal35mm(it) }, monitor)
             val g = aligner.graph(links)
             val dropped = (0 until n).filter { it !in g.component.toSet() }
-            if (g.component.size < 2) throw StitchException("None of the photos overlap clearly enough to be joined.")
-            if (dropped.isNotEmpty()) notes.add("Not connected to the others, left out: ${dropped.joinToString { images.name(it) }}.")
+            if (g.component.size < 2) throw StitchException(tr("None of the photos overlap clearly enough to be joined."))
+            if (dropped.isNotEmpty()) notes.add(tr("Not connected to the others, left out: {0}.", dropped.joinToString { images.name(it) }))
             notes.addAll(matcher.log.take(12))
 
             // 4. Model selection.
-            monitor.stage("Aligning", 0.62)
+            monitor.stage(tr("Aligning"), 0.62)
             val chained = aligner.chainHomographies(g)
             var warp: Warp? = null
             var model = ""
@@ -73,7 +74,7 @@ class Stitcher(
                 val aff = if (sim == null || sim.second > 2.0) aligner.solveFlat(g, affine = true) else null
                 val best = listOfNotNull(sim, aff).minByOrNull { it.second }
                 if (best != null && (best.second < 4.0 || options.mode == SceneMode.FLAT)) {
-                    warp = aligner.planarWarp(best.first, g, if (best === sim) "flat (similarity)" else "flat (affine)")
+                    warp = aligner.planarWarp(best.first, g, if (best === sim) tr("flat (similarity)") else tr("flat (affine)"))
                     model = warp.description
                 }
             }
@@ -86,9 +87,9 @@ class Stitcher(
             }
             if (warp == null) {
                 val (hs, rms) = aligner.refineHomographies(g, chained)
-                if (rms > 12.0) throw StitchException("The photos could not be aligned consistently (the scene may have moved between shots or overlaps are too small).")
-                warp = aligner.planarWarp(hs, g, "perspective")
-                model = "perspective"
+                if (rms > 12.0) throw StitchException(tr("The photos could not be aligned consistently (the scene may have moved between shots or overlaps are too small)."))
+                warp = aligner.planarWarp(hs, g, tr("perspective"))
+                model = warp.description
             }
 
             // 5. Layout, exposure and crop.
@@ -97,7 +98,7 @@ class Stitcher(
             val layout = comp.layout(warp, options.maxOutputPixels)
             notes.addAll(layout.notes)
             val gains = comp.gains(work, g.links)
-            monitor.stage("Finding clean edges", 0.66)
+            monitor.stage(tr("Finding clean edges"), 0.66)
             val crop = if (options.cropToRectangle) comp.cropRect(layout) else intArrayOf(0, 0, layout.width, layout.height)
             // Work copies are no longer needed; free them before full-resolution rendering.
             work.values.forEach { it.release() }

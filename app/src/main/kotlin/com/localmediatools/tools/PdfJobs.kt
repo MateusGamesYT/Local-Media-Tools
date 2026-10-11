@@ -17,6 +17,10 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.BitmapOps
 import com.localmediatools.image.EncodeSpec
 import com.localmediatools.image.ImageOutFormat
@@ -26,17 +30,17 @@ import com.localmediatools.pdf.PdfFiles
 import com.localmediatools.pdf.PdfMerge
 import com.localmediatools.pdf.PdfPageRasterizer
 import com.localmediatools.stitch.OpenCvLoader
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private fun timestampName(prefix: String) = "$prefix ${SimpleDateFormat("yyyy-MM-dd HH.mm", Locale.US).format(Date())}"
 
@@ -47,10 +51,10 @@ object PdfVerifier {
 
 internal fun verifyPdf(ctx: JobContext, uri: android.net.Uri, expectPages: Int) {
     PdfVerifier.impl?.let { return it(ctx.app, uri, expectPages) }
-    val pfd = ctx.app.contentResolver.openFileDescriptor(uri, "r") ?: throw UserFacingException("The written PDF could not be read back.")
+    val pfd = ctx.app.contentResolver.openFileDescriptor(uri, "r") ?: throw UserFacingException(tr("The written PDF could not be read back."))
     pfd.use {
-        val r = try { PdfRenderer(it) } catch (e: Exception) { throw UserFacingException("The written PDF failed verification, so it was discarded.", e) }
-        r.use { rr -> if (rr.pageCount != expectPages) throw UserFacingException("The written PDF has ${rr.pageCount} pages instead of $expectPages, so it was discarded.") }
+        val r = try { PdfRenderer(it) } catch (e: Exception) { throw UserFacingException(tr("The written PDF failed verification, so it was discarded."), e) }
+        r.use { rr -> if (rr.pageCount != expectPages) throw UserFacingException(tr("The written PDF has {0} pages instead of {1}, so it was discarded.", rr.pageCount, expectPages)) }
     }
 }
 
@@ -61,7 +65,7 @@ class PdfToImagesJob(
     private val quality: Int,
     private val scalePercent: Int,
 ) : ExportJob(ToolId.PDF_TO_IMAGES, inputs) {
-    override val title = "Rendering ${plural(inputs.size, "PDF")} to ${format.label} at $scalePercent%"
+    override val title = trn(inputs.size, "Rendering {0} PDF to {1} at {2}%", "Rendering {0} PDFs to {1} at {2}%", format.label, scalePercent)
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = false) { index, item ->
@@ -69,18 +73,18 @@ class PdfToImagesJob(
             try {
                 PdfFiles.renderer(pfd).use { renderer ->
                     val pages = renderer.pageCount
-                    if (pages <= 0) throw UserFacingException("The PDF has no pages.")
+                    if (pages <= 0) throw UserFacingException(tr("The PDF has no pages."))
                     val digits = maxOf(3, pages.toString().length)
                     val outs = ArrayList<com.localmediatools.core.OutputFile>()
                     var maxDims = ""
                     for (p in 0 until pages) {
-                        ctx.status("Page ${p + 1} of $pages", item.name)
-                        val page = try { renderer.openPage(p) } catch (e: Exception) { throw UserFacingException("Page ${p + 1} could not be opened; the PDF may be damaged.", e) }
+                        ctx.status(tr("Page {0} of {1}", p + 1, pages), item.name)
+                        val page = try { renderer.openPage(p) } catch (e: Exception) { throw UserFacingException(tr("Page {0} could not be opened; the PDF may be damaged.", p + 1), e) }
                         page.use { pg ->
                             val rast = PdfPageRasterizer(pg, scalePercent / 100.0)
                             val w = rast.width; val h = rast.height
                             if (w > format.maxDimension || h > format.maxDimension) {
-                                throw UserFacingException("Page ${p + 1} would be ${w}×$h px at $scalePercent%, beyond ${format.label}'s limit. Use a lower scale.")
+                                throw UserFacingException(tr("Page {0} would be {1}×{2} px at {3}%, beyond the limit of {4}. Use a lower scale.", p + 1, w, h, scalePercent, format.label))
                             }
                             maxDims = "${w}×$h"
                             val budget = ctx.memoryBudget()
@@ -98,7 +102,7 @@ class PdfToImagesJob(
                         ctx.unitProgress(index, (p + 1).toDouble() / pages)
                     }
                     val dpi = 72 * scalePercent / 100
-                    ItemResult(item.name, ItemOutcome.SUCCESS, null, outs, "$pages page images · $dpi DPI · last page $maxDims")
+                    ItemResult(item.name, ItemOutcome.SUCCESS, null, outs, trn(pages, "{0} page image", "{0} page images") + " · $dpi DPI · " + tr("last page {0}", maxDims))
                 }
             } finally {
                 try { pfd.close() } catch (_: Exception) { }
@@ -110,9 +114,9 @@ class PdfToImagesJob(
 }
 
 // =========================================================================== 14 & 16. Images → PDF / scanner
-enum class PageOrientation(val label: String) { AUTO("Auto"), PORTRAIT("Portrait"), LANDSCAPE("Landscape") }
-enum class PdfImageQuality(val label: String) { ORIGINAL("Original"), COMPACT("Compact") }
-enum class ScanFilter(val label: String) { NONE("Original colour"), DOCUMENT("Clean document"), BLACK_WHITE("Black & white") }
+enum class PageOrientation(private val en: String) { AUTO(N_("Auto")), PORTRAIT(N_("Portrait")), LANDSCAPE(N_("Landscape")); val label: String get() = tr(en) }
+enum class PdfImageQuality(private val en: String) { ORIGINAL(N_("Original")), COMPACT(N_("Compact")); val label: String get() = tr(en) }
+enum class ScanFilter(private val en: String) { NONE(N_("Original colour")), DOCUMENT(N_("Clean document")), BLACK_WHITE(N_("Black & white")); val label: String get() = tr(en) }
 
 class ImagesToPdfJob(
     tool: ToolId,
@@ -122,7 +126,7 @@ class ImagesToPdfJob(
     private val fileName: String,
     private val filter: ScanFilter = ScanFilter.NONE,
 ) : ExportJob(tool, inputs) {
-    override val title = "Creating a ${inputs.size}-page PDF"
+    override val title = trn(inputs.size, "Creating a {0}-page PDF", "Creating a {0}-page PDF")
 
     private var reducedPages = 0
 
@@ -132,7 +136,7 @@ class ImagesToPdfJob(
     }
 
     override suspend fun run(ctx: JobContext) {
-        val name = Format.safeFileName(fileName.ifBlank { timestampName(if (tool == ToolId.PDF_SCANNER) "Scan" else "Images") })
+        val name = Format.safeFileName(fileName.ifBlank { timestampName(if (tool == ToolId.PDF_SCANNER) trc("default file name", "Scan") else trc("default file name", "Images")) })
         val notes = ArrayList<String>()
         var pagesWritten = 0
         var directJpeg = 0
@@ -142,13 +146,13 @@ class ImagesToPdfJob(
                 pending.openStream().buffered(1 shl 16).use { os ->
                     val pdf = PdfImageWriter(os)
                     for ((i, item) in inputs.withIndex()) {
-                        ctx.status("Page ${i + 1} of ${inputs.size}", item.name)
+                        ctx.status(tr("Page {0} of {1}", i + 1, inputs.size), item.name)
                         ctx.throttle()
                         item.readError?.let { throw UserFacingException("\"${item.name}\": $it") }
                         try {
                             if (addPage(ctx, pdf, item)) directJpeg++
                         } catch (e: UserFacingException) {
-                            throw UserFacingException("Page ${i + 1} (\"${item.name}\"): ${e.message}", e)
+                            throw UserFacingException(tr("Page {0} (\"{1}\"): {2}", i + 1, item.name, e.message), e)
                         }
                         pagesWritten++
                         ctx.unitDone(i)
@@ -157,15 +161,15 @@ class ImagesToPdfJob(
                 }
                 verifyPdf(ctx, pending.uri, inputs.size)
             }
-            if (directJpeg > 0) notes.add("$directJpeg JPEG photo(s) were embedded without recompression.")
-            if (reducedPages > 0) notes.add("$reducedPages very large image(s) were scaled down to fit in memory.")
-            if (tool == ToolId.PDF_SCANNER) notes.add("Pages are images; the text is not searchable or selectable.")
-            ctx.addResult(ItemResult("${inputs.size} images", ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "$pagesWritten A4 pages · ${Format.bytes(out.size)}"))
+            if (directJpeg > 0) notes.add(trn(directJpeg, "{0} JPEG photo was embedded without recompression.", "{0} JPEG photos were embedded without recompression."))
+            if (reducedPages > 0) notes.add(trn(reducedPages, "{0} very large image was scaled down to fit in memory.", "{0} very large images were scaled down to fit in memory."))
+            if (tool == ToolId.PDF_SCANNER) notes.add(tr("Pages are images; the text is not searchable or selectable."))
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} image", "{0} images"), ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
+                trn(pagesWritten, "{0} A4 page", "{0} A4 pages") + " · ${Format.bytes(out.size)}"))
         } catch (e: com.localmediatools.core.ExportCancelledException) {
             throw e
         } catch (e: Throwable) {
-            ctx.addResult(ItemResult("${inputs.size} images", ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} image", "{0} images"), ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
         }
     }
 
@@ -316,17 +320,17 @@ class ImagesToPdfJob(
 
 // =========================================================================== 15. Merge PDFs
 class MergePdfsJob(inputs: List<MediaItem>, private val fileName: String) : ExportJob(ToolId.MERGE_PDFS, inputs) {
-    override val title = "Merging ${plural(inputs.size, "PDF")}"
+    override val title = trn(inputs.size, "Merging {0} PDF", "Merging {0} PDFs")
 
     override suspend fun run(ctx: JobContext) {
-        val name = Format.safeFileName(fileName.ifBlank { timestampName("Merged") })
+        val name = Format.safeFileName(fileName.ifBlank { timestampName(trc("default file name", "Merged")) })
         try {
             for (i in inputs) i.readError?.let { throw UserFacingException("\"${i.name}\": $it") }
             com.localmediatools.core.OutputStore.ensureSpace(inputs.sumOf { it.size.coerceAtLeast(0) } * 2)
             val tmp = File(Outputs.tempDir(ctx), "merged.pdf")
-            ctx.status("Reading documents")
+            ctx.status(tr("Reading documents"))
             val result = PdfMerge.merge(ctx.app, inputs.map { it.name to it.uri }, tmp, Outputs.tempDir(ctx), { ctx.throttle() }) { done ->
-                ctx.status("Added ${done} of ${inputs.size}")
+                ctx.status(tr("Added {0} of {1}", done, inputs.size))
                 ctx.unitProgress(0, done.toDouble() / inputs.size * 0.8)
             }
             val (out, _) = Outputs.produce(ctx, ToolId.MERGE_PDFS.area, if (name.endsWith(".pdf", true)) name else "$name.pdf", "application/pdf") { pending ->
@@ -335,12 +339,12 @@ class MergePdfsJob(inputs: List<MediaItem>, private val fileName: String) : Expo
             }
             tmp.delete()
             for (k in inputs.indices) ctx.unitDone(k)
-            ctx.addResult(ItemResult("${inputs.size} PDFs", ItemOutcome.SUCCESS, result.notes.joinToString(" ").ifBlank { null }, listOf(out),
-                "${result.pages} pages · ${Format.bytes(out.size)} · text, links and page sizes kept"))
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} PDF", "{0} PDFs"), ItemOutcome.SUCCESS, result.notes.joinToString(" ").ifBlank { null }, listOf(out),
+                trn(result.pages, "{0} page", "{0} pages") + " · ${Format.bytes(out.size)} · " + tr("text, links and page sizes kept")))
         } catch (e: com.localmediatools.core.ExportCancelledException) {
             throw e
         } catch (e: Throwable) {
-            ctx.addResult(ItemResult("${inputs.size} PDFs", ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
+            ctx.addResult(ItemResult(trn(inputs.size, "{0} PDF", "{0} PDFs"), ItemOutcome.FAILED, com.localmediatools.core.Errors.describe(e)))
         } finally {
             Outputs.cleanTemp(ctx)
         }

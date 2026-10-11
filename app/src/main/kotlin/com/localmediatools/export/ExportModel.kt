@@ -2,6 +2,9 @@ package com.localmediatools.export
 
 import com.localmediatools.core.MediaItem
 import com.localmediatools.core.OutputFile
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.ToolId
 import java.util.concurrent.atomic.AtomicLong
 
@@ -41,7 +44,6 @@ abstract class ExportJob(val tool: ToolId, inputs: List<MediaItem>) {
 
     companion object {
         private val ids = AtomicLong(System.currentTimeMillis())
-        fun plural(n: Int, one: String, many: String = one + "s") = "$n ${if (n == 1) one else many}"
     }
 }
 
@@ -68,22 +70,22 @@ data class JobSnapshot(
     val outputs get() = results.flatMap { it.outputs }
 
     fun summary(): String = when (status) {
-        JobStatus.QUEUED -> "Waiting to start"
+        JobStatus.QUEUED -> tr("Waiting to start")
         JobStatus.RUNNING -> statusText
-        JobStatus.CANCELLED -> "Cancelled" + if (outputs.isNotEmpty()) " · ${outputs.size} saved before cancelling" else ""
+        JobStatus.CANCELLED -> if (outputs.isNotEmpty()) trn(outputs.size, "Cancelled · {0} saved before cancelling", "Cancelled · {0} saved before cancelling") else tr("Cancelled")
         // Printing saves nothing: its result says what happened.
-        else -> if (tool == ToolId.PRINT) results.firstOrNull()?.message ?: errorMessage ?: "Not printed" else saved()
+        else -> if (tool == ToolId.PRINT) results.firstOrNull()?.message ?: errorMessage ?: tr("Not printed") else saved()
     }
 
     private fun saved(): String = buildString {
         val saved = outputs.size
-        append(if (saved == 1) "1 file saved" else "$saved files saved")
-        if (failed > 0) append(" · $failed failed")
-        if (skipped > 0) append(" · $skipped skipped")
+        append(trn(saved, "{0} file saved", "{0} files saved"))
+        if (failed > 0) append(" · ").append(trn(failed, "{0} failed", "{0} failed"))
+        if (skipped > 0) append(" · ").append(trn(skipped, "{0} skipped", "{0} skipped"))
         if (errorMessage != null && saved == 0) { clear(); append(errorMessage) }
     }
 }
 
 /** Where an export's files went (a tool stack saves into the folders of the tools that made them). */
 val JobSnapshot.savedTo: String
-    get() = results.flatMap { r -> r.outputs.map { it.area.displayPath } }.distinct().joinToString(" and ").ifEmpty { tool.outputPath.replace("\n", " and ") }
+    get() = results.flatMap { r -> r.outputs.map { it.area.displayPath } }.distinct().let { I18n.andList(it) }.ifEmpty { I18n.andList(tool.outputPath.split("\n")) }

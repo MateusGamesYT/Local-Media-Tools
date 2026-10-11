@@ -6,6 +6,8 @@ import com.localmediatools.codec.gif.Dithering
 import com.localmediatools.core.Format
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportJob
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
 import com.localmediatools.tools.CompressVideoJob
 import com.localmediatools.tools.ExtractAudioJob
 import com.localmediatools.tools.OptimizeVideoJob
@@ -44,15 +46,15 @@ class SplitScreen(a: MainActivity) : ToolScreen(a, ToolId.SPLIT_VIDEO) {
     private var presets: ChoiceGroup<Pair<String, Double>>? = null
 
     override fun buildOptions(container: LinearLayout) {
-        val choices = listOf("15 s" to 15.0, "30 s" to 30.0, "1 min" to 60.0, "5 min" to 300.0, "10 min" to 600.0)
-        section(container, "Segment length", "Each part will be about this long", top = 4)
+        val choices = listOf(15.0, 30.0, 60.0, 300.0, 600.0).map { Format.seconds(it) to it }
+        section(container, tr("Segment length"), tr("Each part will be about this long"), top = 4)
         presets = ChoiceGroup(ctx, choices, { it.first }, choices.firstOrNull { it.second == ToolPrefs.splitSeconds }) { p ->
             ToolPrefs.splitSeconds = p.second
             field.edit.setText(fmt(p.second))
             refreshValidation()
         }
         container.addView(presets, lp().apply { topMargin = ctx.dp(10) })
-        field = TextField(ctx, "Custom length (seconds)", "e.g. 45", fmt(ToolPrefs.splitSeconds), numeric = true) { s ->
+        field = TextField(ctx, tr("Custom length (seconds)"), tr("e.g. 45"), fmt(ToolPrefs.splitSeconds), numeric = true) { s ->
             s.replace(',', '.').toDoubleOrNull()?.let { v ->
                 ToolPrefs.splitSeconds = v
                 val match = choices.firstOrNull { it.second == v }
@@ -61,7 +63,7 @@ class SplitScreen(a: MainActivity) : ToolScreen(a, ToolId.SPLIT_VIDEO) {
             refreshValidation()
         }
         container.addView(field, lp().apply { topMargin = ctx.dp(14) })
-        container.addView(UI.note(ctx, "No re-encoding: parts keep the original quality. Cuts happen at the nearest keyframe (sync point) at or before each boundary, so parts may be slightly shorter than the length you set. Videos with very few keyframes can give some longer parts.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.note(ctx, tr("No re-encoding: parts keep the original quality. Cuts happen at the nearest keyframe (sync point) at or before each boundary, so parts may be slightly shorter than the length you set. Videos with very few keyframes can give some longer parts."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
     }
 
     private fun fmt(v: Double) = if (v == Math.floor(v)) v.toLong().toString() else String.format(Locale.US, "%.1f", v)
@@ -69,18 +71,18 @@ class SplitScreen(a: MainActivity) : ToolScreen(a, ToolId.SPLIT_VIDEO) {
     override fun validate(): String? {
         super.validate()?.let { return it }
         val s = ToolPrefs.splitSeconds
-        return if (s < 1 || s > 86400) "Enter a segment length between 1 second and 24 hours" else null
+        return if (s < 1 || s > 86400) tr("Enter a segment length between 1 second and 24 hours") else null
     }
 
-    override fun outputNaming() = "One file per part: name_part01.mp4, name_part02.mp4 … (WebM sources stay WebM)"
+    override fun outputNaming() = tr("One file per part: name_part01.mp4, name_part02.mp4 … (WebM sources stay WebM)")
     override fun createJob(items: List<MediaItem>): ExportJob = SplitVideoJob(items, ToolPrefs.splitSeconds)
 }
 
 // =========================================================================== Optimize
 class OptimizeVideoScreen(a: MainActivity) : ToolScreen(a, ToolId.OPTIMIZE_VIDEO) {
     override fun buildOptions(container: LinearLayout) {
-        container.addView(UI.note(ctx, "Lossless: video and audio streams are copied bit-for-bit, so quality is exactly the same. This is not compression — the size changes only slightly. Use Video compressor to make files much smaller.", UI.NoteKind.INFO))
-        container.addView(UI.note(ctx, "What it improves: the index (moov) is moved to the start so playback and uploads begin immediately, and padding, subtitle and data tracks are removed. Location metadata isn't copied.", UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.note(ctx, tr("Lossless: video and audio streams are copied bit-for-bit, so quality is exactly the same. This is not compression — the size changes only slightly. Use Video compressor to make files much smaller."), UI.NoteKind.INFO))
+        container.addView(UI.note(ctx, tr("What it improves: the index (moov) is moved to the start so playback and uploads begin immediately, and padding, subtitle and data tracks are removed. Location metadata isn't copied."), UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(10) })
     }
     override fun outputNaming() = "name_optimized.mp4"
     override fun createJob(items: List<MediaItem>): ExportJob = OptimizeVideoJob(items)
@@ -91,17 +93,17 @@ class CompressVideoScreen(a: MainActivity) : ToolScreen(a, ToolId.COMPRESS_VIDEO
     private lateinit var estimate: android.widget.TextView
 
     override fun buildOptions(container: LinearLayout) {
-        container.addView(SliderField(ctx, "Quality", 20, 100, ToolPrefs.compressQuality, subtitle = "Higher quality = larger file") { v ->
+        container.addView(SliderField(ctx, tr("Quality"), 20, 100, ToolPrefs.compressQuality, subtitle = tr("Higher quality = larger file")) { v ->
             ToolPrefs.compressQuality = v; updateEstimate()
         })
         estimate = UI.text(ctx, "", TextStyle.CAPTION)
         container.addView(estimate, lp().apply { topMargin = ctx.dp(4) })
-        section(container, "Maximum resolution", "Shorter side; never upscales")
-        val res = listOf("Original" to 0, "1080p" to 1080, "720p" to 720, "480p" to 480)
+        section(container, tr("Maximum resolution"), tr("Shorter side; never upscales"))
+        val res = listOf(tr("Original") to 0, "1080p" to 1080, "720p" to 720, "480p" to 480)
         container.addView(ChoiceGroup(ctx, res, { it.first }, res.firstOrNull { it.second == ToolPrefs.compressShortSide }) {
             ToolPrefs.compressShortSide = it.second; updateEstimate()
         }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "Output is H.264 video with AAC audio in MP4, which plays on virtually every device. Audio is kept (converted to AAC if needed). Orientation is preserved. If a result would be larger than the original, it is not saved.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.note(ctx, tr("Output is H.264 video with AAC audio in MP4, which plays on virtually every device. Audio is kept (converted to AAC if needed). Orientation is preserved. If a result would be larger than the original, it is not saved."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
         updateEstimate()
     }
 
@@ -110,7 +112,7 @@ class CompressVideoScreen(a: MainActivity) : ToolScreen(a, ToolId.COMPRESS_VIDEO
         val side = ToolPrefs.compressShortSide.takeIf { it > 0 } ?: 1080
         val w = side * 16 / 9; val br = VideoTranscoder.bitrateFor(ToolPrefs.compressQuality, w, side, 30.0, 0)
         val mbMin = (br + 160_000) * 60.0 / 8 / 1_000_000
-        estimate.text = String.format(Locale.US, "≈ %.1f Mbps for %dp at 30 fps · about %.0f MB per minute (lower if the source bitrate is lower)", br / 1e6, side, mbMin)
+        estimate.text = tr("≈ {0} Mbps for {1}p at 30 fps · about {2} MB per minute (lower if the source bitrate is lower)", String.format(I18n.locale, "%.1f", br / 1e6), side, String.format(I18n.locale, "%.0f", mbMin))
     }
 
     override fun outputNaming() = "name_compressed.mp4"
@@ -120,7 +122,7 @@ class CompressVideoScreen(a: MainActivity) : ToolScreen(a, ToolId.COMPRESS_VIDEO
 // =========================================================================== Remove audio
 class RemoveAudioScreen(a: MainActivity) : ToolScreen(a, ToolId.REMOVE_AUDIO) {
     override fun buildOptions(container: LinearLayout) {
-        container.addView(UI.note(ctx, "The video stream is copied unchanged (no quality loss); only the sound track is left out. Useful for silent clips and to save a little space. Videos that already have no audio are skipped.", UI.NoteKind.INFO))
+        container.addView(UI.note(ctx, tr("The video stream is copied unchanged (no quality loss); only the sound track is left out. Useful for silent clips and to save a little space. Videos that already have no audio are skipped."), UI.NoteKind.INFO))
     }
     override fun outputNaming() = "name_noaudio.mp4"
     override fun createJob(items: List<MediaItem>): ExportJob = RemoveAudioJob(items)
@@ -134,24 +136,24 @@ class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
     private val widthPresets = listOf(240, 320, 480, 640, 800)
 
     override fun buildOptions(container: LinearLayout) {
-        container.addView(ToggleRow(ctx, "Keep source frame rate and size", "Uses the video's own frame rate (up to 50 fps) and displayed resolution", ToolPrefs.gifSourceMode) { on ->
+        container.addView(ToggleRow(ctx, tr("Keep source frame rate and size"), tr("Uses the video's own frame rate (up to 50 fps) and displayed resolution"), ToolPrefs.gifSourceMode) { on ->
             ToolPrefs.gifSourceMode = on
             setManualEnabled(!on)
         })
-        fps = SliderField(ctx, "Frame rate", 2, 50, ToolPrefs.gifFps, " fps", "Fewer frames = much smaller GIF") { ToolPrefs.gifFps = it }
+        fps = SliderField(ctx, tr("Frame rate"), 2, 50, ToolPrefs.gifFps, " fps", tr("Fewer frames = much smaller GIF")) { ToolPrefs.gifFps = it }
         container.addView(fps, lp().apply { topMargin = ctx.dp(10) })
-        width = SliderField(ctx, "Width", 120, 1280, ToolPrefs.gifWidth, " px", "Height follows the video's shape") { ToolPrefs.gifWidth = it }
+        width = SliderField(ctx, tr("Width"), 120, 1280, ToolPrefs.gifWidth, " px", tr("Height follows the video's shape")) { ToolPrefs.gifWidth = it }
         container.addView(width, lp().apply { topMargin = ctx.dp(14) })
         widthChoices = ChoiceGroup(ctx, widthPresets, { "$it px" }, widthPresets.firstOrNull { it == ToolPrefs.gifWidth }) { width.setValue(it, fromField = false) }
         container.addView(widthChoices, lp().apply { topMargin = ctx.dp(6) })
-        section(container, "Part of the video", "Leave length at 0 to convert to the end")
+        section(container, tr("Part of the video"), tr("Leave length at 0 to convert to the end"))
         val row = UI.horizontal(ctx)
-        row.addView(TextField(ctx, "Start (s)", "0", fmt(ToolPrefs.gifStart), numeric = true) { s -> ToolPrefs.gifStart = s.replace(',', '.').toDoubleOrNull() ?: 0.0; refreshValidation() }, lp(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(6) })
-        row.addView(TextField(ctx, "Length (s)", "0 = to the end", fmt(ToolPrefs.gifLength), numeric = true) { s -> ToolPrefs.gifLength = s.replace(',', '.').toDoubleOrNull() ?: 0.0; refreshValidation() }, lp(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = ctx.dp(6) })
+        row.addView(TextField(ctx, tr("Start (s)"), "0", fmt(ToolPrefs.gifStart), numeric = true) { s -> ToolPrefs.gifStart = s.replace(',', '.').toDoubleOrNull() ?: 0.0; refreshValidation() }, lp(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(6) })
+        row.addView(TextField(ctx, tr("Length (s)"), tr("0 = to the end"), fmt(ToolPrefs.gifLength), numeric = true) { s -> ToolPrefs.gifLength = s.replace(',', '.').toDoubleOrNull() ?: 0.0; refreshValidation() }, lp(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = ctx.dp(6) })
         container.addView(row, lp().apply { topMargin = ctx.dp(10) })
-        section(container, "Colour dithering", "How the 256-colour palette blends gradients")
-        container.addView(ChoiceGroup(ctx, Dithering.entries, { when (it) { Dithering.ORDERED -> "Pattern (stable)"; Dithering.NONE -> "None (sharpest)"; Dithering.DIFFUSION -> "Diffusion (smoothest)" } }, ToolPrefs.gifDither) { ToolPrefs.gifDither = it }, lp().apply { topMargin = ctx.dp(10) })
-        container.addView(UI.note(ctx, "GIF can only show 256 colours per frame, so file size grows quickly with frame rate and resolution. 10–15 fps at 320–480 px is a good start. Colours adapt to each scene; timing follows the video exactly.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        section(container, tr("Colour dithering"), tr("How the 256-colour palette blends gradients"))
+        container.addView(ChoiceGroup(ctx, Dithering.entries, { when (it) { Dithering.ORDERED -> tr("Pattern (stable)"); Dithering.NONE -> tr("None (sharpest)"); Dithering.DIFFUSION -> tr("Diffusion (smoothest)") } }, ToolPrefs.gifDither) { ToolPrefs.gifDither = it }, lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.note(ctx, tr("GIF can only show 256 colours per frame, so file size grows quickly with frame rate and resolution. 10–15 fps at 320–480 px is a good start. Colours adapt to each scene; timing follows the video exactly."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
         setManualEnabled(!ToolPrefs.gifSourceMode)
     }
 
@@ -168,7 +170,7 @@ class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
 
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (ToolPrefs.gifStart < 0 || ToolPrefs.gifLength < 0) return "Start and length can't be negative"
+        if (ToolPrefs.gifStart < 0 || ToolPrefs.gifLength < 0) return tr("Start and length can't be negative")
         return null
     }
 
@@ -182,7 +184,7 @@ class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
 // =========================================================================== Extract audio
 class ExtractAudioScreen(a: MainActivity) : ToolScreen(a, ToolId.EXTRACT_AUDIO) {
     override fun buildOptions(container: LinearLayout) {
-        container.addView(UI.note(ctx, "The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.", UI.NoteKind.INFO))
+        container.addView(UI.note(ctx, tr("The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results."), UI.NoteKind.INFO))
     }
     override fun outputNaming() = "name_audio.m4a"
     override fun createJob(items: List<MediaItem>): ExportJob = ExtractAudioJob(items)

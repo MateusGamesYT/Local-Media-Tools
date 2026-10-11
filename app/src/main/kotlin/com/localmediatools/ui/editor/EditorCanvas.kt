@@ -15,6 +15,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import com.localmediatools.codec.edit.CropRect
+import com.localmediatools.i18n.tr
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.dp
 import kotlin.math.abs
@@ -137,7 +138,7 @@ class EditorCanvas(ctx: Context) : View(ctx) {
             val s = min((width - 2 * pad) / b.width, (height - 2 * pad) / b.height)
             val m = Matrix().apply { setScale(s, s); postTranslate((width - b.width * s) / 2, (height - b.height * s) / 2) }
             c.drawBitmap(b, m, paint)
-            drawHint(c, "Original")
+            drawHint(c, tr("Original"))
             return
         }
         c.drawBitmap(b, display, paint)

@@ -24,6 +24,8 @@ import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceKind
 import com.localmediatools.gallery.core.NameSuggestions
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.ButtonView
 import com.localmediatools.ui.FlowLayout
 import com.localmediatools.ui.Palette
@@ -72,7 +74,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
         body = UI.vertical(ctx).apply { setPadding(ctx.dp(16), ctx.dp(4), ctx.dp(16), ctx.dp(40)) }
         scroll.addView(body)
         root.addView(scroll, lp(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
-        body.addView(UI.text(ctx, "Loading people…", TextStyle.BODY_2))
+        body.addView(UI.text(ctx, tr("Loading people…"), TextStyle.BODY_2))
         scope.launch { load() }
         return root
     }
@@ -99,7 +101,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
     private fun bind() {
         top.removeAllViews()
         val g = current()
-        top.addView(TopBar(this, "Name people", UI.text(ctx, if (g == null) "" else "${index + 1} of ${queue.size}", TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, 0, ctx.dp(10), 0) }))
+        top.addView(TopBar(this, tr("Name people"), UI.text(ctx, if (g == null) "" else tr("{0} of {1}", index + 1, queue.size), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, 0, ctx.dp(10), 0) }))
         body.removeAllViews()
         if (g == null) { finished(); return }
         val card = UI.card(ctx)
@@ -109,12 +111,12 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
         card.addView(seen, lp().apply { topMargin = ctx.dp(10) })
         body.addView(card)
 
-        body.addView(UI.label(ctx, "Who is this?"), lp().apply { topMargin = ctx.dp(18); bottomMargin = ctx.dp(8) })
+        body.addView(UI.label(ctx, tr("Who is this?")), lp().apply { topMargin = ctx.dp(18); bottomMargin = ctx.dp(8) })
         val row = UI.horizontal(ctx)
         input = AutoCompleteTextView(ctx).apply {
             style(TextStyle.BODY)
             setTextColor(Palette.TEXT); setHintTextColor(Palette.TEXT_3)
-            hint = "Type a name, then Enter"
+            hint = tr("Type a name, then Enter")
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
             imeOptions = EditorInfo.IME_ACTION_DONE
             isSingleLine = true
@@ -128,7 +130,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
             setOnItemClickListener { _, _, _, _ -> submit() }
         }
         row.addView(input, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        save = UI.primaryButton(ctx, "Save") { submit() }
+        save = UI.primaryButton(ctx, tr("Save")) { submit() }
         row.addView(save, lp(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { leftMargin = ctx.dp(10) })
         body.addView(row)
 
@@ -136,10 +138,10 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
         body.addView(suggestions, lp().apply { topMargin = ctx.dp(12) })
 
         val actions = UI.horizontal(ctx)
-        actions.addView(UI.secondaryButton(ctx, "Skip") { next() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(8) })
-        actions.addView(UI.secondaryButton(ctx, "No one I know") { ignore(g) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        actions.addView(UI.secondaryButton(ctx, tr("Skip")) { next() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { rightMargin = ctx.dp(8) })
+        actions.addView(UI.secondaryButton(ctx, tr("No one I know")) { ignore(g) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         body.addView(actions, lp().apply { topMargin = ctx.dp(18) })
-        body.addView(UI.ghostButton(ctx, "Some of these aren't the same person…", R.drawable.ic_tool_faceblur) { push(FacesScreen(activity, g.person.id)) }, lp().apply { topMargin = ctx.dp(8) })
+        body.addView(UI.ghostButton(ctx, tr("Some of these aren't the same person…"), R.drawable.ic_tool_faceblur) { push(FacesScreen(activity, g.person.id)) }, lp().apply { topMargin = ctx.dp(8) })
 
         loadFaces(g)
         renderSuggestions(g)
@@ -161,7 +163,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
             repeat(4 - chunk.size) { r.addView(View(ctx), lp(0, 1, 1f).apply { leftMargin = ctx.dp(4); rightMargin = ctx.dp(4) }) }
             faces.addView(r, lp().apply { bottomMargin = ctx.dp(8) })
         }
-        seen.text = "${g.person.faceCount} faces in ${g.person.mediaCount} ${if (g.person.mediaCount == 1) "photo" else "photos"} · long-press a face to see its photo"
+        seen.text = trn(g.person.mediaCount, "{1} faces in {0} photo · long-press a face to see its photo", "{1} faces in {0} photos · long-press a face to see its photo", g.person.faceCount)
     }
 
     private fun faceView(f: GFace): View = object : ImageView(ctx) {
@@ -170,7 +172,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
         scaleType = ImageView.ScaleType.CENTER_CROP
         background = Shapes.circle(Palette.SURFACE_2); clipToOutline = true
         GalleryThumbs.face(ctx, f, 192, this)
-        contentDescription = "Face"
+        contentDescription = tr("Face")
         isLongClickable = true
         setOnLongClickListener {
             scope.launch {
@@ -188,7 +190,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
         val similar = if (mine == null) emptyList() else NameSuggestions.forGroup(mine, others, ClusterParams.of(g.kind))
         for ((id, _) in similar) {
             val name = named[id] ?: continue
-            suggestions.addView(chip("This is $name", true) { assign(g, id, name) })
+            suggestions.addView(chip(tr("This is {0}", name), true) { assign(g, id, name) })
         }
         // Then the most recently named people, for quick taps.
         for ((id, name) in named.entries.reversed().filter { e -> similar.none { it.first == e.key } }.take(6)) {
@@ -210,14 +212,14 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
     private fun submit() {
         val g = current() ?: return
         val name = input.text.toString().trim().replace(Regex("\\s+"), " ").take(60)
-        if (name.isEmpty()) { Toast.makeText(ctx, "Type a name, or tap Skip.", Toast.LENGTH_SHORT).show(); return }
+        if (name.isEmpty()) { Toast.makeText(ctx, tr("Type a name, or tap Skip."), Toast.LENGTH_SHORT).show(); return }
         val existing = named.entries.firstOrNull { it.value.equals(name, ignoreCase = true) && it.key != g.person.id }
         if (existing != null) { assign(g, existing.key, existing.value); return }
         scope.launch {
             withContext(Dispatchers.IO) { GalleryDb.get(ctx).nameGroup(g.person.id, name) }
             changed = true
             named[g.person.id] = name
-            Toast.makeText(ctx, "Named $name", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, tr("Named {0}", name), Toast.LENGTH_SHORT).show()
             next()
         }
     }
@@ -231,7 +233,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
             val a = sums.remove(g.person.id to g.kind); val b = sums[personId to g.kind]
             if (a != null) sums[personId to g.kind] = if (b == null) NameSuggestions.Faces(personId, a.sum, a.count)
                 else NameSuggestions.Faces(personId, FloatArray(a.sum.size) { a.sum[it] + b.sum[it] }, a.count + b.count)
-            Toast.makeText(ctx, "Added to $name", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, tr("Added to {0}", name), Toast.LENGTH_SHORT).show()
             next()
         }
     }
@@ -254,12 +256,12 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
             gravity = Gravity.CENTER_HORIZONTAL
             setPadding(ctx.dp(8), ctx.dp(48), ctx.dp(8), 0)
             addView(UI.iconTile(ctx, R.drawable.ic_check, Palette.SUCCESS, 64, 32))
-            addView(UI.text(ctx, if (queue.isEmpty()) "Everyone is named" else "All done", TextStyle.TITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(16), 0, 0) })
-            addView(UI.text(ctx, if (queue.isEmpty()) "There are no unnamed groups right now. New ones appear as more photos are looked at."
-                else "You went through ${queue.size} ${if (queue.size == 1) "group" else "groups"}${if (n > 0) " and named $n ${if (n == 1) "person" else "people"}" else ""}. Faces are regrouped with your names now.", TextStyle.BODY_2).apply {
+            addView(UI.text(ctx, if (queue.isEmpty()) tr("Everyone is named") else tr("All done"), TextStyle.TITLE).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(16), 0, 0) })
+            addView(UI.text(ctx, if (queue.isEmpty()) tr("There are no unnamed groups right now. New ones appear as more photos are looked at.")
+                else if (n > 0) trn(queue.size, "You went through {0} group and named {1}. Faces are regrouped with your names now.", "You went through {0} groups and named {1}. Faces are regrouped with your names now.", trn(n, "{0} person", "{0} people")) else trn(queue.size, "You went through {0} group. Faces are regrouped with your names now.", "You went through {0} groups. Faces are regrouped with your names now."), TextStyle.BODY_2).apply {
                 gravity = Gravity.CENTER; setPadding(0, ctx.dp(8), 0, ctx.dp(20))
             })
-            addView(UI.primaryButton(ctx, "Back to People") { pop() }, lp())
+            addView(UI.primaryButton(ctx, tr("Back to People")) { pop() }, lp())
         })
     }
 

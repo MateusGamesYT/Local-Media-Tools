@@ -37,6 +37,7 @@ class Navigator(private val container: FrameLayout) {
     private val ease = PathInterpolator(0.2f, 0f, 0f, 1f)
 
     val top: Screen? get() = stack.lastOrNull()
+    val rootScreen: Screen? get() = stack.firstOrNull()
     val depth get() = stack.size
 
     fun root(s: Screen) {

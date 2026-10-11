@@ -14,14 +14,21 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ItemOutcome
 import com.localmediatools.export.ItemResult
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.ui.PickKind
 import com.localmediatools.ui.ToolRules
 import java.io.File
 import java.io.FileOutputStream
 
 /** What kind of file flows between the steps of a tool stack. */
-enum class FlowKind(val noun: String) {
-    IMAGE("photos"), GIF("GIFs"), VIDEO("videos"), PDF("PDFs"), AUDIO("audio files");
+enum class FlowKind(private val nounEn: String) {
+    IMAGE(N_("photos")), GIF(N_("GIFs")), VIDEO(N_("videos")), PDF(N_("PDFs")), AUDIO(N_("audio files"));
+
+    /** What a step gets or makes, in a sentence ("photos", "videos"). */
+    val noun: String get() = tr(nounEn)
 
     companion object {
         fun of(item: MediaItem): FlowKind? = when (item.kind) {
@@ -34,9 +41,9 @@ enum class FlowKind(val noun: String) {
         }
 
         fun describe(kinds: Collection<FlowKind>): String = when (kinds.size) {
-            0 -> "nothing"
+            0 -> tr("nothing")
             1 -> kinds.first().noun
-            else -> kinds.sortedBy { it.ordinal }.let { k -> k.dropLast(1).joinToString(", ") { it.noun } + " and " + k.last().noun }
+            else -> I18n.andList(kinds.sortedBy { it.ordinal }.map { it.noun })
         }
     }
 }
@@ -49,12 +56,12 @@ object StackRules {
     fun stackable(t: ToolId) = t !in notStackable
 
     fun whyNot(t: ToolId): String = when (t) {
-        ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT -> "Edits one photo by hand, so it can't run in a stack"
-        ToolId.DUPLICATES -> "Looks through your whole photo library, so it can't run in a stack"
-        ToolId.PDF_SCANNER -> "Uses the camera; to make a PDF from files in a stack use Images → PDF"
-        ToolId.PRINT -> "Prints instead of saving files, so it can't be a step of a stack"
-        ToolId.HIGHLIGHT_VIDEO -> "Makes one film from the moments you review, so it can't run in a stack"
-        else -> "Can't be part of a stack"
+        ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT -> tr("Edits one photo by hand, so it can't run in a stack")
+        ToolId.DUPLICATES -> tr("Looks through your whole photo library, so it can't run in a stack")
+        ToolId.PDF_SCANNER -> tr("Uses the camera; to make a PDF from files in a stack use Images → PDF")
+        ToolId.PRINT -> tr("Prints instead of saving files, so it can't be a step of a stack")
+        ToolId.HIGHLIGHT_VIDEO -> tr("Makes one film from the moments you review, so it can't run in a stack")
+        else -> tr("Can't be part of a stack")
     }
 
     fun accepts(t: ToolId): Set<FlowKind> = when (ToolRules.pickKind(t)) {
@@ -95,7 +102,7 @@ class StackStep(val tool: ToolId, val summary: String, val job: ExportJob)
  * so nothing is lost on the way.
  */
 class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val keepInBetween: Boolean) : ExportJob(ToolId.TOOL_STACK, inputs) {
-    override val title = "Stack: " + steps.joinToString(" → ") { it.tool.title }
+    override val title = tr("Stack: {0}", steps.joinToString(" → ") { it.tool.title })
     override val unitCount: Int get() = steps.size
 
     /** A file on its way through the stack. */
@@ -134,10 +141,10 @@ class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val 
                         val out = Outputs.produce(ctx, f.area, f.item.name, f.mime ?: f.item.mime ?: "application/octet-stream") { pending ->
                             f.temp.inputStream().use { input -> pending.openStream().use { os -> Outputs.copy(input, os, f.temp.length(), ctx) } }
                         }.first
-                        ctx.addResult(ItemResult(f.origin, ItemOutcome.SUCCESS, notes, listOf(out), "Saved as it came out of an earlier step"))
+                        ctx.addResult(ItemResult(f.origin, ItemOutcome.SUCCESS, notes, listOf(out), tr("Saved as it came out of an earlier step")))
                     }
                     f.changed -> ctx.addResult(ItemResult(f.origin, ItemOutcome.SKIPPED, notes))
-                    else -> ctx.addResult(ItemResult(f.origin, ItemOutcome.SKIPPED, "No step changed this file. " + (notes ?: "")))
+                    else -> ctx.addResult(ItemResult(f.origin, ItemOutcome.SKIPPED, tr("No step changed this file.") + (notes?.let { " $it" } ?: "")))
                 }
             }
         } finally {
@@ -147,21 +154,21 @@ class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val 
 
     private suspend fun runStep(ctx: JobContext, k: Int, step: StackStep, flow: List<Flow>, root: File): List<Flow> {
         val last = k == steps.lastIndex
-        val label = "Step ${k + 1} (${step.tool.title})"
+        val label = tr("Step {0} ({1})", k + 1, step.tool.title)
         val accepted = flow.filter { ToolRules.issue(step.tool, it.item) == null }
-        val passing = flow.filter { f -> accepted.none { it === f } }.map { it.note("$label doesn't work on ${FlowKind.of(it.item)?.noun ?: "this kind of file"}, so it was skipped.") }
+        val passing = flow.filter { f -> accepted.none { it === f } }.map { it.note(FlowKind.of(it.item)?.let { k -> tr("{0} doesn't work on {1}, so it was skipped.", label, k.noun) } ?: tr("{0} doesn't work on this kind of file, so it was skipped.", label)) }
         val min = ToolRules.minItems(step.tool)
         if (accepted.isEmpty()) return passing
-        if (accepted.size < min) return passing + accepted.map { it.note("$label needs at least $min files, so it was skipped.") }
+        if (accepted.size < min) return passing + accepted.map { it.note(trn(min, "{1} needs at least {0} file, so it was skipped.", "{1} needs at least {0} files, so it was skipped.", label)) }
 
-        ctx.status("Step ${k + 1} of ${steps.size}: ${step.tool.title}", null)
+        ctx.status(tr("Step {0} of {1}: {2}", k + 1, steps.size, step.tool.title), null)
         val job = step.job
         job.inputs = accepted.map { it.item }
         val stepDir = File(root, "step${k + 1}").apply { mkdirs() }
         val child = JobContext(ctx.app, job, object : JobContext.Listener {
             override fun onProgress(ctx2: JobContext) {
                 ctx.unitProgress(k, ctx2.fraction)
-                ctx.status("Step ${k + 1} of ${steps.size} · ${step.tool.title}: ${ctx2.statusText}", ctx2.currentName)
+                ctx.status(tr("Step {0} of {1} · {2}: {3}", k + 1, steps.size, step.tool.title, ctx2.statusText), ctx2.currentName)
             }
             override fun onResult(ctx2: JobContext, result: ItemResult) {}
         }, parent = ctx)
@@ -187,14 +194,14 @@ class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val 
             // Tools that combine files (merging) report one result for all of them.
             val group = if (src != null) listOf(src) else unmatched.toList().also { unmatched.clear() }
             if (group.isEmpty()) continue
-            val origin = if (group.size == 1) group[0].origin else group.joinToString(" + ") { it.origin }.let { if (it.length > 60) "${group.size} files" else it }
+            val origin = if (group.size == 1) group[0].origin else group.joinToString(" + ") { it.origin }.let { if (it.length > 60) trn(group.size, "{0} file", "{0} files") else it }
             val notes = group.flatMap { it.notes }.distinct()
             when {
                 r.outcome == ItemOutcome.SUCCESS && r.outputs.isNotEmpty() -> {
                     if (last) {
                         ctx.addResult(ItemResult(origin, ItemOutcome.SUCCESS, (notes + listOfNotNull(r.message)).joinToString(" ").ifBlank { null }, r.outputs, r.details))
                     } else {
-                        if (keepInBetween) ctx.addResult(ItemResult("$origin · after step ${k + 1}", ItemOutcome.SUCCESS, r.message, r.outputs, r.details))
+                        if (keepInBetween) ctx.addResult(ItemResult(tr("{0} · after step {1}", origin, k + 1), ItemOutcome.SUCCESS, r.message, r.outputs, r.details))
                         for (o in r.outputs) {
                             val item = MediaProbe.describe(ctx.app, o.uri)
                             val temp = if (o.uri.scheme == "file") File(o.uri.path!!) else null
@@ -203,13 +210,13 @@ class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val 
                     }
                 }
                 r.outcome == ItemOutcome.FAILED -> for (g in group) {
-                    ctx.addResult(ItemResult(g.origin, ItemOutcome.FAILED, "$label failed: ${r.message ?: "unknown error"}"))
+                    ctx.addResult(ItemResult(g.origin, ItemOutcome.FAILED, tr("{0} failed: {1}", label, r.message ?: tr("unknown error"))))
                 }
                 // Skipped (nothing to do): the file continues unchanged.
-                else -> for (g in group) next.add(g.note("$label left it unchanged: ${r.message ?: "nothing to do"}"))
+                else -> for (g in group) next.add(g.note(tr("{0} left it unchanged: {1}", label, r.message ?: tr("nothing to do"))))
             }
         }
-        for (g in unmatched) ctx.addResult(ItemResult(g.origin, ItemOutcome.FAILED, "$label failed: ${stepError ?: "it produced no result"}"))
+        for (g in unmatched) ctx.addResult(ItemResult(g.origin, ItemOutcome.FAILED, tr("{0} failed: {1}", label, stepError ?: tr("it produced no result"))))
         return next + passing
     }
 }

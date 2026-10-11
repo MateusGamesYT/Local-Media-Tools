@@ -1,15 +1,16 @@
 package com.localmediatools.stitch.core
 
 import com.localmediatools.codec.layout.LargestRectangle
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.Scalar
-import org.opencv.imgproc.Imgproc
+import com.localmediatools.i18n.tr
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.Scalar
+import org.opencv.imgproc.Imgproc
 
 /**
  * Renders the stitched panorama in horizontal strips: for every strip each overlapping photo is
@@ -40,16 +41,16 @@ class Compositor(
                 }
             }
         }
-        if (minX >= maxX || minY >= maxY) throw StitchException("The aligned photos produced an empty result.")
+        if (minX >= maxX || minY >= maxY) throw StitchException(tr("The aligned photos produced an empty result."))
         var scale = 1.0
         val w0 = maxX - minX; val h0 = maxY - minY
         if (w0 * h0 > maxPixels) {
             scale = sqrt(maxPixels / (w0 * h0))
-            notes.add("The panorama was reduced to ${(scale * 100).toInt()}% of full resolution to stay within the size limit.")
+            notes.add(tr("The panorama was reduced to {0}% of full resolution to stay within the size limit.", (scale * 100).toInt()))
         }
         if (w0 * scale > 65000 || h0 * scale > 65000) {
             val s2 = 65000 / max(w0, h0)
-            if (s2 < scale) { scale = s2; notes.add("The panorama was scaled to fit PNG viewers' 65000 px limit.") }
+            if (s2 < scale) { scale = s2; notes.add(tr("The panorama was scaled to fit PNG viewers' 65000 px limit.")) }
         }
         val warp = baseWarp.withOutputTransform(scale, minX * scale, minY * scale)
         return Layout(warp, ceil(w0 * scale).toInt().coerceAtLeast(1), ceil(h0 * scale).toInt().coerceAtLeast(1), scale, notes)
@@ -233,7 +234,7 @@ class Compositor(
             }
             sink.rows(y, rows, argb)
             y += rows
-            monitor.stage("Rendering", y.toDouble() / outH)
+            monitor.stage(tr("Rendering"), y.toDouble() / outH)
         }
         sink.finish()
     }

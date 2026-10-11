@@ -17,17 +17,18 @@ import android.view.WindowInsets
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.localmediatools.core.CaptureProvider
+import com.localmediatools.i18n.tr
 import com.localmediatools.ui.MainShell
 import com.localmediatools.ui.Navigator
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.PickKind
 import com.localmediatools.ui.ResultsScreen
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class MainActivity : Activity() {
     lateinit var navigator: Navigator
@@ -36,6 +37,10 @@ class MainActivity : Activity() {
     private val pending = HashMap<Int, (Int, Intent?) -> Unit>()
     private var nextRequest = 100
     private var permissionThen: (() -> Unit)? = null
+
+    override fun attachBaseContext(base: android.content.Context) {
+        super.attachBaseContext(AppLanguage.wrap(base))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,8 @@ class MainActivity : Activity() {
         setContentView(root)
         navigator = Navigator(root)
         navigator.root(MainShell(this))
+        // Back on the tab that was open (after the language changed, or Android recreated the screen).
+        savedInstanceState?.getInt(STATE_TAB, -1)?.takeIf { it > 0 }?.let { (navigator.top as? MainShell)?.show(it) }
         handleIntent(intent)
         // Someone who has used the gallery gets new photos organised without opening it first.
         if (hasMediaAccess() && getDatabasePath("gallery.db").exists()) com.localmediatools.gallery.GalleryIndex.start(this)
@@ -76,6 +83,18 @@ class MainActivity : Activity() {
     override fun onStop() {
         started.value = false
         super.onStop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        (navigator.rootScreen as? MainShell)?.let { outState.putInt(STATE_TAB, it.tab) }
+    }
+
+    /** Shows the app again in the language just chosen in Settings (notification channels too). */
+    fun restartForLanguage() {
+        com.localmediatools.export.ExportNotifications.createChannels(this)
+        com.localmediatools.gallery.GalleryIndexService.createChannel(this)
+        recreate()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -120,7 +139,7 @@ class MainActivity : Activity() {
                     } catch (_: Exception) { null }
                 }
             }
-            if (copies.isEmpty()) { Toast.makeText(this@MainActivity, "Couldn't read the shared files.", Toast.LENGTH_LONG).show(); return@launch }
+            if (copies.isEmpty()) { Toast.makeText(this@MainActivity, tr("Couldn't read the shared files."), Toast.LENGTH_LONG).show(); return@launch }
             val sel = com.localmediatools.ui.Selection.of(com.localmediatools.tools.ToolId.PRINT)
             sel.clear(); sel.addUris(this@MainActivity, copies)
             while (navigator.depth > 1) navigator.pop()
@@ -151,7 +170,7 @@ class MainActivity : Activity() {
             startActivityForResult(intent, code)
         } catch (e: ActivityNotFoundException) {
             pending.remove(code)
-            Toast.makeText(this, "No app on this phone can handle this action.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, tr("No app on this phone can handle this action."), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -215,7 +234,7 @@ class MainActivity : Activity() {
             if (code != RESULT_OK || tree == null) return@launch
             lifecycleScope.launch {
                 val uris = withContext(Dispatchers.IO) { listFolder(tree, kind) }
-                if (uris.isEmpty()) Toast.makeText(this@MainActivity, "No ${kind.noun} found in that folder.", Toast.LENGTH_LONG).show()
+                if (uris.isEmpty()) Toast.makeText(this@MainActivity, kind.noneInFolder(), Toast.LENGTH_LONG).show()
                 cb(uris)
             }
         }
@@ -244,9 +263,9 @@ class MainActivity : Activity() {
     // ------------------------------------------------------------------ camera
     /** (available, explanation when not). */
     fun cameraAvailability(): Pair<Boolean, String> {
-        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) return false to "This device has no camera. Add pages from the gallery instead."
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) return false to tr("This device has no camera. Add pages from the gallery instead.")
         val resolves = Intent(MediaStore.ACTION_IMAGE_CAPTURE).resolveActivity(packageManager) != null
-        if (!resolves) return false to "No camera app is available on this phone. Add pages from the gallery instead."
+        if (!resolves) return false to tr("No camera app is available on this phone. Add pages from the gallery instead.")
         return true to ""
     }
 
@@ -263,7 +282,7 @@ class MainActivity : Activity() {
             if (code == RESULT_OK && file.exists() && file.length() > 0) cb(CaptureProvider.uriFor(file))
             else {
                 file.delete()
-                if (code == RESULT_OK) Toast.makeText(this, "The camera app didn't return a photo.", Toast.LENGTH_LONG).show()
+                if (code == RESULT_OK) Toast.makeText(this, tr("The camera app didn't return a photo."), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -277,7 +296,7 @@ class MainActivity : Activity() {
             startIntentSenderForResult(sender, code, null, 0, 0, 0)
         } catch (e: Exception) {
             pending.remove(code)
-            Toast.makeText(this, "This action isn't available on this phone.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, tr("This action isn't available on this phone."), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -353,6 +372,7 @@ class MainActivity : Activity() {
     companion object {
         const val EXTRA_SHOW_JOB = "show_job"
         const val EXTRA_OPEN_GALLERY = "open_gallery"
+        private const val STATE_TAB = "tab"
         @Suppress("unused") private fun cacheFile(a: Activity, n: String) = File(a.cacheDir, n)
     }
 }

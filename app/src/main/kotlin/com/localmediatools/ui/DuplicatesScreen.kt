@@ -20,6 +20,10 @@ import android.widget.Toast
 import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
 import com.localmediatools.core.Format
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.ToolId
 import com.localmediatools.vision.DupResultGroup
 import com.localmediatools.vision.DupScanState
@@ -64,7 +68,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         row.addView(UI.toolTile(ctx, tool, 52, 28))
         row.addView(UI.text(ctx, tool.longDescription, TextStyle.BODY_2).apply { setPadding(ctx.dp(14), 0, 0, 0) }, lp(0, WRAP, 1f))
         hero.addView(row)
-        hero.addView(UI.note(ctx, "Photos are compared on this phone. Nothing is deleted until you confirm, and removed photos go to the system trash, where they can be restored for 30 days.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
+        hero.addView(UI.note(ctx, tr("Photos are compared on this phone. Nothing is deleted until you confirm, and removed photos go to the system trash, where they can be restored for 30 days."), UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
         head.addView(hero)
         statusCard = UI.card(ctx)
         head.addView(statusCard, lp().apply { topMargin = ctx.dp(14) })
@@ -81,7 +85,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         bar.elevation = ctx.dp(8).toFloat()
         barText = UI.text(ctx, "", TextStyle.CAPTION).apply { gravity = Gravity.CENTER; setPadding(0, 0, 0, ctx.dp(8)) }
         bar.addView(barText)
-        trashButton = UI.primaryButton(ctx, "Move to trash") { trash() }
+        trashButton = UI.primaryButton(ctx, tr("Move to trash")) { trash() }
         bar.addView(trashButton, lp())
         root.addView(bar, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM).apply { setMargins(ctx.dp(10), 0, ctx.dp(10), ctx.dp(10)) })
         bar.visibility = View.GONE
@@ -94,31 +98,31 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         statusCard.removeAllViews()
         when (s) {
             is DupScanState.Idle -> {
-                statusCard.addView(UI.text(ctx, "Find duplicates in your photos", TextStyle.SUBTITLE))
-                statusCard.addView(UI.text(ctx, if (activity.hasPhotoAccess()) "Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos."
-                    else "The app needs permission to see your photos for this. It never uploads them.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
-                statusCard.addView(UI.primaryButton(ctx, "Scan my photos") { start() }, lp().apply { topMargin = ctx.dp(14) })
+                statusCard.addView(UI.text(ctx, tr("Find duplicates in your photos"), TextStyle.SUBTITLE))
+                statusCard.addView(UI.text(ctx, if (activity.hasPhotoAccess()) tr("Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos.")
+                    else tr("The app needs permission to see your photos for this. It never uploads them."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
+                statusCard.addView(UI.primaryButton(ctx, tr("Scan my photos")) { start() }, lp().apply { topMargin = ctx.dp(14) })
                 show(null)
             }
             is DupScanState.Running -> {
                 statusCard.addView(UI.text(ctx, s.phase, TextStyle.SUBTITLE))
-                statusCard.addView(UI.text(ctx, if (s.total > 0) "${s.done} of ${s.total} photos" else "Starting…", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
+                statusCard.addView(UI.text(ctx, if (s.total > 0) trn(s.total, "{1} of {0} photo", "{1} of {0} photos", s.done) else tr("Starting…"), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
                 statusCard.addView(ProgressBarView(ctx).apply { if (s.total > 0) setProgress(s.done.toFloat() / s.total) else indeterminate = true }, LinearLayout.LayoutParams(MATCH, ctx.dp(8)).apply { topMargin = ctx.dp(12) })
-                statusCard.addView(UI.ghostButton(ctx, "Stop") { DuplicateScanner.cancel() }, lp().apply { topMargin = ctx.dp(8) })
+                statusCard.addView(UI.ghostButton(ctx, tr("Stop")) { DuplicateScanner.cancel() }, lp().apply { topMargin = ctx.dp(8) })
                 show(null)
             }
             is DupScanState.Failed -> {
-                statusCard.addView(UI.note(ctx, "The scan stopped: ${s.message}", UI.NoteKind.WARN))
-                statusCard.addView(UI.secondaryButton(ctx, "Try again") { start() }, lp().apply { topMargin = ctx.dp(12) })
+                statusCard.addView(UI.note(ctx, tr("The scan stopped: {0}", s.message), UI.NoteKind.WARN))
+                statusCard.addView(UI.secondaryButton(ctx, tr("Try again")) { start() }, lp().apply { topMargin = ctx.dp(12) })
                 show(null)
             }
             is DupScanState.Done -> {
                 val extra = s.groups.sumOf { it.photos.size - 1 }
-                statusCard.addView(UI.text(ctx, if (s.groups.isEmpty()) "No duplicates found" else "${s.groups.size} groups · $extra photos you could remove", TextStyle.SUBTITLE))
-                statusCard.addView(UI.text(ctx, if (s.groups.isEmpty()) "Checked ${s.scanned} photos. Nice and tidy!"
-                    else "Checked ${s.scanned} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.", TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
-                if (!s.aiUsed) statusCard.addView(UI.note(ctx, "Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.", UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
-                statusCard.addView(UI.ghostButton(ctx, "Scan again", R.drawable.ic_history) { start() }, lp().apply { topMargin = ctx.dp(8) })
+                statusCard.addView(UI.text(ctx, if (s.groups.isEmpty()) tr("No duplicates found") else trn(s.groups.size, "{0} group", "{0} groups") + " · " + trn(extra, "{0} photo you could remove", "{0} photos you could remove"), TextStyle.SUBTITLE))
+                statusCard.addView(UI.text(ctx, if (s.groups.isEmpty()) trn(s.scanned, "Checked {0} photo. Nice and tidy!", "Checked {0} photos. Nice and tidy!")
+                    else trn(s.scanned, "Checked {0} photo. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.", "Checked {0} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
+                if (!s.aiUsed) statusCard.addView(UI.note(ctx, tr("Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
+                statusCard.addView(UI.ghostButton(ctx, tr("Scan again"), R.drawable.ic_history) { start() }, lp().apply { topMargin = ctx.dp(8) })
                 show(s.groups)
             }
         }
@@ -127,7 +131,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
     private fun start() {
         activity.ensurePhotoAccess { ok ->
             if (ok) DuplicateScanner.start(ctx)
-            else Toast.makeText(ctx, "Without access to your photos the duplicate finder can't look for copies.", Toast.LENGTH_LONG).show()
+            else Toast.makeText(ctx, tr("Without access to your photos the duplicate finder can't look for copies."), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -157,27 +161,27 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         rulesCard.removeAllViews()
         val r = DupChoices.rules
         val head = UI.horizontal(ctx)
-        val summary = listOfNotNull(if (r.keepRaw) "RAWs" else null, if (r.keepFavorites) "favourites" else null,
-            if (r.keepPeople.isNotEmpty()) "${r.keepPeople.size} ${if (r.keepPeople.size == 1) "person" else "people"}" else null)
-        head.addView(UI.titled(ctx, "Keep rules", (if (summary.isEmpty()) "Nothing always kept" else "Always kept: " + summary.joinToString(", ")) +
-            " · keeps the ${r.prefer.label.lowercase()} copy" + if (r.similarShots) " · picks the best similar shot" else ""), lp(0, WRAP, 1f))
+        val summary = listOfNotNull(if (r.keepRaw) tr("RAWs") else null, if (r.keepFavorites) tr("favourites") else null,
+            if (r.keepPeople.isNotEmpty()) trn(r.keepPeople.size, "{0} person", "{0} people") else null)
+        head.addView(UI.titled(ctx, tr("Keep rules"), (if (summary.isEmpty()) tr("Nothing always kept") else tr("Always kept: {0}", summary.joinToString(trc("between the items of a list", ", ")))) +
+            " · " + r.prefer.keeps + if (r.similarShots) " · " + tr("picks the best similar shot") else ""), lp(0, WRAP, 1f))
         head.addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_3, 18).apply { rotation = if (rulesOpen) 270f else 90f })
         head.isClickable = true; head.isFocusable = true
-        head.contentDescription = "Keep rules, ${if (rulesOpen) "expanded" else "collapsed"}"
+        head.contentDescription = if (rulesOpen) tr("Keep rules, expanded") else tr("Keep rules, collapsed")
         head.setOnClickListener { rulesOpen = !rulesOpen; renderRules() }
         rulesCard.addView(head)
         if (!rulesOpen) return
         fun set(n: com.localmediatools.vision.core.KeepRules) { DupChoices.setRules(ctx, n); renderRules(); refreshList() }
-        rulesCard.addView(ToggleRow(ctx, "Always keep RAW photos", "DNG, CR2, NEF, ARW and other camera RAW files; the best other copy stays next to them", r.keepRaw) { set(DupChoices.rules.copy(keepRaw = it)) }, lp().apply { topMargin = ctx.dp(8) })
-        rulesCard.addView(ToggleRow(ctx, "Always keep favourites", "Photos you starred in your gallery", r.keepFavorites) { set(DupChoices.rules.copy(keepFavorites = it)) })
-        rulesCard.addView(ToggleRow(ctx, "Suggest similar shots too", "Keeps the best shot of each burst and suggests the rest", r.similarShots) { set(DupChoices.rules.copy(similarShots = it)) })
-        rulesCard.addView(UI.label(ctx, "Which copy to keep"), lp().apply { topMargin = ctx.dp(12); bottomMargin = ctx.dp(8) })
+        rulesCard.addView(ToggleRow(ctx, tr("Always keep RAW photos"), tr("DNG, CR2, NEF, ARW and other camera RAW files; the best other copy stays next to them"), r.keepRaw) { set(DupChoices.rules.copy(keepRaw = it)) }, lp().apply { topMargin = ctx.dp(8) })
+        rulesCard.addView(ToggleRow(ctx, tr("Always keep favourites"), tr("Photos you starred in your gallery"), r.keepFavorites) { set(DupChoices.rules.copy(keepFavorites = it)) })
+        rulesCard.addView(ToggleRow(ctx, tr("Suggest similar shots too"), tr("Keeps the best shot of each burst and suggests the rest"), r.similarShots) { set(DupChoices.rules.copy(similarShots = it)) })
+        rulesCard.addView(UI.label(ctx, tr("Which copy to keep")), lp().apply { topMargin = ctx.dp(12); bottomMargin = ctx.dp(8) })
         rulesCard.addView(ChoiceGroup(ctx, Prefer.entries, { it.label }, r.prefer) { set(DupChoices.rules.copy(prefer = it)) })
         rulesCard.addView(UI.text(ctx, r.prefer.explain, TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(6) })
-        rulesCard.addView(UI.label(ctx, "Always keep photos of"), lp().apply { topMargin = ctx.dp(14); bottomMargin = ctx.dp(8) })
+        rulesCard.addView(UI.label(ctx, tr("Always keep photos of")), lp().apply { topMargin = ctx.dp(14); bottomMargin = ctx.dp(8) })
         val names = DupChoices.names
         if (names.isEmpty()) {
-            rulesCard.addView(UI.text(ctx, "Name people in the Gallery's People tab to keep every photo they're in.", TextStyle.CAPTION, Palette.TEXT_3))
+            rulesCard.addView(UI.text(ctx, tr("Name people in the Gallery's People tab to keep every photo they're in."), TextStyle.CAPTION, Palette.TEXT_3))
         } else {
             val flow = FlowLayout(ctx)
             for ((id, name) in names.entries.sortedBy { it.value.lowercase() }) {
@@ -187,24 +191,24 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
                     setPadding(ctx.dp(14), ctx.dp(8), ctx.dp(14), ctx.dp(8))
                     background = if (on) Shapes.clickable(ctx, Palette.ACCENT_DARK, 100f, Palette.ACCENT) else Shapes.clickable(ctx, Palette.SURFACE_2, 100f, Palette.STROKE_2)
                     isClickable = true; isFocusable = true
-                    contentDescription = "$name, ${if (on) "always kept" else "not protected"}"
+                    contentDescription = if (on) tr("{0}, always kept", name) else tr("{0}, not protected", name)
                     setOnClickListener { set(DupChoices.rules.copy(keepPeople = if (on) DupChoices.rules.keepPeople - id else DupChoices.rules.keepPeople + id)) }
                 })
             }
             rulesCard.addView(flow)
         }
-        rulesCard.addView(UI.text(ctx, "Rules apply to every group you haven't changed by hand.", TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(12) })
+        rulesCard.addView(UI.text(ctx, tr("Rules apply to every group you haven't changed by hand."), TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(12) })
     }
 
     // ------------------------------------------------------------------ sort, filter, bulk
     private fun renderTools() {
         toolsCard.removeAllViews()
         val actions = UI.horizontal(ctx)
-        actions.addView(UI.primaryButton(ctx, "Review one by one") { review(0) }, lp(0, WRAP, 1f))
+        actions.addView(UI.primaryButton(ctx, tr("Review one by one")) { review(0) }, lp(0, WRAP, 1f))
         actions.addView(View(ctx), lp(ctx.dp(10), 1))
-        actions.addView(UI.secondaryButton(ctx, "Reset to suggestions") {
+        actions.addView(UI.secondaryButton(ctx, tr("Reset to suggestions")) {
             DupChoices.apply(groups, resetTouched = true); refreshList()
-            Toast.makeText(ctx, "Every group follows the keep rules again.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, tr("Every group follows the keep rules again."), Toast.LENGTH_SHORT).show()
         }, lp(0, WRAP, 1f))
         toolsCard.addView(actions)
         toolsCard.addView(ChipRow(ctx, DupChoices.Sort.entries, { it.label }, DupChoices.sort) { DupChoices.sort = it; refreshList() }, lp().apply { topMargin = ctx.dp(12) })
@@ -237,8 +241,8 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         private val strip = LinearLayout(ctx)
         private val cells = ArrayList<PhotoCell>()
         private var group: DupResultGroup? = null
-        private val keepAll = UI.ghostButton(ctx, "Keep all") { group?.let { DupChoices.keepAll(it); bindCells(); updateBar() } }
-        private val suggested = UI.ghostButton(ctx, "Suggested") { group?.let { DupChoices.keepSuggested(it); bindCells(); updateBar() } }
+        private val keepAll = UI.ghostButton(ctx, tr("Keep all")) { group?.let { DupChoices.keepAll(it); bindCells(); updateBar() } }
+        private val suggested = UI.ghostButton(ctx, tr("Suggested")) { group?.let { DupChoices.keepSuggested(it); bindCells(); updateBar() } }
 
         init {
             orientation = VERTICAL
@@ -255,7 +259,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         fun bind(g: DupResultGroup, index: Int) {
             group = g
             title.text = g.kind.label
-            sub.text = "${g.photos.size} photos · ${g.kind.explain}"
+            sub.text = trn(g.photos.size, "{0} photo", "{0} photos") + " · ${g.kind.explain}"
             card.setOnLongClickListener { review(index); true }
             while (cells.size < g.photos.size) PhotoCell(context, 112).also { cells.add(it); strip.addView(it, LayoutParams(context.dp(112), context.dp(112)).apply { rightMargin = context.dp(8) }) }
             for ((i, c) in cells.withIndex()) c.visibility = if (i < g.photos.size) VISIBLE else GONE
@@ -275,8 +279,9 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         val photos = groups.flatMap { it.photos }.filter { it.uri in DupChoices.remove }
         if (photos.isEmpty()) { bar.visibility = View.GONE; return }
         bar.visibility = View.VISIBLE
-        barText.text = "${photos.size} selected in ${groups.count { g -> g.photos.any { it.uri in DupChoices.remove } }} groups · frees ${Format.bytes(photos.sumOf { it.size })}"
-        trashButton.label = "Move ${photos.size} to trash"
+        val touchedGroups = groups.count { g -> g.photos.any { it.uri in DupChoices.remove } }
+        barText.text = trn(touchedGroups, "{1} selected in {0} group · frees {2}", "{1} selected in {0} groups · frees {2}", photos.size, Format.bytes(photos.sumOf { it.size }))
+        trashButton.label = trn(photos.size, "Move {0} to trash", "Move {0} to trash")
     }
 
     private fun trash() = trashPhotos(activity, DupChoices.remove.toList()) { refreshList() }
@@ -295,18 +300,18 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
             val ctx = activity
             if (uris.isEmpty()) return
             if (Build.VERSION.SDK_INT < 30) {
-                Toast.makeText(ctx, "Moving photos to the trash needs Android 11 or newer. Long-press a photo to open it in your gallery and delete it there.", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, tr("Moving photos to the trash needs Android 11 or newer. Long-press a photo to open it in your gallery and delete it there."), Toast.LENGTH_LONG).show()
                 return
             }
             val pi = try { MediaStore.createTrashRequest(ctx.contentResolver, uris, true) } catch (e: Exception) {
-                Toast.makeText(ctx, "These photos can't be moved to the trash: ${e.message}", Toast.LENGTH_LONG).show(); return
+                Toast.makeText(ctx, tr("These photos can't be moved to the trash: {0}", e.message), Toast.LENGTH_LONG).show(); return
             }
             activity.launchIntentSender(pi.intentSender) { rc ->
                 if (rc == android.app.Activity.RESULT_OK) {
                     val set = uris.toHashSet()
                     DupChoices.remove.removeAll(set)
                     DuplicateScanner.removed(set)
-                    Toast.makeText(ctx, "Moved ${uris.size} ${if (uris.size == 1) "photo" else "photos"} to the trash. You can restore them from your gallery's trash for 30 days.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(ctx, trn(uris.size, "Moved {0} photo to the trash. You can restore it from your gallery's trash for 30 days.", "Moved {0} photos to the trash. You can restore them from your gallery's trash for 30 days."), Toast.LENGTH_LONG).show()
                     after()
                 }
             }
@@ -355,9 +360,9 @@ class PhotoCell(ctx: Context, private val sizeDp: Int) : FrameLayout(ctx) {
         iv.alpha = if (marked) 0.5f else 1f
         DupChoices.thumb(context, screen.scope, p.uri, iv, if (sizeDp > 150) 512 else 320)
         val label = when {
-            why != null -> why.uppercase()
-            p === g.best && !marked -> "BEST"
-            kept -> "KEEP"
+            why != null -> why.uppercase(I18n.locale)
+            p === g.best && !marked -> trc("badge on the photo to keep", "Best").uppercase(I18n.locale)
+            kept -> trc("badge on a photo that is kept", "Keep").uppercase(I18n.locale)
             else -> null
         }
         tag1.text = label ?: ""
@@ -365,16 +370,16 @@ class PhotoCell(ctx: Context, private val sizeDp: Int) : FrameLayout(ctx) {
         tag1.background = Shapes.rounded(context, if (why != null) 0xFF2E7D57.toInt() else Palette.SUCCESS, 100f)
         trashIcon.visibility = if (marked) VISIBLE else GONE
         val mp = p.width.toLong() * p.height / 1_000_000.0
-        val res = if (mp >= 1) String.format(java.util.Locale.US, "%.0f MP", mp) else "${p.width}×${p.height}"
+        val res = if (mp >= 1) tr("{0} MP", String.format(I18n.locale, "%.0f", mp)) else "${p.width}×${p.height}"
         info.text = buildString {
             append(res); append(" · "); append(Format.bytes(p.size))
             if (p.raw && why != "RAW") append(" · RAW")
-            if (p.favorite && why != "Favourite") append(" · ★")
+            if (p.favorite && why != com.localmediatools.vision.core.KeepPlanner.favourite) append(" · ★")
             if (sizeDp > 150) { p.album?.let { append("\n"); append(it) } }
         }
-        contentDescription = "${p.name}, ${if (marked) "will be moved to the trash" else "kept"}${if (why != null) ", always kept: $why" else ""}${if (p === g.best) ", best photo" else ""}"
+        contentDescription = (if (marked) tr("{0}, will be moved to the trash", p.name) else tr("{0}, kept", p.name)) + (if (why != null) tr(", always kept: {0}", why) else "") + if (p === g.best) tr(", best photo") else ""
         setOnClickListener {
-            if (!DupChoices.toggle(g, p)) Toast.makeText(context, "Keep at least one photo of each group.", Toast.LENGTH_SHORT).show()
+            if (!DupChoices.toggle(g, p)) Toast.makeText(context, tr("Keep at least one photo of each group."), Toast.LENGTH_SHORT).show()
             changed()
         }
         setOnLongClickListener { (screen.activity).let { DuplicatesScreen.openPhoto(it, p) }; true }

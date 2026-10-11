@@ -9,6 +9,11 @@ import com.localmediatools.core.MemoryBudget
 import com.localmediatools.core.SkipItemException
 import com.localmediatools.core.Workload
 import com.localmediatools.core.WorkloadProfile
+import com.localmediatools.i18n.tr
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
@@ -16,10 +21,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Everything a running job needs: cancellation, progress reporting, results, workload-aware
@@ -45,7 +46,7 @@ class JobContext(
      * points its in-between steps at private temporary files instead.
      */
     @Volatile var outputFactory: ((com.localmediatools.core.OutputArea, String, String) -> com.localmediatools.core.PendingOutput)? = null
-    @Volatile var statusText: String = "Starting…"; private set
+    @Volatile var statusText: String = tr("Starting…"); private set
     @Volatile var currentName: String? = null; private set
     private val partial = ConcurrentHashMap<Int, Double>()
     private val doneUnits = AtomicInteger(0)
@@ -147,7 +148,7 @@ class JobContext(
                         if (i >= items.size || cancelled) break
                         active.incrementAndGet()
                         val item = items[i]
-                        status(if (items.size > 1) "File ${i + 1} of ${items.size}" else "Processing", item.name)
+                        status(if (items.size > 1) tr("File {0} of {1}", i + 1, items.size) else tr("Processing"), item.name)
                         val result = runItem(item) { block(i, item) }
                         active.decrementAndGet()
                         if (result != null) addResult(result)

@@ -30,6 +30,10 @@ import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.GalleryRepo
 import com.localmediatools.gallery.core.Taxonomy
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.ImageSource
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Screen
@@ -39,14 +43,14 @@ import com.localmediatools.ui.UI
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.lp
 import com.localmediatools.ui.typeface
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.DateFormat
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.max
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Full-screen viewer: swipe between photos and videos, pinch or double-tap to zoom, play videos,
@@ -77,15 +81,15 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
         top = UI.horizontal(ctx).apply {
             background = android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(0xAA000000.toInt(), 0x00000000))
             setPadding(ctx.dp(4), ctx.dp(6), ctx.dp(6), ctx.dp(18))
-            addView(UI.iconButton(ctx, R.drawable.ic_back, "Back", Color.WHITE) { pop() })
+            addView(UI.iconButton(ctx, R.drawable.ic_back, tr("Back"), Color.WHITE) { pop() })
             addView(UI.vertical(ctx).apply {
                 title = UI.text(ctx, "", TextStyle.SUBTITLE, Color.WHITE)
                 subtitle = UI.text(ctx, "", TextStyle.CAPTION, 0xCCFFFFFF.toInt())
                 addView(title); addView(subtitle)
             }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = ctx.dp(4) })
-            faceToggle = UI.iconButton(ctx, R.drawable.ic_tool_faceblur, "Show faces", Color.WHITE) { toggleFaces() }
+            faceToggle = UI.iconButton(ctx, R.drawable.ic_tool_faceblur, tr("Show faces"), Color.WHITE) { toggleFaces() }
             addView(faceToggle)
-            addView(UI.iconButton(ctx, R.drawable.ic_info, "Details", Color.WHITE) { info() })
+            addView(UI.iconButton(ctx, R.drawable.ic_info, tr("Details"), Color.WHITE) { info() })
         }
         root.addView(top, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP))
 
@@ -106,11 +110,11 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
                 contentDescription = label
                 setOnClickListener { f() }
             }
-            addView(action(R.drawable.ic_share, "Share") { current()?.let { GalleryActions.share(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(action(R.drawable.ic_tool_editor, "Edit") { edit() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(action(R.drawable.ic_wand, "Tools") { current()?.let { GalleryActions.chooseTool(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(action(R.drawable.ic_tool_print, "Print") { current()?.let { GalleryActions.print(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(action(R.drawable.ic_trash, "Delete") { delete() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(action(R.drawable.ic_share, tr("Share")) { current()?.let { GalleryActions.share(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(action(R.drawable.ic_tool_editor, tr("Edit")) { edit() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(action(R.drawable.ic_wand, tr("Tools")) { current()?.let { GalleryActions.chooseTool(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(action(R.drawable.ic_tool_print, tr("Print")) { current()?.let { GalleryActions.print(activity, listOf(it)) } }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(action(R.drawable.ic_trash, tr("Delete")) { delete() }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         })
         root.addView(bottom, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
         pager.setup()
@@ -166,11 +170,11 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
                 }
                 GalleryThumbs.face(ctx, f, 160, img)
                 addView(img, LinearLayout.LayoutParams(ctx.dp(48), ctx.dp(48)))
-                addView(UI.text(ctx, name ?: "Add name", TextStyle.CAPTION, if (name != null) Color.WHITE else Palette.ACCENT).apply {
+                addView(UI.text(ctx, name ?: tr("Add name"), TextStyle.CAPTION, if (name != null) Color.WHITE else Palette.ACCENT).apply {
                     maxLines = 1; setPadding(0, ctx.dp(4), 0, 0); maxWidth = ctx.dp(72); ellipsize = android.text.TextUtils.TruncateAt.END
                 })
                 isClickable = true; isFocusable = true
-                contentDescription = name ?: "Unnamed face, tap to name"
+                contentDescription = name ?: tr("Unnamed face, tap to name")
                 setOnClickListener { openFace(f) }
             }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(14) })
         }
@@ -180,7 +184,7 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
         showFaces = !showFaces
         ctx.getSharedPreferences("gallery", Context.MODE_PRIVATE).edit().putBoolean("show_faces", showFaces).apply()
         faceToggle.alpha = if (showFaces) 1f else 0.55f
-        faceToggle.contentDescription = if (showFaces) "Hide faces" else "Show faces"
+        faceToggle.contentDescription = if (showFaces) tr("Hide faces") else tr("Show faces")
         renderFaceStrip()
         pager.currentPage()?.invalidateOverlay()
     }
@@ -219,23 +223,23 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
                 val ppl = db.facesOf(m.id).filter { !it.ignored }.map { f -> f.personId?.let { db.person(it)?.name } }
                 t to ppl
             }
-            val df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
+            val df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, I18n.locale)
             val sb = StringBuilder()
             sb.append(m.name).append("\n\n")
             sb.append(df.format(Date(m.taken))).append('\n')
             sb.append("${m.width} × ${m.height}").append(" · ").append(Format.bytes(m.size))
             if (m.video) sb.append(" · ").append(Format.duration(m.durationMs))
             sb.append('\n').append(m.path.ifBlank { m.bucket })
-            if (tags.isNotEmpty()) sb.append("\n\nFound in it: ").append(tags.joinToString(", "))
+            if (tags.isNotEmpty()) sb.append("\n\n").append(tr("Found in it: {0}", tags.joinToString(trc("between the items of a list", ", "))))
             if (people.isNotEmpty()) {
                 val named = people.filterNotNull().distinct()
                 val unnamed = people.count { it == null }
-                sb.append("\nPeople: ").append((named + if (unnamed > 0) listOf("$unnamed unnamed") else emptyList()).joinToString(", "))
+                sb.append("\n").append(tr("People: {0}", (named + if (unnamed > 0) listOf(trn(unnamed, "{0} unnamed", "{0} unnamed")) else emptyList()).joinToString(trc("between the items of a list", ", "))))
             }
             val st = GalleryIndex.state.value
-            if (tags.isEmpty() && people.isEmpty() && st.working) sb.append("\n\nThis item hasn't been analysed yet.")
-            AlertDialog.Builder(activity).setTitle("Details").setMessage(sb.toString()).setPositiveButton("OK", null)
-                .setNeutralButton("Open with…") { _, _ -> GalleryActions.openExternally(activity, m) }.show()
+            if (tags.isEmpty() && people.isEmpty() && st.working) sb.append("\n\n").append(tr("This item hasn't been analysed yet."))
+            AlertDialog.Builder(activity).setTitle(tr("Details")).setMessage(sb.toString()).setPositiveButton(tr("OK"), null)
+                .setNeutralButton(tr("Open with…")) { _, _ -> GalleryActions.openExternally(activity, m) }.show()
         }
     }
 
@@ -262,7 +266,7 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
             addView(zoom, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
             play.background = Shapes.circle(0x99000000.toInt())
             play.addView(UI.iconView(ctx, R.drawable.ic_play, Color.WHITE, 30), LayoutParams(ctx.dp(30), ctx.dp(30), Gravity.CENTER))
-            play.contentDescription = "Play video"
+            play.contentDescription = tr("Play video")
             play.isClickable = true
             play.setOnClickListener { startVideo() }
             addView(play, LayoutParams(ctx.dp(72), ctx.dp(72), Gravity.CENTER))
@@ -307,7 +311,7 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
                 box.color = when { highlighted -> Palette.WARNING; name != null -> Palette.ACCENT; else -> Color.WHITE }
                 val rad = context.dp(10).toFloat()
                 c.drawRoundRect(fr, rad, rad, box)
-                val label = name ?: "Add name"
+                val label = name ?: tr("Add name")
                 val tw = labelText.measureText(label)
                 val pad = context.dp(6).toFloat(); val h = labelText.textSize + pad * 1.4f
                 val lx = (fr.centerX() - tw / 2 - pad).coerceIn(r.left, maxOf(r.left, r.right - tw - 2 * pad))

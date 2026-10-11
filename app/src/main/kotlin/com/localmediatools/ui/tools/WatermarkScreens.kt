@@ -18,6 +18,8 @@ import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportJob
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.image.AspectGroups
 import com.localmediatools.image.WatermarkPosition
 import com.localmediatools.image.WatermarkRenderer
@@ -85,7 +87,7 @@ class WatermarkPreview(ctx: Context) : View(ctx) {
 
     init {
         background = Shapes.rounded(ctx, Palette.SURFACE_2, 16f, Palette.STROKE)
-        contentDescription = "Watermark preview"
+        contentDescription = tr("Watermark preview")
     }
 
     fun setSample(item: MediaItem?) {
@@ -107,7 +109,7 @@ class WatermarkPreview(ctx: Context) : View(ctx) {
             paint.color = Palette.TEXT_3
             paint.textSize = context.dp(13).toFloat()
             paint.textAlign = Paint.Align.CENTER
-            canvas.drawText("Select images to preview", width / 2f, height / 2f, paint)
+            canvas.drawText(tr("Select images to preview"), width / 2f, height / 2f, paint)
             return
         }
         val s = minOf((width - 2 * pad) / b.width, (height - 2 * pad) / b.height)
@@ -131,26 +133,26 @@ class WatermarkScreen(a: MainActivity) : ToolScreen(a, ToolId.WATERMARK) {
     private lateinit var defaultGrid: PositionGrid
 
     override fun buildOptions(container: LinearLayout) {
-        container.addView(TextField(ctx, "Watermark text", "e.g. © Your Name 2026", WatermarkState.text) { WatermarkState.text = it; changed() })
-        section(container, "Logo image", "Optional — PNG with transparency works best")
+        container.addView(TextField(ctx, tr("Watermark text"), tr("e.g. © Your Name {0}", java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)), WatermarkState.text) { WatermarkState.text = it; changed() })
+        section(container, tr("Logo image"), tr("Optional — PNG with transparency works best"))
         logoRow = UI.horizontal(ctx)
         container.addView(logoRow, lp().apply { topMargin = ctx.dp(8) })
         rebuildLogo()
-        container.addView(SliderField(ctx, "Size", 10, 50, WatermarkState.size, "%", "Of each image's shorter side; proportions never stretch") { WatermarkState.size = it; changed() }, lp().apply { topMargin = ctx.dp(16) })
-        container.addView(SliderField(ctx, "Opacity", 10, 100, WatermarkState.opacity, "%") { WatermarkState.opacity = it; changed() }, lp().apply { topMargin = ctx.dp(14) })
-        section(container, "Text colour")
-        val colors = listOf("White" to Color.WHITE, "Black" to Color.BLACK, "Grey" to 0xFF9AA3B2.toInt(), "Gold" to 0xFFFFC857.toInt())
+        container.addView(SliderField(ctx, tr("Size"), 10, 50, WatermarkState.size, "%", tr("Of each image's shorter side; proportions never stretch")) { WatermarkState.size = it; changed() }, lp().apply { topMargin = ctx.dp(16) })
+        container.addView(SliderField(ctx, tr("Opacity"), 10, 100, WatermarkState.opacity, "%") { WatermarkState.opacity = it; changed() }, lp().apply { topMargin = ctx.dp(14) })
+        section(container, tr("Text colour"))
+        val colors = listOf(tr("White") to Color.WHITE, tr("Black") to Color.BLACK, tr("Grey") to 0xFF9AA3B2.toInt(), tr("Gold") to 0xFFFFC857.toInt())
         container.addView(ChoiceGroup(ctx, colors, { it.first }, colors.firstOrNull { it.second == WatermarkState.color }) { WatermarkState.color = it.second; changed() }, lp().apply { topMargin = ctx.dp(10) })
 
-        section(container, "Preview")
+        section(container, tr("Preview"))
         preview = WatermarkPreview(ctx)
         container.addView(preview, lp(MATCH, ctx.dp(240)).apply { topMargin = ctx.dp(10) })
 
-        section(container, "Default position", "Used for every image shape you don't set separately")
+        section(container, tr("Default position"), tr("Used for every image shape you don't set separately"))
         defaultGrid = PositionGrid(ctx, WatermarkState.defaultPosition) { p -> WatermarkState.defaultPosition = p; preview.position = p; rebuildGroups() }
         container.addView(defaultGrid, lp().apply { topMargin = ctx.dp(10) })
 
-        section(container, "Placement by image shape", "Different shapes can use different positions")
+        section(container, tr("Placement by image shape"), tr("Different shapes can use different positions"))
         groupsBox = UI.vertical(ctx)
         container.addView(groupsBox, lp().apply { topMargin = ctx.dp(8) })
         preview.position = WatermarkState.defaultPosition
@@ -164,10 +166,10 @@ class WatermarkScreen(a: MainActivity) : ToolScreen(a, ToolId.WATERMARK) {
         logoRow.removeAllViews()
         val logo = WatermarkState.logo
         if (logo == null) {
-            logoRow.addView(UI.secondaryButton(ctx, "Choose logo", R.drawable.ic_gallery) {
+            logoRow.addView(UI.secondaryButton(ctx, tr("Choose logo"), R.drawable.ic_gallery) {
                 activity.pickMedia(com.localmediatools.ui.PickKind.IMAGES, multiple = false) { uris -> setLogo(uris.firstOrNull()) }
             })
-            logoRow.addView(UI.ghostButton(ctx, "From files", R.drawable.ic_file) {
+            logoRow.addView(UI.ghostButton(ctx, tr("From files"), R.drawable.ic_file) {
                 activity.pickDocuments(com.localmediatools.ui.PickKind.IMAGES, multiple = false) { uris -> setLogo(uris.firstOrNull()) }
             })
         } else {
@@ -175,7 +177,7 @@ class WatermarkScreen(a: MainActivity) : ToolScreen(a, ToolId.WATERMARK) {
             Thumbs.load(ctx, logo, 160, iv)
             logoRow.addView(iv, LinearLayout.LayoutParams(ctx.dp(48), ctx.dp(48)))
             logoRow.addView(UI.text(ctx, logo.name, TextStyle.BODY).apply { setPadding(ctx.dp(12), 0, ctx.dp(8), 0); maxLines = 2 }, lp(0, WRAP, 1f))
-            logoRow.addView(UI.iconButton(ctx, R.drawable.ic_close, "Remove logo", Palette.TEXT_2) {
+            logoRow.addView(UI.iconButton(ctx, R.drawable.ic_close, tr("Remove logo"), Palette.TEXT_2) {
                 WatermarkState.logo = null; preview.setLogo(null); rebuildLogo(); changed()
             })
         }
@@ -185,7 +187,7 @@ class WatermarkScreen(a: MainActivity) : ToolScreen(a, ToolId.WATERMARK) {
         uri ?: return
         scope.launchIo({ com.localmediatools.core.MediaProbe.describe(activity, uri) }) { item ->
             if (item.kind != com.localmediatools.core.MediaKind.IMAGE && item.kind != com.localmediatools.core.MediaKind.GIF) {
-                android.widget.Toast.makeText(ctx, "That file isn't an image.", android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(ctx, tr("That file isn't an image."), android.widget.Toast.LENGTH_LONG).show()
                 return@launchIo
             }
             WatermarkState.logo = item
@@ -211,7 +213,7 @@ class WatermarkScreen(a: MainActivity) : ToolScreen(a, ToolId.WATERMARK) {
         groupsBox.removeAllViews()
         val groups = aspectGroups(selection.usable)
         if (groups.isEmpty()) {
-            groupsBox.addView(UI.text(ctx, "Select images to see the shapes in your batch.", TextStyle.CAPTION))
+            groupsBox.addView(UI.text(ctx, tr("Select images to see the shapes in your batch."), TextStyle.CAPTION))
             return
         }
         for (g in groups) {
@@ -221,22 +223,22 @@ class WatermarkScreen(a: MainActivity) : ToolScreen(a, ToolId.WATERMARK) {
             row.addView(UI.text(ctx, "${g.items.size} · ${WatermarkState.positionFor(g.key).label}", TextStyle.CAPTION, if (WatermarkState.perGroup.containsKey(g.key)) Palette.ACCENT else Palette.TEXT_2))
             groupsBox.addView(row)
         }
-        val btn = UI.secondaryButton(ctx, if (groups.size > 1) "Set placement for each shape (${groups.size})" else "Set placement for this shape", R.drawable.ic_tune) {
+        val btn = UI.secondaryButton(ctx, if (groups.size > 1) tr("Set placement for each shape ({0})", groups.size) else tr("Set placement for this shape"), R.drawable.ic_tune) {
             push(WatermarkPlacementScreen(activity, selection))
         }
         groupsBox.addView(btn, lp().apply { topMargin = ctx.dp(8) })
         if (WatermarkState.perGroup.isNotEmpty()) {
-            groupsBox.addView(UI.ghostButton(ctx, "Reset to default position") { WatermarkState.perGroup.clear(); rebuildGroups() }, lp().apply { topMargin = ctx.dp(4) })
+            groupsBox.addView(UI.ghostButton(ctx, tr("Reset to default position")) { WatermarkState.perGroup.clear(); rebuildGroups() }, lp().apply { topMargin = ctx.dp(4) })
         }
     }
 
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (WatermarkState.text.isBlank() && WatermarkState.logo == null) return "Add watermark text or choose a logo"
+        if (WatermarkState.text.isBlank() && WatermarkState.logo == null) return tr("Add watermark text or choose a logo")
         return null
     }
 
-    override fun outputNaming() = "name_wm.jpg / .png / .webp (same type of format as each original)"
+    override fun outputNaming() = tr("name_wm.jpg / .png / .webp (same type of format as each original)")
 
     override fun createJob(items: List<MediaItem>): ExportJob {
         val groups = aspectGroups(items)
@@ -258,15 +260,15 @@ class WatermarkPlacementScreen(activity: MainActivity, private val selection: Se
     override fun createView(): View {
         val root = FrameLayout(ctx).apply { setBackgroundColor(Palette.BG) }
         val col = UI.vertical(ctx)
-        col.addView(TopBar(this, "Watermark placement"))
+        col.addView(TopBar(this, tr("Watermark placement")))
         body = UI.vertical(ctx, 16, 0)
         col.addView(ScrollView(ctx).apply { addView(body); clipToPadding = false; setPadding(0, 0, 0, ctx.dp(110)) }, lp(MATCH, 0, 1f))
         root.addView(col, FrameLayout.LayoutParams(MATCH, MATCH))
         val bar = UI.horizontal(ctx)
         bar.background = Shapes.rounded(ctx, Palette.SURFACE, 24f, Palette.STROKE)
         bar.setPadding(ctx.dp(12), ctx.dp(10), ctx.dp(12), ctx.dp(10))
-        back = UI.secondaryButton(ctx, "Back") { if (step > 0) { step--; render() } else pop() }
-        next = UI.primaryButton(ctx, "Next") { if (step < groups.size) { step++; render() } else pop() }
+        back = UI.secondaryButton(ctx, tr("Back")) { if (step > 0) { step--; render() } else pop() }
+        next = UI.primaryButton(ctx, tr("Next")) { if (step < groups.size) { step++; render() } else pop() }
         bar.addView(back, lp(0, WRAP, 1f).apply { rightMargin = ctx.dp(6) })
         bar.addView(next, lp(0, WRAP, 1.6f).apply { leftMargin = ctx.dp(6) })
         root.addView(bar, FrameLayout.LayoutParams(MATCH, WRAP, Gravity.BOTTOM).apply { setMargins(ctx.dp(10), 0, ctx.dp(10), ctx.dp(10)) })
@@ -277,21 +279,21 @@ class WatermarkPlacementScreen(activity: MainActivity, private val selection: Se
     private fun render() {
         body.removeAllViews()
         if (groups.isEmpty()) {
-            body.addView(UI.text(ctx, "No image sizes are known yet. Go back and wait for the selection to load.", TextStyle.BODY_2))
-            next.label = "Done"
+            body.addView(UI.text(ctx, tr("No image sizes are known yet. Go back and wait for the selection to load."), TextStyle.BODY_2))
+            next.label = tr("Done")
             return
         }
         if (step < groups.size) {
             val g = groups[step]
-            body.addView(UI.text(ctx, "Shape ${step + 1} of ${groups.size}", TextStyle.LABEL), lp().apply { topMargin = ctx.dp(4) })
+            body.addView(UI.text(ctx, tr("Shape {0} of {1}", step + 1, groups.size), TextStyle.LABEL), lp().apply { topMargin = ctx.dp(4) })
             body.addView(UI.text(ctx, g.label, TextStyle.TITLE).apply { setPadding(0, ctx.dp(4), 0, 0) })
-            body.addView(UI.text(ctx, "${g.items.size} image(s) with this shape", TextStyle.BODY_2).apply { setPadding(0, ctx.dp(4), 0, 0) })
+            body.addView(UI.text(ctx, trn(g.items.size, "{0} image with this shape", "{0} images with this shape"), TextStyle.BODY_2).apply { setPadding(0, ctx.dp(4), 0, 0) })
             val prev = WatermarkPreview(ctx)
             WatermarkState.logo?.let { prev.setLogo(it) }
             prev.setSample(g.items.first())
             prev.position = WatermarkState.positionFor(g.key)
             body.addView(prev, lp(MATCH, ctx.dp(280)).apply { topMargin = ctx.dp(14) })
-            body.addView(UI.text(ctx, "Choose where the watermark goes", TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(16) })
+            body.addView(UI.text(ctx, tr("Choose where the watermark goes"), TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(16) })
             body.addView(PositionGrid(ctx, WatermarkState.positionFor(g.key)) { p ->
                 WatermarkState.perGroup[g.key] = p
                 prev.position = p
@@ -305,11 +307,11 @@ class WatermarkPlacementScreen(activity: MainActivity, private val selection: Se
                 }
                 body.addView(strip, lp().apply { topMargin = ctx.dp(14) })
             }
-            back.label = if (step == 0) "Cancel" else "Back"
-            next.label = if (step == groups.size - 1) "Review plan" else "Next shape"
+            back.label = if (step == 0) tr("Cancel") else tr("Back")
+            next.label = if (step == groups.size - 1) tr("Review plan") else tr("Next shape")
         } else {
-            body.addView(UI.text(ctx, "Placement plan", TextStyle.TITLE), lp().apply { topMargin = ctx.dp(4) })
-            body.addView(UI.text(ctx, "This is how the watermark will be placed when you export.", TextStyle.BODY_2).apply { setPadding(0, ctx.dp(4), 0, ctx.dp(10)) })
+            body.addView(UI.text(ctx, tr("Placement plan"), TextStyle.TITLE), lp().apply { topMargin = ctx.dp(4) })
+            body.addView(UI.text(ctx, tr("This is how the watermark will be placed when you export."), TextStyle.BODY_2).apply { setPadding(0, ctx.dp(4), 0, ctx.dp(10)) })
             for (g in groups) {
                 val c = UI.card(ctx, 14)
                 val row = UI.horizontal(ctx)
@@ -319,14 +321,14 @@ class WatermarkPlacementScreen(activity: MainActivity, private val selection: Se
                 row.addView(UI.vertical(ctx).apply {
                     setPadding(ctx.dp(12), 0, 0, 0)
                     addView(UI.text(ctx, g.label, TextStyle.SUBTITLE))
-                    addView(UI.text(ctx, "${g.items.size} image(s) → ${WatermarkState.positionFor(g.key).label}", TextStyle.CAPTION, Palette.ACCENT).apply { setPadding(0, ctx.dp(3), 0, 0) })
+                    addView(UI.text(ctx, trn(g.items.size, "{0} image → {1}", "{0} images → {1}", WatermarkState.positionFor(g.key).label), TextStyle.CAPTION, Palette.ACCENT).apply { setPadding(0, ctx.dp(3), 0, 0) })
                 }, lp(0, WRAP, 1f))
                 c.addView(row)
                 body.addView(c, lp().apply { bottomMargin = ctx.dp(10) })
             }
-            body.addView(UI.note(ctx, "Size ${WatermarkState.size}% of the shorter side · opacity ${WatermarkState.opacity}%. Images whose shape isn't listed use the default position (${WatermarkState.defaultPosition.label}).", UI.NoteKind.INFO))
-            back.label = "Back"
-            next.label = "Done"
+            body.addView(UI.note(ctx, tr("Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).", WatermarkState.size, WatermarkState.opacity, WatermarkState.defaultPosition.label), UI.NoteKind.INFO))
+            back.label = tr("Back")
+            next.label = tr("Done")
         }
     }
 }

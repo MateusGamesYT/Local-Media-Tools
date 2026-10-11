@@ -1,15 +1,23 @@
 package com.localmediatools.music.core
 
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
 /** The character of the background music. */
-enum class Mood(val label: String, val explain: String, val bpm: Int, val temperature: Float) {
-    UPBEAT("Upbeat", "Bright, with a beat", 120, 0.5f),
-    CHILL("Chill", "Relaxed, soft electric piano", 92, 0.45f),
-    CINEMATIC("Cinematic", "Slow and wide, piano and strings", 76, 0.4f),
+enum class Mood(private val labelEn: String, private val explainEn: String, val bpm: Int, val temperature: Float) {
+    UPBEAT(N_("Upbeat"), N_("Bright, with a beat"), 120, 0.5f),
+    CHILL(N_("Chill"), N_("Relaxed, soft electric piano"), 92, 0.45f),
+    CINEMATIC(N_("Cinematic"), N_("Slow and wide, piano and strings"), 76, 0.4f);
+
+    val label: String get() = tr(labelEn)
+    val explain: String get() = tr(explainEn)
+
+    /** "Upbeat music" (in results). */
+    val musicLabel: String get() = when (this) { UPBEAT -> tr("Upbeat music"); CHILL -> tr("Chill music"); CINEMATIC -> tr("Cinematic music") }
 }
 
 /** A note on the 16th-note grid. */

@@ -12,6 +12,9 @@ import com.localmediatools.app.R
 import com.localmediatools.core.MediaItem
 import com.localmediatools.export.ExportJob
 import com.localmediatools.export.ExportManager
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.StackRules
 import com.localmediatools.tools.StackStep
 import com.localmediatools.tools.ToolId
@@ -20,7 +23,7 @@ import kotlinx.coroutines.launch
 /** A tool screen opened to set up one step of a tool stack instead of exporting. */
 class StackMode(
     val stepNumber: Int,
-    /** What the step gets, e.g. "the 3 files you picked" or "the videos made by step 1 (Blur faces)". */
+    /** What the step works on, e.g. "Works on the 3 files you picked." */
     val input: String,
     /** The stack's own files that this tool can work on, used for previews. */
     val previewItems: List<MediaItem>,
@@ -54,14 +57,14 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
 
     /** Null when ready to export; otherwise a short instruction shown above the button. */
     protected open fun validate(): String? {
-        if (stack != null || checkingStep) return if (selection.loading > 0) "Reading the files…" else null
+        if (stack != null || checkingStep) return if (selection.loading > 0) tr("Reading the files…") else null
         val usable = selection.usable.size
         val min = ToolRules.minItems(tool)
-        val noun = ToolRules.pickKind(tool).noun
+        val kind = ToolRules.pickKind(tool)
         return when {
-            selection.loading > 0 -> "Reading the selected files…"
-            usable == 0 -> "Select $noun to continue"
-            usable < min -> "Select at least $min $noun"
+            selection.loading > 0 -> tr("Reading the selected files…")
+            usable == 0 -> kind.selectToContinue()
+            usable < min -> kind.selectAtLeast(min)
             else -> null
         }
     }
@@ -87,12 +90,12 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
 
     /** Screens with their own selection UI (scanner) override this. */
     protected open fun buildSelection(container: LinearLayout) {
-        val p = SelectionPanel(this, selection, "Select ${ToolRules.pickKind(tool).noun}")
+        val p = SelectionPanel(this, selection, ToolRules.pickKind(tool).select())
         selectionPanel = p
         container.addView(p, lp().apply { topMargin = ctx.dp(14) })
     }
 
-    protected open val startLabel: String get() = "Start export"
+    protected open val startLabel: String get() = tr("Start export")
 
     override fun createView(): View {
         val root = FrameLayout(ctx).apply { setBackgroundColor(Palette.BG) }
@@ -103,14 +106,14 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         root.addView(scroll, FrameLayout.LayoutParams(MATCH, MATCH))
 
         val st = stack
-        content.addView(TopBar(this, if (st != null) "Step ${st.stepNumber}: ${tool.title}" else tool.title).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
+        content.addView(TopBar(this, if (st != null) tr("Step {0}: {1}", st.stepNumber, tool.title) else tool.title).apply { setPadding(0, ctx.dp(6), 0, ctx.dp(6)) })
         content.addView(hero())
         if (st != null) content.addView(stackInputCard(st), lp().apply { topMargin = ctx.dp(14) }) else buildSelection(content)
 
         val opts = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 2))
-        head.addView(UI.text(ctx, "Options", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        head.addView(UI.text(ctx, tr("Options"), TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         opts.addView(head)
         val optBody = UI.vertical(ctx)
         optionsBody = optBody
@@ -154,9 +157,9 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
     }
 
     protected open fun heroChips(): List<View> = listOf(
-        chip(R.drawable.ic_shield, "On-device", Palette.SUCCESS),
-        chip(R.drawable.ic_lock, "Originals untouched", Palette.TEXT_2),
-        chip(R.drawable.ic_clock, "Runs in background", Palette.TEXT_2),
+        chip(R.drawable.ic_shield, tr("On-device"), Palette.SUCCESS),
+        chip(R.drawable.ic_lock, tr("Originals untouched"), Palette.TEXT_2),
+        chip(R.drawable.ic_clock, tr("Runs in background"), Palette.TEXT_2),
     )
 
     protected fun chip(icon: Int, text: String, color: Int): View = UI.horizontal(ctx).apply {
@@ -170,7 +173,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         val c = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 3))
-        head.addView(UI.text(ctx, "Output", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        head.addView(UI.text(ctx, tr("Output"), TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         c.addView(head)
         val row = UI.horizontal(ctx, Gravity.TOP)
         row.setPadding(0, ctx.dp(12), 0, 0)
@@ -181,31 +184,31 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
             addView(UI.text(ctx, outputNaming(), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(4), 0, 0) })
         }, lp(0, WRAP, 1f))
         c.addView(row)
-        c.addView(UI.note(ctx, "New files are always created; your originals are never changed. A file is only published after it has been fully written and checked.", UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
+        c.addView(UI.note(ctx, tr("New files are always created; your originals are never changed. A file is only published after it has been fully written and checked."), UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(12) })
         if (StackRules.stackable(tool)) {
             val row = UI.horizontal(ctx)
             row.setPadding(0, ctx.dp(14), 0, 0)
             row.addView(UI.iconView(ctx, R.drawable.ic_tool_stack, Palette.section(com.localmediatools.tools.ToolSection.STACKS), 20))
-            row.addView(UI.titled(ctx, "Do more with the results?", "Stack another tool that works on them, e.g. compress after this").apply { setPadding(ctx.dp(10), 0, ctx.dp(8), 0) }, lp(0, WRAP, 1f))
+            row.addView(UI.titled(ctx, tr("Do more with the results?"), tr("Stack another tool that works on them, e.g. compress after this")).apply { setPadding(ctx.dp(10), 0, ctx.dp(8), 0) }, lp(0, WRAP, 1f))
             c.addView(row)
-            c.addView(UI.secondaryButton(ctx, "Then run another tool", R.drawable.ic_add) { startStack() }, lp().apply { topMargin = ctx.dp(10) })
+            c.addView(UI.secondaryButton(ctx, tr("Then run another tool"), R.drawable.ic_add) { startStack() }, lp().apply { topMargin = ctx.dp(10) })
         }
         return c
     }
 
     // ------------------------------------------------------------------ tool stacks
-    private val buttonLabel: String get() = stack?.let { if (it.editing) "Save step" else "Add to stack" } ?: startLabel
+    private val buttonLabel: String get() = stack?.let { if (it.editing) tr("Save step") else tr("Add to stack") } ?: startLabel
 
     private fun stackInputCard(m: StackMode): View {
         val c = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 1))
-        head.addView(UI.text(ctx, "Input", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        head.addView(UI.text(ctx, tr("Input"), TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         c.addView(head)
-        c.addView(UI.text(ctx, "Works on ${m.input}.", TextStyle.BODY).apply { setPadding(0, ctx.dp(10), 0, 0) })
+        c.addView(UI.text(ctx, m.input, TextStyle.BODY).apply { setPadding(0, ctx.dp(10), 0, 0) })
         val previews = selection.usable
-        c.addView(UI.text(ctx, if (previews.isEmpty()) "Files it can't work on go to the next step unchanged."
-            else "Previews use your file \"${previews.first().name}\". Files it can't work on go to the next step unchanged.", TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, 0) })
+        c.addView(UI.text(ctx, if (previews.isEmpty()) tr("Files it can't work on go to the next step unchanged.")
+            else tr("Previews use your file \"{0}\". Files it can't work on go to the next step unchanged.", previews.first().name), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(6), 0, 0) })
         return c
     }
 
@@ -213,17 +216,17 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         val c = UI.card(ctx)
         val head = UI.horizontal(ctx)
         head.addView(StepBadge(ctx, 3))
-        head.addView(UI.text(ctx, "Result", TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
+        head.addView(UI.text(ctx, tr("Result"), TextStyle.SUBTITLE).apply { setPadding(ctx.dp(10), 0, 0, 0) })
         c.addView(head)
-        c.addView(UI.text(ctx, "Goes to the next step. If this is the last step, the results are saved in ${tool.outputPath.replace("\n", " and ")}.", TextStyle.BODY_2).apply { setPadding(0, ctx.dp(10), 0, 0) })
+        c.addView(UI.text(ctx, tr("Goes to the next step. If this is the last step, the results are saved in {0}.", I18n.andList(tool.outputPath.split("\n"))), TextStyle.BODY_2).apply { setPadding(0, ctx.dp(10), 0, 0) })
         return c
     }
 
     private fun currentStep(): StackStep? {
         val job = try { createStepJob() } catch (e: IllegalArgumentException) {
-            Toast.makeText(ctx, e.message ?: "Check the options", Toast.LENGTH_LONG).show(); return null
+            Toast.makeText(ctx, e.message ?: tr("Check the options"), Toast.LENGTH_LONG).show(); return null
         }
-        return StackStep(tool, stackSummary().ifBlank { "Standard settings" }, job)
+        return StackStep(tool, stackSummary().ifBlank { tr("Standard settings") }, job)
     }
 
     private fun saveStep() {
@@ -246,10 +249,10 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
             push(StackScreen(activity))
         }
         if (ToolStackState.steps.isEmpty()) go() else android.app.AlertDialog.Builder(ctx)
-            .setTitle("Start a new tool stack?")
-            .setMessage("Your current stack (${ToolStackState.steps.joinToString(" → ") { it.tool.title }}) will be replaced.")
-            .setPositiveButton("Start new") { _, _ -> go() }
-            .setNegativeButton("Cancel", null)
+            .setTitle(tr("Start a new tool stack?"))
+            .setMessage(tr("Your current stack ({0}) will be replaced.", ToolStackState.steps.joinToString(" → ") { it.tool.title }))
+            .setPositiveButton(tr("Start new")) { _, _ -> go() }
+            .setNegativeButton(tr("Cancel"), null)
             .show()
     }
 
@@ -258,10 +261,10 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
         val msg = validate()
         startButton.isEnabled = msg == null
         val busy = ExportManager.state.value.busy
-        helper.text = msg ?: if (stack != null) "Settings are kept with the step; tap it in the stack to change them" else if (busy) "Another export is running; this one will start right after it." else
-            "${selection.usable.size} ${if (selection.usable.size == 1) "file" else "files"} ready · you can leave the app while it runs"
+        helper.text = msg ?: if (stack != null) tr("Settings are kept with the step; tap it in the stack to change them") else if (busy) tr("Another export is running; this one will start right after it.") else
+            trn(selection.usable.size, "{0} file ready · you can leave the app while it runs", "{0} files ready · you can leave the app while it runs")
         helper.setTextColor(if (msg == null) Palette.TEXT_2 else Palette.WARNING)
-        startButton.label = if (msg == null && busy && stack == null) "Add to queue" else buttonLabel
+        startButton.label = if (msg == null && busy && stack == null) tr("Add to queue") else buttonLabel
     }
 
     protected open fun itemsForJob(): List<MediaItem> = selection.usable
@@ -269,7 +272,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
     private fun start() {
         if (validate() != null) return
         val job = try { createJob(itemsForJob()) } catch (e: IllegalArgumentException) {
-            Toast.makeText(ctx, e.message ?: "Check the options", Toast.LENGTH_LONG).show(); return
+            Toast.makeText(ctx, e.message ?: tr("Check the options"), Toast.LENGTH_LONG).show(); return
         }
         activity.ensureNotificationPermission {
             val wasBusy = ExportManager.state.value.busy
@@ -280,7 +283,7 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
     }
 
     protected open fun startedText(queued: Boolean) =
-        if (queued) "Queued — it starts when the current export finishes." else "Export started. You can leave the app; progress is shown in the notification."
+        if (queued) tr("Queued — it starts when the current export finishes.") else tr("Export started. You can leave the app; progress is shown in the notification.")
 
     override fun onShow() { refreshValidation(); selectionPanel?.refresh() }
 
