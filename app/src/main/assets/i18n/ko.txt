@@ -386,6 +386,14 @@
 < Value {0}
 > 값 {0}
 
+@ badge on a tool that is new
+< New
+> 신규
+
+@ badge on a tool that uses on-device AI
+< AI
+> AI
+
 < Most space
 > 용량 큰 순
 

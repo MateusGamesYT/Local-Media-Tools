@@ -33,8 +33,8 @@ SHARED_TEST_SRC = os.path.join(APP, "src", "sharedTest", "kotlin")
 ANDROID_JAR = os.path.join(TC, "android", "android.jar")
 AAPT2 = os.path.join(TC, "android", "aapt2")
 
-VERSION_CODE = 11
-VERSION_NAME = "1.8.1"
+VERSION_CODE = 12
+VERSION_NAME = "1.9.0"
 MIN_SDK = 29
 TARGET_SDK = 35
 ABIS = ["arm64-v8a", "armeabi-v7a"]

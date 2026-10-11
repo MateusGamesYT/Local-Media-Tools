@@ -127,6 +127,27 @@ class ScreenshotTest {
         File(dir, "99_workload.png").outputStream().use { Bitmap.createScaledBitmap(bmp, w / 2, bmp.height / 2, true).compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
+    /** The home screen and Settings in a few of the app's languages. */
+    @Test fun languageScreenshots() {
+        val dirName = System.getenv("LMT_SHOTS")
+        assumeTrue(dirName != null)
+        val dir = File(dirName!!).apply { mkdirs() }
+        val app = RuntimeEnvironment.getApplication()
+        try {
+            for (lang in listOf(com.localmediatools.i18n.Language.PORTUGUESE_BR, com.localmediatools.i18n.Language.CHINESE_SIMPLIFIED,
+                    com.localmediatools.i18n.Language.JAPANESE, com.localmediatools.i18n.Language.RUSSIAN)) {
+                Robo.resetUiState()
+                com.localmediatools.app.AppLanguage.set(app, lang)
+                val controller = Robolectric.buildActivity(MainActivity::class.java).setup()
+                val a = controller.get()
+                idle()
+                shot(a, dir, "lang_${lang.tag}_home")
+                (a.navigator.top as MainShell).show(MainShell.TAB_SETTINGS); idle(); shot(a, dir, "lang_${lang.tag}_settings")
+                controller.pause().stop().destroy()
+            }
+        } finally { com.localmediatools.app.AppLanguage.set(app, null) }
+    }
+
     @Test fun galleryScreenshots() {
         val dirName = System.getenv("LMT_SHOTS")
         assumeTrue(dirName != null)

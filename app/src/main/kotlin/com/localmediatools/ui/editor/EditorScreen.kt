@@ -52,6 +52,7 @@ import com.localmediatools.ui.TextStyle
 import com.localmediatools.ui.UI
 import com.localmediatools.ui.WRAP
 import com.localmediatools.ui.badge
+import com.localmediatools.ui.Badges
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.icon
 import com.localmediatools.ui.lp
@@ -396,7 +397,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         col.addView(row, lp().apply { topMargin = ctx.dp(10) })
         val auto = UI.horizontal(ctx)
         auto.addView(pill(R.drawable.ic_sparkle, tr("Auto enhance")) { runAutoEnhance() })
-        auto.addView(badge(ctx, "AI"), LinearLayout.LayoutParams(WRAP, WRAP).apply { leftMargin = ctx.dp(8) })
+        auto.addView(badge(ctx, Badges.ai), LinearLayout.LayoutParams(WRAP, WRAP).apply { leftMargin = ctx.dp(8) })
         autoNote = UI.text(ctx, autoNoteText ?: tr("Double-tap a slider to reset"), TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(ctx.dp(10), 0, 0, 0); maxLines = 2 }
         auto.addView(autoNote, lp(0, WRAP, 1f))
         col.addView(auto, lp().apply { topMargin = ctx.dp(6) })

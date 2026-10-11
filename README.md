@@ -14,7 +14,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.8.1.apk`](release/LocalMediaTools-1.8.1.apk)
+**Install:** [`release/LocalMediaTools-1.9.0.apk`](release/LocalMediaTools-1.9.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -42,11 +42,73 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|---|---|
 | ![](docs/screenshots/home.png) | ![](docs/screenshots/face-blur.png) | ![](docs/screenshots/background-remover.png) | ![](docs/screenshots/auto-enhance.png) | ![](docs/screenshots/speed.png) |
 
+| Português (Brasil) | 简体中文 | 日本語 | Русский |
+|---|---|---|---|
+| ![](docs/screenshots/home-pt-BR.png) | ![](docs/screenshots/home-zh-Hans.png) | ![](docs/screenshots/home-ja.png) | ![](docs/screenshots/home-ru.png) |
+
 | Magic eraser | Looks | Crop & straighten | Settings |
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.8.1: the Gallery keeps going when the phone is warm
+## What's new in 1.9.0: ten languages, a stronger face model, auto enhance that learned from experts
+
+- **The app speaks ten languages**: English, Português (Brasil), Español, Français, Deutsch, Italiano,
+  Русский, 简体中文, 日本語 and 한국어. It follows the phone's language (Portuguese from anywhere gets the
+  Brazilian translation; Traditional Chinese, which has none yet, falls back to the next language on the
+  phone's list, then English), or choose one in **Settings → App language**. Everything follows it:
+  screens, messages, notifications, what tools write into their results (the highlight video's title,
+  moment names such as "Na praia" or "午餐" and its dates, auto enhance's notes, default file names such as
+  "Mesclado" or "合并"), and dates and numbers are written the language's way, with each language's
+  plurals (Russian's three forms, none in Chinese, Japanese and Korean). The "Print" entry in other
+  apps' share menus follows the phone's language. File-name endings such as `_enhanced` or `_cutout`
+  stay the same in every language, so copies sort and match on any phone. **The translations are
+  machine-made and not yet checked by native speakers**; tests check every one against the code
+  (placeholders, plural forms, date patterns, search words) and open the home screen, every tool's
+  screen and every tab in every language.
+- **Gallery search in your language**: things, places, kinds of media, months and "last week" in
+  each language ("fotos de cachorro na praia em junho de 2023", "海边的狗", "해변에서 강아지"), with accents
+  optional, Chinese and Japanese typed without spaces and Korean particles understood; English words
+  always work too.
+- **A stronger face model for the Gallery's people**: InsightFace's ResNet-50, as TensorFlow Lite with
+  8-bit weights (44 MB). On the same 885 faces of 78 real people as 1.8.0 (settings chosen on half the
+  people, checked on the other half): a person's faces in their main group 92 → 96 % and 90 → 93 %,
+  faces left on their own 8 → 4 % and 12.5 → 10 %, still no face of another person in anyone's group,
+  and naming each person's biggest group once puts 97 % / 90 % of their faces under the name (93 % /
+  89 %). Face blur keeps MobileFaceNet (fast enough for every frame of a video). After the update the
+  app describes the faces again, keeping every name, confirmation and correction. Same licence as
+  1.8.0's model (InsightFace, non-commercial research use). Details:
+  [`buildtools/gallery/README.md`](buildtools/gallery/README.md).
+- **Auto enhance learned from expert retouching.** Its settings now come from a model fitted on
+  MIT-Adobe FiveK (expert C's retouches of 320 photos), through the app's own code. On 154 photos it
+  never saw, the result comes much closer to the expert (colour difference ΔE00 8.89; 1.8's rules
+  10.88, which was slightly *further* than leaving the photo alone, 10.82), better for every kind of
+  scene (portraits 11.28 → 8.42, landscapes 10.52 → 8.32), and confirmed on 77 more photos looked at
+  only once at the end (9.21; rules 11.03). Dark photos are brightened about as much as the experts did,
+  and photos that are already good are changed far less (an expert's finished version by 4.89 instead
+  of 7.59). White balance comes only from the colour of the light, the skin of the faces and the scene,
+  as the experts did it: skin that looks cold is warmed, while scenes whose light really is cool (snow,
+  water, sky) are left cool. Documents keep the 1.8 rules. Measured on a camera dataset, not on phone
+  photos; details: [`buildtools/enhance/README.md`](buildtools/enhance/README.md).
+- **Cleaner cut-outs in the background remover**: the model also looks at the mirrored photo and takes
+  a second, closer look at the subject when it is small, and the edges are fitted over a wider area.
+  On AIM-500 (500 photos with exact cut-outs; settings chosen on half, checked on the other half):
+  3.8 % less error (SAD), 8.9 % by MSE, most for furniture, plants, animals and see-through things;
+  portraits about the same (slightly worse, 42.8 → 43.5). It takes about three times as long per photo. Details: [`buildtools/matting/README.md`](buildtools/matting/README.md).
+- **Magic eraser: measured, unchanged.** On 55 object-shaped holes in 3000 px photos, neither the size
+  of the area the AI looks at nor a bigger working size made a clear difference. A stronger model
+  (LaMa) fills big holes clearly better (+1.9 dB), but its available build can't run in the app and
+  takes about 18 s per hole even on a desktop processor, so it is not in this version
+  ([`buildtools/eraser/README.md`](buildtools/eraser/README.md)).
+- **Fixes**: names and captions are shortened by whole characters (cutting an emoji in half could make
+  an invalid file name or a broken highlight-video caption); a picture region reaching past the photo's
+  edge no longer crashes the editor's fallback decoder; nothing in the app depends on English message
+  text any more (how a refused video container or a changed printer identity is recognised).
+- **The APK is stored with Git LFS** (it is now larger than GitHub's 100 MB file limit); the install
+  link above still downloads it as before.
+- **Not yet tried on a phone**: the new face model's speed and memory (about 90 MB while the Gallery
+  is organised, measured on the build machine), and the new background remover's speed.
+
+## What was new in 1.8.1: the Gallery keeps going when the phone is warm
 
 - **Organising the Gallery no longer stops as soon as the phone warms up.** It used to pause at
   Android's "severe" heat level, which phones reach easily during a long scan. Now it carries on at
@@ -429,7 +491,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 114 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 123 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -456,8 +518,12 @@ so updates install over each other; use your own key for a store release.
   texture coordinates for every video rotation, the sound mix with the music stepped back, and real
   people's faces kept in frame on every frame in all three shapes. New in 1.8: the new face model on
   the real photos (the app's Kotlin pipeline giving the evaluation's embeddings, its alignment giving
-  OpenCV's crops, its self-check, and grouping at least as well as SFace on the same photos).
-* `app/src/roboTest` — 62 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  OpenCV's crops, its self-check, and grouping at least as well as SFace on the same photos). New in
+  1.9: every language's catalog against the code (every text translated, placeholders and plural forms
+  intact, date patterns valid and complete, search words that don't clash), each language's plural
+  rules and number and date formats, search in Portuguese, Chinese, Japanese and Korean, shortening
+  names by whole characters (emoji included), and auto enhance's model on real portraits.
+* `app/src/roboTest` — 64 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -476,7 +542,9 @@ so updates install over each other; use your own key for a store release.
   their best copy, never suggesting photos of a person you keep, the one-by-one review); naming
   people one after another; the highlight video's timeline on real photos of people (moments, the
   draft edit, always in / left out, shape, length, renaming, music, and listening to the music the
-  model writes); and a pass that opens every tool from the home screen. `LMT_SHOTS=<dir>` also renders the screenshots
+  model writes); a pass that opens every tool from the home screen; and, new in 1.9, the home screen,
+  every tool's screen and every tab opened, laid out and drawn in each of the nine other languages,
+  with no English titles and no unfilled placeholders. `LMT_SHOTS=<dir>` also renders the screenshots
   above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is

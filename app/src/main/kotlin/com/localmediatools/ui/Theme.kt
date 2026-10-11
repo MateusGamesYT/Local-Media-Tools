@@ -185,5 +185,9 @@ fun TextView.style(s: TextStyle, color: Int = s.color): TextView {
     letterSpacing = s.letterSpacing
     includeFontPadding = false
     setLineSpacing(0f, s.lineMult)
+    // Line breaks and hyphens follow the app's language, which can differ from the phone's: long words
+    // (German compounds, "automaticamente") are hyphenated instead of being cut anywhere.
+    textLocale = com.localmediatools.i18n.I18n.locale
+    if (s != TextStyle.LABEL) hyphenationFrequency = android.text.Layout.HYPHENATION_FREQUENCY_NORMAL
     return this
 }

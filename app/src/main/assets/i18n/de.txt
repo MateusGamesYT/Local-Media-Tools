@@ -386,6 +386,14 @@
 < Value {0}
 > Wert {0}
 
+@ badge on a tool that is new
+< New
+> Neu
+
+@ badge on a tool that uses on-device AI
+< AI
+> KI
+
 < Most space
 > Meiste Platzersparnis
 

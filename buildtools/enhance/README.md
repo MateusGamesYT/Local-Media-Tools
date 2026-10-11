@@ -34,38 +34,47 @@ The scene comes from FiveK's labels in the harness (night, nature → landscape,
 outdoors → city); in the app it comes from the on-device classifier, and faces or a dark photo
 override it the same way in both.
 
-## Results (test photos, mean CIEDE2000 to expert C; lower is closer)
+## Results (mean CIEDE2000 to expert C; lower is closer)
 
-154 test photos (two shards of FiveK's test split, never used for fitting); the model was fitted on
-320 training photos.
+The model was fitted on 320 training photos. Its choices (below) were compared on 154 test photos (two
+shards of FiveK's test split); the final model was then checked once on 77 more test photos that
+had not been looked at before (a third shard).
 
-| | ΔE00 to expert C | Expert's version enhanced again (how much it changes) |
-|---|---|---|
-| Unchanged photo | 10.82 | — |
-| 1.8 rules | 10.88 | 7.59 |
-| Learned model (1.9) | **9.14** | **3.35** |
+| | 154 test photos: ΔE00 to expert C | change to an expert's finished version | 77 untouched photos: ΔE00 | change to finished |
+|---|---|---|---|---|
+| Unchanged photo | 10.82 | — | 10.53 | — |
+| 1.8 rules | 10.88 | 7.59 | 11.03 | 8.40 |
+| Learned model (1.9) | **8.89** | **4.89** | **9.21** | **5.59** |
 
-By scene (ΔE00; unchanged / 1.8 rules / model): portrait (35) 11.23 / 11.28 / **8.65**, landscape
-(32) 10.05 / 10.52 / **8.52**, animal (7) 12.31 / 11.10 / **10.82**, city (37) 10.20 / 9.70 / **8.64**,
-night (8) 10.32 / 9.69 / **9.28**, other (35) 11.56 / 12.27 / **10.35**. On average the 1.8 rules took
-photos slightly further from the expert than leaving them alone; the model brings 105 of the 154
-closer than the rules did (by more than 0.25) and 40 further.
+The 1.8 rules took photos slightly further from the expert than leaving them alone, on both sets. The
+model is closer than the rules (by more than 0.25) for 108 of the 154 photos and further for 34 (56 /
+14 of the 77). By scene on the 154 (unchanged / 1.8 rules / model): portrait (35) 11.23 / 11.28 /
+**8.42**, landscape (32) 10.05 / 10.52 / **8.32**, animal (7) 12.31 / 11.10 / **10.49**, city (37) 10.20 /
+9.70 / **8.41**, night (8) 10.32 / 9.69 / **8.79**, other (35) 11.56 / 12.27 / **10.11**.
+
+Brightness (mean L*, input → model / expert): dark photos (L* 20) → 26.9 / 28.4, (L* 29) → 36.4 / 36.7,
+(L* 39) → 44.0 / 44.3; bright photos (L* 64) → 59.1 / 57.6. On the 77 untouched photos: L* 27 → 34.9 /
+34.6, 43 → 45.9 / 46.1, 65 → 58.7 / 61.1.
 
 **Leaving good photos alone.** FiveK's as-shot photos are flat; phone photos usually come out of the
-camera already finished. Fitted on the as-shot photos alone, the model also changed finished photos
-a lot. So the experts' versions are added to the fitting as photos that need no change (harness
-`finished`, every slider 0), with half the weight of the real pairs. The weight trades the two
-columns (measured before the skin-colour feature below): 0 → 8.89 / 5.71, 0.25 → 9.08 / 3.99,
-0.5 → 9.22 / 3.27, 1 → 9.44 / 2.55 — every setting beats 1.8 on both; 0.5 is the middle of the range.
+camera already finished. Fitted on the as-shot photos alone, the model also changes finished photos a
+lot. So the experts' versions are added to the fitting as photos that need no change (harness
+`finished`, every slider 0), at half the weight of the real pairs. For exposure and brightness they
+count only a fifth of that: they include night photos the experts kept dark, and at full weight the
+model brightened dark as-shot photos clearly less than the experts did (L* 20 → 25.2 instead of 28.4).
+The choices, on the 154 photos (ΔE00 / change to finished): without finished photos 8.89 / 5.71; at half
+weight for everything 9.14 / 3.35; for everything but brightness 8.89 / 6.00; with a fifth for brightness
+(shipped) 8.89 / 4.89; with half for brightness 8.99 / 4.03 — every setting beats 1.8 on both.
 
 **White balance.** Warmth and tint are predicted only from the measured colour of the light (near-
 neutral mid-tones), the skin colour of the faces and the scene; other measurements (saturation,
 darkness) go with casts in these photos without causing them, and let a strongly tinted photo fool
-the model (9.21 / 3.26 with this restriction, 9.22 / 3.27 without). The experts did *not* warm photos
-whose neutral tones measure blue (mostly sky, snow and water, where the cool light is real), but skin
-should look warm: with the faces' skin colour as a feature (`Stats.faceWarm`), a portrait with a cold
-cast is warmed (VisionCoreTest's darkened, blue-tinted portrait) and portraits come closer to the
-expert (8.88 → 8.65).
+the model (no loss: 9.21 / 3.26 with this restriction, 9.22 / 3.27 without, in an earlier round). The
+experts did *not* warm photos whose neutral tones measure blue (mostly sky, snow and water, where the
+cool light is real; best warmth for those −0.07 on average), but skin should look warm: with the
+faces' skin colour as a feature (`Stats.faceWarm`) a portrait with a cold cast is warmed (VisionCoreTest's
+darkened, blue-tinted portrait), and portraits came closer to the expert (8.88 → 8.65 in that round).
+Squared brightness terms added nothing (9.137 → 9.130) and were left out.
 
-Not measured here: documents (they keep the 1.8 rules), food and plants (scored as a general photo
-and as a landscape), and photos from a real phone camera rather than FiveK's DSLRs.
+Not measured here: documents (they keep the 1.8 rules), food and plants (scored as a general photo and
+as a landscape), and photos from a real phone camera rather than FiveK's DSLRs.

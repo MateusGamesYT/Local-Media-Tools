@@ -220,15 +220,19 @@ class HomeTab(private val shell: MainShell) {
         // "Edit & AI" block: two big cards plus a wide one (shown instead of that section in the full list).
         val block = UI.vertical(ctx)
         block.addView(sectionHeader(ctx, ToolSection.STACKS.title, ToolSection.STACKS.subtitle, Palette.section(ToolSection.STACKS)), lp().apply { bottomMargin = ctx.dp(12) })
-        block.addView(FeatureCard(ctx, ToolId.TOOL_STACK, Palette.sectionGradient(ToolSection.STACKS), "NEW") { ToolLauncher.open(shell.activity, ToolId.TOOL_STACK) },
-            LinearLayout.LayoutParams(MATCH, ctx.dp(150)).apply { bottomMargin = ctx.dp(28) })
+        // Cards are at least their design height and grow when a language needs more lines.
+        block.addView(FeatureCard(ctx, ToolId.TOOL_STACK, Palette.sectionGradient(ToolSection.STACKS), Badges.newTool) { ToolLauncher.open(shell.activity, ToolId.TOOL_STACK) }
+            .apply { minimumHeight = ctx.dp(150) }, LinearLayout.LayoutParams(MATCH, WRAP).apply { bottomMargin = ctx.dp(28) })
         block.addView(sectionHeader(ctx, ToolSection.EDIT.title, ToolSection.EDIT.subtitle, Palette.section(ToolSection.EDIT)), lp().apply { bottomMargin = ctx.dp(12) })
         fun cards(a: Triple<ToolId, IntArray, String?>, b: Triple<ToolId, IntArray, String?>): View = UI.horizontal(ctx, Gravity.TOP).apply {
-            addView(FeatureCard(ctx, a.first, a.second, a.third) { ToolLauncher.open(shell.activity, a.first) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { rightMargin = ctx.dp(6) })
-            addView(FeatureCard(ctx, b.first, b.second, b.third) { ToolLauncher.open(shell.activity, b.first) }, LinearLayout.LayoutParams(0, ctx.dp(176), 1f).apply { leftMargin = ctx.dp(6) })
+            // Both cards of a row take the taller one's height (match parent in a wrap-content row).
+            addView(FeatureCard(ctx, a.first, a.second, a.third) { ToolLauncher.open(shell.activity, a.first) }.apply { minimumHeight = ctx.dp(176) },
+                LinearLayout.LayoutParams(0, MATCH, 1f).apply { rightMargin = ctx.dp(6) })
+            addView(FeatureCard(ctx, b.first, b.second, b.third) { ToolLauncher.open(shell.activity, b.first) }.apply { minimumHeight = ctx.dp(176) },
+                LinearLayout.LayoutParams(0, MATCH, 1f).apply { leftMargin = ctx.dp(6) })
         }
-        block.addView(cards(Triple(ToolId.MAGIC_ERASER, Palette.AI, "AI"), Triple(ToolId.BACKGROUND_REMOVER, Palette.BRAND, "NEW")))
-        block.addView(cards(Triple(ToolId.FACE_BLUR, Palette.TEAL, "NEW"), Triple(ToolId.AUTO_ENHANCE, Palette.SUNSET, "NEW")), lp().apply { topMargin = ctx.dp(12) })
+        block.addView(cards(Triple(ToolId.MAGIC_ERASER, Palette.AI, Badges.ai), Triple(ToolId.BACKGROUND_REMOVER, Palette.BRAND, Badges.newTool)))
+        block.addView(cards(Triple(ToolId.FACE_BLUR, Palette.TEAL, Badges.newTool), Triple(ToolId.AUTO_ENHANCE, Palette.SUNSET, Badges.newTool)), lp().apply { topMargin = ctx.dp(12) })
         block.addView(wideTile(ToolId.PHOTO_EDITOR), lp().apply { topMargin = ctx.dp(12) })
         block.addView(wideTile(ToolId.BLUR_REDACT), lp().apply { topMargin = ctx.dp(12) })
         featured = block

@@ -3,7 +3,7 @@
 (AutoEnhance.Stats, plus the scene) to the slider values that bring the photo closest to expert C's
 retouch (harness `fit` mode). Prints the coefficients as Kotlin for AutoEnhance.kt.
 
-    fit_model.py train.csv [more.csv…] [--lambda 3] [--finished-weight 0.5]
+    fit_model.py train.csv [more.csv…] [--lambda 3] [--finished-weight 0.5] [--light-share 0.3]
 
 Only NumPy. The features are built exactly as AutoEnhance.features() builds them in the app.
 """
@@ -68,12 +68,21 @@ WB_FEATURES = {'warm', 'green', 'has_cast', 'has_face', 'face_warm'} | {'scene_'
 MASKS = {s: np.array([n in WB_FEATURES for n in NAMES]) if s in ('warmth', 'tint') else np.ones(len(NAMES), bool) for s in SLIDERS}
 
 
-def fit(X, Y, lam, wt=None):
+# Sliders the finished photos (which need no change) are fitted for at full weight. For brightness only a
+# share (LIGHT_SHARE): they include dark night photos the experts left dark, which at full weight held
+# the model back from brightening dark as-shot photos as much as the experts did.
+FINISHED_FOR = {'contrast', 'highlights', 'shadows', 'warmth', 'tint', 'vibrance', 'saturation'}
+LIGHT_SHARE = 0.0  # their weight for exposure and brightness, as a share of the others' (--light-share)
+
+
+def fit(X, Y, lam, wt=None, finished=None):
     """fit_all per slider, each with the features its MASKS entry allows (the others get weight 0)."""
     w = np.zeros((X.shape[1], Y.shape[1])); b = np.zeros(Y.shape[1])
     for j, s in enumerate(SLIDERS):
         m = MASKS[s]
-        wj, bj = fit_all(X[:, m], Y[:, j:j + 1], lam, wt)
+        wjt = wt if (wt is None or finished is None or s in FINISHED_FOR) else np.where(finished, wt * LIGHT_SHARE, wt)
+        keep = wjt > 0 if wjt is not None else np.ones(len(X), bool)
+        wj, bj = fit_all(X[keep][:, m], Y[keep, j:j + 1], lam, None if wjt is None else wjt[keep])
         w[m, j] = wj[:, 0]; b[j] = bj[0]
     return w, b
 
@@ -97,9 +106,12 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     lam = float(sys.argv[sys.argv.index('--lambda') + 1]) if '--lambda' in sys.argv else None
     fw = float(sys.argv[sys.argv.index('--finished-weight') + 1]) if '--finished-weight' in sys.argv else 1.0
+    global LIGHT_SHARE
+    LIGHT_SHARE = float(sys.argv[sys.argv.index('--light-share') + 1]) if '--light-share' in sys.argv else 0.0
     args = [a for a in args if a.endswith('.csv')]
     X, Y, rows = load(args)
     wt = weights(rows, fw)
+    fin = np.array([r['name'].endswith('_ex') for r in rows])
     n = len(X)
     print(f'{n} photos', file=sys.stderr)
     # λ by 5-fold cross-validation on the training photos (error in slider units).
@@ -110,17 +122,17 @@ def main():
         err = 0.0
         for f in folds:
             tr = np.setdiff1d(idx, f)
-            w, b = fit(X[tr], Y[tr], l, wt[tr])
+            w, b = fit(X[tr], Y[tr], l, wt[tr], fin[tr])
             err += (wt[f][:, None] * (X[f] @ w + b - Y[f]) ** 2).sum()
         err /= wt.sum() * len(SLIDERS)
         print(f'lambda {l:<6} cv mse {err:.5f}', file=sys.stderr)
         if best is None or err < best[0]: best = (err, l)
-    w, b = fit(X, Y, best[1], wt)
+    w, b = fit(X, Y, best[1], wt, fin)
     print(f'chosen lambda {best[1]}', file=sys.stderr)
     # Kotlin: one row per slider, intercept first.
     k = sum(1 for r in rows if r['name'].endswith('_ex'))
     print('    // Fitted by buildtools/enhance/fit_model.py (ridge, lambda %g) on %d MIT-Adobe FiveK photos (expert C)%s.' % (
-        best[1], n - k, '' if k == 0 else ', and their %d finished versions (no change, weight %g)' % (k, fw)))
+        best[1], n - k, '' if k == 0 else ', and their %d finished versions (no change, weight %g; %g of it for exposure and brightness)' % (k, fw, LIGHT_SHARE)))
     print('    // Features: ' + ', '.join(NAMES))
     print('    private val MODEL = arrayOf(')
     for j, s in enumerate(SLIDERS):

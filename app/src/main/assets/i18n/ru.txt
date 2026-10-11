@@ -386,6 +386,14 @@
 < Value {0}
 > Значение {0}
 
+@ badge on a tool that is new
+< New
+> Новое
+
+@ badge on a tool that uses on-device AI
+< AI
+> ИИ
+
 < Most space
 > Больше места
 

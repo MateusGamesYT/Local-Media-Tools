@@ -198,7 +198,10 @@ fun main(args: Array<String>) {
                 idem[1] += meanDe(render(p.expert, analyze(done).adjust), ref)
                 if (model < rules - 0.25) better++ else if (model > rules + 0.25) worse++
                 byScene.getOrPut(r.scene) { DoubleArray(4) }.let { it[0] += none; it[1] += rules; it[2] += model; it[3]++ }
-                if (args.size > 4) println("${p.name}\t${r.scene}\t${"%.2f".format(none)}\t${"%.2f".format(rules)}\t${"%.2f".format(model)}\t${r.adjust.values.entries.joinToString(" ") { "${it.key.name.lowercase()}=${"%.2f".format(it.value)}" }}")
+                if (args.size > 4) {
+                    fun meanL(px: IntArray): Double { val t = DoubleArray(3); var s = 0.0; for (c in px) { lab(c, t, 0); s += t[0] }; return s / px.size }
+                    println("${p.name}\t${r.scene}\t${"%.2f".format(none)}\t${"%.2f".format(rules)}\t${"%.2f".format(model)}\tL ${"%.1f".format(meanL(p.input.px))} ${"%.1f".format(meanL(render(p.input, r.adjust)))} ${"%.1f".format(meanL(p.expert.px))}\t${r.adjust.values.entries.joinToString(" ") { "${it.key.name.lowercase()}=${"%.2f".format(it.value)}" }}")
+                }
             }
             val n = ps.size
             println("photos $n   ΔE00 to the expert: unchanged ${"%.3f".format(sum[0] / n)}   rules (1.8) ${"%.3f".format(sum[1] / n)}   model ${"%.3f".format(sum[2] / n)}" +

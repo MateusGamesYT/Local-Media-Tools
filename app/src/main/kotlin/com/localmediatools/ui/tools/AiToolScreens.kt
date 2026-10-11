@@ -40,6 +40,7 @@ import com.localmediatools.ui.ToolScreen
 import com.localmediatools.ui.UI
 import com.localmediatools.ui.WRAP
 import com.localmediatools.ui.badge
+import com.localmediatools.ui.Badges
 import com.localmediatools.ui.dp
 import com.localmediatools.ui.lp
 import com.localmediatools.vision.FaceScanResult
@@ -90,7 +91,7 @@ class BackgroundRemoverScreen(a: MainActivity) : ToolScreen(a, ToolId.BACKGROUND
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
         head.addView(UI.text(ctx, tr("Preview"), TextStyle.SUBTITLE), lp(0, WRAP, 1f))
-        head.addView(badge(ctx, "AI"))
+        head.addView(badge(ctx, Badges.ai))
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
         preview = previewBox(ctx)
         container.addView(preview, LinearLayout.LayoutParams(MATCH, ctx.dp(240)).apply { topMargin = ctx.dp(10) })
@@ -170,7 +171,7 @@ class AutoEnhanceScreen(a: MainActivity) : ToolScreen(a, ToolId.AUTO_ENHANCE) {
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
         head.addView(UI.text(ctx, tr("Preview"), TextStyle.SUBTITLE), lp(0, WRAP, 1f))
-        head.addView(badge(ctx, "AI"))
+        head.addView(badge(ctx, Badges.ai))
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
         val row = UI.horizontal(ctx, Gravity.TOP)
         fun col(label: String): Pair<LinearLayout, ImageView> {
@@ -252,7 +253,7 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
         head.addView(UI.text(ctx, tr("People found"), TextStyle.SUBTITLE), lp(0, WRAP, 1f))
-        head.addView(badge(ctx, "AI"))
+        head.addView(badge(ctx, Badges.ai))
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
         status = UI.text(ctx, tr("Select photos or videos; faces are found automatically."), TextStyle.BODY_2)
         container.addView(status, lp().apply { topMargin = ctx.dp(8) })

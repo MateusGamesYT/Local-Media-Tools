@@ -386,6 +386,14 @@
 < Value {0}
 > 値 {0}
 
+@ badge on a tool that is new
+< New
+> 新機能
+
+@ badge on a tool that uses on-device AI
+< AI
+> AI
+
 < Most space
 > 容量の大きい順
 

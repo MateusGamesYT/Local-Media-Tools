@@ -386,6 +386,14 @@
 < Value {0}
 > Valor {0}
 
+@ badge on a tool that is new
+< New
+> Novo
+
+@ badge on a tool that uses on-device AI
+< AI
+> IA
+
 < Most space
 > Mais espaço
 
@@ -1599,7 +1607,7 @@
 > Redefinir
 
 < Auto enhance
-> Aprimorar automaticamente
+> Melhoria automática
 
 < Double-tap a slider to reset
 > Toque duas vezes num controle para redefini-lo
@@ -2373,7 +2381,7 @@
 > Selecione fotos para ver o que o aprimoramento automático faz.
 
 < Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there.
-> Cada foto recebe as próprias configurações: rostos são clareados com suavidade, comida fica mais quente e rica, paisagens com mais profundidade, documentos mais limpos. Quer ajustar? Abra a foto no Editor de fotos e toque em Aprimorar automaticamente lá.
+> Cada foto recebe as próprias configurações: rostos são clareados com suavidade, comida fica mais quente e rica, paisagens com mais profundidade, documentos mais limpos. Quer ajustar? Abra a foto no Editor de fotos e toque em Melhoria automática lá.
 
 < Looking at {0}…
 > Olhando {0}…

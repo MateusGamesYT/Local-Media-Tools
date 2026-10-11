@@ -26,6 +26,8 @@ import com.localmediatools.i18n.tr
 import com.localmediatools.tools.ToolId
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.I18n
 
 /** Rounded search box with a clear button. */
 class SearchField(ctx: Context, hint: String, private val onChange: (String) -> Unit) : LinearLayout(ctx) {
@@ -150,6 +152,7 @@ class FeatureCard(ctx: Context, t: ToolId, colors: IntArray, badge: String?, onC
         }, LinearLayout.LayoutParams(ctx.dp(44), ctx.dp(44)))
         top.addView(UI.flex(ctx))
         if (badge != null) top.addView(UI.text(ctx, badge, TextStyle.LABEL, Color.WHITE).apply {
+            maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END
             background = Shapes.pill(ctx, Palette.withAlpha(Color.BLACK, 0x38))
             setPadding(ctx.dp(10), ctx.dp(5), ctx.dp(10), ctx.dp(5))
             letterSpacing = 0.06f
@@ -337,6 +340,14 @@ class BipolarSlider(ctx: Context, private val range: Float = 100f, private val o
         invalidate()
         onChange(value, done)
     }
+}
+
+/** The words on the small badges of tool cards, in the app's language. */
+object Badges {
+    /** On a tool that is new (shown in capitals). */
+    val newTool: String get() = trc("badge on a tool that is new", "New").uppercase(I18n.locale)
+    /** On a tool that uses the on-device AI. */
+    val ai: String get() = trc("badge on a tool that uses on-device AI", "AI")
 }
 
 /** Small "AI" style badge. */

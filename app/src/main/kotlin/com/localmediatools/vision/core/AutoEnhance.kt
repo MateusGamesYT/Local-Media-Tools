@@ -177,11 +177,11 @@ object AutoEnhance {
     private val MODEL_KEYS = listOf(AdjustKey.EXPOSURE, AdjustKey.BRIGHTNESS, AdjustKey.CONTRAST, AdjustKey.HIGHLIGHTS, AdjustKey.SHADOWS,
         AdjustKey.WARMTH, AdjustKey.TINT, AdjustKey.VIBRANCE, AdjustKey.SATURATION)
 
-    // Fitted by buildtools/enhance/fit_model.py (ridge, lambda 0.1) on 320 MIT-Adobe FiveK photos (expert C), and their 320 finished versions (no change, weight 0.5).
+    // Fitted by buildtools/enhance/fit_model.py (ridge, lambda 0.1) on 320 MIT-Adobe FiveK photos (expert C), and their 320 finished versions (no change, weight 0.5; 0.2 of it for exposure and brightness).
     // Features: ev_mid, ev_face, has_face, face_area, p1, p5, p50, p95, p99, spread, clip, dark, sat, warm, green, has_cast, scene_portrait, scene_landscape, scene_animal, scene_city, scene_night, face_warm
     private val MODEL = arrayOf(
-        floatArrayOf(0.29848f, 0.02891f, 0.05006f, -0.05566f, 0.06134f, 0.10459f, -0.23314f, -0.34420f, -0.20137f, 0.24053f, -0.10244f, 0.02378f, 0.02389f, 0.00368f, 0.17239f, 0.02814f, -0.09416f, -0.00494f, 0.04030f, -0.06060f, 0.01711f, -0.06920f, 0.05173f), // exposure
-        floatArrayOf(0.25706f, 0.01253f, 0.05604f, -0.02491f, 0.05937f, 0.00590f, -0.32469f, -0.05818f, -0.07371f, 0.04444f, 0.04486f, 0.04348f, 0.07337f, -0.08072f, -0.04055f, 0.02151f, -0.11709f, -0.01286f, -0.03398f, 0.00620f, -0.00347f, -0.15369f, -0.07184f), // brightness
+        floatArrayOf(0.28782f, 0.02887f, 0.04849f, -0.05376f, 0.03538f, 0.01754f, -0.28035f, -0.44898f, -0.16295f, 0.21086f, -0.05549f, -0.02376f, 0.03430f, 0.11332f, 0.19533f, 0.02496f, -0.06814f, -0.00270f, 0.05363f, -0.08324f, 0.01600f, -0.06844f, 0.03212f), // exposure
+        floatArrayOf(0.30750f, 0.00546f, 0.05283f, -0.01387f, 0.05504f, -0.24132f, -0.48873f, 0.01379f, -0.04683f, -0.06695f, 0.13163f, -0.00900f, 0.10340f, -0.02114f, -0.07224f, 0.02969f, -0.09651f, -0.01454f, -0.04833f, 0.00833f, -0.01581f, -0.17548f, -0.11309f), // brightness
         floatArrayOf(0.18748f, 0.01889f, 0.03327f, -0.03930f, 0.20623f, 2.09038f, 0.07693f, -0.23264f, 0.05796f, 0.15274f, 0.02610f, -0.07573f, 0.00237f, -0.11334f, 0.36501f, -0.23930f, -0.19076f, 0.01483f, 0.00419f, -0.10965f, -0.03181f, 0.00083f, -0.04387f), // contrast
         floatArrayOf(0.02260f, -0.01693f, -0.03068f, 0.01488f, 0.09140f, -1.35629f, 0.50357f, 0.50173f, 0.16732f, -0.53654f, -0.02150f, 0.30067f, 0.12851f, 0.22689f, -0.27584f, -0.23492f, -0.12824f, -0.00891f, -0.06279f, -0.02029f, -0.06080f, -0.00416f, -0.13064f), // highlights
         floatArrayOf(-0.07251f, 0.00766f, -0.04714f, 0.01873f, -0.07875f, -1.90553f, -0.35768f, -0.15927f, -0.01353f, -0.25122f, 0.11079f, 0.06209f, -0.04917f, 0.14907f, -0.08011f, 0.31614f, 0.18315f, -0.00366f, -0.08164f, 0.05575f, -0.02115f, 0.03249f, 0.07584f), // shadows

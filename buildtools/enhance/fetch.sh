@@ -4,7 +4,7 @@
 set -e
 H=$(cd "$(dirname "$0")" && pwd)
 W=${ENHANCE_WORK:-$H/../dl/enhance}; mkdir -p "$W/fivek"; cd "$W"
-for spec in "train-00000-of-00044 tr0_" "train-00001-of-00044 tr1_" "train-00002-of-00044 tr2_" "train-00003-of-00044 tr3_" "test-00000-of-00013 te0_" "test-00001-of-00013 te1_"; do
+for spec in "train-00000-of-00044 tr0_" "train-00001-of-00044 tr1_" "train-00002-of-00044 tr2_" "train-00003-of-00044 tr3_" "test-00000-of-00013 te0_" "test-00001-of-00013 te1_" "test-00002-of-00013 te2_"; do
   set -- $spec
   curl -sS -f -L -o fivek/shard.parquet "https://huggingface.co/datasets/logasja/mit-adobe-fivek/resolve/main/c/$1.parquet" || exit 1
   python3 -I "$H/fivek_extract.py" fivek/shard.parquet fivek/pairs $2 > fivek/log_$2.txt 2>&1 || exit 1

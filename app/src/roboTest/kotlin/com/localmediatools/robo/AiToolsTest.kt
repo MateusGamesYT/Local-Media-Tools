@@ -93,6 +93,7 @@ class AiToolsTest {
 
     @Test fun autoEnhanceBrightensADarkPhoto() {
         // A dull, dark, slightly blue photo (the face/scene models are unavailable here, so it uses its own analysis).
+        // (A cold-tinted portrait being warmed is VisionCoreTest's, with the real face model.)
         val b = Bitmap.createBitmap(600, 400, Bitmap.Config.ARGB_8888)
         val c = Canvas(b); val p = Paint()
         for (y in 0 until 400 step 20) for (x in 0 until 600 step 20) {
@@ -106,11 +107,11 @@ class AiToolsTest {
         val out = Robo.decode(File(r.outputs.single().uri.path!!))
         assertEquals(600, out.width)
         fun mean(bmp: Bitmap): Double { var s = 0.0; for (y in 0 until bmp.height step 7) for (x in 0 until bmp.width step 7) { val q = bmp.getPixel(x, y); s += (Color.red(q) + Color.green(q) + Color.blue(q)) / 3.0 }; return s / ((bmp.height / 7 + 1) * (bmp.width / 7 + 1)) }
-        assertTrue("brighter: ${mean(out)} vs ${mean(b)}", mean(out) > mean(b) + 15)
-        // The blue cast was recognised and countered (warmer white balance).
-        assertTrue(r.details!!, r.details!!.contains("warmed a blue cast"))
+        // Brightened about as much as the experts brightened photos this dark (buildtools/enhance/README.md).
+        assertTrue("brighter: ${mean(out)} vs ${mean(b)}", mean(out) > mean(b) + 10)
+        // Without faces a cool cast may be the scene's own light, which the experts kept; it is never made bluer.
         val q = out.getPixel(310, 210); val o = b.getPixel(310, 210)
-        assertTrue("warmer: $q vs $o", Color.red(q).toDouble() / Color.blue(q) > Color.red(o).toDouble() / Color.blue(o))
+        assertTrue("not bluer: $q vs $o (${r.details})", Color.red(q).toDouble() / Color.blue(q) >= 0.97 * Color.red(o).toDouble() / Color.blue(o))
     }
 
     @Test fun faceBlurHidesOnlyTheChosenFacesInPhotos() {

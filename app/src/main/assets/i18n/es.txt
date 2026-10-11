@@ -386,6 +386,14 @@
 < Value {0}
 > Valor {0}
 
+@ badge on a tool that is new
+< New
+> Nuevo
+
+@ badge on a tool that uses on-device AI
+< AI
+> IA
+
 < Most space
 > Más espacio
 

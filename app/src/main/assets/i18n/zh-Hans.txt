@@ -386,6 +386,14 @@
 < Value {0}
 > 值 {0}
 
+@ badge on a tool that is new
+< New
+> 新
+
+@ badge on a tool that uses on-device AI
+< AI
+> AI
+
 < Most space
 > 占用空间最多
 
