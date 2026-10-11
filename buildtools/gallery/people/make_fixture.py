@@ -3,8 +3,8 @@ the faces the app's pipeline finds in them (with embeddings), who the verified o
   jvm set:  8 people x 6 faces, chosen to cover headwear/glasses/make-up/expression/angles/small faces
   robo set: roles for the Robolectric fake gallery (A x10 + a small blurry A face, B x12, C x3).
 The photos are chosen as in 1.5.0, with SFace (so the set stays the same); the faces written are
-described as the app describes them now (1.8.0: MobileFaceNet, extract.use_mbf()), and the robo set
-must group as the UI tests expect with the app's current rules (MBF below)."""
+described as the app's Gallery describes them now (1.9.0: ResNet-50, extract.use_r50()), and the robo
+set must group as the UI tests expect with the app's current rules (R50 below)."""
 import sys, os, re, html, json, random, gzip, csv, base64, collections
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np, cv2
@@ -14,8 +14,8 @@ from evaluate import load, cluster_py
 D = WORK
 OUT = sys.argv[1]
 NEW = {"join": 0.46, "merge": 0.65, "assign": 0.42, "low": 0.46, "margin": 0.06, "goodYaw": 1.0, "goodEye": 24, "goodScore": 0.8, "lowScore": 0.85, "link": "centroid"}
-# ClusterParams.MBF (1.8.0)
-MBF = {"join": 0.377, "merge": 0.50, "assign": 0.308, "low": 0.317, "margin": 0.0, "goodYaw": 0.7, "goodEye": 20, "goodScore": 0.7, "lowScore": 0.8, "link": "centroid"}
+# ClusterParams.R50 (1.9.0)
+R50 = {"join": 0.392, "merge": 0.42, "assign": 0.305, "low": 0.332, "margin": 0.06, "goodYaw": 0.7, "goodEye": 16, "goodScore": 0.8, "lowScore": 0.8, "link": "centroid"}
 JVM = ['Taylor Swift', 'Brian Solis', 'Usain Bolt', 'Ian Somerhalder', 'Caroline Wozniacki', 'Katy Perry', 'Christian Heilmann', 'Lady Gaga']
 # The UI tests' screenshots show their faces: people from entertainment, sport and technology only.
 SHOWN = {'Katy Perry', 'Taylor Swift', 'Brian Solis', 'James Marsters', 'Ian Somerhalder', 'John Mayer', 'Neil Patrick Harris', 'Lady Gaga',
@@ -128,7 +128,7 @@ def current(f):
     """The faces of a chosen photo as the app finds and describes them now (the same faces, in the same order)."""
     jpg, found, k = fixture(f)
     if f['image'] not in described:
-        sface = extract.emb; extract.use_mbf()
+        sface = extract.emb; extract.use_r50()
         try: now = extract.analyze(cv2.imdecode(np.frombuffer(jpg, np.uint8), cv2.IMREAD_COLOR))
         finally: extract.emb = sface
         assert len(now) == len(found) and all(np.allclose(a['box'], b['box']) for a, b in zip(now, found)), f['image']
@@ -138,9 +138,9 @@ recs = []
 for role, f in roles:
     now, k = current(f); g = now[k]
     recs.append(dict(face=role, label=role[0], emb=list(g['emb']), score=g['score'], eye=g['eye'], yaw=g['yaw']))
-lab = cluster_py(recs, MBF)
+lab = cluster_py(recs, R50)
 sizes = collections.Counter(lab)
-# 1.8.0: MobileFaceNet also recognises the small, far-away face of A that SFace left on its own.
+# Since 1.8.0 the app's recogniser also recognises the small, far-away face of A that SFace left on its own.
 if sorted(sizes[g] for g in sizes if sizes[g] >= 2) != [3, 11, 12] or any(len({r['label'] for r, l in zip(recs, lab) if l == g}) > 1 for g in sizes):
     sys.exit('the robo set no longer groups as the UI tests expect with the current rules')
 
@@ -164,7 +164,7 @@ for p in JVM:
     for f in jvm[p]: emit(f, 'jvm')
 for role, f in roles: emit(f, role)
 with open(os.path.join(OUT, 'faces.tsv'), 'w') as o:
-    o.write('# file\tface\tx\ty\tw\th\tscore\teye_px\tyaw\tperson\ttags\troles\tembedding (512 float32, little-endian, base64; MobileFaceNet)\n')
+    o.write('# file\tface\tx\ty\tw\th\tscore\teye_px\tyaw\tperson\ttags\troles\tembedding (512 float32, little-endian, base64; ResNet-50)\n')
     for r in rows: o.write('\t'.join(map(str, r)) + '\n')
 with open(os.path.join(OUT, 'CREDITS.tsv'), 'w') as o:
     o.write('# file\tauthor\ttitle\tsource\tlicence\tchanges\n')

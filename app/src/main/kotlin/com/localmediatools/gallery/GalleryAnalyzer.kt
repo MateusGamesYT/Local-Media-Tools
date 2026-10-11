@@ -100,8 +100,8 @@ class GalleryAnalyzer private constructor(
         fun create(ctx: Context): GalleryAnalyzer {
             val app = ctx.applicationContext
             val faces = try {
-                VisionModels.faces(app).takeIf { SelfTest.faces(it) }
-            } catch (t: Throwable) { android.util.Log.w("LMT", "face AI unavailable", t); null }
+                VisionModels.galleryFaces(app).takeIf { SelfTest.faces(it) }.also { if (it == null) VisionModels.releaseGalleryFaces() }
+            } catch (t: Throwable) { android.util.Log.w("LMT", "face AI unavailable", t); VisionModels.releaseGalleryFaces(); null }
             val basic = if (faces == null) try { BasicFaces() } catch (_: Throwable) { null } else null
             val objects = try {
                 ObjectTagger.create(app).takeIf { SelfTest.objects(it) }

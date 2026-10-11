@@ -35,11 +35,12 @@ import kotlin.coroutines.coroutineContext
  */
 object GalleryIndex {
     /**
-     * Bump when what the analyzer stores changes, so older results are redone. 3 (1.8.0): faces are
-     * described with MobileFaceNet; items analysed by version [FACES_ONLY_FROM] only have their faces
-     * looked at again (their tags stay, and what the user said about each face stays with it).
+     * Bump when what the analyzer stores changes, so older results are redone. 3 (1.8.0): faces
+     * described with MobileFaceNet; 4 (1.9.0): with ResNet-50. Items analysed by versions from
+     * [FACES_ONLY_FROM] on only have their faces looked at again (their tags stay, and what the user
+     * said about each face stays with it).
      */
-    const val ANALYZER_VERSION = 3
+    const val ANALYZER_VERSION = 4
     const val FACES_ONLY_FROM = 2
 
     /**
@@ -157,6 +158,7 @@ object GalleryIndex {
                 }
                 analyzer = null
                 ObjectTagger.release()
+                com.localmediatools.vision.VisionModels.releaseGalleryFaces()
             }
         }
     }
@@ -192,7 +194,7 @@ object GalleryIndex {
         target = if (a == null) analyzedValue(EngineMode.AI, EngineMode.AI) else analyzedValue(a.faceMode, a.objectMode)
         // Items without faces need nothing new from a face-model update; where the face AI doesn't work,
         // faces described before stay as they are (still grouped) instead of becoming basic ones.
-        db.promoteUnchanged(FACES_ONLY_FROM, target, keepFaces = a != null && a.faceMode != EngineMode.AI)
+        for (v in FACES_ONLY_FROM until ANALYZER_VERSION) db.promoteUnchanged(v, target, keepFaces = a != null && a.faceMode != EngineMode.AI)
         var (done, total) = db.counts(target)
         if (done >= total) {
             // Nothing new to look at, but people found under older grouping rules are regrouped once.
@@ -220,7 +222,7 @@ object GalleryIndex {
                 val t0 = System.nanoTime()
                 // Analysed before with engines at least as capable for tags: only the faces are new.
                 val prev = db.analyzedValue(m.id)
-                val facesOnly = prev / 10 == FACES_ONLY_FROM && prev % 2 >= target % 2
+                val facesOnly = prev / 10 in FACES_ONLY_FROM until ANALYZER_VERSION && prev % 2 >= target % 2
                 if (facesOnly != _state.value.updatingFaces) _state.update { it.copy(updatingFaces = facesOnly) }
                 val result = try {
                     analyzerOverride?.invoke(m) ?: if (facesOnly) a!!.analyzeFaces(m) else a!!.analyze(m)

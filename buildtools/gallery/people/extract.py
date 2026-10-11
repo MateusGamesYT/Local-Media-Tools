@@ -1,8 +1,10 @@
 """The app's face pipeline (GalleryFaces.analyze) in Python: YuNet on a copy of at most 1600 px,
 small faces re-detected from the full-resolution picture, embeddings averaged with the mirrored face:
-SFace (int8), the app's recogniser until 1.7.0 and what faces.json holds, or after use_mbf() the
-1.8.0 recogniser (MobileFaceNet with 16-bit weights through OpenCV's DNN module, the face aligned as
-FaceAlign does). Saves every face with its embedding, quality numbers and a crop for checking."""
+SFace (int8), the app's recogniser until 1.7.0 and what faces.json holds; after use_mbf() MobileFaceNet
+with 16-bit weights through OpenCV's DNN module (1.8.0; face blur since 1.9.0); after use_r50() the
+Gallery's recogniser since 1.9.0, ResNet-50 with 8-bit weights through TensorFlow Lite, one face at a
+time (the face aligned as FaceAlign does in both). Saves every face with its embedding, quality
+numbers and a crop for checking."""
 import cv2, numpy as np, json, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import WORK as D, MODELS as M, SFACE
@@ -51,6 +53,22 @@ def emb_mbf(img, r):
 def use_mbf():
     global emb
     emb = emb_mbf
+_r50 = []
+def emb_r50(img, r):
+    if not _r50:
+        import tensorflow as tf
+        it = tf.lite.Interpreter(model_path=os.path.join(M, 'face_recognition_r50_w600k_int8.tflite'), num_threads=4); it.allocate_tensors()
+        _r50.append(it)
+    it = _r50[0]; i = it.get_input_details()[0]['index']; o = it.get_output_details()[0]['index']
+    al = cv2.warpAffine(img, align_matrix(r), (112, 112), flags=cv2.INTER_LINEAR)
+    e = np.zeros(512, np.float64)
+    for view in (al, cv2.flip(al, 1)):   # FaceInput.nhwc, one face at a time
+        it.set_tensor(i, ((cv2.cvtColor(view, cv2.COLOR_BGR2RGB).astype(np.float32) - 127.5) / 127.5)[None]); it.invoke()
+        v = it.get_tensor(o).reshape(-1).astype(np.float64); e += v / np.linalg.norm(v)
+    return (e / np.linalg.norm(e)).astype(np.float32)
+def use_r50():
+    global emb
+    emb = emb_r50
 def refine(full, r, up):
     eye, _ = eyes_yaw(r); fe = eye * up; sample = 1
     while fe / (sample * 2) >= 64 and sample < 16: sample *= 2

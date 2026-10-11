@@ -4,6 +4,7 @@ import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceClustering
 import com.localmediatools.gallery.core.FaceRec
 import com.localmediatools.vision.core.FaceEngine
+import com.localmediatools.vision.core.FaceModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
@@ -19,15 +20,17 @@ import kotlin.math.min
  * People grouping on real photos (test resources /people, credits in CREDITS.tsv): nine public
  * figures photographed by different people over the years, with caps, visors and hats, glasses and
  * sunglasses, stage make-up, strong expressions, turned and profile faces and small faces, plus the
- * other people in the pictures. Faces are found and described by the app's own engine (YuNet +
- * MobileFaceNet through OpenCV, flip-averaged, as GalleryFaces does on the phone) and grouped with the
- * shipped rules; the same faces described by SFace (the app's recogniser until 1.7.0, kept in
- * buildtools) are grouped with SFace's rules for comparison.
+ * other people in the pictures. Faces are found by the app's own engine (YuNet through OpenCV). The
+ * Gallery describes them with ResNet-50 through TensorFlow Lite, which can't run here: those
+ * embeddings come from the fixture (made by the evaluation's pipeline, buildtools/gallery/face_model.py
+ * --check compares them with the app's model file), and this test checks that the app prepares faces
+ * for it exactly as that pipeline does. MobileFaceNet (face blur, 1.8's Gallery) and SFace (until
+ * 1.7.0, kept in buildtools) describe the same faces here through OpenCV for comparison.
  */
 class RealPeopleTest {
     /** A face as the gallery stores it; [label]/[tags] from the verified annotations (null: someone else). */
     class Seen(val file: String, val x: Float, val y: Float, val w: Float, val h: Float, val score: Float, val eye: Float, val yaw: Float,
-               val emb: FloatArray, var label: String? = null, var tags: String = "")
+               val emb: FloatArray, val mbf: FloatArray, var label: String? = null, var tags: String = "")
 
     companion object {
         private val models = File("app/src/main/assets/models")
@@ -35,10 +38,12 @@ class RealPeopleTest {
         val seen = ArrayList<Seen>()
         /** The same faces described by SFace (same order), for comparison. */
         val sface = ArrayList<FloatArray>()
-        /** Labelled faces that were not found again, and the lowest agreement with the stored embeddings. */
+        /** Labelled faces that were not found again; how far found faces are from their stored boxes. */
         var missing = ArrayList<String>()
-        var minAgreement = 1f
+        var worstBoxIou = 1f
         var labelled = 0
+        /** Largest difference between the app's TensorFlow Lite input for a face and OpenCV's blob of it. */
+        var inputDiff = 0f
         lateinit var engine: FaceEngine
         lateinit var old: org.opencv.objdetect.FaceRecognizerSF
         /** Largest pixel difference and mean difference between FaceAlign's crops and OpenCV's alignCrop. */
@@ -56,25 +61,39 @@ class RealPeopleTest {
                 // The photos are at most 800 px: the app's 1,600 px working copy is the photo itself.
                 val w = img.cols().toFloat(); val h = img.rows().toFloat()
                 val mine = ArrayList<Seen>()
-                for (f in engine.detect(img, minSize = 12f)) {
+                // The fixture's faces of this photo, in the detector's order (largest first), with the Gallery's embeddings.
+                val stored = rows.filter { it[0] == file }.sortedBy { it[1].toInt() }
+                for ((k, f) in engine.detect(img, minSize = 12f).withIndex()) {
                     val (eye, yaw) = FaceEngine.eyesAndYaw(f.row)
-                    val e = engine.embedTta(img, f) ?: continue
-                    mine.add(Seen(file, f.x / w, f.y / h, f.w / w, f.h / h, f.score, eye, yaw, e))
+                    val r = stored.getOrNull(k) ?: continue
+                    val box = FloatArray(4) { r[2 + it].toFloat() }
+                    val s = Seen(file, f.x / w, f.y / h, f.w / w, f.h / h, f.score, eye, yaw, embedding(r[12]), engine.embedTta(img, f)!!)
+                    worstBoxIou = min(worstBoxIou, iou(s, box))
+                    if (r[9].isNotEmpty()) { s.label = r[9]; s.tags = r[10] }
+                    mine.add(s)
                     sface.add(sfaceTta(old, img, f))
                     compareAlignment(img, f)
+                    engine.align(img, f).let { compareInput(it); it.release() }
                 }
-                for (r in rows.filter { it[0] == file && it[9].isNotEmpty() }) {
+                for (r in stored.filter { it[9].isNotEmpty() }) {
                     labelled++
-                    val box = FloatArray(4) { r[2 + it].toFloat() }
-                    val s = mine.maxByOrNull { iou(it, box) }
-                    if (s == null || iou(s, box) < 0.5f) { missing.add("$file ${r[9]}"); continue }
-                    s.label = r[9]; s.tags = r[10]
-                    val stored = java.nio.ByteBuffer.wrap(Base64.getDecoder().decode(r[12])).order(java.nio.ByteOrder.LITTLE_ENDIAN).asFloatBuffer()
-                    val ref = FloatArray(stored.remaining()) { stored.get(it) }
-                    minAgreement = min(minAgreement, FaceEngine.cosine(s.emb, ref))
+                    if (mine.none { it.label == r[9] && it.file == file }) missing.add("$file ${r[9]}")
                 }
                 seen.addAll(mine)
             }
+        }
+
+        private fun embedding(b64: String): FloatArray {
+            val fb = java.nio.ByteBuffer.wrap(Base64.getDecoder().decode(b64)).order(java.nio.ByteOrder.LITTLE_ENDIAN).asFloatBuffer()
+            return FloatArray(fb.remaining()) { fb.get(it) }
+        }
+
+        /** FaceInput.nhwc (what the app feeds TensorFlow Lite) against OpenCV's blob of the same face (NCHW, RGB, −1…1). */
+        private fun compareInput(aligned: org.opencv.core.Mat) {
+            val mine = com.localmediatools.vision.core.FaceInput.nhwc(aligned)
+            val blob = org.opencv.dnn.Dnn.blobFromImage(aligned, 1.0 / 127.5, org.opencv.core.Size(112.0, 112.0), org.opencv.core.Scalar(127.5, 127.5, 127.5), true, false)
+            val ref = FloatArray(3 * 112 * 112); blob.reshape(1, 1).get(0, 0, ref)
+            for (c in 0 until 3) for (i in 0 until 112 * 112) inputDiff = max(inputDiff, kotlin.math.abs(mine[i * 3 + c] - ref[c * 112 * 112 + i]))
         }
 
         private fun compareAlignment(img: org.opencv.core.Mat, f: com.localmediatools.vision.core.Face) {
@@ -144,36 +163,46 @@ class RealPeopleTest {
     @Test fun findsEveryVerifiedFaceLikeTheFixtureSays() {
         assertEquals("not found again: $missing", 63, labelled)
         assertTrue("not found again: $missing", missing.isEmpty())
-        // The embeddings stored for the Robolectric gallery came from the evaluation's pipeline in Python
-        // (OpenCV 4.11; this is 4.9, phones run 4.12): the app's alignment and model give the same (0.99999).
-        assertTrue("stored embeddings differ: $minAgreement", minAgreement > 0.999f)
+        // Every face the fixture holds is found again where it says (OpenCV 4.9 here, 4.11 for the fixture).
+        assertTrue("boxes moved: $worstBoxIou", worstBoxIou > 0.95f)
+        assertEquals(text("faces.tsv").lines().count { it.isNotBlank() && !it.startsWith("#") }, seen.size)
         assertTrue("other people in the photos: ${seen.size - labelled}", seen.size - labelled >= 20)
     }
 
+    @Test fun preparesFacesForTensorFlowLiteAsTheEvaluationDid() {
+        // RGB, (x − 127.5) / 127.5, in the right places: what OpenCV's blob holds for the same face.
+        assertEquals(88, aligned)
+        assertEquals(0f, inputDiff, 1e-6f)
+        val r50 = FaceModel.R50.expected
+        assertEquals(512, r50.size); assertEquals(1f, FaceEngine.cosine(r50, r50), 1e-4f)
+    }
+
     @Test fun groupsRealPeopleDespiteHatsMakeupExpressionsAndAngles() {
-        val now = group(ClusterParams.MBF)
+        val now = group(ClusterParams.R50)
+        val mbf = group(ClusterParams.MBF) { seen[it].mbf }
         val sfaceNow = group(ClusterParams.SFACE) { sface[it] }
         val before = group(OLD) { sface[it] }
         fun show(name: String, x: Score) = "$name precision %.3f recall %.3f %s".format(x.precision, x.recall, x.mainShare.mapValues { "%.2f".format(it.value) })
-        println("real photos, ${seen.size} faces: ${show("MobileFaceNet", now)} | ${show("SFace (1.5–1.7)", sfaceNow)} | ${show("SFace, 1.4 rules", before)}")
+        println("real photos, ${seen.size} faces: ${show("ResNet-50", now)} | ${show("MobileFaceNet (1.8)", mbf)} | ${show("SFace (1.5–1.7)", sfaceNow)} | ${show("SFace, 1.4 rules", before)}")
         // Nobody is put with someone else, and no stranger in the background joins a person.
         assertTrue("precision ${now.precision}", now.precision >= 0.97)
         assertEquals(0, now.strangersWithSomeone)
-        // Most of each person's faces end up together, whatever they wear or do. Measured here (OpenCV 4.9):
-        // recall 0.79, main group 0.83 of all faces; headwear and turned 1.00, glasses 0.86, frontal 0.79,
-        // expression 0.78, profile 0.69, small 0.68, heavy make-up 0.56 (a few borderline faces move
-        // between OpenCV builds, hence the margins). These are each person's six hardest faces: Lady
-        // Gaga's six stage looks stay apart with MobileFaceNet, where SFace grouped five of them; on the
-        // full set of 885 faces it keeps more of every condition together (make-up 0.88 → 0.92 and
-        // 0.69 → 0.74 on the two halves, buildtools/gallery/README.md).
-        assertTrue("recall ${now.recall}", now.recall >= 0.76)
+        // Most of each person's faces end up together, whatever they wear or do. Measured here: recall
+        // 0.83, main group 0.86 of all faces; headwear and turned 1.00, glasses 0.86, expression 0.85,
+        // frontal 0.83, profile 0.75, small 0.74, heavy make-up 0.63 (each person's six hardest faces:
+        // Lady Gaga's stage looks are the hardest; on the full set of 885 faces ResNet-50 keeps more of
+        // every condition together, buildtools/gallery/README.md). Margins: a few borderline faces move
+        // between OpenCV builds.
+        assertTrue("recall ${now.recall}", now.recall >= 0.80)
         val s = now.mainShare
-        assertTrue("$s", s.getValue("all") >= 0.8)
-        assertTrue("$s", s.getValue("headwear") >= 0.9 && s.getValue("turned") >= 0.9 && s.getValue("glasses") >= 0.8 && s.getValue("frontal") >= 0.75)
-        assertTrue("$s", s.getValue("make-up") >= 0.5 && s.getValue("expression") >= 0.7)
-        assertTrue("$s", s.getValue("profile") >= 0.6 && s.getValue("small") >= 0.6)
-        // At least as good as SFace with its own tuned rules (0.77 here), far better than the rules before 1.5.0.
-        assertTrue("SFace recall ${sfaceNow.recall} vs ${now.recall}", now.recall >= sfaceNow.recall)
+        assertTrue("$s", s.getValue("all") >= 0.83)
+        assertTrue("$s", s.getValue("headwear") >= 0.9 && s.getValue("turned") >= 0.9 && s.getValue("glasses") >= 0.8 && s.getValue("frontal") >= 0.8)
+        assertTrue("$s", s.getValue("make-up") >= 0.55 && s.getValue("expression") >= 0.8)
+        assertTrue("$s", s.getValue("profile") >= 0.7 && s.getValue("small") >= 0.7)
+        // Better than MobileFaceNet (0.79 here) and SFace (0.77) with their own tuned rules, far better
+        // than the rules before 1.5.0.
+        assertTrue("MobileFaceNet recall ${mbf.recall} vs ${now.recall}", now.recall >= mbf.recall + 0.02)
+        assertTrue("SFace recall ${sfaceNow.recall} vs ${now.recall}", now.recall >= sfaceNow.recall + 0.03)
         assertTrue("1.4 recall ${before.recall} vs ${now.recall}", now.recall >= before.recall + 0.2)
     }
 
@@ -187,8 +216,8 @@ class RealPeopleTest {
 
     @Test fun recognizerPassesItsSelfCheck() {
         assertTrue(engine.recognizerWorks())
-        assertEquals(1f, FaceEngine.half(0x3C00), 0f); assertEquals(-2f, FaceEngine.half(0xC000), 0f)
-        assertEquals(65504f, FaceEngine.half(0x7BFF), 0f); assertEquals(5.9604645e-8f, FaceEngine.half(0x0001), 1e-12f)
-        assertEquals(0.333251953125f, FaceEngine.half(0x3555), 0f)
+        assertEquals(1f, FaceModel.half(0x3C00), 0f); assertEquals(-2f, FaceModel.half(0xC000), 0f)
+        assertEquals(65504f, FaceModel.half(0x7BFF), 0f); assertEquals(5.9604645e-8f, FaceModel.half(0x0001), 1e-12f)
+        assertEquals(0.333251953125f, FaceModel.half(0x3555), 0f)
     }
 }

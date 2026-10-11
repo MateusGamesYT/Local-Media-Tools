@@ -12,6 +12,7 @@ import com.localmediatools.vision.core.EnhanceResult
 import com.localmediatools.vision.core.Face
 import com.localmediatools.vision.core.FaceBox
 import com.localmediatools.vision.core.FaceEngine
+import com.localmediatools.vision.core.FaceModel
 import com.localmediatools.vision.core.FaceSample
 import com.localmediatools.vision.core.Matting
 import com.localmediatools.vision.core.SceneKind
@@ -24,16 +25,16 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
- * The on-device vision models: face detection (YuNet) and recognition (MobileFaceNet) and subject cut-out
- * (U²-Net-p); scenes are recognised by the gallery's [ObjectTagger]. They are loaded once and kept
- * while the app runs; everything runs on this phone.
+ * The on-device vision models: face detection (YuNet) and recognition (ResNet-50 for the Gallery,
+ * MobileFaceNet for face blur) and subject cut-out (U²-Net-p); scenes are recognised by the gallery's
+ * [ObjectTagger]. They are loaded when first needed; everything runs on this phone.
  */
 object VisionModels {
     const val YUNET = "face_detection_yunet_2023mar.onnx"
-    const val FACE_RECOGNITION = "face_recognition_mbf_w600k_fp16.onnx"
     const val U2NET = "u2netp.onnx"
 
     private var faces: FaceEngine? = null
+    private var galleryFaces: FaceEngine? = null
     private var matting: Matting? = null
 
     /**
@@ -52,10 +53,33 @@ object VisionModels {
         return f
     }
 
+    /** Faces for face blur and the editor: MobileFaceNet, fast enough for every face of every sampled video frame. Kept while the app runs. */
     @Synchronized fun faces(ctx: Context): FaceEngine {
         faces?.let { return it }
         OpenCvLoader.ensure()
-        return FaceEngine(file(ctx, YUNET).path, file(ctx, FACE_RECOGNITION).path).also { faces = it }
+        return FaceEngine(file(ctx, YUNET).path, file(ctx, FaceModel.MBF.file).path, FaceModel.MBF).also { faces = it }
+    }
+
+    /**
+     * Faces for the Gallery's people: ResNet-50 (8-bit, TensorFlow Lite, about 90 MB while loaded),
+     * used while indexing and released when it ends ([releaseGalleryFaces]).
+     */
+    @Synchronized fun galleryFaces(ctx: Context): FaceEngine {
+        galleryFaces?.let { return it }
+        OpenCvLoader.ensure()
+        val threads = Runtime.getRuntime().availableProcessors().coerceIn(2, 4)
+        val embedder = TfliteFaceEmbedder(mapAsset(ctx, "models/" + FaceModel.R50.file), threads)
+        return FaceEngine(file(ctx, YUNET).path, embedder, FaceModel.R50).also { galleryFaces = it }
+    }
+
+    @Synchronized fun releaseGalleryFaces() {
+        galleryFaces?.close(); galleryFaces = null
+    }
+
+    /** An asset stored uncompressed in the APK (TensorFlow Lite models), mapped into memory. */
+    fun mapAsset(ctx: Context, asset: String): java.nio.MappedByteBuffer {
+        val afd = ctx.assets.openFd(asset)
+        return afd.use { java.io.FileInputStream(it.fileDescriptor).channel.use { ch -> ch.map(java.nio.channels.FileChannel.MapMode.READ_ONLY, it.startOffset, it.declaredLength) } }
     }
 
     @Synchronized fun matting(ctx: Context): Matting {

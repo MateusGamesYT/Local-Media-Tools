@@ -29,13 +29,15 @@ enum class FaceKind(val code: Int) {
     SFACE(0),
     /** Classical LBP texture descriptor (fallback when the AI can't run). */
     LBP(1),
-    /** MobileFaceNet identity embedding (on-device AI since 1.8.0). */
-    MBF(2);
+    /** MobileFaceNet identity embedding (the Gallery's on-device AI in 1.8; face blur still uses it). */
+    MBF(2),
+    /** ResNet-50 identity embedding (the Gallery's on-device AI since 1.9.0). */
+    R50(3);
 
     companion object {
         fun of(code: Int) = entries.firstOrNull { it.code == code } ?: SFACE
-        /** What the face AI describes faces with now. */
-        val AI = MBF
+        /** What the Gallery's face AI describes faces with now. */
+        val AI = R50
     }
 }
 
@@ -118,7 +120,28 @@ class ClusterParams(
             goodScore = 0.70f, goodYaw = 0.70f, goodEye = 20f, centroid = true, lowScore = 0.80f,
             suggestFace = 0.38f, suggestGroup = 0.36f, sameVideoFace = 0.47f)
 
-        fun of(kind: FaceKind) = when (kind) { FaceKind.LBP -> BASIC; FaceKind.MBF -> MBF; FaceKind.SFACE -> SFACE }
+        /**
+         * ResNet-50 (InsightFace w600k_r50, 8-bit weights, flip-averaged), 1.9.0, measured like [MBF] on
+         * the same 885 faces of 78 people, thresholds searched on half A and checked on half B. Against
+         * MobileFaceNet: B-cubed recall 0.886 → 0.938 (A) and 0.851 → 0.890 (B), a person's faces in their
+         * main group 92 → 96 % and 90 → 93 %, faces left on their own 8 → 4 % and 12.5 → 10 %, still no
+         * face of another person in anyone's group; all 78 people at once: 1 face with the wrong person
+         * (MobileFaceNet 3) and 38 strangers' faces in someone's group (50). Naming each person's biggest
+         * group once puts 97 % (A) and 90 % (B) of their faces under the name (93 % and 89 %).
+         *  - merge 0.42: the most alike two different people's mean faces came to 0.29; from 0.38 to 0.42
+         *    the grouping is the same, with fewer strangers at 0.42;
+         *  - suggestions: different people's groups at most 0.25 alike, single faces at most 0.31 to
+         *    someone else's group; at 0.34 (groups) and 0.36 (faces), 99–100 % of a person's own groups
+         *    and 90–94 % of their single faces are offered;
+         *  - sameVideoFace 0.54: SFace's 0.55 at the same rate of different people's faces above it.
+         * The 8-bit weights group these people as the full-precision model does (the same on both
+         * halves; buildtools/gallery/README.md).
+         */
+        val R50 = ClusterParams(join = 0.392f, merge = 0.42f, assign = 0.305f, low = 0.332f, margin = 0.06f,
+            goodScore = 0.80f, goodYaw = 0.70f, goodEye = 16f, centroid = true, lowScore = 0.80f,
+            suggestFace = 0.36f, suggestGroup = 0.34f, sameVideoFace = 0.54f)
+
+        fun of(kind: FaceKind) = when (kind) { FaceKind.LBP -> BASIC; FaceKind.MBF -> MBF; FaceKind.SFACE -> SFACE; FaceKind.R50 -> R50 }
     }
 }
 

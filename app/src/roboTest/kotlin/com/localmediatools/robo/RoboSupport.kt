@@ -133,7 +133,7 @@ object Robo {
  * The people are real (test resources /people, Creative Commons, credits in CREDITS.tsv), with the
  * faces and embeddings the app's face pipeline found in those photos: Caroline Wozniacki (A) and
  * Ian Somerhalder (B) in several photos (side by side in some), Kelly Clarkson (C) in three, and a
- * small, far-away face of Caroline in profile (SFace left it on its own; MobileFaceNet recognises it).
+ * small, far-away face of Caroline in profile (SFace left it on its own; the newer models recognise it).
  */
 object FakeGallery {
     const val DAY = 86_400_000L

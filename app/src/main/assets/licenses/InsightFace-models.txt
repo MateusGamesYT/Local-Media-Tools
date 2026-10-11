@@ -1,6 +1,9 @@
-Face recognition model: MobileFaceNet "w600k_mbf" from the buffalo_s package of InsightFace
-(https://github.com/deepinsight/insightface, release v0.7), trained on WebFace600K. The app stores
-its weights as 16-bit floats; nothing else is changed.
+Face recognition models from InsightFace (https://github.com/deepinsight/insightface, release v0.7),
+trained on WebFace600K:
+- ResNet-50 "w600k_r50" from the buffalo_l package (the Gallery's people), converted to TensorFlow
+  Lite with 8-bit weights;
+- MobileFaceNet "w600k_mbf" from the buffalo_s package (face blur), its weights stored as 16-bit floats.
+Nothing else is changed.
 
 InsightFace's licence statement (README, "License"):
 
@@ -15,5 +18,5 @@ python-library follow the above license policy (which is for non-commercial rese
 
 InsightFace model zoo: "ALL models are available for non-commercial research purposes only."
 
-This app is free and non-commercial; the model is used only on this phone, to recognise the same
+This app is free and non-commercial; the models are used only on this phone, to recognise the same
 person across your photos and videos.

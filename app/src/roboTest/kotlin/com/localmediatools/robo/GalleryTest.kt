@@ -216,7 +216,7 @@ class GalleryTest {
         FaceSheet.nameGroup(a, groupOf(0), "Caroline", emptyList()) {}
         waitFor("naming") { db.people().any { it.name == "Caroline" } }
         idle(500)
-        // The regrouping naming starts would put the halves below back together (MobileFaceNet sees one
+        // The regrouping naming starts would put the halves below back together (the face model sees one
         // person): let it finish first.
         GalleryIndex.drainForTests()
         // Split Ian's group in two by hand, as an over-split person would be.
@@ -272,9 +272,9 @@ class GalleryTest {
         // Only the 18 items with faces were looked at again; the others were up to date as they were.
         assertEquals(18, looked.get())
         val after = db.faces("1", withEmb = true)
-        // The same faces (same ids), now described by MobileFaceNet; tags untouched.
+        // The same faces (same ids), now described by ResNet-50; tags untouched.
         assertEquals(before.keys, after.map { it.id }.toSet())
-        assertTrue(after.all { it.kind == com.localmediatools.gallery.core.FaceKind.MBF && it.emb!!.size == 512 })
+        assertTrue(after.all { it.kind == com.localmediatools.gallery.core.FaceKind.R50 && it.emb!!.size == 512 })
         assertEquals(tags, (1L..36L).associateWith { db.tagsOf(it) })
         // Names, confirmations, the correction and the hidden face stayed.
         for (f in after) if (before.getValue(f.id).confirmed) { assertTrue(f.confirmed); assertEquals(before.getValue(f.id).personId, f.personId) }

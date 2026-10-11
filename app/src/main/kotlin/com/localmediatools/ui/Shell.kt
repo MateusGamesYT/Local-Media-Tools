@@ -339,7 +339,7 @@ class SettingsTab(private val shell: MainShell) {
                 !com.localmediatools.gallery.GalleryIndex.isPausedByUser(ctx)) { on -> com.localmediatools.gallery.GalleryIndex.setPaused(ctx, !on) })
         })
         gal.addView(listRow(ctx, R.drawable.ic_sparkle, Palette.ACCENT, "Recognition models",
-            "EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and MobileFaceNet (faces) · all on this phone"))
+            "EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and ResNet-50 (faces and people) · all on this phone"))
 
         val storage = group(col, "Storage")
         val folders = OutputArea.entries.map { it.displayPath.substringBefore("/LocalMediaTools") }.distinct().joinToString(", ")
@@ -390,7 +390,8 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("MI-GAN (Picsart AI Research)", "MIT License", "Magic eraser model, converted to TensorFlow Lite."),
             Triple("MobileNet-V3 image embedder (MediaPipe)", "Apache License 2.0", "Stitcher alignment assist and similar-photo detection."),
             Triple("YuNet face detector (OpenCV Zoo)", "MIT License", "Finding faces for face blur and auto enhance."),
-            Triple("MobileFaceNet face recognition (InsightFace, w600k_mbf)", "Non-commercial research use only (code MIT)", "Recognising the same person across photos, videos and frames."),
+            Triple("ResNet-50 face recognition (InsightFace, w600k_r50)", "Non-commercial research use only (code MIT)", "Recognising the people in the Gallery."),
+            Triple("MobileFaceNet face recognition (InsightFace, w600k_mbf)", "Non-commercial research use only (code MIT)", "Recognising the same person across video frames and files for face blur."),
             Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", "Background remover."),
             Triple("EfficientDet-Lite2 (MediaPipe)", "Apache License 2.0", "Finding people, animals, vehicles and objects in the gallery."),
             Triple("EfficientNetV2-B3, ImageNet-21k (Google AutoML)", "Apache License 2.0", "Recognising scenes and kinds of things in the gallery and for auto enhance."),
