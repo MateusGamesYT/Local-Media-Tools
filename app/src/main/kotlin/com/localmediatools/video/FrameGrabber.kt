@@ -8,6 +8,7 @@ import android.net.Uri
 import android.opengl.GLES20
 import android.os.Build
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -35,7 +36,7 @@ class FrameGrabber(
      * be rendered and delivered (rendering is the expensive part).
      */
     fun run(startUs: Long, endUs: Long, operatingRate: Int?, want: (Long) -> Boolean, sink: FrameSink, throttle: () -> Unit) {
-        val v = info.video ?: throw UserFacingException("The file has no video track.")
+        val v = info.video ?: throw UserFacingException(tr("The file has no video track."))
         val ex = VideoProbe.extractor(ctx, uri)
         ex.selectTrack(v.index)
         if (startUs > 0) ex.seekTo(startUs, android.media.MediaExtractor.SEEK_TO_PREVIOUS_SYNC)
@@ -56,7 +57,7 @@ class FrameGrabber(
             val name = try { MediaCodecList(MediaCodecList.REGULAR_CODECS).findDecoderForFormat(v.format) } catch (_: Exception) { null }
             val mime = v.mime
             val dec = try { if (name != null) MediaCodec.createByCodecName(name) else MediaCodec.createDecoderByType(mime) }
-            catch (e: Exception) { throw UserFacingException("This device has no decoder for ${v.codecLabel} video.", e) }
+            catch (e: Exception) { throw UserFacingException(tr("This device has no decoder for {0} video.", v.codecLabel), e) }
             decoder = dec
             try {
                 dec.configure(fmt, surface.surface, null, 0)
@@ -97,7 +98,7 @@ class FrameGrabber(
                     val render = inRange && want(pts)
                     dec.releaseOutputBuffer(idx, render)
                     if (render) {
-                        if (!surface.awaitFrame()) throw UserFacingException("The video decoder stopped delivering frames.")
+                        if (!surface.awaitFrame()) throw UserFacingException(tr("The video decoder stopped delivering frames."))
                         renderer.draw(surface.stMatrix, outWidth, outHeight, info.rotation, flipY = true)
                         pixels.clear()
                         GLES20.glReadPixels(0, 0, outWidth, outHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixels)
@@ -119,7 +120,7 @@ class FrameGrabber(
                     if (++n % 10 == 0) throttle()
                 }
                 if (moved) lastActivity = System.currentTimeMillis()
-                else if (System.currentTimeMillis() - lastActivity > 15_000) throw UserFacingException("Video decoding stalled.")
+                else if (System.currentTimeMillis() - lastActivity > 15_000) throw UserFacingException(tr("Video decoding stalled."))
             }
         } finally {
             try { decoder?.stop() } catch (_: Exception) { }

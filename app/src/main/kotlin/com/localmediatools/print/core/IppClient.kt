@@ -63,11 +63,20 @@ class PinnedTrust(@Volatile var pin: String?) : X509TrustManager {
         val fp = fingerprint(leaf)
         val p = pin
         if (p == null) pin = fp
-        else if (!p.equals(fp, ignoreCase = true)) throw CertificateException(tr("The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again."))
+        else if (!p.equals(fp, ignoreCase = true)) throw IdentityChangedException()
     }
     override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
 
+    /** The printer's certificate isn't the one it had when it was added. */
+    class IdentityChangedException : CertificateException(identityChangedMessage)
+
     companion object {
+        val identityChangedMessage: String get() = tr("The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again.")
+
+        /** Whether [e] (or what caused it) is a printer whose identity changed (the TLS layer may wrap it, or only copy its message). */
+        fun identityChanged(e: Throwable?): Boolean =
+            generateSequence(e) { it.cause }.any { it is IdentityChangedException || it.message?.contains(identityChangedMessage) == true }
+
         fun fingerprint(c: X509Certificate): String = MessageDigest.getInstance("SHA-256").digest(c.encoded).joinToString("") { "%02x".format(it) }
     }
 }

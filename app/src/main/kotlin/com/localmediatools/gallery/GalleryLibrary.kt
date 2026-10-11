@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import com.localmediatools.i18n.tr
 
 /** Reads the phone's photo and video library (MediaStore) into the gallery index. */
 object GalleryLibrary {
@@ -52,7 +53,7 @@ object GalleryLibrary {
         if (Build.VERSION.SDK_INT >= 30) cols.add(MediaStore.MediaColumns.IS_FAVORITE)
         val sel = "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE}, ${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}) AND ${MediaStore.MediaColumns.SIZE} > 0"
         // No cursor means the media provider isn't answering, not that the library is empty.
-        val cursor = ctx.contentResolver.query(FILES, cols.toTypedArray(), sel, null, null) ?: throw IllegalStateException("The photo library isn't available right now")
+        val cursor = ctx.contentResolver.query(FILES, cols.toTypedArray(), sel, null, null) ?: throw IllegalStateException(tr("The photo library isn't available right now"))
         cursor.use { c ->
             while (c.moveToNext()) {
                 val video = c.getInt(1) == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
@@ -65,7 +66,7 @@ object GalleryLibrary {
                 if (rot % 180 != 0) { val t = w; w = h; h = t }
                 out.add(GMedia(
                     id = c.getLong(0), video = video, mime = mime, name = c.getString(3) ?: "",
-                    bucketId = c.getString(4) ?: "", bucket = c.getString(5) ?: "Other", path = c.getString(6) ?: "",
+                    bucketId = c.getString(4) ?: "", bucket = c.getString(5) ?: tr("Other"), path = c.getString(6) ?: "",
                     taken = taken, modified = modified, size = c.getLong(9), width = w, height = h, orientation = rot,
                     durationMs = if (c.isNull(13)) 0 else c.getLong(13),
                     favorite = Build.VERSION.SDK_INT >= 30 && c.getInt(15) == 1,

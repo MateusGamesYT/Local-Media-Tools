@@ -12,6 +12,9 @@ import com.localmediatools.gallery.core.ClusterParams
 import com.localmediatools.gallery.core.FaceClustering
 import com.localmediatools.gallery.core.FaceKind
 import com.localmediatools.gallery.core.FaceRec
+import com.localmediatools.i18n.tr
+import java.util.concurrent.Executors
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,8 +27,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import java.util.concurrent.Executors
-import kotlin.coroutines.coroutineContext
 
 /**
  * Keeps the gallery index up to date: reads the library, then looks at new photos and videos one
@@ -116,7 +117,7 @@ object GalleryIndex {
     fun setPaused(ctx: Context, paused: Boolean) {
         prefs(ctx).edit().putBoolean("paused", paused).apply()
         userPaused = paused
-        if (paused) { job?.cancel(); _state.update { it.copy(phase = Phase.PAUSED, pausedWhy = "Paused", pausedByUser = true) } }
+        if (paused) { job?.cancel(); _state.update { it.copy(phase = Phase.PAUSED, pausedWhy = tr("Paused"), pausedByUser = true) } }
         else { _state.update { it.copy(pausedByUser = false) }; start(ctx) }
     }
 
@@ -151,7 +152,7 @@ object GalleryIndex {
                 // However it ended (error, cancel, stop), never leave the state saying it is working.
                 _state.update { s ->
                     when {
-                        userPaused -> s.copy(phase = Phase.PAUSED, pausedWhy = "Paused", pausedByUser = true)
+                        userPaused -> s.copy(phase = Phase.PAUSED, pausedWhy = tr("Paused"), pausedByUser = true)
                         s.working || (s.phase == Phase.PAUSED && !s.pausedByUser) -> s.copy(phase = Phase.IDLE, pausedWhy = null)
                         else -> s
                     }
@@ -187,7 +188,7 @@ object GalleryIndex {
         if (changed > 0 || removed > 0) notifyChanged()
         if (userPaused) {
             val (d, t) = db.counts(target)
-            _state.update { it.copy(phase = Phase.PAUSED, done = d, total = t, pausedWhy = "Paused", pausedByUser = true) }
+            _state.update { it.copy(phase = Phase.PAUSED, done = d, total = t, pausedWhy = tr("Paused"), pausedByUser = true) }
             return
         }
         val a = if (analyzerOverride != null) null else analyzer ?: GalleryAnalyzer.create(ctx).also { analyzer = it }
@@ -288,15 +289,15 @@ object GalleryIndex {
 
     private fun holdReason(ctx: Context): String? {
         val pm = ctx.getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (pm.currentThermalStatus >= PAUSE_AT) return "Waiting for the phone to cool down"
+        if (pm.currentThermalStatus >= PAUSE_AT) return tr("Waiting for the phone to cool down")
         val battery = ctx.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         if (battery != null) {
             val level = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
             val scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE, 100).coerceAtLeast(1)
             val plugged = battery.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0
-            if (!plugged && level >= 0 && level * 100 / scale < 15) return "Paused to save battery (below 15%)"
+            if (!plugged && level >= 0 && level * 100 / scale < 15) return tr("Paused to save battery (below 15%)")
         }
-        if (Build.VERSION.SDK_INT >= 29 && pm.isPowerSaveMode && !isCharging(ctx)) return "Paused while Battery Saver is on"
+        if (Build.VERSION.SDK_INT >= 29 && pm.isPowerSaveMode && !isCharging(ctx)) return tr("Paused while Battery Saver is on")
         return null
     }
 

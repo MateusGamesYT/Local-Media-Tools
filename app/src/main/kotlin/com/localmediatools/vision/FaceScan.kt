@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.localmediatools.core.MediaItem
 import com.localmediatools.core.MediaKind
+import com.localmediatools.i18n.tr
 import com.localmediatools.image.ImageSource
 import com.localmediatools.video.FrameGrabber
 import com.localmediatools.video.VideoProbe
@@ -55,9 +56,9 @@ object FaceScanner {
             val span = 1.0 / items.size
             try {
                 if (item.kind == MediaKind.VIDEO) {
-                    tracks.addAll(scanVideo(ctx, k, item, thumbs, cancelled) { f -> progress(base + span * f, "Watching ${item.name}") })
+                    tracks.addAll(scanVideo(ctx, k, item, thumbs, cancelled) { f -> progress(base + span * f, tr("Watching {0}", item.name)) })
                 } else {
-                    progress(base, "Looking at ${item.name}")
+                    progress(base, tr("Looking at {0}", item.name))
                     ImageSource.open(ctx, item).use { src ->
                         val bmp = src.preview(1600)
                         try {
@@ -73,11 +74,11 @@ object FaceScanner {
             } catch (e: Cancelled) {
                 throw e
             } catch (e: Throwable) {
-                problems.add(item.name to (e.message ?: "couldn't be read"))
+                problems.add(item.name to (e.message ?: tr("couldn't be read")))
             }
         }
         if (cancelled()) throw Cancelled()
-        progress(1.0, "Grouping faces into people")
+        progress(1.0, tr("Grouping faces into people"))
         val people = FaceTracker.cluster(tracks)
         // Thumbnails of dropped (noise) tracks are no longer needed.
         val kept = people.flatMap { it.tracks }.toHashSet()

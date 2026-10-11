@@ -30,7 +30,7 @@ object GalleryRepo {
     fun vocabulary(ctx: Context): SearchVocabulary {
         val db = GalleryDb.get(ctx)
         val people = db.people(includeHidden = true).filter { it.named }.map { it.id to it.name!! }
-        val categories = categories(ctx).map { Triple(it.key, it.name, it.words) }
+        val categories = categories(ctx).map { Triple(it.key, it.name, it.searchWords + it.englishName) }
         val albums = db.albums().map { it.first to it.second }
         return SearchVocabulary(people, categories, albums)
     }

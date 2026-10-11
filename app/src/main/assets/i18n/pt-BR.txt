@@ -1,0 +1,6523 @@
+# Português (Brasil) — translations of the app's English text (see buildtools/i18n/catalog.py).
+# "< " lines: the English (two lines: singular and plural); "> " lines: the translation (one per plural form);
+# "@ " lines: which meaning of the English is meant.
+
+< Exposure
+> Exposição
+
+< Brightness
+> Brilho
+
+< Contrast
+> Contraste
+
+< Highlights
+> Realces
+
+< Shadows
+> Sombras
+
+< Saturation
+> Saturação
+
+< Vibrance
+> Vibração
+
+< Warmth
+> Temperatura
+
+< Tint
+> Matiz
+
+< Sharpness
+> Nitidez
+
+< Vignette
+> Vinheta
+
+< Original
+> Original
+
+< Vivid
+> Vívido
+
+< Golden
+> Dourado
+
+< Nordic
+> Nórdico
+
+< Matte
+> Fosco
+
+< Vintage
+> Vintage
+
+< Cinema
+> Cinema
+
+< Drama
+> Drama
+
+< Mono
+> Mono
+
+< Noir
+> Noir
+
+< Sepia
+> Sépia
+
+< File is too large to decode in memory on this device
+> O arquivo é grande demais para ser decodificado na memória deste aparelho
+
+< Image has invalid dimensions
+> A imagem tem dimensões inválidas
+
+< Image is too large ({0}×{1})
+> A imagem é grande demais ({0}×{1})
+
+< Not a TIFF file
+> Não é um arquivo TIFF
+
+< BigTIFF files are not supported
+> Arquivos BigTIFF não são compatíveis
+
+< TIFF file is truncated
+> O arquivo TIFF está truncado
+
+< Corrupt TIFF tag
+> Tag TIFF corrompida
+
+< TIFF has no image data
+> O TIFF não tem dados de imagem
+
+< TIFF with mixed bit depths is not supported
+> TIFF com profundidades de bits diferentes não é compatível
+
+< TIFF with {0}-bit samples is not supported
+> TIFF com amostras de {0} bits não é compatível
+
+< Floating-point TIFF is not supported
+> TIFF de ponto flutuante não é compatível
+
+< TIFF compression {0} is not supported
+> A compressão TIFF {0} não é compatível
+
+< TIFF colour model {0} is not supported
+> O modelo de cor TIFF {0} não é compatível
+
+< TIFF is missing image data
+> Faltam dados de imagem no TIFF
+
+< Unsupported TIFF compression
+> Compressão TIFF não compatível
+
+< Palette TIFF without colour map
+> TIFF com paleta sem mapa de cores
+
+< Corrupt compressed TIFF data
+> Dados TIFF comprimidos corrompidos
+
+< Not a PSD file
+> Não é um arquivo PSD
+
+< {0}-bit PSD is not supported
+> PSD de {0} bits não é compatível
+
+< PSD colour mode {0} is not supported (use RGB, Grayscale or CMYK)
+> O modo de cor PSD {0} não é compatível (use RGB, tons de cinza ou CMYK)
+
+< PSD file is truncated
+> O arquivo PSD está truncado
+
+< PSD file has no merged image
+> O arquivo PSD não tem imagem mesclada
+
+< PSD with ZIP-compressed composite is not supported
+> PSD com composição comprimida em ZIP não é compatível
+
+< Not a QOI file
+> Não é um arquivo QOI
+
+< QOI file is truncated
+> O arquivo QOI está truncado
+
+< Corrupt PNM header
+> Cabeçalho PNM corrompido
+
+< Not a PNM file
+> Não é um arquivo PNM
+
+< Corrupt PAM header
+> Cabeçalho PAM corrompido
+
+< PNM file is truncated
+> O arquivo PNM está truncado
+
+< PBM file is truncated
+> O arquivo PBM está truncado
+
+< Not a TGA file
+> Não é um arquivo TGA
+
+< Not a supported TGA file
+> Não é um arquivo TGA compatível
+
+< Unsupported TGA pixel depth {0}
+> Profundidade de pixel TGA não compatível: {0}
+
+< TGA file is truncated
+> O arquivo TGA está truncado
+
+< TGA colour index out of range
+> Índice de cor TGA fora do intervalo
+
+< Truncated MP4 box header
+> Cabeçalho de caixa MP4 truncado
+
+< MP4 box '{0}' at {1} is truncated or corrupt
+> A caixa MP4 '{0}' em {1} está truncada ou corrompida
+
+< The file has no movie header (moov box)
+> O arquivo não tem cabeçalho de filme (caixa moov)
+
+< The file has no media data (mdat box)
+> O arquivo não tem dados de mídia (caixa mdat)
+
+< Movie header is unexpectedly large
+> O cabeçalho do filme é grande demais
+
+< Chunk offsets do not fit even in 64-bit tables
+> Os deslocamentos dos blocos não cabem nem em tabelas de 64 bits
+
+< Corrupt '{0}' box in movie header
+> Caixa '{0}' corrompida no cabeçalho do filme
+
+< A media chunk points outside the file's data boxes
+> Um bloco de mídia aponta para fora das caixas de dados do arquivo
+
+< Corrupt chunk offset table
+> Tabela de deslocamentos corrompida
+
+< Unexpected end of file
+> Fim de arquivo inesperado
+
+< GIF cannot store semi-transparent pixels
+> O GIF não consegue armazenar pixels semitransparentes
+
+< Frame {0} needs more than 256 colours including transparency, which GIF cannot store exactly
+> O quadro {0} precisa de mais de 256 cores incluindo a transparência, o que o GIF não consegue armazenar com exatidão
+
+< Not a GIF file
+> Não é um arquivo GIF
+
+< GIF has an empty canvas
+> O GIF tem uma tela vazia
+
+< GIF canvas {0}×{1} is too large to process on this device
+> A tela do GIF de {0}×{1} é grande demais para processar neste aparelho
+
+< Corrupt GIF block ({0}) after frame {1}
+> Bloco GIF corrompido ({0}) após o quadro {1}
+
+< GIF is truncated inside frame {0}
+> O GIF está truncado dentro do quadro {0}
+
+< GIF frame {0} has no colour table
+> O quadro {0} do GIF não tem tabela de cores
+
+< GIF frame {0} has invalid LZW code size
+> O quadro {0} do GIF tem um tamanho de código LZW inválido
+
+< GIF frame {0} is too large
+> O quadro {0} do GIF é grande demais
+
+< GIF frame {0} is missing image data
+> Faltam dados de imagem no quadro {0} do GIF
+
+< GIF is truncated
+> O GIF está truncado
+
+< GPS location
+> localização GPS
+
+< camera make & model
+> marca e modelo da câmera
+
+< date & time
+> data e hora
+
+< software
+> software
+
+< author & copyright
+> autor e direitos autorais
+
+< camera serial number
+> número de série da câmera
+
+< lens details
+> detalhes da lente
+
+< maker notes
+> notas do fabricante
+
+< descriptions & comments
+> descrições e comentários
+
+< shooting settings
+> configurações de captura
+
+< embedded thumbnail
+> miniatura incorporada
+
+< Not a JPEG file
+> Não é um arquivo JPEG
+
+< Damaged JPEG segment
+> Segmento JPEG danificado
+
+< other application data
+> outros dados de aplicativos
+
+< XMP metadata
+> metadados XMP
+
+< colour profile
+> perfil de cor
+
+< extra images (depth, HDR or motion data)
+> imagens extras (profundidade, HDR ou movimento)
+
+< Adobe colour transform
+> transformação de cor Adobe
+
+< IPTC / Photoshop data
+> dados IPTC / Photoshop
+
+< The JPEG file is truncated
+> O arquivo JPEG está truncado
+
+< Not a PNG file
+> Não é um arquivo PNG
+
+< Damaged PNG chunk
+> Bloco PNG danificado
+
+< EXIF data
+> dados EXIF
+
+< text notes ({0})
+> notas de texto ({0})
+
+< hidden data after the image
+> dados ocultos após a imagem
+
+< Not a WebP file
+> Não é um arquivo WebP
+
+< Damaged GIF (unexpected block {0})
+> GIF danificado (bloco inesperado {0})
+
+< The file is truncated
+> O arquivo está truncado
+
+< {0} supports at most {1} px per side; the edited photo is {2}×{3}. Choose PNG or JPEG.
+> {0} aceita no máximo {1} px por lado; a foto editada tem {2}×{3}. Escolha PNG ou JPEG.
+
+< This photo is too large to edit with the memory available right now. Close other apps or raise the export workload and try again.
+> Esta foto é grande demais para editar com a memória disponível agora. Feche outros apps ou aumente a carga de exportação e tente de novo.
+
+< {0} can't be written in pieces and this photo is too large for memory; choose JPEG or PNG.
+> {0} não pode ser gravado em partes e esta foto é grande demais para a memória; escolha JPEG ou PNG.
+
+< Erase
+> Apagar
+
+< Blur
+> Desfocar
+
+< Pixelate
+> Pixelizar
+
+< Could not store the retouched area
+> Não foi possível guardar a área retocada
+
+< A retouched area is missing; please redo it.
+> Uma área retocada está faltando; refaça-a.
+
+< AI · MI-GAN on-device
+> IA · MI-GAN no aparelho
+
+< Basic fill (AI unavailable)
+> Preenchimento básico (IA indisponível)
+
+< This phone is set up as a low-memory device.
+> Este celular está configurado como aparelho de pouca memória.
+
+< Needs at least 2 GB of RAM.
+> Precisa de pelo menos 2 GB de RAM.
+
+< Needs a 64-bit processor.
+> Precisa de um processador de 64 bits.
+
+< The on-device model is missing from this build.
+> O modelo no aparelho está faltando nesta versão.
+
+< On-device AI
+> IA no aparelho
+
+< That area is too large to erase in one go with the memory available. Erase it in smaller parts.
+> Essa área é grande demais para apagar de uma vez com a memória disponível. Apague em partes menores.
+
+< That area is too large for the memory available. Do it in smaller parts.
+> Essa área é grande demais para a memória disponível. Faça em partes menores.
+
+< Clear search
+> Limpar pesquisa
+
+< , selected
+> , selecionado
+
+< , changed
+> , alterado
+
+< Value {0}
+> Valor {0}
+
+< Most space
+> Mais espaço
+
+< Newest
+> Mais recentes
+
+< Oldest
+> Mais antigas
+
+< Most photos
+> Mais fotos
+
+< All
+> Todos
+
+< Copies
+> Cópias
+
+< Similar shots
+> Fotos parecidas
+
+< Keep all
+> Manter todas
+
+< Suggested
+> Sugeridas
+
+< Next
+> Próximo
+
+< Group {0} of {1}
+> Grupo {0} de {1}
+
+< Tap a photo to keep or remove it · long-press to open it · swipe for the next group
+> Toque numa foto para mantê-la ou removê-la · toque e segure para abri-la · deslize para o próximo grupo
+
+< Done
+> Concluído
+
+< {0} photo
+< {0} photos
+> {0} foto
+> {0} fotos
+
+< all kept
+> todas mantidas
+
+< {0} to remove ({1})
+< {0} to remove ({1})
+> {0} para remover ({1})
+> {0} para remover ({1})
+
+< {0} selected in total
+< {0} selected in total
+> {0} selecionada no total
+> {0} selecionadas no total
+
+< Photos are compared on this phone. Nothing is deleted until you confirm, and removed photos go to the system trash, where they can be restored for 30 days.
+> As fotos são comparadas neste celular. Nada é apagado antes da sua confirmação, e as fotos removidas vão para a lixeira do sistema, onde podem ser restauradas por 30 dias.
+
+< Move to trash
+> Mover para a lixeira
+
+< Find duplicates in your photos
+> Encontre duplicatas nas suas fotos
+
+< Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos.
+> Analisa todas as fotos que este app consegue ver. A primeira análise demora um pouco (cerca de um minuto por mil fotos); as seguintes só olham as fotos novas.
+
+< The app needs permission to see your photos for this. It never uploads them.
+> Para isso, o app precisa de permissão para ver suas fotos. Ele nunca as envia para lugar nenhum.
+
+< Scan my photos
+> Analisar minhas fotos
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {1} de {0} foto
+> {1} de {0} fotos
+
+< Starting…
+> Começando…
+
+< Stop
+> Parar
+
+< The scan stopped: {0}
+> A análise parou: {0}
+
+< Try again
+> Tentar de novo
+
+< No duplicates found
+> Nenhuma duplicata encontrada
+
+< {0} group
+< {0} groups
+> {0} grupo
+> {0} grupos
+
+< {0} photo you could remove
+< {0} photos you could remove
+> {0} foto que você poderia remover
+> {0} fotos que você poderia remover
+
+< Checked {0} photo. Nice and tidy!
+< Checked {0} photos. Nice and tidy!
+> {0} foto verificada. Tudo em ordem!
+> {0} fotos verificadas. Tudo em ordem!
+
+< Checked {0} photo. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+< Checked {0} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+> {0} foto verificada. As cópias de uma imagem são sugeridas para remoção (a melhor fica); as fotos parecidas ficam a seu critério, ou deixe as regras abaixo escolherem.
+> {0} fotos verificadas. As cópias de uma imagem são sugeridas para remoção (a melhor fica); as fotos parecidas ficam a seu critério, ou deixe as regras abaixo escolherem.
+
+< Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
+> Detectar fotos parecidas exige o modelo de IA no aparelho, que não está disponível neste celular; cópias exatas e salvas de novo continuam sendo encontradas.
+
+< Scan again
+> Analisar de novo
+
+< Without access to your photos the duplicate finder can't look for copies.
+> Sem acesso às suas fotos, o localizador de duplicatas não consegue procurar cópias.
+
+< RAWs
+> RAWs
+
+< favourites
+> favoritas
+
+< {0} person
+< {0} people
+> {0} pessoa
+> {0} pessoas
+
+< Keep rules
+> Regras para manter
+
+< Nothing always kept
+> Nada é mantido sempre
+
+< Always kept: {0}
+> Sempre mantidas: {0}
+
+@ between the items of a list
+< , 
+> ,
+
+< picks the best similar shot
+> escolhe a melhor foto parecida
+
+< Keep rules, expanded
+> Regras para manter, expandido
+
+< Keep rules, collapsed
+> Regras para manter, recolhido
+
+< Always keep RAW photos
+> Sempre manter fotos RAW
+
+< DNG, CR2, NEF, ARW and other camera RAW files; the best other copy stays next to them
+> DNG, CR2, NEF, ARW e outros arquivos RAW de câmera; a melhor cópia restante fica junto deles
+
+< Always keep favourites
+> Sempre manter favoritas
+
+< Photos you starred in your gallery
+> Fotos que você marcou com estrela na galeria
+
+< Suggest similar shots too
+> Sugerir também fotos parecidas
+
+< Keeps the best shot of each burst and suggests the rest
+> Mantém a melhor foto de cada sequência e sugere as demais
+
+< Which copy to keep
+> Qual cópia manter
+
+< Always keep photos of
+> Sempre manter fotos de
+
+< Name people in the Gallery's People tab to keep every photo they're in.
+> Dê nomes às pessoas na aba Pessoas da Galeria para manter todas as fotos em que elas aparecem.
+
+< {0}, always kept
+> {0}, sempre mantida
+
+< {0}, not protected
+> {0}, não protegida
+
+< Rules apply to every group you haven't changed by hand.
+> As regras valem para todos os grupos que você não alterou manualmente.
+
+< Review one by one
+> Revisar uma por uma
+
+< Reset to suggestions
+> Voltar às sugestões
+
+< Every group follows the keep rules again.
+> Todos os grupos voltam a seguir as regras para manter.
+
+< {1} selected in {0} group · frees {2}
+< {1} selected in {0} groups · frees {2}
+> {1} selecionada em {0} grupo · libera {2}
+> {1} selecionadas em {0} grupos · libera {2}
+
+< Move {0} to trash
+< Move {0} to trash
+> Mover {0} para a lixeira
+> Mover {0} para a lixeira
+
+< Moving photos to the trash needs Android 11 or newer. Long-press a photo to open it in your gallery and delete it there.
+> Mover fotos para a lixeira exige o Android 11 ou mais recente. Toque e segure uma foto para abri-la na galeria e apagá-la por lá.
+
+< These photos can't be moved to the trash: {0}
+> Estas fotos não podem ser movidas para a lixeira: {0}
+
+< Moved {0} photo to the trash. You can restore it from your gallery's trash for 30 days.
+< Moved {0} photos to the trash. You can restore them from your gallery's trash for 30 days.
+> {0} foto movida para a lixeira. Você pode restaurá-la pela lixeira da galeria por 30 dias.
+> {0} fotos movidas para a lixeira. Você pode restaurá-las pela lixeira da galeria por 30 dias.
+
+@ badge on the photo to keep
+< Best
+> Melhor
+
+@ badge on a photo that is kept
+< Keep
+> Manter
+
+< {0} MP
+> {0} MP
+
+< {0}, will be moved to the trash
+> {0}, será movida para a lixeira
+
+< {0}, kept
+> {0}, mantida
+
+< , always kept: {0}
+> , sempre mantida: {0}
+
+< , best photo
+> , melhor foto
+
+< Keep at least one photo of each group.
+> Mantenha pelo menos uma foto de cada grupo.
+
+< Back
+> Voltar
+
+< No installed app can open {0} files.
+> Nenhum app instalado consegue abrir arquivos {0}.
+
+< This file is no longer available.
+> Este arquivo não está mais disponível.
+
+< Share
+> Compartilhar
+
+< Waiting for the current export to finish
+> Aguardando a exportação atual terminar
+
+< {0}%
+> {0}%
+
+< Export workload: {0} ({1}%)
+> Carga de exportação: {0} ({1}%)
+
+< {0} of {1} done
+> {0} de {1} concluídos
+
+< 1 job
+> 1 tarefa
+
+< Cancel
+> Cancelar
+
+< Workload
+> Carga
+
+< View results
+> Ver resultados
+
+< Open
+> Abrir
+
+< Cancel this export?
+> Cancelar esta exportação?
+
+< Files already saved are kept. The file being processed is discarded, never left half-written.
+> Os arquivos já salvos são mantidos. O arquivo em processamento é descartado, nunca fica pela metade.
+
+< Cancel export
+> Cancelar exportação
+
+< Keep going
+> Continuar
+
+< Custom setting.
+> Configuração personalizada.
+
+< Export workload
+> Carga de exportação
+
+< How hard exports may work the phone
+> Quanto as exportações podem exigir do celular
+
+< This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.
+> Não é um limite exato de porcentagem da CPU. Define o trabalho em paralelo, a prioridade das threads, as pausas entre etapas e quanta memória livre uma exportação pode usar. As mudanças valem para as exportações em andamento em poucos segundos.
+
+< Export results
+> Resultados da exportação
+
+< This export is no longer in the history.
+> Esta exportação não está mais no histórico.
+
+< Share file
+> Compartilhar arquivo
+
+< Share all {0}
+< Share all {0}
+> Compartilhar {0}
+> Compartilhar os {0}
+
+< Print
+> Imprimir
+
+< Saved to {0}. Find them in your gallery, Files app or the folder named LocalMediaTools.
+> Salvo em {0}. Encontre os arquivos na galeria, no app Arquivos ou na pasta LocalMediaTools.
+
+< Failed ({0})
+> Com falha ({0})
+
+< Skipped ({0})
+> Ignorados ({0})
+
+< Printed
+> Impresso
+
+< Saved ({0})
+> Salvos ({0})
+
+< …and {0} more
+< …and {0} more
+> …e mais {0}
+> …e mais {0}
+
+< Finished {0}
+> Concluído em {0}
+
+< took {0}
+> levou {0}
+
+< workload {0}%
+> carga {0}%
+
+< Open {0}
+> Abrir {0}
+
+< Share {0}
+> Compartilhar {0}
+
+< …and {0} more file
+< …and {0} more files
+> …e mais {0} arquivo
+> …e mais {0} arquivos
+
+@ empty the list
+< Clear
+> Limpar
+
+< Clear export history?
+> Limpar o histórico de exportações?
+
+< Only the list is cleared; saved files stay on your phone.
+> Só a lista é apagada; os arquivos salvos continuam no seu celular.
+
+< Recent exports
+> Exportações recentes
+
+< No exports yet. Results of every export appear here.
+> Nenhuma exportação ainda. Os resultados de cada exportação aparecem aqui.
+
+< Nothing here yet
+> Nada por aqui ainda
+
+< Choose an image
+> Escolha uma imagem
+
+< Choose images
+> Escolha imagens
+
+< Choose a video
+> Escolha um vídeo
+
+< Choose videos
+> Escolha vídeos
+
+< Choose a GIF
+> Escolha um GIF
+
+< Choose GIFs
+> Escolha GIFs
+
+< Choose a PDF
+> Escolha um PDF
+
+< Choose PDFs
+> Escolha PDFs
+
+< Choose a photo or video
+> Escolha uma foto ou um vídeo
+
+< Choose photos or videos
+> Escolha fotos ou vídeos
+
+< Choose a file
+> Escolha um arquivo
+
+< Choose files
+> Escolha arquivos
+
+< Choose a photo or PDF
+> Escolha uma foto ou um PDF
+
+< Choose photos or PDFs
+> Escolha fotos ou PDFs
+
+< Select images
+> Selecione imagens
+
+< Select videos
+> Selecione vídeos
+
+< Select GIFs
+> Selecione GIFs
+
+< Select PDFs
+> Selecione PDFs
+
+< Select photos or videos
+> Selecione fotos ou vídeos
+
+< Select files
+> Selecione arquivos
+
+< Select photos or PDFs
+> Selecione fotos ou PDFs
+
+< Select images to continue
+> Selecione imagens para continuar
+
+< Select videos to continue
+> Selecione vídeos para continuar
+
+< Select GIFs to continue
+> Selecione GIFs para continuar
+
+< Select PDFs to continue
+> Selecione PDFs para continuar
+
+< Select photos or videos to continue
+> Selecione fotos ou vídeos para continuar
+
+< Select files to continue
+> Selecione arquivos para continuar
+
+< Select photos or PDFs to continue
+> Selecione fotos ou PDFs para continuar
+
+< Select at least {0} image
+< Select at least {0} images
+> Selecione pelo menos {0} imagem
+> Selecione pelo menos {0} imagens
+
+< Select at least {0} video
+< Select at least {0} videos
+> Selecione pelo menos {0} vídeo
+> Selecione pelo menos {0} vídeos
+
+< Select at least {0} GIF
+< Select at least {0} GIFs
+> Selecione pelo menos {0} GIF
+> Selecione pelo menos {0} GIFs
+
+< Select at least {0} PDF
+< Select at least {0} PDFs
+> Selecione pelo menos {0} PDF
+> Selecione pelo menos {0} PDFs
+
+< Select at least {0} photo or video
+< Select at least {0} photos or videos
+> Selecione pelo menos {0} foto ou vídeo
+> Selecione pelo menos {0} fotos ou vídeos
+
+< Select at least {0} file
+< Select at least {0} files
+> Selecione pelo menos {0} arquivo
+> Selecione pelo menos {0} arquivos
+
+< Select at least {0} photo or PDF
+< Select at least {0} photos or PDFs
+> Selecione pelo menos {0} foto ou PDF
+> Selecione pelo menos {0} fotos ou PDFs
+
+< {0} image selected
+< {0} images selected
+> {0} imagem selecionada
+> {0} imagens selecionadas
+
+< {0} video selected
+< {0} videos selected
+> {0} vídeo selecionado
+> {0} vídeos selecionados
+
+< {0} GIF selected
+< {0} GIFs selected
+> {0} GIF selecionado
+> {0} GIFs selecionados
+
+< {0} PDF selected
+< {0} PDFs selected
+> {0} PDF selecionado
+> {0} PDFs selecionados
+
+< {0} photo or video selected
+< {0} photos and videos selected
+> {0} foto ou vídeo selecionado
+> {0} fotos e vídeos selecionados
+
+< {0} file selected
+< {0} files selected
+> {0} arquivo selecionado
+> {0} arquivos selecionados
+
+< {0} photo or PDF selected
+< {0} photos and PDFs selected
+> {0} foto ou PDF selecionado
+> {0} fotos e PDFs selecionados
+
+< No images found in that folder.
+> Nenhuma imagem encontrada nessa pasta.
+
+< No videos found in that folder.
+> Nenhum vídeo encontrado nessa pasta.
+
+< No GIFs found in that folder.
+> Nenhum GIF encontrado nessa pasta.
+
+< No PDFs found in that folder.
+> Nenhum PDF encontrado nessa pasta.
+
+< No photos or videos found in that folder.
+> Nenhuma foto ou vídeo encontrado nessa pasta.
+
+< No files found in that folder.
+> Nenhum arquivo encontrado nessa pasta.
+
+< No photos or PDFs found in that folder.
+> Nenhuma foto ou PDF encontrado nessa pasta.
+
+< Not a video file
+> Não é um arquivo de vídeo
+
+< Not a PDF file
+> Não é um arquivo PDF
+
+< Not a photo or video
+> Não é uma foto nem um vídeo
+
+< Not a photo, video, GIF or PDF
+> Não é uma foto, vídeo, GIF ou PDF
+
+< Not a photo or PDF
+> Não é uma foto nem um PDF
+
+< Use the GIF optimizer for GIFs
+> Use o otimizador de GIF para GIFs
+
+< Not an image file
+> Não é um arquivo de imagem
+
+< One at a time
+> Um de cada vez
+
+< They'll be used in the order you select them
+> Serão usados na ordem em que você os selecionar
+
+< Select as many as you like
+> Selecione quantos quiser
+
+< Gallery
+> Galeria
+
+< Files
+> Arquivos
+
+< Folder
+> Pasta
+
+< Review & order
+> Revisar e ordenar
+
+< Review
+> Revisar
+
+< Reading the selected files…
+> Lendo os arquivos selecionados…
+
+< Nothing selected yet.
+> Nada selecionado ainda.
+
+< {0} can't be used
+< {0} can't be used
+> {0} não pode ser usado
+> {0} não podem ser usados
+
+< {0} file will be skipped: {1}
+< {0} files will be skipped: {1}
+> {0} arquivo será ignorado: {1}
+> {0} arquivos serão ignorados: {1}
+
+< {0}: {1}, can't be used
+> {0}: {1}, não pode ser usado
+
+< Selected files
+> Arquivos selecionados
+
+< Files are processed from top to bottom. Use the arrows to change the order.
+> Os arquivos são processados de cima para baixo. Use as setas para mudar a ordem.
+
+< {0} file
+< {0} files
+> {0} arquivo
+> {0} arquivos
+
+< {0} will be skipped
+< {0} will be skipped
+> {0} será ignorado
+> {0} serão ignorados
+
+< Move up
+> Mover para cima
+
+< Move down
+> Mover para baixo
+
+< Remove
+> Remover
+
+< remove object person people erase delete clean ai inpaint
+> remover objeto pessoa pessoas apagar excluir limpar ia borracha mágica preencher
+
+< crop rotate straighten brightness contrast exposure saturation filter look edit adjust colour color warmth
+> cortar recortar girar endireitar brilho contraste exposição saturação filtro visual editar ajustar cor temperatura
+
+< censor hide face plate privacy mosaic anonymize redact
+> censurar esconder ocultar rosto placa privacidade mosaico anonimizar tarjar
+
+< stack chain pipeline workflow combine multiple steps several tools in a row automate batch then
+> pilha encadear sequência fluxo combinar várias etapas vários ferramentas em sequência automatizar lote depois
+
+< cut out cutout remove background transparent png sticker subject product ai
+> recortar recorte remover fundo transparente png figurinha adesivo objeto produto ia
+
+< auto fix improve brighten colour color one tap magic ai enhance
+> automático corrigir melhorar clarear cor um toque mágica ia aprimorar
+
+< face faces blur pixelate hide anonymize people video privacy censor ai
+> rosto rostos desfocar desfoque borrar pixelizar esconder anonimizar pessoas vídeo privacidade censurar ia
+
+< duplicate similar same copies clean storage space free gallery burst
+> duplicata duplicada duplicadas parecida igual iguais cópias limpar armazenamento espaço liberar galeria sequência
+
+< join combine concatenate clips append video
+> juntar unir combinar concatenar clipes emendar vídeo
+
+< highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
+> destaques retrospectiva montagem filme clipe apresentação memórias lembranças viagem férias evento música resumo editar automático
+
+< fast slow motion timelapse time lapse speed up hyperlapse
+> rápido câmera lenta timelapse acelerar velocidade lento hyperlapse
+
+< cut shorten clip rotate sideways
+> cortar encurtar aparar clipe girar deitado
+
+< cut parts segments whatsapp status
+> cortar dividir partes segmentos whatsapp status
+
+< shrink smaller reduce size mp4 h264
+> diminuir menor reduzir tamanho comprimir mp4 h264
+
+< shrink smaller reduce size jpg jpeg webp resize
+> diminuir menor reduzir tamanho comprimir jpg jpeg webp redimensionar
+
+< heic avif jpg jpeg png webp tiff format
+> heic avif jpg jpeg png webp tiff formato converter
+
+< collage combine join stack
+> colagem combinar juntar unir empilhar
+
+< panorama join overlap screenshots
+> panorama panorâmica juntar sobreposição capturas de tela
+
+< logo brand copyright text
+> logotipo logo marca direitos autorais texto marca d'água
+
+< exif gps location privacy clean strip
+> exif gps localização privacidade limpar remover metadados
+
+< mp3 m4a sound music
+> mp3 m4a som música áudio
+
+< mute silent sound
+> mudo silencioso sem som
+
+< scan document camera paper
+> digitalizar escanear documento câmera papel
+
+< split pdf pages select
+> dividir pdf páginas selecionar extrair
+
+< animation meme
+> animação meme
+
+< Tools
+> Ferramentas
+
+< Activity
+> Atividade
+
+< Settings
+> Configurações
+
+< Private · offline · on-device
+> Privado · offline · no aparelho
+
+< No uploads
+> Sem uploads
+
+< Edit, convert and\nclean up — privately.
+> Edite, converta e\norganize — com privacidade.
+
+< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
+< {0} tools that run entirely on this phone. No account, no cloud, no limits.
+> {0} ferramenta que funciona inteiramente neste celular. Sem conta, sem nuvem, sem limites.
+> {0} ferramentas que funcionam inteiramente neste celular. Sem conta, sem nuvem, sem limites.
+
+< Search {0} tool
+< Search {0} tools
+> Pesquisar em {0} ferramenta
+> Pesquisar em {0} ferramentas
+
+< Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
+> Suas fotos, vídeos e documentos são processados neste celular e nunca enviados — o app nunca se conecta a servidores na internet (a impressão fala só com a sua impressora, na sua própria rede). Os resultados são salvos em pastas LocalMediaTools dentro de Pictures, Movies, Music e Documents.
+
+< No tool matches "{0}"
+> Nenhuma ferramenta corresponde a "{0}"
+
+< Try words like crop, gps, mp3, heic or panorama.
+> Experimente palavras como cortar, gps, mp3, heic ou panorama.
+
+< {0} result
+< {0} results
+> {0} resultado
+> {0} resultados
+
+< Exports keep running when you leave the app.
+> As exportações continuam rodando quando você sai do app.
+
+< Start a tool and its results will be listed here, with files you can open or share.
+> Use uma ferramenta e os resultados aparecerão aqui, com arquivos que você pode abrir ou compartilhar.
+
+< Language
+> Idioma
+
+< App language
+> Idioma do app
+
+< Performance
+> Desempenho
+
+< How hard exports may work the phone. Lower keeps it cool and responsive; higher finishes sooner.
+> Quanto as exportações podem exigir do celular. Menos mantém o aparelho frio e responsivo; mais termina antes.
+
+< Magic eraser model
+> Modelo da borracha mágica
+
+< MI-GAN · runs on this phone · ready
+> MI-GAN · roda neste celular · pronto
+
+< Unavailable: {0} Basic fill is used instead.
+> Indisponível: {0} Em vez disso, é usado o preenchimento básico.
+
+< Stitcher alignment assist
+> Assistência de alinhamento do montador
+
+< MobileNet-V3 · runs on this phone · ready
+> MobileNet-V3 · roda neste celular · pronto
+
+< Organise in the background
+> Organizar em segundo plano
+
+< Finds people and things in new photos on this phone so you can search them. Slows down when the phone is warm; pauses when it's very hot or the battery is low.
+> Encontra pessoas e coisas nas fotos novas neste celular para que você possa pesquisá-las. Fica mais devagar quando o celular está quente; pausa quando está muito quente ou com pouca bateria.
+
+< Recognition models
+> Modelos de reconhecimento
+
+< EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and ResNet-50 (faces and people) · all on this phone
+> EfficientDet-Lite2 e EfficientNetV2 (coisas e lugares), YuNet e ResNet-50 (rostos e pessoas) · tudo neste celular
+
+< Storage
+> Armazenamento
+
+< Where results go
+> Onde ficam os resultados
+
+< LocalMediaTools folders in {0}
+> Pastas LocalMediaTools em {0}
+
+< Clear temporary files
+> Limpar arquivos temporários
+
+< Calculating…
+> Calculando…
+
+< {0} in the app's cache · your files are not affected
+> {0} no cache do app · seus arquivos não são afetados
+
+< Privacy
+> Privacidade
+
+< Nothing goes to the internet
+> Nada vai para a internet
+
+< The app never connects to servers on the internet; printing talks only to printers on your own network.
+> O app nunca se conecta a servidores na internet; a impressão fala só com impressoras na sua própria rede.
+
+< Originals are never changed
+> Os originais nunca são alterados
+
+< Every tool writes new files and checks them before saving.
+> Cada ferramenta cria arquivos novos e os verifica antes de salvar.
+
+< About
+> Sobre
+
+< {0} tool
+< {0} tools
+> {0} ferramenta
+> {0} ferramentas
+
+< Open-source licences
+> Licenças de código aberto
+
+< Phone's language ({0})
+> Idioma do celular ({0})
+
+< Clear temporary files?
+> Limpar arquivos temporários?
+
+< An export is running; temporary files will be cleared after it finishes. Try again then.
+> Há uma exportação em andamento; os arquivos temporários serão apagados depois que ela terminar. Tente de novo depois.
+
+< Thumbnails and leftovers from interrupted exports are removed. Your saved files are not affected.
+> Miniaturas e sobras de exportações interrompidas são removidas. Seus arquivos salvos não são afetados.
+
+@ delete files
+< Clear
+> Limpar
+
+< Temporary files cleared
+> Arquivos temporários apagados
+
+< Image alignment for the stitcher and basic fill.
+> Alinhamento de imagens para o montador e o preenchimento básico.
+
+< Merging PDFs and extracting pages.
+> Juntar PDFs e extrair páginas.
+
+< Runs the on-device AI models.
+> Executa os modelos de IA no aparelho.
+
+< Magic eraser model, converted to TensorFlow Lite.
+> Modelo da borracha mágica, convertido para TensorFlow Lite.
+
+< Stitcher alignment assist and similar-photo detection.
+> Assistência de alinhamento do montador e detecção de fotos parecidas.
+
+< Finding faces for face blur, the Gallery and auto enhance.
+> Encontrar rostos para o desfoque de rostos, a Galeria e o aprimoramento automático.
+
+< Non-commercial research use only (code MIT)
+> Uso apenas em pesquisa não comercial (código MIT)
+
+< Recognising the people in the Gallery.
+> Reconhecer as pessoas na Galeria.
+
+< Recognising the same person across video frames and files for face blur.
+> Reconhecer a mesma pessoa em quadros de vídeo e arquivos diferentes para o desfoque de rostos.
+
+< Background remover.
+> Removedor de fundo.
+
+< Finding people, animals, vehicles and objects in the gallery.
+> Encontrar pessoas, animais, veículos e objetos na galeria.
+
+< Recognising scenes and kinds of things in the gallery and for auto enhance.
+> Reconhecer cenas e tipos de coisas na galeria e no aprimoramento automático.
+
+< Writing the instrumental background music for highlight videos, on the phone.
+> Compor a música instrumental de fundo dos vídeos de destaques, no celular.
+
+< Grouping the classifier's classes into searchable categories.
+> Agrupar as classes do classificador em categorias pesquisáveis.
+
+< Human-verified labels used to calibrate and train the category recognisers.
+> Rótulos verificados por pessoas, usados para calibrar e treinar os reconhecedores de categorias.
+
+< Language runtime.
+> Ambiente de execução da linguagem.
+
+< App typography.
+> Tipografia do app.
+
+< {0}: original
+> {0}: original
+
+< Run several tools in a row. Each tool works on the results of the one before; only the final files are saved.
+> Use várias ferramentas em sequência. Cada uma trabalha nos resultados da anterior; só os arquivos finais são salvos.
+
+< Example: {0}
+> Exemplo: {0}
+
+< Pick your files
+> Escolha seus arquivos
+
+< Steps
+> Etapas
+
+< Tap a step to change its settings
+> Toque numa etapa para mudar as configurações dela
+
+< Results
+> Resultados
+
+< Also save the in-between results
+> Salvar também os resultados intermediários
+
+< Off: only the final files are saved; the rest are temporary
+> Desligado: só os arquivos finais são salvos; o resto é temporário
+
+< If a step has nothing to do for a file (for example it's already small), or can't work on that kind of file, the file goes on to the next step unchanged, so nothing is lost.
+> Se uma etapa não tiver nada a fazer com um arquivo (por exemplo, ele já é pequeno) ou não funcionar com esse tipo de arquivo, o arquivo segue para a próxima etapa sem alteração, então nada se perde.
+
+< Run stack
+> Executar pilha
+
+< Starts with the files you pick
+> Começa com os arquivos que você escolher
+
+< Starts with {0} file: {1}
+< Starts with {0} files: {1}
+> Começa com {0} arquivo: {1}
+> Começa com {0} arquivos: {1}
+
+< Gets no files it can work on: it needs {0}
+> Não recebe arquivos com que possa trabalhar: precisa de {0}
+
+< Saved: {0}
+> Salvos: {0}
+
+< then {0}
+> depois {0}
+
+< Add the first step
+> Adicionar a primeira etapa
+
+< Add a step
+> Adicionar uma etapa
+
+< Add steps to see where the results go.
+> Adicione etapas para ver onde ficam os resultados.
+
+< The final files are saved where step {0} saves them: {1}. Files that the last step doesn't change are saved by the last step that did.
+> Os arquivos finais são salvos onde a etapa {0} os salva: {1}. Os arquivos que a última etapa não altera são salvos pela última etapa que os alterou.
+
+< Move step {0} up
+> Mover a etapa {0} para cima
+
+< Move step {0} down
+> Mover a etapa {0} para baixo
+
+< Remove step {0}
+> Remover a etapa {0}
+
+< Step {0}: {1}. {2}. Tap to change
+> Etapa {0}: {1}. {2}. Toque para alterar
+
+< Works on the files you pick.
+> Trabalha nos arquivos que você escolher.
+
+< Works on the {0} file you picked.
+< Works on the {0} files you picked.
+> Trabalha no arquivo que você escolheu.
+> Trabalha nos {0} arquivos que você escolheu.
+
+< Works on the {0} coming from step {1} ({2}).
+> Trabalha nos {0} que vêm da etapa {1} ({2}).
+
+< Pick files to continue
+> Escolha arquivos para continuar
+
+< Add at least one step
+> Adicione pelo menos uma etapa
+
+< Step {0} ({1}) gets no files it can work on
+> A etapa {0} ({1}) não recebe arquivos com que possa trabalhar
+
+< {0} step
+< {0} steps
+> {0} etapa
+> {0} etapas
+
+< starts after the current export
+> começa depois da exportação atual
+
+< you can leave the app while it runs
+> você pode sair do app enquanto ela roda
+
+< Add to queue
+> Adicionar à fila
+
+< Queued — it starts when the current export finishes.
+> Na fila — começa quando a exportação atual terminar.
+
+< Stack started. You can leave the app; progress is shown in the notification.
+> Pilha iniciada. Você pode sair do app; o progresso aparece na notificação.
+
+< Add step {0}
+> Adicionar etapa {0}
+
+< This step gets {0}. Pick a tool; you'll set its options next.
+> Esta etapa recebe {0}. Escolha uma ferramenta; você define as opções dela em seguida.
+
+< Works on {0}, which this step doesn't get
+> Trabalha com {0}, que esta etapa não recebe
+
+< {0}, not available at this step
+> {0}, indisponível nesta etapa
+
+< Not available in stacks: {0}. They work on one photo by hand, look through your library or use the camera.
+> Indisponíveis em pilhas: {0}. Elas trabalham numa foto à mão, examinam sua biblioteca ou usam a câmera.
+
+< Reading the files…
+> Lendo os arquivos…
+
+< Start export
+> Iniciar exportação
+
+< Step {0}: {1}
+> Etapa {0}: {1}
+
+< Options
+> Opções
+
+< On-device
+> No aparelho
+
+< Originals untouched
+> Originais intactos
+
+< Runs in background
+> Roda em segundo plano
+
+< Output
+> Saída
+
+< New files are always created; your originals are never changed. A file is only published after it has been fully written and checked.
+> Sempre são criados arquivos novos; seus originais nunca são alterados. Um arquivo só é publicado depois de totalmente gravado e verificado.
+
+< Do more with the results?
+> Fazer mais com os resultados?
+
+< Stack another tool that works on them, e.g. compress after this
+> Empilhe outra ferramenta que trabalhe neles, por exemplo comprimir depois desta
+
+< Then run another tool
+> Depois, usar outra ferramenta
+
+< Save step
+> Salvar etapa
+
+< Add to stack
+> Adicionar à pilha
+
+< Input
+> Entrada
+
+< Files it can't work on go to the next step unchanged.
+> Os arquivos com que ela não trabalha seguem para a próxima etapa sem alteração.
+
+< Previews use your file "{0}". Files it can't work on go to the next step unchanged.
+> As prévias usam o seu arquivo "{0}". Os arquivos com que ela não trabalha seguem para a próxima etapa sem alteração.
+
+< Result
+> Resultado
+
+< Goes to the next step. If this is the last step, the results are saved in {0}.
+> Segue para a próxima etapa. Se esta for a última, os resultados são salvos em {0}.
+
+< Check the options
+> Verifique as opções
+
+< Standard settings
+> Configurações padrão
+
+< Start a new tool stack?
+> Começar uma nova pilha de ferramentas?
+
+< Your current stack ({0}) will be replaced.
+> Sua pilha atual ({0}) será substituída.
+
+< Start new
+> Começar nova
+
+< Settings are kept with the step; tap it in the stack to change them
+> As configurações ficam guardadas com a etapa; toque nela na pilha para mudá-las
+
+< Another export is running; this one will start right after it.
+> Há outra exportação em andamento; esta começa logo depois dela.
+
+< {0} file ready · you can leave the app while it runs
+< {0} files ready · you can leave the app while it runs
+> {0} arquivo pronto · você pode sair do app enquanto ela roda
+> {0} arquivos prontos · você pode sair do app enquanto ela roda
+
+< Export started. You can leave the app; progress is shown in the notification.
+> Exportação iniciada. Você pode sair do app; o progresso aparece na notificação.
+
+< {0} value
+> Valor de {0}
+
+< {0} percent
+> {0} por cento
+
+< Crop
+> Cortar
+
+< Adjust
+> Ajustar
+
+< Looks
+> Visuais
+
+< Close editor
+> Fechar editor
+
+< Undo
+> Desfazer
+
+< Redo
+> Refazer
+
+< Hold to compare with the original
+> Toque e segure para comparar com o original
+
+< Save
+> Salvar
+
+< Opening photo…
+> Abrindo a foto…
+
+< This photo can't be edited: {0}
+> Esta foto não pode ser editada: {0}
+
+< Brush over what you want to remove
+> Pinte por cima do que você quer remover
+
+< Paint over what you want to hide
+> Pinte por cima do que você quer esconder
+
+< Basic fill
+> Preenchimento básico
+
+< Erasing…
+> Apagando…
+
+< Applying…
+> Aplicando…
+
+< Free
+> Livre
+
+< Square
+> Quadrado
+
+< Straighten
+> Endireitar
+
+< Rotate
+> Girar
+
+< Flip
+> Espelhar
+
+< Reset
+> Redefinir
+
+< Auto enhance
+> Aprimorar automaticamente
+
+< Double-tap a slider to reset
+> Toque duas vezes num controle para redefini-lo
+
+< Strength
+> Intensidade
+
+< Brush size
+> Tamanho do pincel
+
+< AI
+> IA
+
+< Loading the on-device model…
+> Carregando o modelo no aparelho…
+
+< Paint over a person or object, then lift your finger. Cover its shadow too. Zoom with two fingers for small details.
+> Pinte por cima de uma pessoa ou objeto e depois levante o dedo. Cubra também a sombra. Use dois dedos para dar zoom em detalhes pequenos.
+
+< Enhancing…
+> Aprimorando…
+
+< {0}: {1}
+> {0}: {1}
+
+< already well balanced
+> já está bem equilibrada
+
+< Finding faces…
+> Procurando rostos…
+
+< No faces were found in this photo.
+> Nenhum rosto foi encontrado nesta foto.
+
+< Pixelated {0} face · undo to bring it back
+< Pixelated {0} faces · undo to bring them back
+> {0} rosto pixelizado · desfaça para trazê-lo de volta
+> {0} rostos pixelizados · desfaça para trazê-los de volta
+
+< Blurred {0} face · undo to bring it back
+< Blurred {0} faces · undo to bring them back
+> {0} rosto desfocado · desfaça para trazê-lo de volta
+> {0} rostos desfocados · desfaça para trazê-los de volta
+
+< Hide all faces
+> Esconder todos os rostos
+
+< full resolution
+> resolução total
+
+< Quality
+> Qualidade
+
+< This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
+> Esta foto tem áreas transparentes: PNG ou WebP as mantêm; o JPEG as preenche de branco.
+
+< A new copy is saved to {0}. The original is not changed. Location and camera details are not copied.
+> Uma cópia nova é salva em {0}. O original não é alterado. Localização e detalhes da câmera não são copiados.
+
+< Save a copy
+> Salvar uma cópia
+
+< Saving in the background…
+> Salvando em segundo plano…
+
+< Discard your edits?
+> Descartar as edições?
+
+< Nothing has been saved yet. Your original photo is not affected.
+> Nada foi salvo ainda. Sua foto original não é afetada.
+
+< Discard
+> Descartar
+
+< Keep editing
+> Continuar editando
+
+< Unnamed person
+> Pessoa sem nome
+
+< Who is this?
+> Quem é?
+
+< You confirmed this · in {0} photo
+< You confirmed this · in {0} photos
+> Você confirmou · em {0} foto
+> Você confirmou · em {0} fotos
+
+< Recognised automatically · in {0} photo
+< Recognised automatically · in {0} photos
+> Reconhecida automaticamente · em {0} foto
+> Reconhecida automaticamente · em {0} fotos
+
+< This face is small, blurry or turned, so it's only grouped when it clearly matches someone
+> Este rosto é pequeno, desfocado ou está virado, então só é agrupado quando combina claramente com alguém
+
+< Not grouped with anyone yet
+> Ainda não agrupado com ninguém
+
+< Name this person
+> Dar nome a esta pessoa
+
+< Names the {0} face in this group
+< Names all {0} faces in this group
+> Dá nome ao rosto deste grupo
+> Dá nome a todos os {0} rostos deste grupo
+
+< This is {0}
+> É {0}
+
+< Looks similar
+> Parece com
+
+< Add a name
+> Adicionar um nome
+
+< Start a person, or pick one you named
+> Comece uma pessoa nova ou escolha uma que você já nomeou
+
+< This isn't {0}
+> Não é {0}
+
+< Removes it from {0} for good
+> Remove de {0} de vez
+
+< Not the same person
+> Não é a mesma pessoa
+
+< Takes this face out of the group
+> Tira este rosto do grupo
+
+< This is someone else…
+> É outra pessoa…
+
+< Pick or type their name
+> Escolha ou digite o nome
+
+< Use as {0}'s picture
+> Usar como foto de {0}
+
+< Use as the group's picture
+> Usar como foto do grupo
+
+< Ignore this face
+> Ignorar este rosto
+
+< For strangers, posters or statues: it won't appear in People
+> Para desconhecidos, cartazes ou estátuas: não vai aparecer em Pessoas
+
+< Name
+> Nome
+
+< Add to {0}?
+> Adicionar a {0}?
+
+< {1} already exists. This face will be added to {1}.
+< {1} already exists. These {0} faces will be added to {1}.
+> {1} já existe. Este rosto será adicionado a {1}.
+> {1} já existe. Estes {0} rostos serão adicionados a {1}.
+
+< Add
+> Adicionar
+
+< Named {0}
+> {0} nomeado
+
+< Named
+> Com nome
+
+< Unnamed groups
+> Grupos sem nome
+
+< On their own
+> Sozinhos
+
+< Ignored
+> Ignorados
+
+< All faces
+> Todos os rostos
+
+< Review faces
+> Revisar rostos
+
+< Tap a face that isn't this person to remove it.
+> Toque num rosto que não é desta pessoa para removê-lo.
+
+< Show this face in People again?
+> Mostrar este rosto em Pessoas de novo?
+
+< Show
+> Mostrar
+
+< Unnamed
+> Sem nome
+
+< Small or blurry
+> Pequeno ou desfocado
+
+< {0}. Tap to name or correct, long-press to open the photo.
+> {0}. Toque para nomear ou corrigir, toque e segure para abrir a foto.
+
+< You can share up to {0} items at a time ({1} selected).
+> Você pode compartilhar até {0} itens por vez ({1} selecionados).
+
+< You can delete up to {0} items at a time ({1} selected).
+> Você pode apagar até {0} itens por vez ({1} selecionados).
+
+< These items can't be moved to the trash: {0}
+> Estes itens não podem ser movidos para a lixeira: {0}
+
+< Moved {0} item to the trash. You can restore it for 30 days.
+< Moved {0} items to the trash. You can restore them for 30 days.
+> {0} item movido para a lixeira. Você pode restaurá-lo por 30 dias.
+> {0} itens movidos para a lixeira. Você pode restaurá-los por 30 dias.
+
+< On Android 10, photos can be deleted one at a time (there is no trash).
+> No Android 10, as fotos só podem ser apagadas uma de cada vez (não há lixeira).
+
+< Delete for good?
+> Apagar de vez?
+
+< Android 10 has no trash, so {0} can't be restored afterwards.
+> O Android 10 não tem lixeira, então {0} não poderá ser restaurado depois.
+
+< Delete
+> Apagar
+
+< Deleted.
+> Apagado.
+
+< This item can't be deleted.
+> Este item não pode ser apagado.
+
+< This item can't be deleted: {0}
+> Este item não pode ser apagado: {0}
+
+< No app can open this file.
+> Nenhum app consegue abrir este arquivo.
+
+< Videos can't be printed.
+> Vídeos não podem ser impressos.
+
+< Videos are left out: only photos can be printed.
+> Os vídeos ficaram de fora: só fotos podem ser impressas.
+
+< No tool works on this selection.
+> Nenhuma ferramenta funciona com esta seleção.
+
+< Open in a tool
+> Abrir numa ferramenta
+
+< Use {0} item in a tool
+< Use {0} items in a tool
+> Usar {0} item numa ferramenta
+> Usar {0} itens numa ferramenta
+
+< Search photos
+> Pesquisar fotos
+
+< Gallery options
+> Opções da galeria
+
+< Search people, things, places…
+> Pesquise pessoas, coisas, lugares…
+
+< Photos
+> Fotos
+
+< Albums
+> Álbuns
+
+< People
+> Pessoas
+
+< Things
+> Coisas
+
+< Showing only the photos you allowed. Tap to allow more.
+> Mostrando só as fotos que você permitiu. Toque para permitir mais.
+
+< Allow more photos
+> Permitir mais fotos
+
+< No photos or videos yet
+> Nenhuma foto ou vídeo ainda
+
+< Photos and videos you take or save on this phone will show up here.
+> As fotos e vídeos que você tirar ou salvar neste celular aparecerão aqui.
+
+< Your photos, organised on this phone
+> Suas fotos, organizadas neste celular
+
+< Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for "dog" or "Sophie" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet.
+> Permita o acesso para ver suas fotos e vídeos aqui. O app encontra pessoas, animais, lugares e coisas neles para que você possa pesquisar "cachorro" ou "Sofia" — tudo neste celular. Nada é enviado: o app nunca se conecta a servidores na internet.
+
+< Allow access
+> Permitir acesso
+
+< No albums yet
+> Nenhum álbum ainda
+
+< Folders with photos or videos appear here.
+> As pastas com fotos ou vídeos aparecem aqui.
+
+< Videos
+> Vídeos
+
+< Favourites
+> Favoritos
+
+< Screenshots
+> Capturas de tela
+
+< {0} face found · named, unnamed and on their own
+< {0} faces found · named, unnamed and on their own
+> {0} rosto encontrado · com nome, sem nome e sozinhos
+> {0} rostos encontrados · com nome, sem nome e sozinhos
+
+< Name people
+> Dar nomes às pessoas
+
+< {0} group to name, one after another
+< {0} groups to name, one after another
+> {0} grupo para nomear, um depois do outro
+> {0} grupos para nomear, um depois do outro
+
+< Name people, {0} group to name
+< Name people, {0} groups to name
+> Dar nomes às pessoas, {0} grupo para nomear
+> Dar nomes às pessoas, {0} grupos para nomear
+
+< Finding people…
+> Procurando pessoas…
+
+< No people yet
+> Nenhuma pessoa ainda
+
+< Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos.
+> Os rostos estão sendo encontrados e agrupados neste celular. As pessoas aparecem aqui assim que o mesmo rosto surge em algumas fotos.
+
+< When the same person appears in several photos, they show up here so you can name them.
+> Quando a mesma pessoa aparece em várias fotos, ela aparece aqui para você dar um nome.
+
+< Add names
+> Adicionar nomes
+
+< Looking at your photos…
+> Olhando suas fotos…
+
+< Nothing recognised yet
+> Nada reconhecido ainda
+
+< Pets, food, places and things appear here as photos are analysed on this phone.
+> Animais, comida, lugares e coisas aparecem aqui à medida que as fotos são analisadas neste celular.
+
+< Pets, food, vehicles, places and more appear here when photos show them.
+> Animais, comida, veículos, lugares e mais aparecem aqui quando as fotos os mostram.
+
+< Resume organising
+> Retomar a organização
+
+< Pause organising
+> Pausar a organização
+
+< About recognition
+> Sobre o reconhecimento
+
+< Start over (forget people and names)
+> Recomeçar (esquecer pessoas e nomes)
+
+< Start over?
+> Recomeçar?
+
+< Names, people and everything found in your photos are forgotten and the photos are analysed again. Your photos themselves are not touched.
+> Nomes, pessoas e tudo o que foi encontrado nas suas fotos são esquecidos e as fotos são analisadas de novo. As fotos em si não são tocadas.
+
+< Start over
+> Recomeçar
+
+< on-device AI
+> IA no aparelho
+
+< basic mode (the AI model couldn't run on this phone)
+> modo básico (o modelo de IA não pôde rodar neste celular)
+
+< unavailable
+> indisponível
+
+< starts with the first photo
+> começa com a primeira foto
+
+< {1} of {0} photo or video analysed.
+< {1} of {0} photos and videos analysed.
+> {1} de {0} foto ou vídeo analisado.
+> {1} de {0} fotos e vídeos analisados.
+
+< Reading your library.
+> Lendo a sua biblioteca.
+
+< Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
+> Os rostos encontrados antes estão sendo analisados de novo com o modelo de rostos mais novo e preciso. Nomes, confirmações e correções continuam; as pessoas são reagrupadas quando terminar.
+
+< Objects and scenes: {0}.
+> Objetos e cenas: {0}.
+
+< Faces and people: {0}.
+> Rostos e pessoas: {0}.
+
+< Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
+> Tudo roda neste celular com baixa prioridade. Fica mais devagar quando o celular esquenta, pausa quando está muito quente ou com pouca bateria e continua de onde parou.
+
+< Organising your gallery
+> Organizando a sua galeria
+
+< OK
+> OK
+
+< Resume
+> Retomar
+
+< Pause
+> Pausar
+
+< Paused
+> Pausado
+
+< {0} left
+< {0} left
+> falta {0}
+> faltam {0}
+
+< Reading your library…
+> Lendo a sua biblioteca…
+
+< Grouping faces into people…
+> Agrupando rostos em pessoas…
+
+< Updating face recognition · {0} of {1}
+> Atualizando o reconhecimento de rostos · {0} de {1}
+
+< slower while the phone is warm
+> mais devagar enquanto o celular está quente
+
+< names are kept
+> os nomes são mantidos
+
+< Finding people and things · {0} of {1}
+> Procurando pessoas e coisas · {0} de {1}
+
+< on this phone
+> neste celular
+
+< {1}, {0} item
+< {1}, {0} items
+> {1}, {0} item
+> {1}, {0} itens
+
+< Add name
+> Adicionar nome
+
+< {1}, {0} photo
+< {1}, {0} photos
+> {1}, {0} foto
+> {1}, {0} fotos
+
+@ date pattern: a short month and its year
+< MMM yyyy
+> MMM 'de' yyyy
+
+< {0} item
+< {0} items
+> {0} item
+> {0} itens
+
+@ date pattern: a month and its year
+< MMMM yyyy
+> MMMM 'de' yyyy
+
+< Today
+> Hoje
+
+< Yesterday
+> Ontem
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> EEE, d 'de' MMM
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> d 'de' MMM 'de' yyyy
+
+< Video
+> Vídeo
+
+< Photo
+> Foto
+
+< , not selected
+> , não selecionado
+
+< Found on this phone by on-device AI.
+> Encontrado neste celular pela IA no aparelho.
+
+< Cancel selection
+> Cancelar seleção
+
+< Select all
+> Selecionar tudo
+
+< Use in a tool
+> Usar numa ferramenta
+
+< Select items
+> Selecionar itens
+
+< {0} selected
+< {0} selected
+> {0} selecionado
+> {0} selecionados
+
+< Loading people…
+> Carregando pessoas…
+
+< {0} of {1}
+> {0} de {1}
+
+< Type a name, then Enter
+> Digite um nome e toque em Enter
+
+< Skip
+> Pular
+
+< No one I know
+> Não conheço
+
+< Some of these aren't the same person…
+> Alguns destes não são a mesma pessoa…
+
+< {1} faces in {0} photo · long-press a face to see its photo
+< {1} faces in {0} photos · long-press a face to see its photo
+> {1} rostos em {0} foto · toque e segure um rosto para ver a foto
+> {1} rostos em {0} fotos · toque e segure um rosto para ver a foto
+
+< Face
+> Rosto
+
+< Type a name, or tap Skip.
+> Digite um nome ou toque em Pular.
+
+< Added to {0}
+> Adicionado a {0}
+
+< Everyone is named
+> Todos têm nome
+
+< All done
+> Tudo pronto
+
+< There are no unnamed groups right now. New ones appear as more photos are looked at.
+> Não há grupos sem nome agora. Novos aparecem à medida que mais fotos são analisadas.
+
+< You went through {0} group and named {1}. Faces are regrouped with your names now.
+< You went through {0} groups and named {1}. Faces are regrouped with your names now.
+> Você passou por {0} grupo e nomeou {1}. Os rostos estão sendo reagrupados com os seus nomes.
+> Você passou por {0} grupos e nomeou {1}. Os rostos estão sendo reagrupados com os seus nomes.
+
+< You went through {0} group. Faces are regrouped with your names now.
+< You went through {0} groups. Faces are regrouped with your names now.
+> Você passou por {0} grupo. Os rostos estão sendo reagrupados com os seus nomes.
+> Você passou por {0} grupos. Os rostos estão sendo reagrupados com os seus nomes.
+
+< Back to People
+> Voltar para Pessoas
+
+< {0} photo or video
+< {0} photos and videos
+> {0} foto ou vídeo
+> {0} fotos e vídeos
+
+< {0} face
+< {0} faces
+> {0} rosto
+> {0} rostos
+
+< Also {0}?
+> Também {0}?
+
+< These groups look similar. Confirm the ones that are {0}.
+> Estes grupos parecem iguais. Confirme os que são {0}.
+
+< Open this group
+> Abrir este grupo
+
+< Not {0}
+> Não é {0}
+
+< Yes, {0}
+> Sim, {0}
+
+< Merge with {0}?
+> Juntar com {0}?
+
+< {0} already exists. Merge {1} into {0}? All their photos will be under {0}.
+> {0} já existe. Juntar {1} com {0}? Todas as fotos ficarão em {0}.
+
+< Merge
+> Juntar
+
+< Rename
+> Renomear
+
+< Merge with…
+> Juntar com…
+
+< Show in People
+> Mostrar em Pessoas
+
+< Hide from People
+> Esconder de Pessoas
+
+< Shown in People
+> Mostrado em Pessoas
+
+< Hidden from People
+> Escondido de Pessoas
+
+< Remove name
+> Remover nome
+
+< Remove {0}?
+> Remover {0}?
+
+< The name is removed and these faces become unnamed again. Photos are not affected.
+> O nome é removido e estes rostos voltam a ficar sem nome. As fotos não são afetadas.
+
+< There is no one else to merge with yet.
+> Ainda não há ninguém para juntar.
+
+< Same person as…
+> Mesma pessoa que…
+
+< People, things, places, dates
+> Pessoas, coisas, lugares, datas
+
+< Showing results for {0} (you typed {1})
+> Mostrando resultados para {0} (você digitou {1})
+
+< still analysing {0} more
+< still analysing {0} more
+> ainda analisando mais {0}
+> ainda analisando mais {0}
+
+< No matches
+> Nada encontrado
+
+< Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
+> Experimente um nome que você deu a alguém, ou coisas como cachorro, carro, praia, comida, pôr do sol ou documento.
+
+< No photo has all of these. Remove a word to see more.
+> Nenhuma foto tem tudo isso. Tire uma palavra para ver mais.
+
+< Nothing found yet.
+> Nada encontrado ainda.
+
+< Things in your photos
+> Coisas nas suas fotos
+
+< Try
+> Experimente
+
+< Last month
+> Mês passado
+
+< This year
+> Este ano
+
+< Press search to look for "{0}".
+> Toque em pesquisar para procurar "{0}".
+
+< Name people in Gallery › People to search for them, like "Sophie" or "John and Sophie".
+> Dê nomes às pessoas em Galeria › Pessoas para pesquisá-las, como "Sofia" ou "João e Sofia".
+
+< Show faces
+> Mostrar rostos
+
+< Details
+> Detalhes
+
+< Edit
+> Editar
+
+< Unnamed face, tap to name
+> Rosto sem nome, toque para nomear
+
+< Hide faces
+> Esconder rostos
+
+< Found in it: {0}
+> Encontrado nela: {0}
+
+< People: {0}
+> Pessoas: {0}
+
+< {0} unnamed
+< {0} unnamed
+> {0} sem nome
+> {0} sem nome
+
+< This item hasn't been analysed yet.
+> Este item ainda não foi analisado.
+
+< Open with…
+> Abrir com…
+
+< Play video
+> Reproduzir vídeo
+
+< Preview
+> Prévia
+
+< Select a photo to see the cut-out.
+> Selecione uma foto para ver o recorte.
+
+< Background
+> Fundo
+
+< What goes behind the subject
+> O que fica atrás do objeto
+
+< Crop to the subject
+> Recortar no objeto
+
+< Trims the empty space around it
+> Corta o espaço vazio em volta
+
+< Works best with one clear subject: a person, pet, product or object. Fine hair and see-through things can keep a little of the background.
+> Funciona melhor com um objeto bem definido: uma pessoa, um animal, um produto ou um objeto. Cabelos finos e coisas transparentes podem manter um pouco do fundo.
+
+< Finding the subject in {0}…
+> Procurando o objeto em {0}…
+
+< Preview not available: {0}
+> Prévia indisponível: {0}
+
+< No clear subject found in this photo.
+> Nenhum objeto claro encontrado nesta foto.
+
+< Preview of {0}
+> Prévia de {0}
+
+< the other {0} photo is done the same way
+< the other {0} photos are done the same way
+> a outra foto é feita do mesmo jeito
+> as outras {0} fotos são feitas do mesmo jeito
+
+< saved at full resolution
+> salvo em resolução total
+
+< name_cutout.png (transparent) · name_cutout.jpg (with a colour)
+> nome_cutout.png (transparente) · nome_cutout.jpg (com uma cor)
+
+< Before
+> Antes
+
+< After
+> Depois
+
+< Select photos to see what auto enhance does.
+> Selecione fotos para ver o que o aprimoramento automático faz.
+
+< Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there.
+> Cada foto recebe as próprias configurações: rostos são clareados com suavidade, comida fica mais quente e rica, paisagens com mais profundidade, documentos mais limpos. Quer ajustar? Abra a foto no Editor de fotos e toque em Aprimorar automaticamente lá.
+
+< Looking at {0}…
+> Olhando {0}…
+
+< {0}: {1}.
+> {0}: {1}.
+
+< already well balanced, only small touches
+> já está bem equilibrada, só pequenos retoques
+
+< name_enhanced.jpg (PNG stays PNG)
+> nome_enhanced.jpg (PNG continua PNG)
+
+< Pixelate chosen faces
+> Pixelizar os rostos escolhidos
+
+< Blur chosen faces
+> Desfocar os rostos escolhidos
+
+< People found
+> Pessoas encontradas
+
+< Select photos or videos; faces are found automatically.
+> Selecione fotos ou vídeos; os rostos são encontrados automaticamente.
+
+< Find faces
+> Encontrar rostos
+
+< Hide everyone
+> Esconder todos
+
+< Hide no one
+> Não esconder ninguém
+
+< Style
+> Estilo
+
+@ strength
+< Light
+> Leve
+
+@ strength
+< Medium
+> Médio
+
+@ strength
+< Strong
+> Forte
+
+< Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
+> Os rostos são seguidos de quadro em quadro e comparados em todos os arquivos selecionados, então cada pessoa aparece uma vez só. Os vídeos são recodificados em MP4 H.264 com qualidade próxima à original; o som é mantido.
+
+< Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
+> Todos os rostos encontrados nesta etapa serão escondidos. Para escolher pessoas, coloque fotos ou vídeos na pilha.
+
+< Watching the video for faces…
+< Watching {0} videos for faces…
+> Procurando rostos no vídeo…
+> Procurando rostos em {0} vídeos…
+
+< Looking for faces…
+> Procurando rostos…
+
+< Find faces again
+> Procurar rostos de novo
+
+< No faces were found.
+> Nenhum rosto foi encontrado.
+
+< Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
+< Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
+> {0} pessoa encontrada. Toque num rosto para mantê-lo visível; os rostos destacados serão escondidos.
+> {0} pessoas diferentes encontradas. Toque num rosto para mantê-lo visível; os rostos destacados serão escondidos.
+
+< Stopped. Tap Find faces to look again.
+> Parado. Toque em Encontrar rostos para procurar de novo.
+
+< Faces couldn't be found: {0}
+> Não foi possível encontrar rostos: {0}
+
+< {0} file couldn't be read: {1}.
+< {0} files couldn't be read: {1}.
+> {0} arquivo não pôde ser lido: {1}.
+> {0} arquivos não puderam ser lidos: {1}.
+
+< Stopping…
+> Parando…
+
+< {0} video
+< {0} videos
+> {0} vídeo
+> {0} vídeos
+
+< Hidden
+> Escondido
+
+< Visible
+> Visível
+
+< Person {0}, in {1}, will be hidden
+> Pessoa {0}, em {1}, será escondida
+
+< Person {0}, in {1}, stays visible
+> Pessoa {0}, em {1}, continua visível
+
+< Tap the people you want to hide
+> Toque nas pessoas que você quer esconder
+
+< Tap Find faces first
+> Toque primeiro em Encontrar rostos
+
+< No faces to hide in these files
+> Não há rostos para esconder nestes arquivos
+
+< name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
+> nome_blurred.jpg / .png (Pictures) · nome_blurred.mp4 (Movies)
+
+< Hides every face
+> Esconde todos os rostos
+
+< Hides {1} of {0} person (others stay visible)
+< Hides {1} of {0} people (others stay visible)
+> Esconde {1} de {0} pessoa (as outras continuam visíveis)
+> Esconde {1} de {0} pessoas (as outras continuam visíveis)
+
+< Find faces first
+> Primeiro, encontre os rostos
+
+< The chosen people don't appear in these files
+> As pessoas escolhidas não aparecem nestes arquivos
+
+< Output width
+> Largura de saída
+
+< 0 keeps the original width
+> 0 mantém a largura original
+
+< Frame rate
+> Taxa de quadros
+
+< 0 keeps the original timing; lower drops frames
+> 0 mantém o tempo original; menos descarta quadros
+
+< Palette size
+> Tamanho da paleta
+
+< Fewer colours = smaller file, less detail
+> Menos cores = arquivo menor, menos detalhe
+
+< {0} colour
+< {0} colours
+> {0} cor
+> {0} cores
+
+< 32: tiny files, visible banding · 64: good for simple graphics · 128: balanced · 256: most detail
+> 32: arquivos minúsculos, faixas visíveis · 64: bom para gráficos simples · 128: equilibrado · 256: mais detalhe
+
+< Dithering
+> Pontilhamento
+
+< Pattern
+> Padrão
+
+@ no dithering
+< None
+> Nenhum
+
+< Diffusion
+> Difusão
+
+< Size, frame rate and colours all trade detail for file size. Results that wouldn't be smaller than the original aren't saved.
+> Tamanho, taxa de quadros e cores trocam detalhe por tamanho de arquivo. Resultados que não ficariam menores que o original não são salvos.
+
+< 0 keeps every pixel identical; other widths sample pixels without blending
+> 0 mantém todos os pixels idênticos; outras larguras amostram pixels sem misturá-los
+
+< Playback frame rate
+> Taxa de quadros da reprodução
+
+< 0 keeps the exact original timing
+> 0 mantém exatamente o tempo original
+
+< Only keep smaller results
+> Manter só resultados menores
+
+< Re-encodes the GIF more efficiently (changed areas only, exact palettes, frame merging) while every displayed pixel stays identical. This is only possible when each frame fits GIF's limits: up to 256 colours including transparency, and on/off transparency only. Frames that don't fit are reported and the file is rejected rather than altered.
+> Recodifica o GIF de forma mais eficiente (só as áreas alteradas, paletas exatas, junção de quadros) mantendo idêntico cada pixel exibido. Isso só é possível quando cada quadro cabe nos limites do GIF: até 256 cores incluindo a transparência, e transparência só de ligado/desligado. Os quadros que não cabem são informados e o arquivo é recusado em vez de alterado.
+
+< Image format
+> Formato da imagem
+
+< lossless, crisp text
+> sem perdas, texto nítido
+
+< smaller files
+> arquivos menores
+
+< JPEG quality
+> Qualidade JPEG
+
+< Render scale
+> Escala de renderização
+
+< 100% = 72 DPI
+> 100% = 72 DPI
+
+< Every page becomes one image that looks exactly like the page on screen (white background). Text isn't extracted; links and selectable text don't carry over. Pages of any size are rendered in strips, so large posters work too.
+> Cada página vira uma imagem idêntica à página na tela (fundo branco). O texto não é extraído; links e texto selecionável não são mantidos. Páginas de qualquer tamanho são renderizadas em faixas, então pôsteres grandes também funcionam.
+
+< ≈ {0} DPI · an A4 page becomes {1} × {2} px
+> ≈ {0} DPI · uma página A4 vira {1} × {2} px
+
+< name_p001.{0}, name_p002… one image per page
+> nome_p001.{0}, nome_p002… uma imagem por página
+
+< Create PDF
+> Criar PDF
+
+< Page orientation
+> Orientação da página
+
+< All pages are A4 with a small margin
+> Todas as páginas são A4 com uma margem pequena
+
+< Auto (match image)
+> Automática (conforme a imagem)
+
+< Image quality
+> Qualidade da imagem
+
+< no recompression
+> sem recompressão
+
+< smaller PDF
+> PDF menor
+
+< Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
+> Original incorpora as fotos JPEG byte a byte e as demais imagens sem perdas. Compacta reduz para a resolução de impressão (300 DPI em A4) em JPEG.
+
+< File name
+> Nome do arquivo
+
+@ default file name
+< Images
+> Imagens
+
+< <date>
+> <data>
+
+< One image per page, in the order shown above (use Review & order to change it). Pictures are fitted without distortion and keep their displayed orientation. This makes an image PDF — text in photos is not made searchable (no OCR).
+> Uma imagem por página, na ordem mostrada acima (use Revisar e ordenar para mudar). As imagens são ajustadas sem distorção e mantêm a orientação exibida. Isto cria um PDF de imagens — o texto das fotos não fica pesquisável (sem OCR).
+
+< Merge PDFs
+> Juntar PDFs
+
+@ default file name
+< Merged
+> Mesclado
+
+< Documents are joined in the order shown above, page by page. Their real content is kept — text stays selectable, vector graphics and links keep working, and every page keeps its own size. Password-protected or damaged PDFs are rejected with the file name.
+> Os documentos são unidos na ordem mostrada acima, página por página. O conteúdo real é mantido — o texto continua selecionável, os gráficos vetoriais e os links continuam funcionando, e cada página mantém o próprio tamanho. PDFs protegidos por senha ou danificados são recusados, com o nome do arquivo.
+
+< Save PDF
+> Salvar PDF
+
+< Pages
+> Páginas
+
+< Capture page
+> Capturar página
+
+< Add from gallery
+> Adicionar da galeria
+
+< Reorder
+> Reordenar
+
+< Clear pages
+> Limpar páginas
+
+< Remove all pages?
+> Remover todas as páginas?
+
+< Captured pages are deleted from the app's private storage; gallery photos aren't affected.
+> As páginas capturadas são apagadas do armazenamento privado do app; as fotos da galeria não são afetadas.
+
+< Page {0}
+> Página {0}
+
+< No pages yet
+> Nenhuma página ainda
+
+< {0} page
+< {0} pages
+> {0} página
+> {0} páginas
+
+< Capture pages with the camera or add photos. Pages appear here in order.
+> Capture páginas com a câmera ou adicione fotos. As páginas aparecem aqui em ordem.
+
+< Enhancement
+> Aprimoramento
+
+< Makes photographed pages look like scans
+> Faz páginas fotografadas parecerem digitalizadas
+
+< Clean document evens out shadows and boosts contrast (greyscale). Black & white gives crisp text and the smallest files.
+> Documento limpo uniformiza as sombras e aumenta o contraste (tons de cinza). Preto e branco deixa o texto nítido e os arquivos menores.
+
+< Auto (match photo)
+> Automática (conforme a foto)
+
+< Portrait
+> Retrato
+
+@ default file name
+< Scan
+> Digitalização
+
+< Each page becomes an A4 page with a small margin, upright as you see it. This is an image scanner: text stays part of the picture and is not searchable or selectable (no OCR).
+> Cada página vira uma página A4 com uma margem pequena, na posição em que você a vê. Isto é um digitalizador de imagens: o texto continua fazendo parte da imagem e não é pesquisável nem selecionável (sem OCR).
+
+< Adding pages…
+> Adicionando páginas…
+
+< Capture or add at least one page
+> Capture ou adicione pelo menos uma página
+
+< Music
+> Música
+
+< Written on this phone for your video — always instrumental
+> Composta neste celular para o seu vídeo — sempre instrumental
+
+< No music
+> Sem música
+
+< Listen
+> Ouvir
+
+< Another tune
+> Outra melodia
+
+< Length
+> Duração
+
+< {0} s
+> {0} s
+
+< Auto
+> Automático
+
+< Shape
+> Formato
+
+< Captions
+> Legendas
+
+< The title at the start and each moment's name
+> O título no início e o nome de cada momento
+
+< Sound from your videos
+> Som dos seus vídeos
+
+< The music gets quieter while they play
+> A música fica mais baixa enquanto eles tocam
+
+< Title
+> Título
+
+< Moments
+> Momentos
+
+< Tap a shot to always include it; tap again to leave it out
+> Toque numa cena para sempre incluí-la; toque de novo para deixá-la de fora
+
+< Auto ({0})
+> Automático ({0})
+
+< landscape
+> paisagem
+
+< portrait
+> retrato
+
+< square
+> quadrado
+
+< Pick the photos and videos of an event (two or more). They're put in the order they were taken.
+> Escolha as fotos e vídeos de um evento (dois ou mais). Eles são colocados na ordem em que foram feitos.
+
+< Too few of these files could be read.
+> Poucos destes arquivos puderam ser lidos.
+
+< {0} of the files couldn't be read and is left out.
+< {0} of the files couldn't be read and are left out.
+> {0} dos arquivos não pôde ser lido e ficou de fora.
+> {0} dos arquivos não puderam ser lidos e ficaram de fora.
+
+< Looking at your photos with on-device AI… {0} of {1}
+> Olhando suas fotos com a IA no aparelho… {0} de {1}
+
+< Looking at your videos with on-device AI… {0} of {1}
+> Olhando seus vídeos com a IA no aparelho… {0} de {1}
+
+< Looking at your photos and videos with on-device AI… {0} of {1}
+> Olhando suas fotos e vídeos com a IA no aparelho… {0} de {1}
+
+< Everything is left out — tap a shot to bring it back.
+> Tudo ficou de fora — toque numa cena para trazê-la de volta.
+
+< not in the video
+> fora do vídeo
+
+< {1} of {0} in the video
+< {1} of {0} in the video
+> {1} de {0} no vídeo
+> {1} de {0} no vídeo
+
+< no music
+> sem música
+
+< {0} moment
+< {0} moments
+> {0} momento
+> {0} momentos
+
+< {0} clip
+< {0} clips
+> {0} clipe
+> {0} clipes
+
+< Name this moment
+> Dar nome a este momento
+
+< Automatic
+> Automático
+
+< Pick a kind of music first.
+> Escolha um tipo de música primeiro.
+
+< Writing…
+> Compondo…
+
+< The music can't be played on this phone right now.
+> A música não pode ser tocada neste celular agora.
+
+< Left out
+> Fora
+
+< left out
+> fora
+
+< always in
+> sempre incluída
+
+< in the video
+> no vídeo
+
+< not used
+> não usada
+
+< Format
+> Formato
+
+< most compatible
+> mais compatível
+
+< smaller
+> menor
+
+< JPEG works everywhere but has no transparency. WebP is typically 25–35% smaller at similar quality and keeps transparency.
+> O JPEG funciona em qualquer lugar, mas não tem transparência. O WebP costuma ser 25–35% menor com qualidade parecida e mantém a transparência.
+
+< Lower = smaller file, more artefacts
+> Menos = arquivo menor, mais artefatos
+
+< Maximum width
+> Largura máxima
+
+< 0 keeps the original size; never upscales
+> 0 mantém o tamanho original; nunca amplia
+
+< Aspect ratio and displayed orientation are always preserved. Metadata such as GPS location is not copied. If a result isn't smaller than the original (and wasn't resized), it isn't saved.
+> A proporção e a orientação exibida são sempre preservadas. Metadados como a localização GPS não são copiados. Se um resultado não ficar menor que o original (e não tiver sido redimensionado), ele não é salvo.
+
+< Visually lossless for most photos; modest savings.
+> Visualmente sem perdas para a maioria das fotos; economia modesta.
+
+< Recommended: strong savings with little visible difference.
+> Recomendado: grande economia com pouca diferença visível.
+
+< Small files; artefacts visible on close inspection.
+> Arquivos pequenos; artefatos visíveis de perto.
+
+< Very small files; noticeable artefacts and blur.
+> Arquivos muito pequenos; artefatos e desfoque perceptíveis.
+
+< Maximum width must be 0 (original) or at least 16 px
+> A largura máxima deve ser 0 (original) ou pelo menos 16 px
+
+< name_q{0}.{1} (plus _1920w when resized)
+> nome_q{0}.{1} (mais _1920w quando redimensionada)
+
+< Lossless format
+> Formato sem perdas
+
+< usually smallest
+> geralmente o menor
+
+< PNG output picks the smallest exact colour mode (palette, greyscale, RGB or RGBA) and maximum compression.
+> A saída PNG escolhe o menor modo de cor exato (paleta, tons de cinza, RGB ou RGBA) e a compressão máxima.
+
+< Discard a result that isn't smaller than its original
+> Descarta um resultado que não fique menor que o original
+
+< Every pixel is preserved exactly — this is not lossy compression. Smaller files are not guaranteed: screenshots and graphics often shrink, while JPEG/HEIC photos usually get larger in a lossless format. 16-bit PNGs and animations are rejected rather than altered.
+> Cada pixel é preservado com exatidão — não é compressão com perdas. Arquivos menores não são garantidos: capturas de tela e gráficos costumam diminuir, enquanto fotos JPEG/HEIC normalmente aumentam num formato sem perdas. PNGs de 16 bits e animações são recusados em vez de alterados.
+
+< name_lossless.{0} (in the same folder as the image compressor's results)
+> nome_lossless.{0} (na mesma pasta dos resultados do compressor de imagens)
+
+< Convert to
+> Converter para
+
+< lossless
+> sem perdas
+
+< lossy
+> com perdas
+
+< Quality (lossy formats)
+> Qualidade (formatos com perdas)
+
+< 90 keeps photos visually identical
+> 90 mantém as fotos visualmente idênticas
+
+< Reads JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG and other RAW previews (when the phone supports them), plus TIFF, PSD (flattened), QOI, PPM/PGM/PBM/PAM and TGA. Animated files use their first frame. Size, aspect ratio and displayed orientation are kept.
+> Lê JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG e prévias de outros RAW (quando o celular é compatível), além de TIFF, PSD (achatado), QOI, PPM/PGM/PBM/PAM e TGA. Arquivos animados usam o primeiro quadro. Tamanho, proporção e orientação exibida são mantidos.
+
+< name.{0} (same name, new format)
+> nome.{0} (mesmo nome, formato novo)
+
+< Layout
+> Disposição
+
+< Fills space around images of different sizes
+> Preenche o espaço em volta de imagens de tamanhos diferentes
+
+< Spacing between images
+> Espaço entre as imagens
+
+@ no spacing
+< None
+> Nenhum
+
+@ spacing
+< Small
+> Pequeno
+
+@ spacing
+< Medium
+> Médio
+
+@ spacing
+< Large
+> Grande
+
+< Images are never scaled or cropped — each keeps its exact pixels and correct orientation. The result is a lossless PNG; very large results are written in strips, so they don't need to fit in memory.
+> As imagens nunca são redimensionadas nem cortadas — cada uma mantém os pixels exatos e a orientação correta. O resultado é um PNG sem perdas; resultados muito grandes são gravados em faixas, então não precisam caber na memória.
+
+< Left
+> Esquerda
+
+< Center
+> Centro
+
+< Right
+> Direita
+
+< Top
+> Em cima
+
+< Bottom
+> Embaixo
+
+< Alignment
+> Alinhamento
+
+< For images narrower or shorter than the widest one
+> Para imagens mais estreitas ou mais baixas que a maior
+
+< Select at least two images to see the layout.
+> Selecione pelo menos duas imagens para ver a disposição.
+
+< Some images couldn't be read.
+> Algumas imagens não puderam ser lidas.
+
+< Result: {0} × {1} px ({2} MP)
+> Resultado: {0} × {1} px ({2} MP)
+
+< <date and time>
+> <data e hora>
+
+< Merge layout preview
+> Prévia da disposição
+
+< AI Assisted Alignment
+> Alinhamento assistido por IA
+
+< Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.
+> Roda um pequeno modelo de imagem inteiramente neste celular — nenhuma imagem é enviada. Ele resolve alinhamentos ambíguos (padrões repetitivos, correspondências fracas) e ajuda a juntar fotos com pouca textura. A montagem funciona sem ele.
+
+< Scene type
+> Tipo de cena
+
+< Auto detects how your photos were taken
+> Automático detecta como as fotos foram tiradas
+
+< Flat surface
+> Superfície plana
+
+< Panorama
+> Panorama
+
+< Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid.
+> Superfície plana: documentos, quadros brancos, mapas, capturas de tela (câmera movida em paralelo). Panorama: câmera girada a partir de um ponto — na horizontal, na vertical ou em grade.
+
+< Crop to clean edges
+> Cortar para bordas limpas
+
+< Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)
+> Corta no maior retângulo totalmente coberto pelas fotos (senão os cantos vazios ficam transparentes)
+
+< For best results: overlap neighbouring shots by about a third, keep exposure steady and avoid moving subjects. Featureless walls, sky-only frames and repetitive textures (tiles, fences) are hard to align. Any arrangement and selection order works; photos that don't connect are reported.
+> Para os melhores resultados: sobreponha as fotos vizinhas em cerca de um terço, mantenha a exposição constante e evite objetos em movimento. Paredes lisas, quadros só de céu e texturas repetitivas (azulejos, cercas) são difíceis de alinhar. Qualquer disposição e ordem de seleção funcionam; as fotos que não se conectam são informadas.
+
+@ default file name
+< Stitched
+> Panorama
+
+< lossless, at the photos' native resolution when practical
+> sem perdas, na resolução nativa das fotos quando possível
+
+< Removed
+> Removido
+
+< GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)
+> Localização GPS · marca, modelo e número de série da câmera · datas · software · autor · comentários · XMP/IPTC · miniaturas ocultas e imagens extras (profundidade, movimento, dados HDR)
+
+< Kept
+> Mantido
+
+< The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
+> Os dados da imagem byte a byte, a orientação (para as fotos continuarem em pé), o perfil de cor e a animação GIF. Vídeos: as faixas de vídeo e áudio, bit a bit, e a rotação.
+
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> Funciona com JPEG, PNG, WebP, GIF e vídeos MP4/MOV/WebM. HEIC, AVIF e RAW não podem ser limpos sem recodificar; converta-os com Converter imagens (as cópias convertidas não levam metadados).
+
+< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
+> nome_clean.jpg / .png / .webp / .gif / .mp4 — fotos em Pictures, vídeos em Movies
+
+< e.g. 1-3, 5, 8-
+> ex.: 1-3, 5, 8-
+
+< Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
+> Use vírgulas entre as páginas; intervalos como 4-9; "8-" significa da página 8 até o fim. As páginas são salvas na ordem em que você as escrever.
+
+< Save as
+> Salvar como
+
+< name_pages.pdf
+> nome_pages.pdf
+
+< name_p3.pdf, name_p4.pdf …
+> nome_p3.pdf, nome_p4.pdf …
+
+< Select a video to choose the part to keep.
+> Selecione um vídeo para escolher a parte que quer manter.
+
+< Fix videos recorded sideways
+> Corrige vídeos gravados de lado
+
+@ no rotation
+< Keep
+> Manter
+
+< 90° right
+> 90° para a direita
+
+< 90° left
+> 90° para a esquerda
+
+< Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
+> Sem perdas: as faixas são copiadas, não recodificadas. O início vai para o quadro-chave anterior mais próximo (normalmente menos de um ou dois segundos); o fim é exato.
+
+< Reading {0}…
+> Lendo {0}…
+
+< {0}: the duration couldn't be read.
+> {0}: não foi possível ler a duração.
+
+< Start {0}
+> Início {0}
+
+< End {0} · keeps {1}
+> Fim {0} · mantém {1}
+
+< Put a video in the stack to choose the part to keep
+> Coloque um vídeo na pilha para escolher a parte que quer manter
+
+< Select one video (trimming is set per video)
+> Selecione um vídeo (o corte é definido por vídeo)
+
+< Reading the video…
+> Lendo o vídeo…
+
+< Keep at least a fraction of a second
+> Mantenha pelo menos uma fração de segundo
+
+< Move the handles or pick a rotation
+> Mova as alças ou escolha uma rotação
+
+< name_trim.mp4 (WebM stays WebM)
+> nome_trim.mp4 (WebM continua WebM)
+
+< Keep {0}–{1} of {2} ({3}–{4}% of each video)
+> Manter {0}–{1} de {2} ({3}–{4}% de cada vídeo)
+
+< Keep {0}–{1}% of each video
+> Manter {0}–{1}% de cada vídeo
+
+< turn {0}° clockwise
+> girar {0}° no sentido horário
+
+< Part of the video to keep
+> Parte do vídeo a manter
+
+< Select two or more videos. They are joined in the order shown above (tap Review to reorder).
+> Selecione dois ou mais vídeos. Eles são unidos na ordem mostrada acima (toque em Revisar para reordenar).
+
+< Keep sound
+> Manter o som
+
+< Clips without sound get silence
+> Clipes sem som ficam em silêncio
+
+< Clips filmed on the same phone with the same settings are joined without re-encoding, in seconds and with no quality loss. Otherwise they're converted to one size (black bars where shapes differ) and format first.
+> Clipes gravados no mesmo celular com as mesmas configurações são unidos sem recodificar, em segundos e sem perda de qualidade. Os outros primeiro são convertidos para um único tamanho (com faixas pretas onde os formatos diferem) e formato.
+
+< Checking the clips…
+> Verificando os clipes…
+
+< One of the files couldn't be read as a video.
+> Um dos arquivos não pôde ser lido como vídeo.
+
+< {0} clip · {1} in total
+< {0} clips · {1} in total
+> {0} clipe · {1} no total
+> {0} clipes · {1} no total
+
+< these clips can be joined without re-encoding (no quality loss).
+> estes clipes podem ser unidos sem recodificar (sem perda de qualidade).
+
+< {0}, so they'll be converted to a common format first (slower).
+> {0}, então eles serão convertidos para um formato comum primeiro (mais lento).
+
+< Slow motion
+> Câmera lenta
+
+< Best with high-frame-rate recordings
+> Melhor com gravações em alta taxa de quadros
+
+< Faster
+> Mais rápido
+
+< Timelapse
+> Timelapse
+
+< Hours become minutes
+> Horas viram minutos
+
+< Natural pitch, no chipmunk voices (up to 4×)
+> Tom natural, sem voz de esquilo (até 4×)
+
+< Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
+> Sem som e até 120 fps, o vídeo só tem o tempo reajustado: sem recodificar, sem perda de qualidade. Caso contrário, é recodificado em MP4 H.264; os timelapses mantêm 30 quadros por segundo.
+
+< {0} becomes {1}
+> {0} vira {1}
+
+< only {0} frame per second, so it will look choppy
+< only {0} frames per second, so it will look choppy
+> só {0} quadro por segundo, então vai parecer travado
+> só {0} quadros por segundo, então vai parecer travado
+
+< no re-encoding
+> sem recodificar
+
+< Speed {0}
+> Velocidade {0}
+
+< Choose a speed
+> Escolha uma velocidade
+
+< Segment length
+> Duração dos segmentos
+
+< Each part will be about this long
+> Cada parte terá mais ou menos esta duração
+
+< Custom length (seconds)
+> Duração personalizada (segundos)
+
+< e.g. 45
+> ex.: 45
+
+< No re-encoding: parts keep the original quality. Cuts happen at the nearest keyframe (sync point) at or before each boundary, so parts may be slightly shorter than the length you set. Videos with very few keyframes can give some longer parts.
+> Sem recodificar: as partes mantêm a qualidade original. Os cortes acontecem no quadro-chave (ponto de sincronização) mais próximo, no limite ou antes dele, então as partes podem ficar um pouco mais curtas que a duração definida. Vídeos com poucos quadros-chave podem gerar algumas partes mais longas.
+
+< Enter a segment length between 1 second and 24 hours
+> Digite uma duração de segmento entre 1 segundo e 24 horas
+
+< One file per part: name_part01.mp4, name_part02.mp4 … (WebM sources stay WebM)
+> Um arquivo por parte: nome_part01.mp4, nome_part02.mp4 … (fontes WebM continuam WebM)
+
+< Lossless: video and audio streams are copied bit-for-bit, so quality is exactly the same. This is not compression — the size changes only slightly. Use Video compressor to make files much smaller.
+> Sem perdas: as faixas de vídeo e áudio são copiadas bit a bit, então a qualidade é exatamente a mesma. Isto não é compressão — o tamanho muda só um pouco. Use o Compressor de vídeo para deixar os arquivos bem menores.
+
+< What it improves: the index (moov) is moved to the start so playback and uploads begin immediately, and padding, subtitle and data tracks are removed. Location metadata isn't copied.
+> O que melhora: o índice (moov) vai para o início, então a reprodução e os uploads começam na hora, e as faixas de preenchimento, legendas e dados são removidas. Os metadados de localização não são copiados.
+
+< Higher quality = larger file
+> Mais qualidade = arquivo maior
+
+< Maximum resolution
+> Resolução máxima
+
+< Shorter side; never upscales
+> Lado menor; nunca amplia
+
+< Output is H.264 video with AAC audio in MP4, which plays on virtually every device. Audio is kept (converted to AAC if needed). Orientation is preserved. If a result would be larger than the original, it is not saved.
+> A saída é vídeo H.264 com áudio AAC em MP4, que toca em praticamente qualquer aparelho. O áudio é mantido (convertido para AAC se precisar). A orientação é preservada. Se um resultado ficasse maior que o original, ele não é salvo.
+
+< ≈ {0} Mbps for {1}p at 30 fps · about {2} MB per minute (lower if the source bitrate is lower)
+> ≈ {0} Mbps para {1}p a 30 fps · cerca de {2} MB por minuto (menos se a taxa de bits da origem for menor)
+
+< The video stream is copied unchanged (no quality loss); only the sound track is left out. Useful for silent clips and to save a little space. Videos that already have no audio are skipped.
+> A faixa de vídeo é copiada sem alteração (sem perda de qualidade); só a faixa de som fica de fora. Útil para clipes sem som e para economizar um pouco de espaço. Vídeos que já não têm áudio são ignorados.
+
+< Keep source frame rate and size
+> Manter a taxa de quadros e o tamanho da origem
+
+< Uses the video's own frame rate (up to 50 fps) and displayed resolution
+> Usa a própria taxa de quadros do vídeo (até 50 fps) e a resolução exibida
+
+< Fewer frames = much smaller GIF
+> Menos quadros = GIF bem menor
+
+< Width
+> Largura
+
+< Height follows the video's shape
+> A altura acompanha o formato do vídeo
+
+< Part of the video
+> Parte do vídeo
+
+< Leave length at 0 to convert to the end
+> Deixe a duração em 0 para converter até o fim
+
+< Start (s)
+> Início (s)
+
+< Length (s)
+> Duração (s)
+
+< 0 = to the end
+> 0 = até o fim
+
+< Colour dithering
+> Pontilhamento de cores
+
+< How the 256-colour palette blends gradients
+> Como a paleta de 256 cores mistura os degradês
+
+< Pattern (stable)
+> Padrão (estável)
+
+< None (sharpest)
+> Nenhum (mais nítido)
+
+< Diffusion (smoothest)
+> Difusão (mais suave)
+
+< GIF can only show 256 colours per frame, so file size grows quickly with frame rate and resolution. 10–15 fps at 320–480 px is a good start. Colours adapt to each scene; timing follows the video exactly.
+> O GIF só consegue mostrar 256 cores por quadro, então o tamanho do arquivo cresce rápido com a taxa de quadros e a resolução. 10–15 fps com 320–480 px é um bom começo. As cores se adaptam a cada cena; o tempo segue o vídeo exatamente.
+
+< Start and length can't be negative
+> O início e a duração não podem ser negativos
+
+< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
+> A faixa de som AAC é copiada para um arquivo .m4a exatamente como está — sem recodificar, sem perda de qualidade. Vídeos cujo áudio não é AAC (por exemplo Opus ou AC-3) ou que não têm som são listados claramente nos resultados.
+
+< Watermark preview
+> Prévia da marca d'água
+
+< Select images to preview
+> Selecione imagens para ver a prévia
+
+< Watermark text
+> Texto da marca d'água
+
+< e.g. © Your Name {0}
+> ex.: © Seu Nome {0}
+
+< Logo image
+> Imagem do logotipo
+
+< Optional — PNG with transparency works best
+> Opcional — PNG com transparência funciona melhor
+
+< Size
+> Tamanho
+
+< Of each image's shorter side; proportions never stretch
+> Do lado menor de cada imagem; as proporções nunca são esticadas
+
+< Opacity
+> Opacidade
+
+< Text colour
+> Cor do texto
+
+< White
+> Branco
+
+< Black
+> Preto
+
+< Grey
+> Cinza
+
+< Gold
+> Dourado
+
+< Default position
+> Posição padrão
+
+< Used for every image shape you don't set separately
+> Usada para todos os formatos de imagem que você não definir separadamente
+
+< Placement by image shape
+> Posição por formato de imagem
+
+< Different shapes can use different positions
+> Formatos diferentes podem usar posições diferentes
+
+< Choose logo
+> Escolher logotipo
+
+< From files
+> Dos arquivos
+
+< Remove logo
+> Remover logotipo
+
+< That file isn't an image.
+> Esse arquivo não é uma imagem.
+
+< Select images to see the shapes in your batch.
+> Selecione imagens para ver os formatos do seu lote.
+
+< Set placement for each shape ({0})
+> Definir a posição de cada formato ({0})
+
+< Set placement for this shape
+> Definir a posição deste formato
+
+< Reset to default position
+> Voltar à posição padrão
+
+< Add watermark text or choose a logo
+> Adicione um texto de marca d'água ou escolha um logotipo
+
+< name_wm.jpg / .png / .webp (same type of format as each original)
+> nome_wm.jpg / .png / .webp (mesmo tipo de formato de cada original)
+
+< Watermark placement
+> Posição da marca d'água
+
+< No image sizes are known yet. Go back and wait for the selection to load.
+> Ainda não se sabe o tamanho das imagens. Volte e espere a seleção carregar.
+
+< Shape {0} of {1}
+> Formato {0} de {1}
+
+< {0} image with this shape
+< {0} images with this shape
+> {0} imagem com este formato
+> {0} imagens com este formato
+
+< Choose where the watermark goes
+> Escolha onde a marca d'água fica
+
+< Review plan
+> Revisar o plano
+
+< Next shape
+> Próximo formato
+
+< Placement plan
+> Plano de posições
+
+< This is how the watermark will be placed when you export.
+> É assim que a marca d'água será posicionada quando você exportar.
+
+< {0} image → {1}
+< {0} images → {1}
+> {0} imagem → {1}
+> {0} imagens → {1}
+
+< Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
+> Tamanho de {0}% do lado menor · opacidade de {1}%. As imagens cujo formato não está na lista usam a posição padrão ({2}).
+
+< Queued — it prints when the current job finishes.
+> Na fila — imprime quando a tarefa atual terminar.
+
+< Sending to the printer. You can leave the app; progress is shown in the notification.
+> Enviando para a impressora. Você pode sair do app; o progresso aparece na notificação.
+
+< Only your Wi-Fi
+> Só o seu Wi-Fi
+
+< No printer app
+> Sem app da impressora
+
+< Printer
+> Impressora
+
+< Can't reach the printer
+> Não foi possível acessar a impressora
+
+< Choose your printer. It must be on the same Wi-Fi as this phone (or its own Wi-Fi Direct network).
+> Escolha a sua impressora. Ela precisa estar no mesmo Wi-Fi que este celular (ou na própria rede Wi-Fi Direct).
+
+< Find printers
+> Encontrar impressoras
+
+< Connecting…
+> Conectando…
+
+< Printing
+> Imprimindo
+
+< Ready · {0}
+> Pronta · {0}
+
+< Ready
+> Pronta
+
+< encrypted
+> criptografada
+
+< Change
+> Trocar
+
+< unknown
+> desconhecido
+
+< Ink, as the printer estimates it
+> Tinta, segundo a estimativa da impressora
+
+< Some ink is low. If your printer has refillable tanks, check them: the printer can only estimate.
+> Tem tinta acabando. Se a sua impressora tem tanques recarregáveis, confira: a impressora só consegue estimar.
+
+< Choose a printer
+> Escolha uma impressora
+
+< Close
+> Fechar
+
+@ printers kept in the app
+< Saved
+> Salvas
+
+< Forget {0}
+> Esquecer {0}
+
+< On this Wi-Fi
+> Neste Wi-Fi
+
+< Looking for printers…
+> Procurando impressoras…
+
+< Add by IP address
+> Adicionar pelo endereço IP
+
+< If your printer isn't found (its IP address is on its network status page)
+> Se a impressora não for encontrada (o endereço IP aparece na página de status de rede dela)
+
+< Printer's IP address
+> Endereço IP da impressora
+
+< No printers answered. Check that the printer is on and connected to this Wi-Fi, or add it by IP address.
+> Nenhuma impressora respondeu. Confira se a impressora está ligada e conectada a este Wi-Fi, ou adicione-a pelo endereço IP.
+
+< Found {0}
+< Found {0}
+> {0} encontrada
+> {0} encontradas
+
+< Couldn't look for printers
+> Não foi possível procurar impressoras
+
+< The paper sizes, paper types and other settings shown are the printer's own once it's connected.
+> Os tamanhos e tipos de papel e as outras configurações mostradas são os da impressora quando ela estiver conectada.
+
+< Paper size
+> Tamanho do papel
+
+< Paper type
+> Tipo de papel
+
+< Tell the printer what's loaded: it lays down the right amount of ink
+> Diga à impressora o que está carregado: ela aplica a quantidade certa de tinta
+
+< {0} per sheet
+< {0} per sheet
+> {0} por folha
+> {0} por folha
+
+< Whole photo
+> Foto inteira
+
+< Fill (trims edges)
+> Preencher (corta as bordas)
+
+< Borderless
+> Sem margens
+
+< Available once the printer is connected
+> Disponível quando a impressora estiver conectada
+
+< Print to the edges of the paper
+> Imprime até as bordas do papel
+
+< Not available for {0} on this printer
+> Indisponível para {0} nesta impressora
+
+< Actual size
+> Tamanho real
+
+< PDF pages at their real size instead of fitted to the paper
+> Páginas do PDF no tamanho real em vez de ajustadas ao papel
+
+< All, or e.g. 1-3, 5, 8-
+> Todas, ou ex.: 1-3, 5, 8-
+
+< Colour
+> Cor
+
+< Black & white
+> Preto e branco
+
+< Draft
+> Rascunho
+
+@ print quality
+< Best
+> Ótima
+
+< Normal
+> Normal
+
+< photos
+> fotos
+
+< Two-sided
+> Frente e verso
+
+< Print on both sides of the paper
+> Imprime dos dois lados do papel
+
+< Select photos or PDFs to see the sheets
+> Selecione fotos ou PDFs para ver as folhas
+
+< Couldn't prepare the preview
+> Não foi possível preparar a prévia
+
+< {0} sheet
+< {0} sheets
+> {0} folha
+> {0} folhas
+
+< first {0} shown
+< first {0} shown
+> primeira mostrada
+> primeiras {0} mostradas
+
+< Sheet {0}
+> Folha {0}
+
+< {0} copy
+< {0} copies
+> {0} cópia
+> {0} cópias
+
+< Connecting to the printer…
+> Conectando à impressora…
+
+< Choose a printer first
+> Escolha uma impressora primeiro
+
+< The sheets are drawn on this phone and sent straight to the printer. Progress shows in the notification and in Activity, where you can cancel; problems such as no paper are explained there.
+> As folhas são desenhadas neste celular e enviadas direto para a impressora. O progresso aparece na notificação e em Atividade, onde você pode cancelar; problemas como falta de papel são explicados lá.
+
+< Your files go only to the printer, over your own network. The app never connects to servers on the internet.
+> Seus arquivos vão só para a impressora, pela sua própria rede. O app nunca se conecta a servidores na internet.
+
+< Couldn't read the shared files.
+> Não foi possível ler os arquivos compartilhados.
+
+< No app on this phone can handle this action.
+> Nenhum app neste celular consegue fazer esta ação.
+
+< This device has no camera. Add pages from the gallery instead.
+> Este aparelho não tem câmera. Adicione páginas da galeria.
+
+< No camera app is available on this phone. Add pages from the gallery instead.
+> Nenhum app de câmera está disponível neste celular. Adicione páginas da galeria.
+
+< The camera app didn't return a photo.
+> O app da câmera não devolveu uma foto.
+
+< This action isn't available on this phone.
+> Esta ação não está disponível neste celular.
+
+< Nothing was produced.
+> Nada foi produzido.
+
+< Waiting
+> Aguardando
+
+< Waiting to start
+> Aguardando para começar
+
+< Cancelled · {0} saved before cancelling
+< Cancelled · {0} saved before cancelling
+> Cancelado · {0} salvo antes de cancelar
+> Cancelado · {0} salvos antes de cancelar
+
+< Cancelled
+> Cancelado
+
+< Not printed
+> Não impresso
+
+< {0} file saved
+< {0} files saved
+> {0} arquivo salvo
+> {0} arquivos salvos
+
+< {0} failed
+< {0} failed
+> {0} falhou
+> {0} falharam
+
+< {0} skipped
+< {0} skipped
+> {0} ignorado
+> {0} ignorados
+
+< Export progress
+> Progresso da exportação
+
+< Shows the progress of running exports
+> Mostra o progresso das exportações em andamento
+
+< Finished exports
+> Exportações concluídas
+
+< Tells you when an export finishes or fails
+> Avisa quando uma exportação termina ou falha
+
+< Preparing export…
+> Preparando a exportação…
+
+< {0} queued
+< {0} queued
+> {0} na fila
+> {0} na fila
+
+< Workload {0}%
+> Carga {0}%
+
+< Export finished
+> Exportação concluída
+
+< Export finished with issues
+> Exportação concluída com problemas
+
+< Export cancelled
+> Exportação cancelada
+
+< Export failed
+> Falha na exportação
+
+< Saved to {0}
+> Salvo em {0}
+
+< File {0} of {1}
+> Arquivo {0} de {1}
+
+< Processing
+> Processando
+
+< WebP lossless
+> WebP sem perdas
+
+< {0} supports at most {1} px per side; this image would be {2}×{3}. Choose a smaller width or another format.
+> {0} aceita no máximo {1} px por lado; esta imagem teria {2}×{3}. Escolha uma largura menor ou outro formato.
+
+< This image is too large to encode as {0} with the memory available ({1}×{2}). Choose PNG or JPEG, or set a smaller width.
+> Esta imagem é grande demais para codificar em {0} com a memória disponível ({1}×{2}). Escolha PNG ou JPEG, ou defina uma largura menor.
+
+< This {0} image is too large to process in pieces with the memory available.
+> Esta imagem {0} é grande demais para processar em partes com a memória disponível.
+
+< The JPEG encoder failed.
+> O codificador JPEG falhou.
+
+< The WebP encoder failed.
+> O codificador WebP falhou.
+
+< The lossless WebP encoder failed.
+> O codificador WebP sem perdas falhou.
+
+< The PNG encoder failed.
+> O codificador PNG falhou.
+
+< {0} cannot be written in pieces.
+> {0} não pode ser gravado em partes.
+
+< This very large image uses the {0} colour profile, which can't be preserved exactly when processing it in pieces.
+> Esta imagem muito grande usa o perfil de cor {0}, que não pode ser preservado com exatidão ao processá-la em partes.
+
+< The written file failed verification ({0}×{1}, expected {2}×{3}), so it was discarded.
+> O arquivo gravado não passou na verificação ({0}×{1}, esperado {2}×{3}), então foi descartado.
+
+< This image ({0}×{1}) needs about {2} MB of memory, more than is free right now.
+> Esta imagem ({0}×{1}) precisa de cerca de {2} MB de memória, mais do que está livre agora.
+
+< The image data could not be decoded. The file may be damaged or use an unsupported variant of {0}.
+> Não foi possível decodificar os dados da imagem. O arquivo pode estar danificado ou usar uma variante de {0} não compatível.
+
+< Part of the image could not be decoded; the file may be damaged.
+> Parte da imagem não pôde ser decodificada; o arquivo pode estar danificado.
+
+< The file is empty.
+> O arquivo está vazio.
+
+< This {0} file is damaged or uses an unsupported variant.
+> Este arquivo {0} está danificado ou usa uma variante não compatível.
+
+< This {0} file is incomplete (truncated). Processing it would produce grey or missing areas, so it was not used.
+> Este arquivo {0} está incompleto (truncado). Processá-lo geraria áreas cinzas ou faltando, então ele não foi usado.
+
+< AVIF images can't be decoded on this Android version.
+> Imagens AVIF não podem ser decodificadas nesta versão do Android.
+
+< This HEIC/HEIF image can't be decoded on this device.
+> Esta imagem HEIC/HEIF não pode ser decodificada neste aparelho.
+
+< This camera RAW format isn't supported by Android's decoder.
+> Este formato RAW de câmera não é compatível com o decodificador do Android.
+
+< This file is not an image format that can be decoded.
+> Este arquivo não está num formato de imagem que possa ser decodificado.
+
+< This {0} image could not be decoded. It may be damaged.
+> Esta imagem {0} não pôde ser decodificada. Ela pode estar danificada.
+
+< Unsupported {0} file
+> Arquivo {0} não compatível
+
+< Unsupported format
+> Formato não compatível
+
+< The {0} file could not be decoded
+> Não foi possível decodificar o arquivo {0}
+
+< The {0} file is damaged.
+> O arquivo {0} está danificado.
+
+< Top left
+> Em cima à esquerda
+
+< Top center
+> Em cima ao centro
+
+< Top right
+> Em cima à direita
+
+< Center left
+> No centro à esquerda
+
+< Center right
+> No centro à direita
+
+< Bottom left
+> Embaixo à esquerda
+
+< Bottom center
+> Embaixo ao centro
+
+< Bottom right
+> Embaixo à direita
+
+< Landscape
+> Paisagem
+
+< Waiting for the phone to cool down
+> Esperando o celular esfriar
+
+< Paused to save battery (below 15%)
+> Pausado para economizar bateria (abaixo de 15%)
+
+< Paused while Battery Saver is on
+> Pausado enquanto a Economia de bateria está ativa
+
+< Organising the gallery
+> Organizando a galeria
+
+< Shows progress while photos are analysed on this phone for search and people
+> Mostra o progresso enquanto as fotos são analisadas neste celular para a busca e as pessoas
+
+< Grouping faces into people
+> Agrupando rostos em pessoas
+
+< {1} of {0} photo or video · on this phone
+< {1} of {0} photos and videos · on this phone
+> {1} de {0} foto ou vídeo · neste celular
+> {1} de {0} fotos e vídeos · neste celular
+
+< Reading your library
+> Lendo sua biblioteca
+
+< The photo library isn't available right now
+> A biblioteca de fotos não está disponível agora
+
+< Other
+> Outros
+
+@ search words for videos, separated by commas
+< video,videos,clip,clips,movie,movies
+> vídeo,vídeos,clipe,clipes,filme,filmes,gravação,gravações
+
+@ search words for photos, separated by commas
+< photo,photos,picture,pictures,pic,pics,image,images
+> foto,fotos,fotografia,fotografias,imagem,imagens
+
+@ search words for screenshots, separated by commas
+< screenshot,screenshots,screen shot,screen shots,screengrab
+> captura de tela,capturas de tela,print,prints,print de tela,prints de tela
+
+@ search words for GIFs, separated by commas
+< gif,gifs,animation,animations
+> gif,gifs,animação,animações
+
+@ search words for favourites, separated by commas
+< favourite,favourites,favorite,favorites,starred
+> favorito,favoritos,favorita,favoritas,com estrela,estrela,estrelas
+
+< GIFs
+> GIFs
+
+@ search words for today, separated by commas
+< today
+> hoje
+
+@ search words for yesterday, separated by commas
+< yesterday
+> ontem
+
+@ search words for this week, separated by commas
+< this week
+> esta semana,essa semana,nesta semana,nessa semana
+
+@ search words for last week, separated by commas
+< last week
+> semana passada,na semana passada,última semana
+
+@ search words for this month, separated by commas
+< this month
+> este mês,esse mês,neste mês,nesse mês
+
+@ search words for last month, separated by commas
+< last month
+> mês passado,no mês passado,último mês
+
+@ search words for this year, separated by commas
+< this year
+> este ano,esse ano,neste ano,nesse ano
+
+@ search words for last year, separated by commas
+< last year
+> ano passado,no ano passado,último ano
+
+< This week
+> Esta semana
+
+< Last week
+> Semana passada
+
+< This month
+> Este mês
+
+< Last year
+> Ano passado
+
+@ search: words to leave out of a search, separated by commas
+< a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
+> o,a,os,as,um,uma,uns,umas,de,do,da,dos,das,com,e,em,no,na,nos,nas,num,numa,por,pelo,pela,pelos,pelas,para,pra,meu,minha,meus,minhas,nosso,nossa,nossos,nossas,mostrar,mostre,mostra,buscar,busque,procurar,procure,achar,ache,encontrar,encontre,todo,toda,todos,todas,algum,alguma,alguns,algumas,onde,é,são,foi,foram,estava,estavam,juntos,juntas,ou,ambos,ambas,quem,que,tirada,tiradas,tirado,tirados
+
+< Upbeat
+> Animada
+
+< Bright, with a beat
+> Alegre, com batida
+
+< Chill
+> Tranquila
+
+< Relaxed, soft electric piano
+> Relaxante, piano elétrico suave
+
+< Cinematic
+> Cinematográfica
+
+< Slow and wide, piano and strings
+> Lenta e ampla, piano e cordas
+
+< Upbeat music
+> Música animada
+
+< Chill music
+> Música tranquila
+
+< Cinematic music
+> Música cinematográfica
+
+< Reading your photo library
+> Lendo sua biblioteca de fotos
+
+< The scan stopped unexpectedly.
+> A análise parou inesperadamente.
+
+< Looking at your photos
+> Olhando suas fotos
+
+< Comparing
+> Comparando
+
+< Watching {0}
+> Assistindo {0}
+
+< Looking at {0}
+> Olhando {0}
+
+< couldn't be read
+> não pôde ser lido
+
+< Could not prepare the on-device model {0}
+> Não foi possível preparar o modelo no aparelho {0}
+
+@ kind of photo
+< Portrait
+> Retrato
+
+@ kind of photo
+< Landscape
+> Paisagem
+
+< Food
+> Comida
+
+< Animal
+> Animal
+
+< Plants & flowers
+> Plantas e flores
+
+< City & buildings
+> Cidade e prédios
+
+< Document
+> Documento
+
+< Night
+> Noite
+
+< General
+> Geral
+
+< brightened the faces
+> clareou os rostos
+
+< brightened
+> clareou
+
+< toned down the brightness
+> reduziu o brilho
+
+< recovered highlights
+> recuperou os realces
+
+< lifted shadows
+> clareou as sombras
+
+< added contrast
+> aumentou o contraste
+
+< cooled a yellow cast
+> esfriou um tom amarelado
+
+< warmed a blue cast
+> aqueceu um tom azulado
+
+< balanced colours
+> equilibrou as cores
+
+< removed a green tint
+> removeu um tom esverdeado
+
+< removed a magenta tint
+> removeu um tom magenta
+
+< richer colours
+> deixou as cores mais vivas
+
+< Identical copies
+> Cópias idênticas
+
+< Byte-for-byte the same file
+> O mesmo arquivo, byte a byte
+
+< Duplicates
+> Duplicatas
+
+< The same picture saved again, resized or re-compressed
+> A mesma imagem salva de novo, redimensionada ou recomprimida
+
+< Bursts and retakes of the same moment
+> Sequências e repetições do mesmo momento
+
+< Best quality
+> Melhor qualidade
+
+< Most pixels, then the sharpest
+> Mais pixels e, depois, a mais nítida
+
+< The oldest file, before it was copied or edited
+> O arquivo mais antigo, antes de ser copiado ou editado
+
+< The latest file, e.g. your edited version
+> O arquivo mais recente, por exemplo, a sua versão editada
+
+< Smallest file
+> Menor arquivo
+
+< Saves the most space
+> Economiza mais espaço
+
+< keeps the best-quality copy
+> mantém a cópia de melhor qualidade
+
+< keeps the original copy
+> mantém a cópia original
+
+< keeps the newest copy
+> mantém a cópia mais recente
+
+< keeps the smallest copy
+> mantém a menor cópia
+
+< Favourite
+> Favorita
+
+< Person you keep
+> Pessoa que você mantém
+
+< Transparent
+> Transparente
+
+< Light grey
+> Cinza-claro
+
+< Removing the background from {0} photo
+< Removing the background from {0} photos
+> Removendo o fundo de {0} foto
+> Removendo o fundo de {0} fotos
+
+< Finding the subject
+> Encontrando o objeto principal
+
+< No clear subject was found in this photo, so nothing was saved.
+> Nenhum objeto principal claro foi encontrado nesta foto, então nada foi salvo.
+
+< The whole photo looks like the subject, so there was no background to remove.
+> A foto inteira parece ser o objeto principal, então não havia fundo para remover.
+
+< Very large photo: saved at {0}×{1}.
+> Foto muito grande: salva em {0}×{1}.
+
+< transparent PNG
+> PNG transparente
+
+< {0} background
+> fundo: {0}
+
+@ strength
+< Subtle
+> Sutil
+
+@ strength
+< Natural
+> Natural
+
+< Enhancing {0} photo
+< Enhancing {0} photos
+> Melhorando {0} foto
+> Melhorando {0} fotos
+
+< Looking at the photo
+> Analisando a foto
+
+< This photo already looks balanced; nothing to improve.
+> Esta foto já parece equilibrada; não há o que melhorar.
+
+< fine-tuned
+> ajustes finos
+
+< Pixelating faces in {0} file
+< Pixelating faces in {0} files
+> Pixelizando rostos em {0} arquivo
+> Pixelizando rostos em {0} arquivos
+
+< Blurring faces in {0} file
+< Blurring faces in {0} files
+> Desfocando rostos em {0} arquivo
+> Desfocando rostos em {0} arquivos
+
+< No faces to hide were found in this file.
+> Nenhum rosto para ocultar foi encontrado neste arquivo.
+
+< None of the chosen people appear in this file, so it was left as it is.
+> Nenhuma das pessoas escolhidas aparece neste arquivo, então ele ficou como estava.
+
+< Finding faces
+> Encontrando rostos
+
+< Photo metadata (location, camera, dates) is not copied.
+> Os metadados da foto (local, câmera, datas) não são copiados.
+
+< {0} face pixelated
+< {0} faces pixelated
+> {0} rosto pixelizado
+> {0} rostos pixelizados
+
+< {0} face blurred
+< {0} faces blurred
+> {0} rosto desfocado
+> {0} rostos desfocados
+
+< This file has no video track.
+> Este arquivo não tem faixa de vídeo.
+
+< Blurring faces frame by frame
+> Desfocando rostos quadro a quadro
+
+< {0} face track pixelated
+< {0} face tracks pixelated
+> {0} rosto acompanhado e pixelizado
+> {0} rostos acompanhados e pixelizados
+
+< {0} face track blurred
+< {0} face tracks blurred
+> {0} rosto acompanhado e desfocado
+> {0} rostos acompanhados e desfocados
+
+< H.264 from {0}
+> H.264 a partir de {0}
+
+< Vertical
+> Vertical
+
+< One image below another
+> Uma imagem abaixo da outra
+
+< Horizontal
+> Horizontal
+
+< Images side by side
+> Imagens lado a lado
+
+< Smart pack
+> Encaixe inteligente
+
+< Compact arrangement of different sizes
+> Arranjo compacto de tamanhos diferentes
+
+< Merging {0} image ({1})
+< Merging {0} images ({1})
+> Juntando {0} imagem ({1})
+> Juntando {0} imagens ({1})
+
+< The merged image would be {0}×{1} pixels, which is too large to save.
+> A imagem combinada teria {0}×{1} pixels, grande demais para salvar.
+
+< The result is very large ({0}×{1}); some gallery apps may not be able to open it.
+> O resultado é muito grande ({0}×{1}); alguns apps de galeria podem não conseguir abri-lo.
+
+< {0} image
+< {0} images
+> {0} imagem
+> {0} imagens
+
+< Stitching {0} photo (AI assisted)
+< Stitching {0} photos (AI assisted)
+> Montando {0} foto (com ajuda de IA)
+> Montando {0} fotos (com ajuda de IA)
+
+< Stitching {0} photo
+< Stitching {0} photos
+> Montando {0} foto
+> Montando {0} fotos
+
+< AI assistance could not start on this device ({0}); stitched without it.
+> A ajuda de IA não pôde ser iniciada neste aparelho ({0}); a montagem foi feita sem ela.
+
+< AI resolved {0} alignment decision on-device.
+< AI resolved {0} alignment decisions on-device.
+> A IA resolveu {0} decisão de alinhamento no aparelho.
+> A IA resolveu {0} decisões de alinhamento no aparelho.
+
+< AI assistance was on but no ambiguous decisions needed it.
+> A ajuda de IA estava ligada, mas nenhuma decisão ambígua precisou dela.
+
+< {0}% scale
+> escala de {0}%
+
+< Watermarking {0} image
+< Watermarking {0} images
+> Aplicando marca d'água em {0} imagem
+> Aplicando marca d'água em {0} imagens
+
+< The logo image could not be loaded: {0}
+> Não foi possível carregar a imagem do logotipo: {0}
+
+< Add watermark text or a logo first.
+> Adicione primeiro um texto ou um logotipo para a marca d'água.
+
+< Saving edited photo
+> Salvando a foto editada
+
+< cropped/rotated
+> cortada/girada
+
+< {0} retouch
+< {0} retouches
+> {0} retoque
+> {0} retoques
+
+< {0} adjustment
+< {0} adjustments
+> {0} ajuste
+> {0} ajustes
+
+< {0} look
+> visual: {0}
+
+< Photo metadata (location, camera, dates) is not copied to edited copies.
+> Os metadados da foto (local, câmera, datas) não são copiados para as cópias editadas.
+
+< Converting {0} video to GIF
+< Converting {0} videos to GIF
+> Convertendo {0} vídeo em GIF
+> Convertendo {0} vídeos em GIF
+
+< The video's dimensions could not be read.
+> Não foi possível ler as dimensões do vídeo.
+
+< Frame rate limited to 50 fps, the fastest rate GIF viewers play.
+> Taxa de quadros limitada a 50 fps, a mais rápida que os visualizadores de GIF reproduzem.
+
+< The chosen start time is beyond the end of the video.
+> O início escolhido fica depois do fim do vídeo.
+
+< Analysing colours
+> Analisando as cores
+
+< No frames could be decoded from the selected part of the video.
+> Nenhum quadro pôde ser decodificado da parte escolhida do vídeo.
+
+< {0} frame used its own colour palette for a scene with different colours.
+< {0} frames used their own colour palette for scenes with different colours.
+> {0} quadro usou a própria paleta de cores para uma cena com cores diferentes.
+> {0} quadros usaram a própria paleta de cores para cenas com cores diferentes.
+
+< {0} frame
+< {0} frames
+> {0} quadro
+> {0} quadros
+
+< The written GIF failed verification, so it was discarded.
+> O GIF gravado falhou na verificação, então foi descartado.
+
+< The written GIF has no frames, so it was discarded.
+> O GIF gravado não tem quadros, então foi descartado.
+
+< Compressing {0} GIF ({1} colours)
+< Compressing {0} GIFs ({1} colours)
+> Comprimindo {0} GIF ({1} cores)
+> Comprimindo {0} GIFs ({1} cores)
+
+< Analysing
+> Analisando
+
+< The GIF contains no frames.
+> O GIF não contém quadros.
+
+< The result would not be smaller ({0} vs {1}), so nothing was saved. Try fewer colours, a smaller width or a lower frame rate.
+> O resultado não ficaria menor ({0} contra {1}), então nada foi salvo. Tente menos cores, uma largura menor ou uma taxa de quadros mais baixa.
+
+< {1} of {0} frame
+< {1} of {0} frames
+> {1} de {0} quadro
+> {1} de {0} quadros
+
+< Optimizing {0} GIF (pixel-preserving)
+< Optimizing {0} GIFs (pixel-preserving)
+> Otimizando {0} GIF (sem alterar pixels)
+> Otimizando {0} GIFs (sem alterar pixels)
+
+< This GIF is already efficiently encoded (optimized: {0} vs {1}), so nothing was saved.
+> Este GIF já está codificado de forma eficiente (otimizado: {0} contra {1}), então nada foi salvo.
+
+< pixel-identical frames
+> quadros idênticos pixel a pixel
+
+< resized with nearest-neighbour sampling (no new colours)
+> redimensionado pelo vizinho mais próximo (sem cores novas)
+
+< Making a highlight video from {0} photo or video
+< Making a highlight video from {0} photos and videos
+> Criando um vídeo de destaques com {0} foto ou vídeo
+> Criando um vídeo de destaques com {0} fotos e vídeos
+
+< Pick at least two photos or videos.
+> Escolha pelo menos duas fotos ou vídeos.
+
+< Looking at the photos and videos ({0} of {1})
+> Olhando as fotos e os vídeos ({0} de {1})
+
+< "{0}" couldn't be read and was left out.
+> "{0}" não pôde ser lido e ficou de fora.
+
+< Too few of the files could be read to make a video.
+> Poucos arquivos puderam ser lidos para criar um vídeo.
+
+< Writing the music
+> Compondo a música
+
+< Preparing the sound
+> Preparando o som
+
+< Making the video
+> Criando o vídeo
+
+< Saving
+> Salvando
+
+< {0} of the files couldn't be read.
+< {0} of the files couldn't be read.
+> {0} dos arquivos não pôde ser lido.
+> {0} dos arquivos não puderam ser lidos.
+
+< Compressing {0} image to {1} (quality {2})
+< Compressing {0} images to {1} (quality {2})
+> Comprimindo {0} imagem em {1} (qualidade {2})
+> Comprimindo {0} imagens em {1} (qualidade {2})
+
+< Already compact: re-encoding at quality {0} would make it larger ({1} vs {2}). Nothing was saved.
+> Já está compacta: recodificar com qualidade {0} a deixaria maior ({1} contra {2}). Nada foi salvo.
+
+< Transparent areas were filled with white because JPEG has no transparency.
+> As áreas transparentes foram preenchidas com branco, porque o JPEG não tem transparência.
+
+< Only the first frame of the animation was used.
+> Só o primeiro quadro da animação foi usado.
+
+< Optimizing {0} image losslessly ({1})
+< Optimizing {0} images losslessly ({1})
+> Otimizando {0} imagem sem perdas ({1})
+> Otimizando {0} imagens sem perdas ({1})
+
+< GIFs are optimized with the GIF optimizer tool (this tool would keep only one frame).
+> GIFs são otimizados com a ferramenta Otimizador de GIF (esta ferramenta manteria só um quadro).
+
+< Animated WebP can't be optimized here without losing its animation.
+> WebP animado não pode ser otimizado aqui sem perder a animação.
+
+< 16-bit-per-channel PNG can't be kept pixel-identical (Android decodes 8 bits per channel). Nothing was saved.
+> PNG de 16 bits por canal não pode ser mantido idêntico pixel a pixel (o Android decodifica 8 bits por canal). Nada foi salvo.
+
+< {0} photos are already lossy-compressed; storing their pixels losslessly takes more space.
+> Fotos {0} já têm compressão com perdas; guardar os pixels sem perdas ocupa mais espaço.
+
+< Not smaller than the original ({0} vs {1}), so nothing was saved.
+> Não ficou menor que o original ({0} contra {1}), então nada foi salvo.
+
+< orientation applied to pixels
+> orientação aplicada aos pixels
+
+< pixel-identical
+> idêntica pixel a pixel
+
+< Converting {0} image to {1}
+< Converting {0} images to {1}
+> Convertendo {0} imagem em {1}
+> Convertendo {0} imagens em {1}
+
+< {0} supports at most {1} px per side; this image is {2}×{3}. Choose PNG or JPEG.
+> {0} aceita no máximo {1} px por lado; esta imagem tem {2}×{3}. Escolha PNG ou JPEG.
+
+< Only the first frame of the animation was converted.
+> Só o primeiro quadro da animação foi convertido.
+
+< quality {0}
+> qualidade {0}
+
+< The written file failed verification (missing track), so it was discarded.
+> O arquivo gravado falhou na verificação (faixa ausente), então foi descartado.
+
+< The written file failed verification (no samples), so it was discarded.
+> O arquivo gravado falhou na verificação (sem amostras), então foi descartado.
+
+< The written file could not be read back, so it was discarded.
+> Não foi possível reler o arquivo gravado, então ele foi descartado.
+
+< Removing metadata from {0} file
+< Removing metadata from {0} files
+> Removendo metadados de {0} arquivo
+> Removendo metadados de {0} arquivos
+
+< {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
+> Arquivos {0} não podem ser limpos sem recodificar. Use Converter imagens para criar uma cópia limpa em JPEG ou PNG (arquivos convertidos não levam metadados).
+
+< The file is damaged or uses an unusual layout ({0}); nothing was saved.
+> O arquivo está danificado ou tem uma estrutura incomum ({0}); nada foi salvo.
+
+< No metadata found — this file is already clean. Nothing was saved.
+> Nenhum metadado encontrado — este arquivo já está limpo. Nada foi salvo.
+
+< The cleaned copy failed verification, so it was discarded.
+> A cópia limpa falhou na verificação, então foi descartada.
+
+< orientation
+> orientação
+
+< Removed: {0}.
+> Removido: {0}.
+
+< Kept: {0}.
+> Mantido: {0}.
+
+< image data copied unchanged
+> dados da imagem copiados sem alteração
+
+< Location, camera, date and other container metadata were not copied. Rotation is kept.
+> Local, câmera, data e outros metadados do contêiner não foram copiados. A rotação é mantida.
+
+< video and audio copied bit-for-bit
+> vídeo e áudio copiados bit a bit
+
+< Trimming {0}
+> Cortando {0}
+
+< Trimming {0} video
+< Trimming {0} videos
+> Cortando {0} vídeo
+> Cortando {0} vídeos
+
+< The selected part is too short.
+> A parte escolhida é curta demais.
+
+< Finding keyframes
+> Encontrando quadros-chave
+
+< Nothing to change: the whole video is selected and it isn't rotated.
+> Nada a mudar: o vídeo inteiro está selecionado e ele não está girado.
+
+< Starts {0} earlier than chosen, at the previous keyframe (cutting elsewhere would need re-encoding).
+> Começa {0} antes do escolhido, no quadro-chave anterior (cortar em outro ponto exigiria recodificar).
+
+< Turned {0}° clockwise (players read the rotation flag; pixels are untouched).
+> Girado {0}° no sentido horário (os players leem a marcação de rotação; os pixels não são alterados).
+
+< One PDF
+> Um PDF
+
+< One PDF per page
+> Um PDF por página
+
+< Enter the pages to keep, like 1-3, 5
+> Digite as páginas a manter, como 1-3, 5
+
+< "{0}" isn't a valid page range
+> "{0}" não é um intervalo de páginas válido
+
+< Page {1} doesn't exist; the PDF has {0} page
+< Page {1} doesn't exist; the PDF has {0} pages
+> A página {1} não existe; o PDF tem {0} página
+> A página {1} não existe; o PDF tem {0} páginas
+
+< "{0}" isn't a page number
+> "{0}" não é um número de página
+
+< Extracting pages from {0} PDF
+< Extracting pages from {0} PDFs
+> Extraindo páginas de {0} PDF
+> Extraindo páginas de {0} PDFs
+
+< This PDF is password-protected. Remove the password first.
+> Este PDF é protegido por senha. Remova a senha primeiro.
+
+< Not a valid PDF or damaged ({0}).
+> PDF inválido ou danificado ({0}).
+
+< {1} of {0} page
+< {1} of {0} pages
+> {1} de {0} página
+> {1} de {0} páginas
+
+< {0} PDF
+< {0} PDFs
+> {0} PDF
+> {0} PDFs
+
+< text and links kept
+> texto e links mantidos
+
+< The written PDF could not be read back.
+> Não foi possível reler o PDF gravado.
+
+< The written PDF failed verification, so it was discarded.
+> O PDF gravado falhou na verificação, então foi descartado.
+
+< The written PDF has {0} pages instead of {1}, so it was discarded.
+> O PDF gravado tem {0} páginas em vez de {1}, então foi descartado.
+
+< Rendering {0} PDF to {1} at {2}%
+< Rendering {0} PDFs to {1} at {2}%
+> Renderizando {0} PDF em {1} a {2}%
+> Renderizando {0} PDFs em {1} a {2}%
+
+< The PDF has no pages.
+> O PDF não tem páginas.
+
+< Page {0} of {1}
+> Página {0} de {1}
+
+< Page {0} could not be opened; the PDF may be damaged.
+> Não foi possível abrir a página {0}; o PDF pode estar danificado.
+
+< Page {0} would be {1}×{2} px at {3}%, beyond the limit of {4}. Use a lower scale.
+> A página {0} teria {1}×{2} px a {3}%, acima do limite de {4}. Use uma escala menor.
+
+< {0} page image
+< {0} page images
+> {0} imagem de página
+> {0} imagens de página
+
+< last page {0}
+> última página {0}
+
+< Compact
+> Compacto
+
+< Original colour
+> Cor original
+
+< Clean document
+> Documento limpo
+
+< Creating a {0}-page PDF
+< Creating a {0}-page PDF
+> Criando um PDF de {0} página
+> Criando um PDF de {0} páginas
+
+< Page {0} ("{1}"): {2}
+> Página {0} ("{1}"): {2}
+
+< {0} JPEG photo was embedded without recompression.
+< {0} JPEG photos were embedded without recompression.
+> {0} foto JPEG foi incorporada sem recompressão.
+> {0} fotos JPEG foram incorporadas sem recompressão.
+
+< {0} very large image was scaled down to fit in memory.
+< {0} very large images were scaled down to fit in memory.
+> {0} imagem muito grande foi reduzida para caber na memória.
+> {0} imagens muito grandes foram reduzidas para caber na memória.
+
+< Pages are images; the text is not searchable or selectable.
+> As páginas são imagens; o texto não pode ser pesquisado nem selecionado.
+
+< {0} A4 page
+< {0} A4 pages
+> {0} página A4
+> {0} páginas A4
+
+< Merging {0} PDF
+< Merging {0} PDFs
+> Juntando {0} PDF
+> Juntando {0} PDFs
+
+< Reading documents
+> Lendo os documentos
+
+< Added {0} of {1}
+> {0} de {1} adicionados
+
+< text, links and page sizes kept
+> texto, links e tamanhos de página mantidos
+
+< videos
+> vídeos
+
+< PDFs
+> PDFs
+
+< audio files
+> arquivos de áudio
+
+< nothing
+> nada
+
+< Edits one photo by hand, so it can't run in a stack
+> Edita uma foto à mão, por isso não pode ser executada numa pilha
+
+< Looks through your whole photo library, so it can't run in a stack
+> Examina toda a sua biblioteca de fotos, por isso não pode ser executada numa pilha
+
+< Uses the camera; to make a PDF from files in a stack use Images → PDF
+> Usa a câmera; para criar um PDF a partir de arquivos numa pilha, use Imagens → PDF
+
+< Prints instead of saving files, so it can't be a step of a stack
+> Imprime em vez de salvar arquivos, por isso não pode ser uma etapa de uma pilha
+
+< Makes one film from the moments you review, so it can't run in a stack
+> Cria um único filme a partir dos momentos que você revisa, por isso não pode ser executada numa pilha
+
+< Can't be part of a stack
+> Não pode fazer parte de uma pilha
+
+< Stack: {0}
+> Pilha: {0}
+
+< Saved as it came out of an earlier step
+> Salvo como saiu de uma etapa anterior
+
+< No step changed this file.
+> Nenhuma etapa alterou este arquivo.
+
+< Step {0} ({1})
+> Etapa {0} ({1})
+
+< {0} doesn't work on {1}, so it was skipped.
+> {0} não funciona com {1}, então foi pulada.
+
+< {0} doesn't work on this kind of file, so it was skipped.
+> {0} não funciona com este tipo de arquivo, então foi pulada.
+
+< {1} needs at least {0} file, so it was skipped.
+< {1} needs at least {0} files, so it was skipped.
+> {1} precisa de pelo menos {0} arquivo, então foi pulada.
+> {1} precisa de pelo menos {0} arquivos, então foi pulada.
+
+< Step {0} of {1}: {2}
+> Etapa {0} de {1}: {2}
+
+< Step {0} of {1} · {2}: {3}
+> Etapa {0} de {1} · {2}: {3}
+
+< {0} · after step {1}
+> {0} · depois da etapa {1}
+
+< {0} failed: {1}
+> {0} falhou: {1}
+
+< unknown error
+> erro desconhecido
+
+< {0} left it unchanged: {1}
+> {0} não alterou nada: {1}
+
+< nothing to do
+> nada a fazer
+
+< it produced no result
+> não gerou resultado
+
+< Stacks
+> Pilhas
+
+< Run several tools in a row
+> Execute várias ferramentas em sequência
+
+< Edit & AI
+> Edição e IA
+
+< Retouch, cut out and anonymise with on-device AI
+> Retoque, recorte e anonimize com IA no aparelho
+
+< Images
+> Imagens
+
+< Compress, convert, combine and brand photos
+> Comprima, converta, combine e personalize fotos
+
+< Trim, cut, repackage and shrink videos
+> Corte, divida, reempacote e reduza vídeos
+
+< GIF
+> GIF
+
+< Create and slim down animations
+> Crie e enxugue animações
+
+< PDF
+> PDF
+
+< Pages, scans and merges
+> Páginas, digitalizações e junções
+
+< Photos and documents on your Wi-Fi printer
+> Fotos e documentos na sua impressora Wi-Fi
+
+< Privacy & audio
+> Privacidade e áudio
+
+< Clean metadata and extract sound
+> Limpe metadados e extraia o som
+
+< Tool stack
+> Pilha de ferramentas
+
+< Chain tools: each works on the last one's results
+> Encadeie ferramentas: cada uma trabalha sobre os resultados da anterior
+
+< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> Escolha os arquivos uma vez, adicione as ferramentas que quiser na ordem — por exemplo Desfocar rostos → Compressor de vídeo → Vídeo → GIF → Otimizador de GIF — e execute todas com um toque. Cada ferramenta mantém todas as suas configurações; só os resultados finais são salvos.
+
+< Photo editor
+> Editor de fotos
+
+< Crop, straighten, light, colour and looks
+> Corte, endireite, luz, cor e visuais
+
+< Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched.
+> Corte e endireite, ajuste a luz e a cor, aplique visuais e salve uma cópia em resolução total. O original fica intacto.
+
+< Magic eraser
+> Borracha mágica
+
+< Brush away people and objects with AI
+> Apague pessoas e objetos com IA
+
+< Brush over what you don't want and an AI model running on this phone fills the gap with matching background. Nothing is uploaded.
+> Pinte sobre o que você não quer e um modelo de IA rodando neste celular preenche o espaço com um fundo compatível. Nada é enviado.
+
+< Blur & pixelate
+> Desfocar e pixelizar
+
+< Hide faces, plates and private details
+> Esconda rostos, placas e detalhes privados
+
+< Paint over faces, number plates, addresses or screens to blur or pixelate them before you share a photo.
+> Pinte sobre rostos, placas de carro, endereços ou telas para desfocá-los ou pixelizá-los antes de compartilhar uma foto.
+
+< Background remover
+> Removedor de fundo
+
+< Cut out the subject as a transparent PNG
+> Recorte o objeto principal como PNG transparente
+
+< An AI model on this phone finds the main subject (people, pets, products, objects) and removes everything behind it. Save as a transparent PNG or on a plain colour.
+> Um modelo de IA neste celular encontra o objeto principal (pessoas, animais, produtos, objetos) e remove tudo o que está atrás dele. Salve como PNG transparente ou sobre uma cor sólida.
+
+< One tap: light, colour and detail by AI
+> Um toque: luz, cor e detalhes com IA
+
+< On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
+> A IA no aparelho reconhece rostos e o tipo de cena (comida, paisagem, noite, documentos…) e corrige exposição, contraste, tons de cor e nitidez de acordo. Funciona com um lote inteiro.
+
+< Blur faces
+> Desfocar rostos
+
+< Find faces in photos and videos, pick who to hide
+> Encontre rostos em fotos e vídeos e escolha quem esconder
+
+< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
+> A IA no aparelho encontra todos os rostos nas suas fotos e vídeos e os agrupa por pessoa. Escolha quem desfocar ou pixelizar; os rostos são acompanhados ao longo de todo o vídeo.
+
+< Highlight video
+> Vídeo de destaques
+
+< Your best moments, cut to music, automatically
+> Seus melhores momentos, editados com música, automaticamente
+
+< Pick the photos and videos of a day out, a trip or a party. On-device AI puts them in the order they were taken, finds the moments (setting off, lunch, the beach…), picks the best shots and the liveliest part of each video, and edits them into a short film on the beat of background music it writes for it — always instrumental, and quieter while your videos speak. Review the moments, change anything, then save. Nothing is uploaded.
+> Escolha as fotos e os vídeos de um passeio, uma viagem ou uma festa. A IA no aparelho os coloca na ordem em que foram feitos, encontra os momentos (a partida, o almoço, a praia…), escolhe as melhores fotos e a parte mais animada de cada vídeo e os edita num filme curto no ritmo de uma música de fundo que ela compõe para ele — sempre instrumental e mais baixa enquanto seus vídeos falam. Revise os momentos, mude o que quiser e salve. Nada é enviado.
+
+< Split videos
+> Dividir vídeos
+
+< Cut into equal-length parts without re-encoding
+> Corte em partes de mesma duração sem recodificar
+
+< Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.
+> Divide cada vídeo em segmentos consecutivos da duração que você escolher. As faixas são copiadas, não recodificadas, então cada parte mantém a qualidade original.
+
+< Trim & rotate video
+> Cortar e girar vídeo
+
+< Cut the start and end, fix sideways videos
+> Corte o início e o fim, conserte vídeos de lado
+
+< Keeps only the part you choose and can turn the video by 90° steps. Streams are copied, not re-encoded, so quality is untouched; the start snaps to the nearest earlier keyframe.
+> Mantém só a parte que você escolher e pode girar o vídeo em passos de 90°. As faixas são copiadas, não recodificadas, então a qualidade fica intacta; o início se ajusta ao quadro-chave anterior mais próximo.
+
+< Lossless video optimizer
+> Otimizador de vídeo sem perdas
+
+< Repackage for fast start; quality untouched
+> Reempacote para início rápido; qualidade intacta
+
+< Copies the existing video and audio streams bit-for-bit into a clean MP4 with the index at the front (plays and uploads faster). This is not compression: quality is identical and the size changes only slightly.
+> Copia bit a bit as faixas de vídeo e áudio existentes para um MP4 limpo com o índice no começo (toca e envia mais rápido). Isto não é compressão: a qualidade é idêntica e o tamanho muda só um pouco.
+
+< Video compressor
+> Compressor de vídeo
+
+< Re-encode to smaller H.264 MP4 files
+> Recodifique em arquivos MP4 H.264 menores
+
+< Re-encodes videos to H.264 + AAC MP4 at the quality you choose. Lower quality gives smaller files.
+> Recodifica vídeos em MP4 H.264 + AAC com a qualidade que você escolher. Qualidade menor gera arquivos menores.
+
+< Merge videos
+> Juntar vídeos
+
+< Join clips into one video, in your order
+> Una clipes num só vídeo, na sua ordem
+
+< Joins videos end to end. Clips recorded with the same settings are joined without re-encoding (no quality loss); others are converted to a common size and format first.
+> Junta vídeos um após o outro. Clipes gravados com as mesmas configurações são unidos sem recodificar (sem perda de qualidade); os outros são convertidos antes para um tamanho e formato em comum.
+
+< Speed & timelapse
+> Velocidade e timelapse
+
+< Slow motion, fast forward, timelapses
+> Câmera lenta, avanço rápido, timelapses
+
+< Plays videos from 0.25× to 60× speed. The sound keeps its natural pitch, or can be muted; long recordings become smooth timelapses.
+> Reproduz vídeos de 0,25× a 60× de velocidade. O som mantém o tom natural ou pode ser silenciado; gravações longas viram timelapses suaves.
+
+< Remove video audio
+> Remover áudio do vídeo
+
+< Silent copies with the video untouched
+> Cópias sem som com o vídeo intacto
+
+< Creates copies of your videos without the sound track. The picture is copied as-is, with no quality loss.
+> Cria cópias dos seus vídeos sem a faixa de som. A imagem é copiada como está, sem perda de qualidade.
+
+< Image compressor
+> Compressor de imagens
+
+< JPEG or WebP with quality and size limits
+> JPEG ou WebP com limites de qualidade e tamanho
+
+< Re-encodes photos as JPEG or WebP at the quality you choose, optionally limiting the width. Aspect ratio and orientation are always preserved.
+> Recodifica fotos em JPEG ou WebP com a qualidade que você escolher e, se quiser, limita a largura. A proporção e a orientação são sempre preservadas.
+
+< Lossless image optimizer
+> Otimizador de imagens sem perdas
+
+< Pixel-identical PNG or lossless WebP
+> PNG idêntico pixel a pixel ou WebP sem perdas
+
+< Stores every pixel exactly as it is in an efficiently compressed lossless file. Savings depend on the source and are not guaranteed.
+> Guarda cada pixel exatamente como está num arquivo sem perdas comprimido de forma eficiente. A economia depende da origem e não é garantida.
+
+< Convert images
+> Converter imagens
+
+< PNG, JPEG or WebP from most formats
+> PNG, JPEG ou WebP a partir da maioria dos formatos
+
+< Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.
+> Converte imagens (HEIC, AVIF, TIFF, BMP, PSD, prévias de RAW e mais) em PNG, JPEG ou WebP.
+
+< Merge images
+> Juntar imagens
+
+< Stack, line up or pack images into one PNG
+> Empilhe, alinhe ou encaixe imagens num só PNG
+
+< Combines two or more images into a single PNG without scaling or cropping any of them.
+> Combina duas ou mais imagens num único PNG sem redimensionar nem cortar nenhuma delas.
+
+< Multi-shot stitcher
+> Montador de várias fotos
+
+< Join overlapping photos into a panorama
+> Una fotos sobrepostas num panorama
+
+< Finds where your overlapping photos meet, aligns them and blends them into one high-resolution lossless PNG.
+> Encontra onde suas fotos sobrepostas se encontram, alinha e mescla tudo num único PNG sem perdas de alta resolução.
+
+< Bulk watermark
+> Marca d'água em lote
+
+< Text or logo on every photo in a batch
+> Texto ou logotipo em todas as fotos de um lote
+
+< Adds a text and/or logo watermark to every image, with independent placement for each image shape.
+> Adiciona uma marca d'água de texto e/ou logotipo a cada imagem, com posicionamento independente para cada formato de imagem.
+
+< Duplicate finder
+> Localizador de duplicatas
+
+< Find copies and similar shots, free space
+> Encontre cópias e fotos parecidas, libere espaço
+
+< Scans your photos on this phone for identical copies, re-saved duplicates and near-identical shots, suggests the best one to keep and moves the rest to the trash when you confirm.
+> Analisa as fotos neste celular em busca de cópias idênticas, duplicatas salvas de novo e fotos quase iguais, sugere a melhor para manter e move as outras para a lixeira quando você confirma.
+
+< Video → GIF
+> Vídeo → GIF
+
+< Animated GIFs with adaptive colours
+> GIFs animados com cores adaptáveis
+
+< Turns videos into animated GIFs with an adaptive colour palette and accurate frame timing.
+> Transforma vídeos em GIFs animados com uma paleta de cores adaptável e tempo de quadros preciso.
+
+< GIF compressor
+> Compressor de GIF
+
+< Smaller GIFs: size, frame rate, colours
+> GIFs menores: tamanho, taxa de quadros, cores
+
+< Shrinks existing GIFs by reducing their dimensions, frame rate and colour palette.
+> Reduz GIFs existentes diminuindo as dimensões, a taxa de quadros e a paleta de cores.
+
+< GIF optimizer
+> Otimizador de GIF
+
+< Re-pack GIFs while keeping every pixel
+> Reempacote GIFs mantendo todos os pixels
+
+< Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
+> Recodifica GIFs de forma mais eficiente, mantendo idêntico cada pixel exibido.
+
+< PDF → images
+> PDF → imagens
+
+< Every page as a PNG or JPEG
+> Cada página como PNG ou JPEG
+
+< Renders each page of a PDF to an image exactly as it looks on screen.
+> Renderiza cada página de um PDF numa imagem, exatamente como aparece na tela.
+
+< Images → PDF
+> Imagens → PDF
+
+< One A4 page per image, in your order
+> Uma página A4 por imagem, na sua ordem
+
+< Builds an A4 PDF with one image per page, in the order you choose.
+> Cria um PDF A4 com uma imagem por página, na ordem que você escolher.
+
+< Combine PDFs, keeping text and links
+> Combine PDFs mantendo texto e links
+
+< Joins PDFs into one document, keeping their original text, vector graphics, links and page sizes.
+> Junta PDFs num só documento, mantendo o texto original, os gráficos vetoriais, os links e os tamanhos de página.
+
+< Extract PDF pages
+> Extrair páginas de PDF
+
+< Pick pages into a new PDF or separate files
+> Escolha páginas para um novo PDF ou arquivos separados
+
+< Choose page numbers or ranges (like 1-3, 7, 10-) and save them as one new PDF or one PDF per page. Pages are copied as they are: text, links and quality are kept.
+> Escolha números ou intervalos de páginas (como 1-3, 7, 10-) e salve-os como um novo PDF ou um PDF por página. As páginas são copiadas como estão: texto, links e qualidade são mantidos.
+
+< PDF scanner
+> Digitalizador de PDF
+
+< Camera or gallery pages into a PDF
+> Páginas da câmera ou da galeria num PDF
+
+< Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.
+> Captura páginas com a câmera ou adiciona fotos da galeria e as salva como um PDF A4.
+
+< Photos and PDFs on your Wi-Fi printer, no printer app
+> Fotos e PDFs na sua impressora Wi-Fi, sem app da impressora
+
+< Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
+> Imprime fotos e PDFs direto numa impressora da sua rede Wi-Fi — Epson, HP, Canon, Brother e outras compatíveis com AirPrint, Mopria ou IPP Everywhere — sem o app do fabricante. Escolha o tamanho e o tipo de papel, sem bordas, várias fotos por folha, colorido ou preto e branco, qualidade e cópias, com uma prévia de cada folha. O app conversa só com a impressora da sua própria rede.
+
+< Remove metadata
+> Remover metadados
+
+< Strip location, camera and date info
+> Tire local, câmera e data
+
+< Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
+> Cria cópias limpas de fotos e vídeos sem a localização GPS, os detalhes da câmera, datas, comentários ou miniaturas ocultas. Os pixels das fotos e as faixas de vídeo são copiados sem alteração (sem perda de qualidade); a orientação e o perfil de cor são mantidos.
+
+< Extract audio
+> Extrair áudio
+
+< Save a video's AAC sound as M4A
+> Salve o som AAC de um vídeo como M4A
+
+< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
+> Copia a faixa de som AAC de cada vídeo para um arquivo de áudio M4A sem recodificar.
+
+< Merging {0} video
+< Merging {0} videos
+> Juntando {0} vídeo
+> Juntando {0} vídeos
+
+< Reading the clips
+> Lendo os clipes
+
+< "{0}" has no video track.
+> "{0}" não tem faixa de vídeo.
+
+< Joining without re-encoding
+> Unindo sem recodificar
+
+< joined without re-encoding
+> unidos sem recodificar
+
+< The clips couldn't be joined directly ({0}), so they were converted to one size and format first.
+> Não foi possível unir os clipes diretamente ({0}), então eles foram convertidos antes para um único tamanho e formato.
+
+< Converting clip {0} of {1}
+> Convertendo o clipe {0} de {1}
+
+< The converted clips still can't be joined on this device ({0}).
+> Os clipes convertidos ainda não podem ser unidos neste aparelho ({0}).
+
+< Joining
+> Unindo
+
+< Finishing
+> Finalizando
+
+< Sound was left out, as chosen.
+> O som ficou de fora, como escolhido.
+
+< Changing the speed of {0} video to {1}
+< Changing the speed of {0} videos to {1}
+> Mudando a velocidade de {0} vídeo para {1}
+> Mudando a velocidade de {0} vídeos para {1}
+
+< Sound was left out: above {0} it can't be followed.
+> O som ficou de fora: acima de {0} não dá para acompanhá-lo.
+
+< Slow motion looks smoothest with high-frame-rate recordings (this one has {0} fps).
+> A câmera lenta fica mais suave com gravações de alta taxa de quadros (esta tem {0} fps).
+
+< natural-pitch sound
+> som com tom natural
+
+< No suitable container for these tracks.
+> Nenhum contêiner adequado para estas faixas.
+
+< Splitting {0} video into {1} parts
+< Splitting {0} videos into {1} parts
+> Dividindo {0} vídeo em partes de {1}
+> Dividindo {0} vídeos em partes de {1}
+
+< {0} long — already within one {1} part, nothing to split.
+> {0} de duração — já cabe numa parte de {1}, nada a dividir.
+
+< The video has no keyframes after the start, so it can't be split without re-encoding.
+> O vídeo não tem quadros-chave depois do início, então não pode ser dividido sem recodificar.
+
+< Part {0} of {1}
+> Parte {0} de {1}
+
+< Some parts are longer than {0} because the video has few keyframes (longest {1}).
+> Algumas partes são mais longas que {0} porque o vídeo tem poucos quadros-chave (a mais longa tem {1}).
+
+< {0} part
+< {0} parts
+> {0} parte
+> {0} partes
+
+< cuts at keyframes
+> cortes em quadros-chave
+
+< Optimizing {0} video (lossless)
+< Optimizing {0} videos (lossless)
+> Otimizando {0} vídeo (sem perdas)
+> Otimizando {0} vídeos (sem perdas)
+
+< {0} non-audio/video track (subtitles or metadata) was not copied.
+< {0} non-audio/video tracks (subtitles or metadata) were not copied.
+> {0} faixa que não é de áudio nem vídeo (legendas ou metadados) não foi copiada.
+> {0} faixas que não são de áudio nem vídeo (legendas ou metadados) não foram copiadas.
+
+< Moving the index to the front
+> Movendo o índice para o começo
+
+< Fast start: the video index is at the beginning, so it starts playing and uploading sooner.
+> Início rápido: o índice do vídeo fica no começo, então ele começa a tocar e a ser enviado mais cedo.
+
+< streams copied bit-for-bit
+> faixas copiadas bit a bit
+
+< Compressing {0} video (quality {1})
+< Compressing {0} videos (quality {1})
+> Comprimindo {0} vídeo (qualidade {1})
+> Comprimindo {0} vídeos (qualidade {1})
+
+< The compressed video would be larger than the original ({0} vs {1}), so nothing was saved. Try a lower quality or resolution.
+> O vídeo comprimido ficaria maior que o original ({0} contra {1}), então nada foi salvo. Tente uma qualidade ou resolução menor.
+
+< from {0}
+> a partir de {0}
+
+< Removing audio from {0} video
+< Removing audio from {0} videos
+> Removendo o áudio de {0} vídeo
+> Removendo o áudio de {0} vídeos
+
+< This video already has no audio track.
+> Este vídeo já não tem faixa de áudio.
+
+< video copied as-is
+> vídeo copiado como está
+
+< Extracting audio from {0} video
+< Extracting audio from {0} videos
+> Extraindo o áudio de {0} vídeo
+> Extraindo o áudio de {0} vídeos
+
+< This video has no audio track.
+> Este vídeo não tem faixa de áudio.
+
+< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
+> Nenhuma faixa de áudio AAC compatível (o áudio deste vídeo é {0}). Nada foi extraído.
+
+< {0} non-AAC audio track was not extracted.
+< {0} non-AAC audio tracks were not extracted.
+> {0} faixa de áudio que não é AAC não foi extraída.
+> {0} faixas de áudio que não são AAC não foram extraídas.
+
+< AAC copied without re-encoding
+> AAC copiado sem recodificar
+
+< The video encoder stopped taking frames.
+> O codificador de vídeo parou de aceitar quadros.
+
+< The video encoder produced nothing.
+> O codificador de vídeo não gerou nada.
+
+< This device has no H.264 encoder for {0}×{1}.
+> Este aparelho não tem codificador H.264 para {0}×{1}.
+
+< The H.264 encoder rejected {0}×{1}.
+> O codificador H.264 recusou {0}×{1}.
+
+< Landscape 16:9
+> Horizontal 16:9
+
+< Portrait 9:16
+> Vertical 9:16
+
+< More {1}
+> Mais {1}
+
+< Day {0} · {1}
+> Dia {0} · {1}
+
+< The wedding
+> O casamento
+
+< At the concert
+> No show
+
+< At the beach
+> Na praia
+
+< By the pool
+> Na piscina
+
+< In the snow
+> Na neve
+
+< At the waterfall
+> Na cachoeira
+
+< In the mountains
+> Nas montanhas
+
+< By the water
+> À beira d'água
+
+< In the woods
+> Na mata
+
+< Sunset
+> Pôr do sol
+
+< At the castle
+> No castelo
+
+< The city at night
+> A cidade à noite
+
+< In the city
+> Na cidade
+
+< Late bite
+> Lanche da madrugada
+
+< Breakfast
+> Café da manhã
+
+< Lunch
+> Almoço
+
+< Afternoon snack
+> Lanche da tarde
+
+< Dinner
+> Jantar
+
+< Setting off
+> A partida
+
+< On the way
+> No caminho
+
+< Game time
+> Hora do jogo
+
+< Outdoors
+> Ao ar livre
+
+< With the animals
+> Com os animais
+
+< Night out
+> Noitada
+
+< Together
+> Juntos
+
+< Late night
+> Madrugada
+
+< Morning
+> Manhã
+
+< Midday
+> Meio-dia
+
+< Afternoon
+> Tarde
+
+< Evening
+> Noite
+
+@ date pattern: a day, with its weekday
+< EEEE, d MMMM yyyy
+> EEEE, d 'de' MMMM 'de' yyyy
+
+@ dates from one day to another in one month
+< {0}–{1}
+> {0} a {1}
+
+@ date pattern: the first day of a range in one month
+< d
+> d
+
+@ date pattern: the last day of a range in one month
+< d MMMM yyyy
+> d 'de' MMMM 'de' yyyy
+
+@ dates from one day to another
+< {0} – {1}
+> {0} a {1}
+
+@ date pattern: the first day of a range in one year
+< d MMMM
+> d 'de' MMMM
+
+@ date pattern: the last day of a range in one year
+< d MMMM yyyy
+> d 'de' MMMM 'de' yyyy
+
+@ date pattern: a day
+< d MMMM yyyy
+> d 'de' MMMM 'de' yyyy
+
+@ time pattern: when a moment starts
+< h:mm a
+> HH:mm
+
+< A clip has no video track.
+> Um clipe não tem faixa de vídeo.
+
+< No media samples were found in these clips.
+> Nenhuma amostra de mídia foi encontrada nestes clipes.
+
+< a clip has no video
+> um clipe não tem vídeo
+
+< {0} video can't be joined directly
+> vídeo {0} não pode ser unido diretamente
+
+< the clips use different video formats
+> os clipes usam formatos de vídeo diferentes
+
+< the clips have different picture sizes
+> os clipes têm tamanhos de imagem diferentes
+
+< the clips have different orientations
+> os clipes têm orientações diferentes
+
+< the clips were recorded with different encoder settings
+> os clipes foram gravados com configurações de codificação diferentes
+
+< some clips have sound and others don't
+> alguns clipes têm som e outros não
+
+< the clips' sound uses different formats
+> o som dos clipes usa formatos diferentes
+
+< the clips' sound uses different settings
+> o som dos clipes usa configurações diferentes
+
+< The file has no video track.
+> O arquivo não tem faixa de vídeo.
+
+< This device has no decoder for {0} video.
+> Este aparelho não tem decodificador para vídeo {0}.
+
+< The video decoder stopped delivering frames.
+> O decodificador de vídeo parou de entregar quadros.
+
+< Video decoding stalled.
+> A decodificação do vídeo travou.
+
+< {0} video can't be stored in a {1} file on this device.
+> Vídeo {0} não pode ser guardado num arquivo {1} neste aparelho.
+
+< {0} audio can't be stored in a {1} file on this device.
+> Áudio {0} não pode ser guardado num arquivo {1} neste aparelho.
+
+< No media samples were found in this part of the file.
+> Nenhuma amostra de mídia foi encontrada nesta parte do arquivo.
+
+< This file can't be read as a video. It may be damaged or use an unsupported container.
+> Este arquivo não pode ser lido como vídeo. Ele pode estar danificado ou usar um contêiner incompatível.
+
+< The file contains no audio or video tracks.
+> O arquivo não contém faixas de áudio nem de vídeo.
+
+< HDR video was converted to standard dynamic range (SDR).
+> O vídeo HDR foi convertido para faixa dinâmica padrão (SDR).
+
+< HDR video: colours may look different after conversion on this Android version.
+> Vídeo HDR: as cores podem ficar diferentes após a conversão nesta versão do Android.
+
+< {0} audio was converted to AAC.
+> O áudio {0} foi convertido para AAC.
+
+< The {0} audio couldn't be converted on this device, so the result has no sound.
+> O áudio {0} não pôde ser convertido neste aparelho, então o resultado ficou sem som.
+
+< Video processing stalled (the device codec stopped responding).
+> O processamento do vídeo travou (o codec do aparelho parou de responder).
+
+< No video frames could be decoded from this file.
+> Nenhum quadro de vídeo pôde ser decodificado deste arquivo.
+
+< The {0} decoder rejected this video ({1}×{2}).
+> O decodificador {0} recusou este vídeo ({1}×{2}).
+
+< This device has no H.264 encoder that supports {0}×{1}.
+> Este aparelho não tem codificador H.264 compatível com {0}×{1}.
+
+< The H.264 encoder rejected the output settings ({0}×{1}).
+> O codificador H.264 recusou as configurações de saída ({0}×{1}).
+
+< Printing {0} file on {1}
+< Printing {0} files on {1}
+> Imprimindo {0} arquivo em {1}
+> Imprimindo {0} arquivos em {1}
+
+< Connecting to {0}
+> Conectando a {0}
+
+< Preparing
+> Preparando
+
+< There's nothing to print (no pages chosen)
+> Não há nada para imprimir (nenhuma página escolhida)
+
+< The printer couldn't be reached
+> Não foi possível alcançar a impressora
+
+< Not a printer address
+> Não é um endereço de impressora
+
+< Connect the phone to the same Wi-Fi as the printer to find it.
+> Conecte o celular ao mesmo Wi-Fi da impressora para encontrá-la.
+
+< the printer didn't understand the request
+> a impressora não entendeu o pedido
+
+< the printer refused the request
+> a impressora recusou o pedido
+
+< the printer asks for a password
+> a impressora pede uma senha
+
+< the printer refused access
+> a impressora recusou o acesso
+
+< the printer can't do that
+> a impressora não consegue fazer isso
+
+< the printer has no such job
+> a impressora não tem esse trabalho
+
+< the printer doesn't accept this kind of file
+> a impressora não aceita este tipo de arquivo
+
+< the printer doesn't support some of these settings
+> a impressora não aceita algumas destas configurações
+
+< the printer isn't accepting jobs right now
+> a impressora não está aceitando trabalhos agora
+
+< the printer is busy
+> a impressora está ocupada
+
+< the printer had an internal problem (code {0})
+> a impressora teve um problema interno (código {0})
+
+< the printer answered {0}
+> a impressora respondeu {0}
+
+< Not a printer address: {0}
+> Não é um endereço de impressora: {0}
+
+< Use the printer's IP address (like 192.168.1.20), not a name: "{0}"
+> Use o endereço IP da impressora (como 192.168.1.20), não um nome: "{0}"
+
+< The printer sent no certificate
+> A impressora não enviou certificado
+
+< The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again.
+> A identidade da impressora mudou desde que ela foi adicionada. Se ela foi redefinida ou trocada, remova-a e adicione-a de novo.
+
+< Couldn't set up a secure connection to the printer: {0}
+> Não foi possível estabelecer uma conexão segura com a impressora: {0}
+
+< Couldn't set up a secure connection to the printer
+> Não foi possível estabelecer uma conexão segura com a impressora
+
+< Can't reach the printer at {0}
+> Não é possível alcançar a impressora em {0}
+
+< The connection to the printer was lost while sending
+> A conexão com a impressora caiu durante o envio
+
+< The printer stopped answering
+> A impressora parou de responder
+
+< The connection to the printer was lost
+> A conexão com a impressora caiu
+
+< Can't reach the printer at {0} (is it on, and is the phone on the same Wi-Fi?)
+> Não é possível alcançar a impressora em {0} (ela está ligada e o celular está no mesmo Wi-Fi?)
+
+< The printer closed the connection without answering
+> A impressora fechou a conexão sem responder
+
+< The printer sent an unexpected answer: {0}
+> A impressora enviou uma resposta inesperada: {0}
+
+< The printer asks for a password; this app can't print to protected printers
+> A impressora pede uma senha; este app não imprime em impressoras protegidas
+
+< The printer only accepts secure connections
+> A impressora só aceita conexões seguras
+
+< The printer has no print service at {0}
+> A impressora não tem serviço de impressão em {0}
+
+< The printer answered HTTP {0}
+> A impressora respondeu HTTP {0}
+
+< The printer sent an answer that couldn't be read
+> A impressora enviou uma resposta que não pôde ser lida
+
+< The printer sent an overlong header
+> A impressora enviou um cabeçalho longo demais
+
+< {0} isn't on your local network; this app only talks to devices on it
+> {0} não está na sua rede local; este app só conversa com dispositivos dela
+
+< This printer doesn't take any kind of file this app can send (it takes {0})
+> Esta impressora não aceita nenhum tipo de arquivo que este app consegue enviar (ela aceita {0})
+
+< nothing it names
+> nenhum que ela informe
+
+< Checking with the printer
+> Consultando a impressora
+
+< The printer isn't accepting jobs right now
+> A impressora não está aceitando trabalhos agora
+
+< The printer says {0}
+> A impressora diz: {0}
+
+< The printer accepted the job but gave it no number
+> A impressora aceitou o trabalho, mas não deu um número a ele
+
+< Sending to the printer
+> Enviando para a impressora
+
+< Sending sheet {0} of {1}
+> Enviando a folha {0} de {1}
+
+< Sent to the printer; it is still working on it
+> Enviado para a impressora; ela ainda está trabalhando nele
+
+< The job was cancelled at the printer
+> O trabalho foi cancelado na impressora
+
+< The printer gave up on the job: {0}
+> A impressora desistiu do trabalho: {0}
+
+< The printer gave up on the job
+> A impressora desistiu do trabalho
+
+< {0} — printing continues once it's sorted
+> {0} — a impressão continua quando isso for resolvido
+
+< Waiting for the printer
+> Aguardando a impressora
+
+< Printing sheet {0} of {1}
+> Imprimindo a folha {0} de {1}
+
+< Printed {0} sheet
+< Printed {0} sheets
+> {0} folha impressa
+> {0} folhas impressas
+
+< The printer didn't describe itself ({0})
+> A impressora não se descreveu ({0})
+
+< Letter
+> Carta
+
+< Legal
+> Ofício
+
+< Card (54 × 86 mm)
+> Cartão (54 × 86 mm)
+
+< Envelope DL
+> Envelope DL
+
+< Envelope #10
+> Envelope nº 10
+
+< Envelope C6
+> Envelope C6
+
+< Envelope C5
+> Envelope C5
+
+< Executive
+> Executivo
+
+< Square 89 × 89 mm
+> Quadrado 89 × 89 mm
+
+< Plain paper
+> Papel comum
+
+< Heavy paper
+> Papel grosso
+
+< Light paper
+> Papel fino
+
+< Letterhead
+> Papel timbrado
+
+< Inkjet paper
+> Papel para jato de tinta
+
+< Photo paper
+> Papel fotográfico
+
+< Glossy photo paper
+> Papel fotográfico brilhante
+
+< High-gloss photo paper
+> Papel fotográfico de alto brilho
+
+< Semi-gloss photo paper
+> Papel fotográfico semibrilho
+
+< Satin photo paper
+> Papel fotográfico acetinado
+
+< Matte photo paper
+> Papel fotográfico fosco
+
+< Photo film
+> Filme fotográfico
+
+< Envelope
+> Envelope
+
+@ paper type
+< Card
+> Cartolina
+
+< Labels
+> Etiquetas
+
+< Transparency
+> Transparência
+
+< Add paper
+> Coloque papel
+
+< Paper is running low
+> O papel está acabando
+
+< Paper jam: open the printer and remove the stuck paper
+> Papel atolado: abra a impressora e retire o papel preso
+
+< The paper didn't feed: check the paper tray
+> O papel não foi puxado: verifique a bandeja de papel
+
+< Out of ink
+> Sem tinta
+
+< Ink is low
+> Tinta baixa
+
+< The ink pad (maintenance box) is almost full
+> A almofada de tinta (caixa de manutenção) está quase cheia
+
+< The ink pad (maintenance box) is full: service needed
+> A almofada de tinta (caixa de manutenção) está cheia: precisa de assistência técnica
+
+< A cover is open
+> Uma tampa está aberta
+
+< The printer is offline
+> A impressora está off-line
+
+< The printer is paused
+> A impressora está pausada
+
+< The printer's memory is full
+> A memória da impressora está cheia
+
+< Not enough free memory (RAM) to process this file. Close other apps, lower the export workload, or choose a smaller output size.
+> Memória livre (RAM) insuficiente para processar este arquivo. Feche outros apps, reduza a carga de exportação ou escolha um tamanho de saída menor.
+
+< Not enough free storage space to save the result.
+> Espaço de armazenamento livre insuficiente para salvar o resultado.
+
+< Android no longer allows reading this file. Please select it again.
+> O Android não permite mais ler este arquivo. Selecione-o de novo.
+
+< The file could not be opened. It may have been moved, deleted or is stored in the cloud only.
+> Não foi possível abrir o arquivo. Ele pode ter sido movido ou apagado, ou estar guardado só na nuvem.
+
+< This device's video codec failed while processing the file (temporary codec problem — try again).
+> O codec de vídeo deste aparelho falhou ao processar o arquivo (problema temporário do codec — tente de novo).
+
+< This device's video codec failed while processing the file.
+> O codec de vídeo deste aparelho falhou ao processar o arquivo.
+
+< The video file is damaged or incomplete: {0}
+> O arquivo de vídeo está danificado ou incompleto: {0}
+
+< This file's video or audio codec can't be stored in the output container on this device.
+> O codec de vídeo ou de áudio deste arquivo não pode ser guardado no contêiner de saída neste aparelho.
+
+< Read/write error: {0}
+> Erro de leitura/gravação: {0}
+
+< Audio
+> Áudio
+
+< Unknown
+> Desconhecido
+
+< The file is empty
+> O arquivo está vazio
+
+< Permission to read this file was not granted
+> A permissão para ler este arquivo não foi concedida
+
+< The file can't be opened ({0})
+> O arquivo não pode ser aberto ({0})
+
+< {0} B
+> {0} B
+
+< {0} KB
+> {0} KB
+
+< {0} MB
+> {0} MB
+
+< {0} GB
+> {0} GB
+
+< {0} min
+> {0} min
+
+< {0} min {1} s
+> {0} min {1} s
+
+< Could not open the output file for writing
+> Não foi possível abrir o arquivo de saída para gravação
+
+< The system media store refused to create "{0}"
+> O armazenamento de mídia do sistema recusou criar "{0}"
+
+< Not enough free storage: about {0} is needed but only {1} is free.
+> Espaço livre insuficiente: são necessários cerca de {0}, mas só há {1} livres.
+
+< Efficient
+> Eficiente
+
+< Gentle on battery and heat; exports take longer.
+> Poupa a bateria e esquenta menos; as exportações demoram mais.
+
+< Balanced
+> Equilibrado
+
+< Good speed while the phone stays responsive.
+> Boa velocidade com o celular ainda respondendo bem.
+
+< Fast
+> Rápido
+
+< Uses the device fully; best when plugged in.
+> Usa o aparelho ao máximo; ideal quando está carregando.
+
+< Custom · light
+> Personalizado · leve
+
+< Custom · moderate
+> Personalizado · moderado
+
+< Custom · high
+> Personalizado · alto
+
+< {0} file at a time
+< up to {0} files at once
+> {0} arquivo por vez
+> até {0} arquivos ao mesmo tempo
+
+< no pauses
+> sem pausas
+
+< short pauses (~{0}% of the time)
+> pausas curtas (~{0}% do tempo)
+
+< Images: {0} · {1} · {2}
+> Imagens: {0} · {1} · {2}
+
+< background priority
+> prioridade de segundo plano
+
+< normal priority
+> prioridade normal
+
+< "{0}" could not be opened.
+> Não foi possível abrir "{0}".
+
+< "{0}" is password-protected. Remove the password before merging.
+> "{0}" é protegido por senha. Remova a senha antes de juntar.
+
+< "{0}" is not a valid PDF or is damaged ({1}).
+> "{0}" não é um PDF válido ou está danificado ({1}).
+
+< "{0}" has no pages.
+> "{0}" não tem páginas.
+
+< "{0}" had usage restrictions (no password needed to open); they were not carried over.
+> "{0}" tinha restrições de uso (sem senha para abrir); elas não foram mantidas.
+
+< "{0}" has a structure that couldn't be merged ({1}).
+> "{0}" tem uma estrutura que não pôde ser juntada ({1}).
+
+< Merged page count doesn't match the inputs; nothing was saved.
+> O número de páginas juntadas não confere com os arquivos de entrada; nada foi salvo.
+
+< The PDF could not be opened.
+> Não foi possível abrir o PDF.
+
+< This PDF is password-protected and can't be opened.
+> Este PDF é protegido por senha e não pode ser aberto.
+
+< This file is not a valid PDF or is damaged.
+> Este arquivo não é um PDF válido ou está danificado.
+
+< Not available: this phone is configured as a low-memory device.
+> Indisponível: este celular está configurado como aparelho de pouca memória.
+
+< Not available: needs at least 4 GB of RAM (this phone has {0} GB).
+> Indisponível: precisa de pelo menos 4 GB de RAM (este celular tem {0} GB).
+
+< Not available: needs a 64-bit processor.
+> Indisponível: precisa de um processador de 64 bits.
+
+< Not available: needs at least 4 CPU cores.
+> Indisponível: precisa de pelo menos 4 núcleos de CPU.
+
+< Not available: the on-device model is missing from this build.
+> Indisponível: o modelo no aparelho não está nesta versão do app.
+
+< Available on this device · runs fully offline
+> Disponível neste aparelho · funciona totalmente off-line
+
+< panorama (rectilinear)
+> panorama (retilíneo)
+
+< panorama (cylindrical)
+> panorama (cilíndrico)
+
+< panorama (spherical)
+> panorama (esférico)
+
+< The aligned photos produced an empty result.
+> As fotos alinhadas geraram um resultado vazio.
+
+< The panorama was reduced to {0}% of full resolution to stay within the size limit.
+> O panorama foi reduzido a {0}% da resolução total para ficar dentro do limite de tamanho.
+
+< The panorama was scaled to fit PNG viewers' 65000 px limit.
+> O panorama foi redimensionado para caber no limite de 65000 px dos visualizadores de PNG.
+
+< Rendering
+> Renderizando
+
+< {0}↔{1}: ambiguous match (repetitive pattern) rejected
+> {0}↔{1}: correspondência ambígua (padrão repetitivo) rejeitada
+
+< {0}↔{1}: AI could not separate two alignments; pair skipped
+> {0}↔{1}: a IA não conseguiu separar dois alinhamentos; par ignorado
+
+< {0}↔{1}: AI chose between two candidate alignments
+> {0}↔{1}: a IA escolheu entre dois alinhamentos possíveis
+
+< {0}↔{1}: weak match rejected by AI check
+> {0}↔{1}: correspondência fraca rejeitada pela verificação de IA
+
+< {0}↔{1}: weak match confirmed by AI check
+> {0}↔{1}: correspondência fraca confirmada pela verificação de IA
+
+< {0}↔{1}: aligned by AI dense matching (low texture)
+> {0}↔{1}: alinhado por correspondência densa de IA (pouca textura)
+
+< Select at least two overlapping photos.
+> Selecione pelo menos duas fotos sobrepostas.
+
+< Finding features ({0}/{1})
+> Encontrando pontos de referência ({0}/{1})
+
+< Matching photos ({0}/{1})
+> Comparando fotos ({0}/{1})
+
+< No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content.
+> Não foi encontrada sobreposição entre estas fotos. Verifique se as fotos vizinhas se sobrepõem em cerca de um terço e mostram o mesmo conteúdo detalhado.
+
+< Turning on AI Assisted Alignment may help with low-texture scenes.
+> Ativar o Alinhamento assistido por IA pode ajudar em cenas com pouca textura.
+
+< None of the photos overlap clearly enough to be joined.
+> Nenhuma das fotos se sobrepõe o suficiente para ser unida.
+
+< Not connected to the others, left out: {0}.
+> Sem ligação com as outras, ficaram de fora: {0}.
+
+< Aligning
+> Alinhando
+
+< flat (similarity)
+> plano (semelhança)
+
+< flat (affine)
+> plano (afim)
+
+< The photos could not be aligned consistently (the scene may have moved between shots or overlaps are too small).
+> Não foi possível alinhar as fotos de forma consistente (a cena pode ter se mexido entre as fotos ou as sobreposições são pequenas demais).
+
+< perspective
+> perspectiva
+
+< Finding clean edges
+> Encontrando bordas limpas
+
+@ search words for “People”, separated by commas
+< person,people,human,humans,man,men,woman,women,kid,kids,friends,family
+> pessoa,pessoas,gente,humano,humanos,homem,homens,mulher,mulheres,criança,crianças,menino,meninos,menina,meninas,amigo,amigos,amiga,amigas,família
+
+< Dogs
+> Cachorros
+
+< Animals
+> Animais
+
+@ search words for “Dogs”, separated by commas
+< dog,dogs,puppy,puppies,pup,doggy,doggo,canine
+> cachorro,cachorros,cão,cães,cachorrinho,cachorrinhos,cadela,cadelas,filhote de cachorro,canino
+
+< Cats
+> Gatos
+
+@ search words for “Cats”, separated by commas
+< cat,cats,kitten,kittens,kitty,feline
+> gato,gatos,gata,gatas,gatinho,gatinhos,gatinha,filhote de gato,felino,bichano
+
+< Birds
+> Pássaros
+
+@ search words for “Birds”, separated by commas
+< bird,birds,parrot,pigeon,seagull,duck,chicken
+> pássaro,pássaros,ave,aves,passarinho,passarinhos,papagaio,pombo,pombos,gaivota,pato,patos,galinha,galinhas
+
+< Horses
+> Cavalos
+
+@ search words for “Horses”, separated by commas
+< horse,horses,pony,ponies
+> cavalo,cavalos,égua,éguas,pônei,pôneis,potro
+
+< Fish
+> Peixes
+
+@ search words for “Fish”, separated by commas
+< fish,fishes,aquarium
+> peixe,peixes,aquário
+
+< Insects
+> Insetos
+
+@ search words for “Insects”, separated by commas
+< insect,insects,bug,bugs,bee,ladybug,beetle,dragonfly
+> inseto,insetos,abelha,abelhas,joaninha,besouro,libélula
+
+< Butterflies
+> Borboletas
+
+@ search words for “Butterflies”, separated by commas
+< butterfly,butterflies,moth
+> borboleta,borboletas,mariposa
+
+< Cows
+> Vacas
+
+@ search words for “Cows”, separated by commas
+< cow,cows,cattle,bull,calf,ox
+> vaca,vacas,gado,boi,bois,touro,bezerro
+
+< Sheep
+> Ovelhas
+
+@ search words for “Sheep”, separated by commas
+< sheep,lamb,lambs
+> ovelha,ovelhas,carneiro,cordeiro
+
+< Goats
+> Cabras
+
+@ search words for “Goats”, separated by commas
+< goat,goats
+> cabra,cabras,bode,cabrito
+
+< Pigs
+> Porcos
+
+@ search words for “Pigs”, separated by commas
+< pig,pigs,piglet,hog
+> porco,porcos,leitão,porquinho
+
+< Elephants
+> Elefantes
+
+@ search words for “Elephants”, separated by commas
+< elephant,elephants
+> elefante,elefantes
+
+< Zebras
+> Zebras
+
+@ search words for “Zebras”, separated by commas
+< zebra,zebras
+> zebra,zebras
+
+< Giraffes
+> Girafas
+
+@ search words for “Giraffes”, separated by commas
+< giraffe,giraffes
+> girafa,girafas
+
+< Monkeys
+> Macacos
+
+@ search words for “Monkeys”, separated by commas
+< monkey,monkeys,ape,apes,gorilla,chimpanzee
+> macaco,macacos,gorila,chimpanzé,primata
+
+< Lions
+> Leões
+
+@ search words for “Lions”, separated by commas
+< lion,lions
+> leão,leões,leoa
+
+< Tigers
+> Tigres
+
+@ search words for “Tigers”, separated by commas
+< tiger,tigers
+> tigre,tigres
+
+< Rabbits
+> Coelhos
+
+@ search words for “Rabbits”, separated by commas
+< rabbit,rabbits,bunny,bunnies,hare
+> coelho,coelhos,coelhinho,lebre
+
+< Reptiles
+> Répteis
+
+@ search words for “Reptiles”, separated by commas
+< reptile,reptiles,lizard,snake,snakes,turtle,turtles,tortoise,crocodile
+> réptil,répteis,lagarto,cobra,cobras,tartaruga,tartarugas,jabuti,crocodilo,jacaré
+
+@ search words for “Animals”, separated by commas
+< animal,animals,wildlife,pet,pets
+> animal,animais,bicho,bichos,vida selvagem,pet,pets,animal de estimação
+
+< Cars
+> Carros
+
+< Vehicles
+> Veículos
+
+@ search words for “Cars”, separated by commas
+< car,cars,auto,automobile,vehicle
+> carro,carros,automóvel,automóveis,veículo
+
+< Buses
+> Ônibus
+
+@ search words for “Buses”, separated by commas
+< bus,buses,coach
+> ônibus,busão
+
+< Motorcycles
+> Motos
+
+@ search words for “Motorcycles”, separated by commas
+< motorcycle,motorcycles,motorbike,scooter,moped
+> moto,motos,motocicleta,motocicletas,scooter,lambreta
+
+< Bicycles
+> Bicicletas
+
+@ search words for “Bicycles”, separated by commas
+< bicycle,bicycles,bike,bikes,cycling
+> bicicleta,bicicletas,bike,bikes,ciclismo
+
+< Trains
+> Trens
+
+@ search words for “Trains”, separated by commas
+< train,trains,railway,locomotive,tram,subway
+> trem,trens,ferrovia,locomotiva,bonde,metrô
+
+< Airplanes
+> Aviões
+
+@ search words for “Airplanes”, separated by commas
+< airplane,airplanes,plane,planes,aeroplane,aircraft,jet
+> avião,aviões,aeronave,jato
+
+< Helicopters
+> Helicópteros
+
+@ search words for “Helicopters”, separated by commas
+< helicopter,helicopters
+> helicóptero,helicópteros
+
+< Boats
+> Barcos
+
+@ search words for “Boats”, separated by commas
+< boat,boats,ship,ships,yacht,sailboat,ferry,canoe,kayak
+> barco,barcos,navio,navios,iate,veleiro,balsa,canoa,caiaque,lancha
+
+@ search words for “Food”, separated by commas
+< food,meal,dish,dinner,lunch,breakfast,eating
+> comida,comidas,refeição,prato,pratos,jantar,almoço,café da manhã,comendo
+
+< Pizza
+> Pizza
+
+@ search words for “Pizza”, separated by commas
+< pizza,pizzas
+> pizza,pizzas
+
+< Cakes
+> Bolos
+
+@ search words for “Cakes”, separated by commas
+< cake,cakes,birthday cake,cupcake
+> bolo,bolos,bolo de aniversário,cupcake
+
+< Burgers
+> Hambúrgueres
+
+@ search words for “Burgers”, separated by commas
+< burger,burgers,hamburger,cheeseburger
+> hambúrguer,hambúrgueres,x-burguer,x-salada
+
+< Sushi
+> Sushi
+
+@ search words for “Sushi”, separated by commas
+< sushi
+> sushi,sashimi,temaki
+
+< Ice cream
+> Sorvete
+
+@ search words for “Ice cream”, separated by commas
+< ice cream,icecream,gelato,sundae
+> sorvete,sorvetes,gelato,picolé,casquinha
+
+< Fruit
+> Frutas
+
+@ search words for “Fruit”, separated by commas
+< fruit,fruits,banana,apple,orange,strawberry,grapes
+> fruta,frutas,banana,maçã,laranja,morango,uva,uvas
+
+< Salads
+> Saladas
+
+@ search words for “Salads”, separated by commas
+< salad,salads
+> salada,saladas
+
+< Desserts
+> Sobremesas
+
+@ search words for “Desserts”, separated by commas
+< dessert,desserts,sweets,pastry,cookies,chocolate,donut
+> sobremesa,sobremesas,doce,doces,confeitaria,biscoito,biscoitos,bolacha,chocolate,rosquinha
+
+< Coffee
+> Café
+
+@ search words for “Coffee”, separated by commas
+< coffee,espresso,cappuccino,latte
+> café,cafezinho,expresso,cappuccino
+
+< Drinks
+> Bebidas
+
+@ search words for “Drinks”, separated by commas
+< drink,drinks,beverage,juice,tea,soda
+> bebida,bebidas,suco,sucos,chá,refrigerante
+
+< Wine
+> Vinho
+
+@ search words for “Wine”, separated by commas
+< wine,red wine,white wine
+> vinho,vinhos,vinho tinto,vinho branco
+
+< Beer
+> Cerveja
+
+@ search words for “Beer”, separated by commas
+< beer,beers,lager
+> cerveja,cervejas,chope,chopp
+
+< Cocktails
+> Coquetéis
+
+@ search words for “Cocktails”, separated by commas
+< cocktail,cocktails,mojito,margarita
+> coquetel,coquetéis,drinque,drinques,drink,drinks,caipirinha
+
+< Beach
+> Praia
+
+< Nature
+> Natureza
+
+@ search words for “Beach”, separated by commas
+< beach,beaches,seaside,shore,coast,sand
+> praia,praias,litoral,beira-mar,orla,costa,areia
+
+< Sea
+> Mar
+
+@ search words for “Sea”, separated by commas
+< sea,ocean,waves,seascape
+> mar,oceano,onda,ondas
+
+< Mountains
+> Montanhas
+
+@ search words for “Mountains”, separated by commas
+< mountain,mountains,peak,alps,hills,volcano
+> montanha,montanhas,serra,serras,pico,morro,morros,colina,colinas,vulcão
+
+< Lakes
+> Lagos
+
+@ search words for “Lakes”, separated by commas
+< lake,lakes,pond
+> lago,lagos,lagoa,lagoas,açude
+
+< Rivers
+> Rios
+
+@ search words for “Rivers”, separated by commas
+< river,rivers,stream,creek
+> rio,rios,riacho,córrego
+
+< Waterfalls
+> Cachoeiras
+
+@ search words for “Waterfalls”, separated by commas
+< waterfall,waterfalls,falls
+> cachoeira,cachoeiras,cascata,cascatas
+
+< Forest
+> Floresta
+
+@ search words for “Forest”, separated by commas
+< forest,woods,jungle
+> floresta,florestas,mata,bosque,selva
+
+< Flowers
+> Flores
+
+@ search words for “Flowers”, separated by commas
+< flower,flowers,rose,roses,tulip,sunflower,bouquet,blossom
+> flor,flores,rosa,rosas,tulipa,girassol,buquê
+
+< Snow
+> Neve
+
+@ search words for “Snow”, separated by commas
+< snow,snowy,winter,skiing,ski,snowboard
+> neve,nevando,inverno,esqui,esquiar,snowboard
+
+< Sky
+> Céu
+
+@ search words for “Sky”, separated by commas
+< sky,clouds,cloud,blue sky
+> céu,nuvem,nuvens,céu azul
+
+< Sunsets
+> Pores do sol
+
+@ search words for “Sunsets”, separated by commas
+< sunset,sunsets,sunrise,dusk,dawn,golden hour
+> pôr do sol,pores do sol,nascer do sol,crepúsculo,entardecer,amanhecer,hora dourada
+
+@ search words for “Night”, separated by commas
+< night,nighttime,night sky,stars
+> noite,noturno,noturna,céu noturno,estrelas
+
+< Desert
+> Deserto
+
+@ search words for “Desert”, separated by commas
+< desert,dunes,sand dunes
+> deserto,duna,dunas
+
+< Grass & fields
+> Grama e campos
+
+@ search words for “Grass & fields”, separated by commas
+< grass,lawn,field,fields,meadow
+> grama,gramado,campo,campos,pasto,prado
+
+< Rocks & cliffs
+> Rochas e penhascos
+
+@ search words for “Rocks & cliffs”, separated by commas
+< rock,rocks,cliff,cliffs,canyon,cave
+> rocha,rochas,pedra,pedras,penhasco,penhascos,falésia,cânion,caverna,gruta
+
+< City
+> Cidade
+
+< Places
+> Lugares
+
+@ search words for “City”, separated by commas
+< city,cities,downtown,skyline,cityscape,urban
+> cidade,cidades,centro da cidade,paisagem urbana,urbano,urbana,prédios,arranha-céu,arranha-céus
+
+< Castles
+> Castelos
+
+@ search words for “Castles”, separated by commas
+< castle,castles,palace,fortress
+> castelo,castelos,palácio,fortaleza
+
+< Bridges
+> Pontes
+
+@ search words for “Bridges”, separated by commas
+< bridge,bridges
+> ponte,pontes
+
+< Streets
+> Ruas
+
+@ search words for “Streets”, separated by commas
+< street,streets,road,roads,highway
+> rua,ruas,estrada,estradas,avenida,rodovia
+
+< Swimming pools
+> Piscinas
+
+@ search words for “Swimming pools”, separated by commas
+< pool,swimming pool,swimming
+> piscina,piscinas,natação
+
+< Kitchens
+> Cozinhas
+
+@ search words for “Kitchens”, separated by commas
+< kitchen,kitchens
+> cozinha,cozinhas
+
+< Bedrooms
+> Quartos
+
+@ search words for “Bedrooms”, separated by commas
+< bedroom,bedrooms
+> quarto,quartos,dormitório
+
+< Bathrooms
+> Banheiros
+
+@ search words for “Bathrooms”, separated by commas
+< bathroom,bathrooms,toilet
+> banheiro,banheiros,lavabo,vaso sanitário
+
+< Towers
+> Torres
+
+@ search words for “Towers”, separated by commas
+< tower,towers
+> torre,torres
+
+< Fountains
+> Fontes
+
+@ search words for “Fountains”, separated by commas
+< fountain,fountains
+> fonte,fontes,chafariz
+
+< Weddings
+> Casamentos
+
+< Events
+> Eventos
+
+@ search words for “Weddings”, separated by commas
+< wedding,weddings,bride,groom
+> casamento,casamentos,noiva,noivo,noivos
+
+< Concerts
+> Shows
+
+@ search words for “Concerts”, separated by commas
+< concert,concerts,gig,festival,stage
+> show,shows,concerto,concertos,festival,palco
+
+< Football
+> Futebol
+
+< Sports
+> Esportes
+
+@ search words for “Football”, separated by commas
+< football,soccer
+> futebol,pelada
+
+< Tennis
+> Tênis
+
+@ search words for “Tennis”, separated by commas
+< tennis
+> tênis
+
+< Skiing
+> Esqui
+
+@ search words for “Skiing”, separated by commas
+< skiing,ski,skis,snowboarding
+> esqui,esquiar,esquis,snowboard
+
+< Surfing
+> Surfe
+
+@ search words for “Surfing”, separated by commas
+< surfing,surf,surfboard
+> surfe,surfar,surfista,prancha
+
+< Documents
+> Documentos
+
+@ search words for “Documents”, separated by commas
+< document,documents,paper,papers,receipt,text,letter,page
+> documento,documentos,papel,papéis,recibo,nota fiscal,texto,carta,página
+
+< Phones
+> Celulares
+
+@ search words for “Phones”, separated by commas
+< phone,phones,smartphone,mobile,cellphone,iphone
+> celular,celulares,telefone,telefones,smartphone
+
+< Bags
+> Bolsas
+
+@ search words for “Bags”, separated by commas
+< bag,bags,handbag,purse,backpack,suitcase,luggage
+> bolsa,bolsas,mochila,mala,malas,bagagem,sacola
+
+< Furniture
+> Móveis
+
+@ search words for “Furniture”, separated by commas
+< furniture,chair,chairs,sofa,couch,table,bed
+> móveis,móvel,cadeira,cadeiras,sofá,mesa,cama
+
+< Sofas
+> Sofás
+
+@ search words for “Sofas”, separated by commas
+< sofa,sofas,couch,couches
+> sofá,sofás
+
+< Beds
+> Camas
+
+@ search words for “Beds”, separated by commas
+< bed,beds
+> cama,camas
+
+< Clocks
+> Relógios
+
+@ search words for “Clocks”, separated by commas
+< clock,clocks
+> relógio,relógios
+
+< Bottles
+> Garrafas
+
+@ search words for “Bottles”, separated by commas
+< bottle,bottles
+> garrafa,garrafas
+
+< Umbrellas
+> Guarda-chuvas
+
+@ search words for “Umbrellas”, separated by commas
+< umbrella,umbrellas
+> guarda-chuva,guarda-chuvas,sombrinha,guarda-sol
+
+< Guitars
+> Violões e guitarras
+
+@ search words for “Guitars”, separated by commas
+< guitar,guitars
+> violão,violões,guitarra,guitarras
+
+< Pianos
+> Pianos
+
+@ search words for “Pianos”, separated by commas
+< piano,pianos,keyboard
+> piano,pianos,teclado
+
+@ search words for “Music”, separated by commas
+< music,musical instrument,instruments,drums,violin,guitar,piano
+> música,músicas,instrumento musical,instrumentos,bateria,violino,violão,piano

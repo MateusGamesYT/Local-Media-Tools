@@ -1,5 +1,6 @@
 package com.localmediatools.codec.mp4
 
+import com.localmediatools.i18n.tr
 import java.io.IOException
 import java.io.OutputStream
 import java.io.RandomAccessFile
@@ -37,13 +38,13 @@ object Mp4FastStart {
             var size = u32(hdr, 0)
             val type = String(hdr, 4, 4, Charsets.ISO_8859_1)
             if (size == 1L) {
-                if (len - pos < 16) throw Mp4FormatException("Truncated MP4 box header")
+                if (len - pos < 16) throw Mp4FormatException(tr("Truncated MP4 box header"))
                 file.readFully(hdr, 8, 8)
                 size = ByteBuffer.wrap(hdr, 8, 8).long
             } else if (size == 0L) {
                 size = len - pos
             }
-            if (size < 8 || pos + size > len) throw Mp4FormatException("MP4 box '$type' at $pos is truncated or corrupt")
+            if (size < 8 || pos + size > len) throw Mp4FormatException(tr("MP4 box '{0}' at {1} is truncated or corrupt", type, pos))
             boxes.add(TopBox(type, pos, size))
             pos += size
         }
@@ -59,15 +60,15 @@ object Mp4FastStart {
 
     fun process(input: RandomAccessFile, out: OutputStream): Result {
         val boxes = scan(input)
-        val moovBox = boxes.firstOrNull { it.type == "moov" } ?: throw Mp4FormatException("The file has no movie header (moov box)")
-        if (boxes.none { it.type == "mdat" }) throw Mp4FormatException("The file has no media data (mdat box)")
+        val moovBox = boxes.firstOrNull { it.type == "moov" } ?: throw Mp4FormatException(tr("The file has no movie header (moov box)"))
+        if (boxes.none { it.type == "mdat" }) throw Mp4FormatException(tr("The file has no media data (mdat box)"))
         if (boxes.any { it.type == "moof" }) {
             // Fragmented MP4 is streamable already and uses absolute offsets elsewhere: copy as-is.
             var total = 0L
             for (b in boxes) { copyRange(input, b.offset, b.size, out); total += b.size }
             return Result(false, 0, total)
         }
-        if (moovBox.size > 512L * 1024 * 1024) throw Mp4FormatException("Movie header is unexpectedly large")
+        if (moovBox.size > 512L * 1024 * 1024) throw Mp4FormatException(tr("Movie header is unexpectedly large"))
         val moovBytes = ByteArray(moovBox.size.toInt())
         input.seek(moovBox.offset); input.readFully(moovBytes)
 
@@ -94,7 +95,7 @@ object Mp4FastStart {
             }
             val overflow = patchOffsets(moov, boxes.filter { it.type != "moov" && it.type !in PADDING }, newOffsets)
             if (overflow && !useCo64) { useCo64 = true; continue }
-            if (overflow) throw Mp4FormatException("Chunk offsets do not fit even in 64-bit tables")
+            if (overflow) throw Mp4FormatException(tr("Chunk offsets do not fit even in 64-bit tables"))
             moovOut = serialize(moov)
             break
         }
@@ -117,7 +118,7 @@ object Mp4FastStart {
         var size = size0
         if (size0 == 1L) { size = ByteBuffer.wrap(b, off + 8, 8).long; header = 16 }
         else if (size0 == 0L) size = len.toLong()
-        if (size < header || size > len) throw Mp4FormatException("Corrupt '$type' box in movie header")
+        if (size < header || size > len) throw Mp4FormatException(tr("Corrupt '{0}' box in movie header", type))
         val end = off + size.toInt()
         return if (type in CONTAINERS) {
             val kids = ArrayList<Box>()
@@ -201,13 +202,13 @@ object Mp4FastStart {
                     else -> return old - b.offset + newOffsets.getValue(b)
                 }
             }
-            throw Mp4FormatException("A media chunk points outside the file's data boxes")
+            throw Mp4FormatException(tr("A media chunk points outside the file's data boxes"))
         }
         forEachBox(moov) { box ->
             val p = box.payload ?: return@forEachBox
             if (box.type == "stco") {
                 val n = u32(p, 4).toInt()
-                if (8L + n * 4L > p.size) throw Mp4FormatException("Corrupt chunk offset table")
+                if (8L + n * 4L > p.size) throw Mp4FormatException(tr("Corrupt chunk offset table"))
                 val bb = ByteBuffer.wrap(p)
                 for (j in 0 until n) {
                     val v = remap(u32(p, 8 + j * 4))
@@ -216,7 +217,7 @@ object Mp4FastStart {
                 }
             } else if (box.type == "co64") {
                 val n = u32(p, 4).toInt()
-                if (8L + n * 8L > p.size) throw Mp4FormatException("Corrupt chunk offset table")
+                if (8L + n * 8L > p.size) throw Mp4FormatException(tr("Corrupt chunk offset table"))
                 val bb = ByteBuffer.wrap(p)
                 for (j in 0 until n) bb.putLong(8 + j * 8, remap(bb.getLong(8 + j * 8)))
             }
@@ -230,7 +231,7 @@ object Mp4FastStart {
         var left = size
         while (left > 0) {
             val n = f.read(buf, 0, minOf(buf.size.toLong(), left).toInt())
-            if (n < 0) throw Mp4FormatException("Unexpected end of file")
+            if (n < 0) throw Mp4FormatException(tr("Unexpected end of file"))
             out.write(buf, 0, n)
             left -= n
         }

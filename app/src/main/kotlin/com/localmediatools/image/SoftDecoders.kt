@@ -8,6 +8,7 @@ import com.localmediatools.codec.image.SoftImageDecoders
 import com.localmediatools.core.MediaProbe
 import com.localmediatools.core.SniffedFormat
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 
 /** Bridges the pure-Kotlin decoders (TIFF, PSD, QOI, PNM, TGA) to Android bitmaps. */
 object SoftDecoders {
@@ -30,13 +31,13 @@ object SoftDecoders {
     fun readSize(ctx: Context, uri: Uri, f: SniffedFormat): Pair<Int, Int>? = try {
         SoftImageDecoders.size(kindOf(f)!!, bytes(ctx, uri))
     } catch (e: SoftDecodeException) {
-        throw UserFacingException(e.message ?: "Unsupported ${f.label} file")
+        throw UserFacingException(e.message ?: tr("Unsupported {0} file", f.label))
     } catch (e: IndexOutOfBoundsException) {
         null
     }
 
     fun decode(ctx: Context, uri: Uri, f: SniffedFormat, sampleSize: Int, unpremultiplied: Boolean = false): Bitmap {
-        val kind = kindOf(f) ?: throw UserFacingException("Unsupported format")
+        val kind = kindOf(f) ?: throw UserFacingException(tr("Unsupported format"))
         val data = bytes(ctx, uri)
         val (w, h) = SoftImageDecoders.size(kind, data)
         val s = sampleSize.coerceAtLeast(1)
@@ -58,10 +59,10 @@ object SoftDecoders {
             }
         } catch (e: SoftDecodeException) {
             bmp.recycle()
-            throw UserFacingException(e.message ?: "The ${f.label} file could not be decoded")
+            throw UserFacingException(e.message ?: tr("The {0} file could not be decoded", f.label))
         } catch (e: IndexOutOfBoundsException) {
             bmp.recycle()
-            throw UserFacingException("The ${f.label} file is damaged.")
+            throw UserFacingException(tr("The {0} file is damaged.", f.label))
         }
         return bmp
     }

@@ -132,7 +132,10 @@ class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: Cutou
 }
 
 // =========================================================================== Auto enhance
-enum class EnhanceStrength(private val labelEn: String, val value: Float) { SUBTLE(N_("Subtle"), 0.6f), NATURAL(N_("Natural"), 1f), STRONG(N_("Strong"), 1.35f); val label: String get() = trc("strength", labelEn) }
+enum class EnhanceStrength(val value: Float) {
+    SUBTLE(0.6f), NATURAL(1f), STRONG(1.35f);
+    val label: String get() = when (this) { SUBTLE -> trc("strength", "Subtle"); NATURAL -> trc("strength", "Natural"); STRONG -> trc("strength", "Strong") }
+}
 
 class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStrength) : ExportJob(ToolId.AUTO_ENHANCE, inputs) {
     override val title = trn(inputs.size, "Enhancing {0} photo", "Enhancing {0} photos")
@@ -155,7 +158,7 @@ class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStren
                     ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                 }
                 ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out),
-                    tr("{0}: {1}", r.scene.label, r.notes.joinToString(trc("between the items of a list", ", ")).ifBlank { tr("fine-tuned") }) + " · ${size.first}×${size.second}")
+                    tr("{0}: {1}", r.scene.label, r.shownNotes.ifBlank { tr("fine-tuned") }) + " · ${size.first}×${size.second}")
             }
         }
     }

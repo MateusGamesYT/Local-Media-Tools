@@ -3,14 +3,22 @@ package com.localmediatools.vision.core
 import com.localmediatools.codec.edit.AdjustKey
 import com.localmediatools.codec.edit.Adjustments
 import com.localmediatools.codec.edit.ColorPipeline
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
 import kotlin.math.ln
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
-enum class SceneKind(val label: String) {
-    PORTRAIT("Portrait"), LANDSCAPE("Landscape"), FOOD("Food"), ANIMAL("Animal"), PLANT("Plants & flowers"),
-    CITY("City & buildings"), DOCUMENT("Document"), NIGHT("Night"), GENERAL("General"),
+enum class SceneKind {
+    PORTRAIT, LANDSCAPE, FOOD, ANIMAL, PLANT, CITY, DOCUMENT, NIGHT, GENERAL;
+
+    /** The kind of photo ("Portrait" a photo of a person, not the page orientation). */
+    val label: String get() = when (this) {
+        PORTRAIT -> trc("kind of photo", "Portrait"); LANDSCAPE -> trc("kind of photo", "Landscape"); FOOD -> tr("Food"); ANIMAL -> tr("Animal")
+        PLANT -> tr("Plants & flowers"); CITY -> tr("City & buildings"); DOCUMENT -> tr("Document"); NIGHT -> tr("Night"); GENERAL -> tr("General")
+    }
 }
 
 /** Maps the gallery's recognised categories to the scene kinds auto-enhance cares about. */
@@ -42,7 +50,11 @@ object SceneMapper {
 /** A face box as fractions (0..1) of the image. */
 data class FaceBox(val x: Float, val y: Float, val w: Float, val h: Float)
 
-class EnhanceResult(val adjust: Adjustments, val scene: SceneKind, val notes: List<String>)
+/** [notes] are in English ("lifted shadows"): shown with [shownNotes]. */
+class EnhanceResult(val adjust: Adjustments, val scene: SceneKind, val notes: List<String>) {
+    /** What was changed, in the app's language. */
+    val shownNotes: String get() = notes.joinToString(trc("between the items of a list", ", ")) { tr(it) }
+}
 
 /**
  * One-tap enhancement: measures exposure, contrast, clipping, colour cast and saturation, and uses
@@ -112,17 +124,17 @@ object AutoEnhance {
         if (scene == SceneKind.NIGHT) ev = ev.coerceAtMost(0.35)
         if (kotlin.math.abs(ev) > 0.08) {
             a = a.with(AdjustKey.EXPOSURE, (ev / 2).toFloat())
-            notes.add(if (faceLuma >= 0 && ev > 0) "brightened the faces" else if (ev > 0) "brightened" else "toned down the brightness")
+            notes.add(if (faceLuma >= 0 && ev > 0) N_("brightened the faces") else if (ev > 0) N_("brightened") else N_("toned down the brightness"))
         }
 
         // Highlights and shadows.
         if (p99 > 0.95f && clipHi > 0.006f) {
             a = a.with(AdjustKey.HIGHLIGHTS, -min(0.6f, clipHi * 10f + (p99 - 0.93f) * 3f))
-            notes.add("recovered highlights")
+            notes.add(N_("recovered highlights"))
         }
         if (p5 < 0.07f && dark > 0.12f) {
             val s = min(if (scene == SceneKind.NIGHT) 0.2f else 0.5f, dark * 1.3f)
-            a = a.with(AdjustKey.SHADOWS, s); notes.add("lifted shadows")
+            a = a.with(AdjustKey.SHADOWS, s); notes.add(N_("lifted shadows"))
         }
 
         // Where the mid-tones land after the exposure change.
@@ -135,11 +147,11 @@ object AutoEnhance {
         val want = when (scene) { SceneKind.LANDSCAPE, SceneKind.CITY -> 0.80f; SceneKind.PORTRAIT -> 0.66f; SceneKind.DOCUMENT -> 0.9f; SceneKind.NIGHT -> 0.6f; else -> 0.74f }
         var contrast = ((want - spread) * 1.3f + if (scene == SceneKind.DOCUMENT) 0.12f else 0f).coerceIn(-0.2f, 0.42f)
         if (contrast > 0 && midAfter < 0.42f) contrast *= ((midAfter / 0.42f) * (midAfter / 0.42f)).coerceIn(0.15f, 1f)
-        if (kotlin.math.abs(contrast) > 0.05f) { a = a.with(AdjustKey.CONTRAST, contrast); if (contrast > 0) notes.add("added contrast") }
+        if (kotlin.math.abs(contrast) > 0.05f) { a = a.with(AdjustKey.CONTRAST, contrast); if (contrast > 0) notes.add(N_("added contrast")) }
         // Still too dark after the (limited) exposure change: lift the mid-tones.
         if (scene != SceneKind.NIGHT && midAfter < target - 0.08f) {
             a = a.with(AdjustKey.BRIGHTNESS, ((target - midAfter) * 1.1f).coerceAtMost(0.3f))
-            if ("brightened" !in notes && "brightened the faces" !in notes) notes.add("brightened")
+            if ("brightened" !in notes && "brightened the faces" !in notes) notes.add(N_("brightened"))
         }
 
         // Colour cast (grey world on neutral mid-tones), gentler for warm light that is part of the scene.
@@ -158,9 +170,9 @@ object AutoEnhance {
             val tint = (greenCast * 1.6f * if (scene == SceneKind.LANDSCAPE || scene == SceneKind.PLANT) 0.3f else 1f).coerceIn(-0.3f, 0.3f)
             if (kotlin.math.abs(warmth) > 0.05f) {
                 a = a.with(AdjustKey.WARMTH, warmth)
-                notes.add(if (warmCast > 0.04f) "cooled a yellow cast" else if (warmCast < -0.04f) "warmed a blue cast" else "balanced colours")
+                notes.add(if (warmCast > 0.04f) N_("cooled a yellow cast") else if (warmCast < -0.04f) N_("warmed a blue cast") else N_("balanced colours"))
             }
-            if (kotlin.math.abs(tint) > 0.05f) { a = a.with(AdjustKey.TINT, tint); notes.add(if (greenCast > 0) "removed a green tint" else "removed a magenta tint") }
+            if (kotlin.math.abs(tint) > 0.05f) { a = a.with(AdjustKey.TINT, tint); notes.add(if (greenCast > 0) N_("removed a green tint") else N_("removed a magenta tint")) }
         }
 
         // Colour and detail by scene.
@@ -168,7 +180,7 @@ object AutoEnhance {
         vib += when (scene) { SceneKind.LANDSCAPE, SceneKind.PLANT -> 0.15f; SceneKind.FOOD -> 0.12f; SceneKind.ANIMAL, SceneKind.CITY -> 0.05f; else -> 0f }
         if (scene == SceneKind.PORTRAIT) vib *= 0.5f
         if (scene == SceneKind.DOCUMENT) vib = 0f
-        if (vib > 0.05f) { a = a.with(AdjustKey.VIBRANCE, vib.coerceAtMost(0.45f)); notes.add("richer colours") }
+        if (vib > 0.05f) { a = a.with(AdjustKey.VIBRANCE, vib.coerceAtMost(0.45f)); notes.add(N_("richer colours")) }
         val sharp = when (scene) { SceneKind.LANDSCAPE, SceneKind.CITY -> 0.3f; SceneKind.DOCUMENT -> 0.35f; SceneKind.FOOD, SceneKind.PLANT, SceneKind.ANIMAL -> 0.22f; SceneKind.PORTRAIT -> 0.08f; SceneKind.NIGHT -> 0f; else -> 0.15f }
         if (sharp > 0f) a = a.with(AdjustKey.SHARPNESS, sharp)
 

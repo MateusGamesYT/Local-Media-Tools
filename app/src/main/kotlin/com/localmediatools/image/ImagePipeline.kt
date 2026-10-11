@@ -15,14 +15,19 @@ import com.localmediatools.codec.png.PngWriter
 import com.localmediatools.core.PendingOutput
 import com.localmediatools.core.UserFacingException
 import com.localmediatools.export.JobContext
+import com.localmediatools.i18n.N_
+import com.localmediatools.i18n.tr
 import java.io.FilterOutputStream
 import java.io.OutputStream
 
-enum class ImageOutFormat(val ext: String, val mime: String, val lossless: Boolean, val label: String) {
+enum class ImageOutFormat(val ext: String, val mime: String, val lossless: Boolean, private val labelEn: String) {
     JPEG("jpg", "image/jpeg", false, "JPEG"),
     PNG("png", "image/png", true, "PNG"),
     WEBP("webp", "image/webp", false, "WebP"),
-    WEBP_LOSSLESS("webp", "image/webp", true, "WebP lossless");
+    WEBP_LOSSLESS("webp", "image/webp", true, N_("WebP lossless"));
+
+    /** "JPEG", "PNG", "WebP" (names), "WebP lossless" (in the app's language). */
+    val label: String get() = tr(labelEn)
 
     val supportsAlpha get() = this != JPEG
     /** WebP cannot exceed 16383 px per side. */
@@ -71,7 +76,7 @@ object ImagePipeline {
         onProgress: (Double) -> Unit = {},
     ): Result {
         if (outW > spec.format.maxDimension || outH > spec.format.maxDimension) {
-            throw UserFacingException("${spec.format.label} supports at most ${spec.format.maxDimension} px per side; this image would be ${outW}×$outH. Choose a smaller width or another format.")
+            throw UserFacingException(tr("{0} supports at most {1} px per side; this image would be {2}×{3}. Choose a smaller width or another format.", spec.format.label, spec.format.maxDimension, outW, outH))
         }
         val budget = ctx.memoryBudget(ctx.workload.parallelism)
         val scale = src.width.toDouble() / outW
@@ -88,10 +93,10 @@ object ImagePipeline {
                 flattened = renderFull(ctx, src, outW, outH, sample, spec, overlay, exactPixels, counting)
             } else {
                 if (!spec.format.streamable) {
-                    throw UserFacingException("This image is too large to encode as ${spec.format.label} with the memory available (${src.width}×${src.height}). Choose PNG or JPEG, or set a smaller width.")
+                    throw UserFacingException(tr("This image is too large to encode as {0} with the memory available ({1}×{2}). Choose PNG or JPEG, or set a smaller width.", spec.format.label, src.width, src.height))
                 }
                 if (!src.canServeRegions(budget)) {
-                    throw UserFacingException("This ${src.format.label} image is too large to process in pieces with the memory available.")
+                    throw UserFacingException(tr("This {0} image is too large to process in pieces with the memory available.", src.format.label))
                 }
                 if (exactPixels) renderStripsExact(ctx, src, spec, budget, counting, onProgress)
                 else renderStrips(ctx, src, outW, outH, spec, overlay, budget, counting, onProgress)
@@ -148,7 +153,7 @@ object ImagePipeline {
             ImageOutFormat.JPEG -> {
                 val flat = BitmapOps.flatten(bmp, spec.background, recycleSource = false)
                 try {
-                    if (!flat.compress(Bitmap.CompressFormat.JPEG, spec.quality.coerceIn(1, 100), out)) throw UserFacingException("The JPEG encoder failed.")
+                    if (!flat.compress(Bitmap.CompressFormat.JPEG, spec.quality.coerceIn(1, 100), out)) throw UserFacingException(tr("The JPEG encoder failed."))
                 } finally { if (flat !== bmp) flat.recycle() }
             }
             ImageOutFormat.WEBP -> {
@@ -156,20 +161,20 @@ object ImagePipeline {
                 val f = if (Build.VERSION.SDK_INT >= 30) Bitmap.CompressFormat.WEBP_LOSSY else Bitmap.CompressFormat.WEBP
                 // On Android 10 quality 100 would silently switch to lossless; cap it.
                 val q = if (Build.VERSION.SDK_INT >= 30) spec.quality.coerceIn(1, 100) else spec.quality.coerceIn(1, 99)
-                if (!bmp.compress(f, q, out)) throw UserFacingException("The WebP encoder failed.")
+                if (!bmp.compress(f, q, out)) throw UserFacingException(tr("The WebP encoder failed."))
             }
             ImageOutFormat.WEBP_LOSSLESS -> {
                 @Suppress("DEPRECATION")
                 val ok = if (Build.VERSION.SDK_INT >= 30) bmp.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, out)
                 else bmp.compress(Bitmap.CompressFormat.WEBP, 100, out)
-                if (!ok) throw UserFacingException("The lossless WebP encoder failed.")
+                if (!ok) throw UserFacingException(tr("The lossless WebP encoder failed."))
             }
             ImageOutFormat.PNG -> {
                 val cs = bmp.colorSpace
                 val srgb = cs == null || cs == android.graphics.ColorSpace.get(android.graphics.ColorSpace.Named.SRGB)
                 if (!srgb) {
                     // The platform encoder embeds the colour profile; keep colours exact that way.
-                    if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, out)) throw UserFacingException("The PNG encoder failed.")
+                    if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, out)) throw UserFacingException(tr("The PNG encoder failed."))
                 } else {
                     writePng(bmp, spec, out)
                 }
@@ -228,7 +233,7 @@ object ImagePipeline {
                 override fun finish() = jw.finish()
             }
         }
-        else -> throw UserFacingException("${spec.format.label} cannot be written in pieces.")
+        else -> throw UserFacingException(tr("{0} cannot be written in pieces.", spec.format.label))
     }
 
     private fun renderStrips(
@@ -294,7 +299,7 @@ object ImagePipeline {
                 if (region.width != w || region.height != rows) throw IllegalStateException("region size mismatch")
                 val cs = region.colorSpace
                 if (cs != null && cs != android.graphics.ColorSpace.get(android.graphics.ColorSpace.Named.SRGB)) {
-                    throw UserFacingException("This very large image uses the ${cs.name} colour profile, which can't be preserved exactly when processing it in pieces.")
+                    throw UserFacingException(tr("This very large image uses the {0} colour profile, which can't be preserved exactly when processing it in pieces.", cs.name))
                 }
                 region.getPixels(px, 0, w, 0, 0, w, rows)
             } finally { region.recycle() }
@@ -310,7 +315,7 @@ object ImagePipeline {
         val o = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         ctx.contentResolver.openInputStream(pending.uri)?.use { BitmapFactory.decodeStream(it, null, o) }
         if (o.outWidth != expectW || o.outHeight != expectH) {
-            throw UserFacingException("The written file failed verification (${o.outWidth}×${o.outHeight}, expected ${expectW}×$expectH), so it was discarded.")
+            throw UserFacingException(tr("The written file failed verification ({0}×{1}, expected {2}×{3}), so it was discarded.", o.outWidth, o.outHeight, expectW, expectH))
         }
     }
 

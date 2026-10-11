@@ -13,6 +13,8 @@ import android.os.IBinder
 import android.os.PowerManager
 import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -99,8 +101,8 @@ class GalleryIndexService : Service() {
         fun manager(ctx: Context) = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         fun createChannel(ctx: Context) {
-            manager(ctx).createNotificationChannel(NotificationChannel(CHANNEL, "Organising the gallery", NotificationManager.IMPORTANCE_MIN).apply {
-                description = "Shows progress while photos are analysed on this phone for search and people"
+            manager(ctx).createNotificationChannel(NotificationChannel(CHANNEL, tr("Organising the gallery"), NotificationManager.IMPORTANCE_MIN).apply {
+                description = tr("Shows progress while photos are analysed on this phone for search and people")
                 setShowBadge(false)
             })
         }
@@ -123,22 +125,22 @@ class GalleryIndexService : Service() {
             val pause = PendingIntent.getService(ctx, 12, Intent(ctx, GalleryIndexService::class.java).setAction(ACTION_PAUSE),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             val text = when {
-                s.phase == GalleryIndex.Phase.PAUSED -> s.pausedWhy ?: "Paused"
-                s.phase == GalleryIndex.Phase.GROUPING -> "Grouping faces into people"
-                s.updatingFaces && s.total > 0 -> "Updating face recognition · ${s.done} of ${s.total} · names are kept"
-                s.total > 0 -> "${s.done} of ${s.total} photos and videos · on this phone"
-                else -> "Reading your library"
+                s.phase == GalleryIndex.Phase.PAUSED -> s.pausedWhy ?: tr("Paused")
+                s.phase == GalleryIndex.Phase.GROUPING -> tr("Grouping faces into people")
+                s.updatingFaces && s.total > 0 -> tr("Updating face recognition · {0} of {1}", s.done, s.total) + " · " + tr("names are kept")
+                s.total > 0 -> trn(s.total, "{1} of {0} photo or video · on this phone", "{1} of {0} photos and videos · on this phone", s.done)
+                else -> tr("Reading your library")
             }
             return Notification.Builder(ctx, CHANNEL)
                 .setSmallIcon(R.drawable.ic_stat_export)
-                .setContentTitle("Organising your gallery")
+                .setContentTitle(tr("Organising your gallery"))
                 .setContentText(text)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setContentIntent(open)
                 .setProgress(s.total.coerceAtLeast(1), s.done.coerceAtMost(s.total), s.total <= 0)
-                .addAction(Notification.Action.Builder(null, "Pause", pause).build())
+                .addAction(Notification.Action.Builder(null, tr("Pause"), pause).build())
                 .build()
         }
     }

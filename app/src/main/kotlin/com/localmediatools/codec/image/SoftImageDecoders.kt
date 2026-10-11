@@ -1,5 +1,6 @@
 package com.localmediatools.codec.image
 
+import com.localmediatools.i18n.tr
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -45,15 +46,15 @@ object SoftImageDecoders {
             val n = input.read(buf)
             if (n < 0) break
             total += n
-            if (total > limit) throw SoftDecodeException("File is too large to decode in memory on this device")
+            if (total > limit) throw SoftDecodeException(tr("File is too large to decode in memory on this device"))
             out.write(buf, 0, n)
         }
         return out.toByteArray()
     }
 
     private fun checkDims(w: Int, h: Int) {
-        if (w <= 0 || h <= 0) throw SoftDecodeException("Image has invalid dimensions")
-        if (w.toLong() * h > 400_000_000L) throw SoftDecodeException("Image is too large (${w}x$h)")
+        if (w <= 0 || h <= 0) throw SoftDecodeException(tr("Image has invalid dimensions"))
+        if (w.toLong() * h > 400_000_000L) throw SoftDecodeException(tr("Image is too large ({0}×{1})", w, h))
     }
 
     // ================================================================== TIFF
@@ -68,14 +69,14 @@ object SoftImageDecoders {
     private class Tiff(val d: ByteArray) {
         val le: Boolean
         init {
-            if (d.size < 8) throw SoftDecodeException("Not a TIFF file")
+            if (d.size < 8) throw SoftDecodeException(tr("Not a TIFF file"))
             le = when {
                 d[0] == 'I'.code.toByte() && d[1] == 'I'.code.toByte() -> true
                 d[0] == 'M'.code.toByte() && d[1] == 'M'.code.toByte() -> false
-                else -> throw SoftDecodeException("Not a TIFF file")
+                else -> throw SoftDecodeException(tr("Not a TIFF file"))
             }
-            if (u16(2) == 43) throw SoftDecodeException("BigTIFF files are not supported")
-            if (u16(2) != 42) throw SoftDecodeException("Not a TIFF file")
+            if (u16(2) == 43) throw SoftDecodeException(tr("BigTIFF files are not supported"))
+            if (u16(2) != 42) throw SoftDecodeException(tr("Not a TIFF file"))
         }
 
         fun u8(o: Int) = d[o].toInt() and 0xFF
@@ -85,12 +86,12 @@ object SoftImageDecoders {
             return if (le) (u8(o).toLong() or (u8(o + 1).toLong() shl 8) or (u8(o + 2).toLong() shl 16) or (u8(o + 3).toLong() shl 24))
             else ((u8(o).toLong() shl 24) or (u8(o + 1).toLong() shl 16) or (u8(o + 2).toLong() shl 8) or u8(o + 3).toLong())
         }
-        fun chk(o: Int, n: Int) { if (o < 0 || o + n > d.size) throw SoftDecodeException("TIFF file is truncated") }
+        fun chk(o: Int, n: Int) { if (o < 0 || o + n > d.size) throw SoftDecodeException(tr("TIFF file is truncated")) }
 
         fun values(entry: Int): LongArray {
             val type = u16(entry + 2)
             val count = u32(entry + 4)
-            if (count > 50_000_000) throw SoftDecodeException("Corrupt TIFF tag")
+            if (count > 50_000_000) throw SoftDecodeException(tr("Corrupt TIFF tag"))
             val size = when (type) { 1, 2, 6, 7 -> 1; 3, 8 -> 2; 4, 9 -> 4; 5, 10 -> 8; 16, 17, 18 -> 8; else -> 1 }
             val total = size * count
             val base = if (total <= 4) entry + 8 else u32(entry + 8).toInt()
@@ -123,7 +124,7 @@ object SoftImageDecoders {
                 IntArray(k) { i -> (0xFF shl 24) or ((m[i].toInt() shr 8) shl 16) or ((m[k + i].toInt() shr 8) shl 8) or (m[2 * k + i].toInt() shr 8) }
             }
             val tw = one(322, 0).toInt(); val th = one(323, 0).toInt()
-            val offsets = (if (tw > 0) tags[324] else tags[273]) ?: throw SoftDecodeException("TIFF has no image data")
+            val offsets = (if (tw > 0) tags[324] else tags[273]) ?: throw SoftDecodeException(tr("TIFF has no image data"))
             val counts = (if (tw > 0) tags[325] else tags[279]) ?: LongArray(offsets.size) { -1 }
             return Ifd(w, h, bps, spp, one(259, 1).toInt(), one(262, if (spp >= 3) 2 else 1).toInt(), one(284, 1).toInt(),
                 one(317, 1).toInt(), offsets, counts, one(278, h.toLong()).toInt().coerceAtLeast(1), tw, th, cmap,
@@ -133,14 +134,14 @@ object SoftImageDecoders {
         fun decode(sink: RowSink): Pair<Int, Int> {
             val f = firstIfd()
             val bits = f.bitsPerSample[0]
-            if (f.bitsPerSample.any { it != bits }) throw SoftDecodeException("TIFF with mixed bit depths is not supported")
-            if (bits !in intArrayOf(1, 2, 4, 8, 16)) throw SoftDecodeException("TIFF with $bits-bit samples is not supported")
-            if (f.sampleFormat == 3) throw SoftDecodeException("Floating-point TIFF is not supported")
+            if (f.bitsPerSample.any { it != bits }) throw SoftDecodeException(tr("TIFF with mixed bit depths is not supported"))
+            if (bits !in intArrayOf(1, 2, 4, 8, 16)) throw SoftDecodeException(tr("TIFF with {0}-bit samples is not supported", bits))
+            if (f.sampleFormat == 3) throw SoftDecodeException(tr("Floating-point TIFF is not supported"))
             if (f.compression !in intArrayOf(1, 5, 8, 32946, 32773)) {
                 val name = when (f.compression) { 6, 7 -> "JPEG"; 2, 3, 4 -> "CCITT fax"; 34712 -> "JPEG 2000"; else -> "#${f.compression}" }
-                throw SoftDecodeException("TIFF compression $name is not supported")
+                throw SoftDecodeException(tr("TIFF compression {0} is not supported", name))
             }
-            if (f.photometric !in intArrayOf(0, 1, 2, 3, 5)) throw SoftDecodeException("TIFF colour model ${f.photometric} is not supported")
+            if (f.photometric !in intArrayOf(0, 1, 2, 3, 5)) throw SoftDecodeException(tr("TIFF colour model {0} is not supported", f.photometric))
             val spp = f.samplesPerPixel
             val planes = if (f.planar == 2) spp else 1
             val samplesPerUnit = if (f.planar == 2) 1 else spp
@@ -160,17 +161,17 @@ object SoftImageDecoders {
                 val rowsInBand = minOf(blockH, h - by * blockH)
                 for (p in 0 until planes) for (bx in 0 until blocksAcross) {
                     val idx = p * blocksAcross * blocksDown + by * blocksAcross + bx
-                    if (idx >= f.stripOffsets.size) throw SoftDecodeException("TIFF is missing image data")
+                    if (idx >= f.stripOffsets.size) throw SoftDecodeException(tr("TIFF is missing image data"))
                     val off = f.stripOffsets[idx].toInt()
                     val cnt = f.stripByteCounts.getOrElse(idx) { -1 }.let { if (it < 0) d.size - off.toLong() else it }.toInt()
-                    if (off < 0 || off.toLong() + cnt > d.size) throw SoftDecodeException("TIFF file is truncated")
+                    if (off < 0 || off.toLong() + cnt > d.size) throw SoftDecodeException(tr("TIFF file is truncated"))
                     val expected = (rowBytes * blockH).toInt()
                     val raw = when (f.compression) {
                         1 -> d.copyOfRange(off, off + minOf(cnt, expected))
                         5 -> lzw(d, off, cnt, expected)
                         8, 32946 -> inflate(d, off, cnt, expected)
                         32773 -> packBits(d, off, cnt, expected)
-                        else -> throw SoftDecodeException("Unsupported TIFF compression")
+                        else -> throw SoftDecodeException(tr("Unsupported TIFF compression"))
                     }
                     if (f.fillOrder == 2) for (i in raw.indices) raw[i] = (Integer.reverse(raw[i].toInt()) ushr 24).toByte()
                     // Unpack samples of this block into the band buffer.
@@ -209,7 +210,7 @@ object SoftImageDecoders {
                             }
                             (rr shl 16) or (gg shl 8) or bb
                         }
-                        3 -> (f.colorMap ?: throw SoftDecodeException("Palette TIFF without colour map")).getOrElse(sample(0)) { 0 } and 0xFFFFFF
+                        3 -> (f.colorMap ?: throw SoftDecodeException(tr("Palette TIFF without colour map"))).getOrElse(sample(0)) { 0 } and 0xFFFFFF
                         5 -> {
                             val c = s8(sample(0)); val m = s8(sample(1)); val y = s8(sample(2)); val k = s8(sample(3))
                             val rr = (255 - c) * (255 - k) / 255; val gg = (255 - m) * (255 - k) / 255; val bb = (255 - y) * (255 - k) / 255
@@ -259,7 +260,7 @@ object SoftImageDecoders {
                 n += k
             }
         } catch (e: java.util.zip.DataFormatException) {
-            throw SoftDecodeException("Corrupt compressed TIFF data")
+            throw SoftDecodeException(tr("Corrupt compressed TIFF data"))
         } finally { inf.end() }
         return out
     }
@@ -333,7 +334,7 @@ object SoftImageDecoders {
     // ================================================================== PSD
     /** [height, width, channels, depth, mode, version] */
     private fun psdHeader(d: ByteArray): IntArray {
-        if (d.size < 26 || String(d, 0, 4, Charsets.ISO_8859_1) != "8BPS") throw SoftDecodeException("Not a PSD file")
+        if (d.size < 26 || String(d, 0, 4, Charsets.ISO_8859_1) != "8BPS") throw SoftDecodeException(tr("Not a PSD file"))
         fun u16(o: Int) = ((d[o].toInt() and 0xFF) shl 8) or (d[o + 1].toInt() and 0xFF)
         fun u32(o: Int) = ((d[o].toInt() and 0xFF) shl 24) or ((d[o + 1].toInt() and 0xFF) shl 16) or ((d[o + 2].toInt() and 0xFF) shl 8) or (d[o + 3].toInt() and 0xFF)
         val version = u16(4)
@@ -345,27 +346,27 @@ object SoftImageDecoders {
     private fun decodePsd(d: ByteArray, sink: RowSink): Pair<Int, Int> {
         val hd = psdHeader(d)
         val h = hd[0]; val w = hd[1]; val channels = hd[2]; val depth = hd[3]; val mode = hd[4]; val version = hd[5]
-        if (depth != 8 && depth != 16) throw SoftDecodeException("$depth-bit PSD is not supported")
-        if (mode !in intArrayOf(1, 3, 4)) throw SoftDecodeException("PSD colour mode $mode is not supported (use RGB, Grayscale or CMYK)")
+        if (depth != 8 && depth != 16) throw SoftDecodeException(tr("{0}-bit PSD is not supported", depth))
+        if (mode !in intArrayOf(1, 3, 4)) throw SoftDecodeException(tr("PSD colour mode {0} is not supported (use RGB, Grayscale or CMYK)", mode))
         var p = 26
         fun u16(o: Int) = ((d[o].toInt() and 0xFF) shl 8) or (d[o + 1].toInt() and 0xFF)
         fun u32(o: Int): Long = (((d[o].toInt() and 0xFF) shl 24) or ((d[o + 1].toInt() and 0xFF) shl 16) or ((d[o + 2].toInt() and 0xFF) shl 8) or (d[o + 3].toInt() and 0xFF)).toLong() and 0xFFFFFFFFL
         fun skipSection(longLen: Boolean) {
             val len = if (longLen) (u32(p) shl 32) or u32(p + 4) else u32(p)
             p += (if (longLen) 8 else 4) + len.toInt()
-            if (p > d.size) throw SoftDecodeException("PSD file is truncated")
+            if (p > d.size) throw SoftDecodeException(tr("PSD file is truncated"))
         }
         skipSection(false) // colour mode data
         skipSection(false) // image resources
         skipSection(version == 2) // layer and mask info
-        if (p + 2 > d.size) throw SoftDecodeException("PSD file has no merged image")
+        if (p + 2 > d.size) throw SoftDecodeException(tr("PSD file has no merged image"))
         val compression = u16(p); p += 2
         val bps = depth / 8
         val used = minOf(channels, if (mode == 4) 5 else if (mode == 3) 4 else 2)
         val planes = Array(used) { ByteArray(w * h) }
         if (compression == 0) {
             for (c in 0 until channels) for (y in 0 until h) for (x in 0 until w) {
-                if (p + bps > d.size) throw SoftDecodeException("PSD file is truncated")
+                if (p + bps > d.size) throw SoftDecodeException(tr("PSD file is truncated"))
                 if (c < used) planes[c][y * w + x] = d[p]
                 p += bps
             }
@@ -375,7 +376,7 @@ object SoftImageDecoders {
             p += channels * h * countSize
             for (c in 0 until channels) for (y in 0 until h) {
                 val n = counts[c * h + y]
-                if (p + n > d.size) throw SoftDecodeException("PSD file is truncated")
+                if (p + n > d.size) throw SoftDecodeException(tr("PSD file is truncated"))
                 if (c < used) {
                     val row = packBits(d, p, n, w * bps)
                     for (x in 0 until w) planes[c][y * w + x] = row[x * bps]
@@ -383,7 +384,7 @@ object SoftImageDecoders {
                 p += n
             }
         } else {
-            throw SoftDecodeException("PSD with ZIP-compressed composite is not supported")
+            throw SoftDecodeException(tr("PSD with ZIP-compressed composite is not supported"))
         }
         val out = IntArray(w)
         for (y in 0 until h) {
@@ -408,7 +409,7 @@ object SoftImageDecoders {
 
     // ================================================================== QOI
     private fun qoiSize(d: ByteArray): Pair<Int, Int> {
-        if (d.size < 14 || String(d, 0, 4, Charsets.ISO_8859_1) != "qoif") throw SoftDecodeException("Not a QOI file")
+        if (d.size < 14 || String(d, 0, 4, Charsets.ISO_8859_1) != "qoif") throw SoftDecodeException(tr("Not a QOI file"))
         val w = ((d[4].toInt() and 0xFF) shl 24) or ((d[5].toInt() and 0xFF) shl 16) or ((d[6].toInt() and 0xFF) shl 8) or (d[7].toInt() and 0xFF)
         val h = ((d[8].toInt() and 0xFF) shl 24) or ((d[9].toInt() and 0xFF) shl 16) or ((d[10].toInt() and 0xFF) shl 8) or (d[11].toInt() and 0xFF)
         checkDims(w, h)
@@ -425,7 +426,7 @@ object SoftImageDecoders {
         for (y in 0 until h) {
             for (x in 0 until w) {
                 if (run > 0) { run-- } else {
-                    if (p >= d.size) throw SoftDecodeException("QOI file is truncated")
+                    if (p >= d.size) throw SoftDecodeException(tr("QOI file is truncated"))
                     val b1 = d[p++].toInt() and 0xFF
                     when {
                         b1 == 0xFE -> { r = d[p].toInt() and 0xFF; g = d[p + 1].toInt() and 0xFF; b = d[p + 2].toInt() and 0xFF; p += 3 }
@@ -462,12 +463,12 @@ object SoftImageDecoders {
             }
         }
         private fun token(): String { skipWs(); val s = p; while (p < d.size && !d[p].toInt().toChar().isWhitespace()) p++; return String(d, s, p - s, Charsets.ISO_8859_1) }
-        private fun int(): Int = token().toIntOrNull() ?: throw SoftDecodeException("Corrupt PNM header")
+        private fun int(): Int = token().toIntOrNull() ?: throw SoftDecodeException(tr("Corrupt PNM header"))
 
         fun header(): Header {
             p = 0
             val magic = token()
-            if (magic.length != 2 || magic[0] != 'P') throw SoftDecodeException("Not a PNM file")
+            if (magic.length != 2 || magic[0] != 'P') throw SoftDecodeException(tr("Not a PNM file"))
             val t = magic[1]
             if (t == '7') {
                 var w = 0; var h = 0; var depth = 0; var maxV = 255; var tupl = ""
@@ -477,7 +478,7 @@ object SoftImageDecoders {
                         "WIDTH" -> w = int(); "HEIGHT" -> h = int(); "DEPTH" -> depth = int(); "MAXVAL" -> maxV = int()
                         "TUPLTYPE" -> tupl = token()
                         "ENDHDR" -> break
-                        "" -> throw SoftDecodeException("Corrupt PAM header")
+                        "" -> throw SoftDecodeException(tr("Corrupt PAM header"))
                     }
                 }
                 p++ // single whitespace
@@ -494,7 +495,7 @@ object SoftImageDecoders {
 
         fun decode(sink: RowSink): Pair<Int, Int> {
             val hd = header()
-            if (hd.maxV <= 0 || hd.maxV > 65535) throw SoftDecodeException("Corrupt PNM header")
+            if (hd.maxV <= 0 || hd.maxV > 65535) throw SoftDecodeException(tr("Corrupt PNM header"))
             val w = hd.w; val h = hd.h
             val row = IntArray(w)
             val bytesPer = if (hd.maxV > 255) 2 else 1
@@ -502,10 +503,10 @@ object SoftImageDecoders {
             val ascii = hd.type in '1'..'3'
             fun sample(): Int {
                 if (ascii) {
-                    if (hd.type == '1') { skipWs(); if (p >= d.size) throw SoftDecodeException("PNM file is truncated"); return d[p++].toInt() - '0'.code }
+                    if (hd.type == '1') { skipWs(); if (p >= d.size) throw SoftDecodeException(tr("PNM file is truncated")); return d[p++].toInt() - '0'.code }
                     return int()
                 }
-                if (p + bytesPer > d.size) throw SoftDecodeException("PNM file is truncated")
+                if (p + bytesPer > d.size) throw SoftDecodeException(tr("PNM file is truncated"))
                 val v = if (bytesPer == 2) ((d[p].toInt() and 0xFF) shl 8) or (d[p + 1].toInt() and 0xFF) else d[p].toInt() and 0xFF
                 p += bytesPer
                 return v
@@ -514,7 +515,7 @@ object SoftImageDecoders {
             for (y in 0 until h) {
                 if (hd.type == '4') {
                     val rb = (w + 7) / 8
-                    if (p + rb > d.size) throw SoftDecodeException("PBM file is truncated")
+                    if (p + rb > d.size) throw SoftDecodeException(tr("PBM file is truncated"))
                     for (x in 0 until w) {
                         val bit = (d[p + x / 8].toInt() shr (7 - x % 8)) and 1
                         row[x] = if (bit == 1) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()
@@ -548,11 +549,11 @@ object SoftImageDecoders {
                             val w: Int, val h: Int, val bpp: Int, val desc: Int)
 
     private fun tgaHeader(d: ByteArray): TgaHeader {
-        if (d.size < 18) throw SoftDecodeException("Not a TGA file")
+        if (d.size < 18) throw SoftDecodeException(tr("Not a TGA file"))
         fun u16(o: Int) = (d[o].toInt() and 0xFF) or ((d[o + 1].toInt() and 0xFF) shl 8)
         val hd = TgaHeader(d[0].toInt() and 0xFF, d[1].toInt() and 0xFF, d[2].toInt() and 0xFF, u16(3), u16(5), d[7].toInt() and 0xFF,
             u16(12), u16(14), d[16].toInt() and 0xFF, d[17].toInt() and 0xFF)
-        if (hd.type !in intArrayOf(1, 2, 3, 9, 10, 11)) throw SoftDecodeException("Not a supported TGA file")
+        if (hd.type !in intArrayOf(1, 2, 3, 9, 10, 11)) throw SoftDecodeException(tr("Not a supported TGA file"))
         checkDims(hd.w, hd.h)
         return hd
     }
@@ -569,7 +570,7 @@ object SoftImageDecoders {
             }
             24 -> (0xFF shl 24) or ((d[o + 2].toInt() and 0xFF) shl 16) or ((d[o + 1].toInt() and 0xFF) shl 8) or (d[o].toInt() and 0xFF)
             32 -> ((d[o + 3].toInt() and 0xFF) shl 24) or ((d[o + 2].toInt() and 0xFF) shl 16) or ((d[o + 1].toInt() and 0xFF) shl 8) or (d[o].toInt() and 0xFF)
-            else -> throw SoftDecodeException("Unsupported TGA pixel depth $bits")
+            else -> throw SoftDecodeException(tr("Unsupported TGA pixel depth {0}", bits))
         }
         var cmap: IntArray? = null
         if (hd.cmapType == 1) {
@@ -583,17 +584,17 @@ object SoftImageDecoders {
         val rle = hd.type >= 9
         var i = 0
         fun read(): Int {
-            if (p + bytes > d.size) throw SoftDecodeException("TGA file is truncated")
+            if (p + bytes > d.size) throw SoftDecodeException(tr("TGA file is truncated"))
             val v = if (hd.type == 1 || hd.type == 9) {
                 val idx = if (bytes == 2) (d[p].toInt() and 0xFF) or ((d[p + 1].toInt() and 0xFF) shl 8) else d[p].toInt() and 0xFF
-                cmap?.getOrNull(idx) ?: throw SoftDecodeException("TGA colour index out of range")
+                cmap?.getOrNull(idx) ?: throw SoftDecodeException(tr("TGA colour index out of range"))
             } else px(if (hd.bpp == 16 && (hd.desc and 0x0F) == 0) 15 else hd.bpp, p)
             p += bytes
             return v
         }
         while (i < w * h) {
             if (rle) {
-                if (p >= d.size) throw SoftDecodeException("TGA file is truncated")
+                if (p >= d.size) throw SoftDecodeException(tr("TGA file is truncated"))
                 val c = d[p++].toInt() and 0xFF
                 val n = (c and 0x7F) + 1
                 if (c and 0x80 != 0) { val v = read(); for (k in 0 until n) if (i < pixels.size) pixels[i++] = v }

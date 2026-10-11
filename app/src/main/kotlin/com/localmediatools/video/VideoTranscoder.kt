@@ -12,6 +12,7 @@ import android.os.Build
 import com.localmediatools.codec.audio.PcmProcessor
 import com.localmediatools.core.UserFacingException
 import com.localmediatools.core.WorkloadProfile
+import com.localmediatools.i18n.tr
 import java.io.FileDescriptor
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -64,7 +65,7 @@ class VideoTranscoder(
     private val timeoutUs = 10_000L
 
     fun run(out: FileDescriptor, p: Params, workload: WorkloadProfile, throttle: () -> Unit, progress: (Double) -> Unit): Result {
-        val v = info.video ?: throw UserFacingException("The file has no video track.")
+        val v = info.video ?: throw UserFacingException(tr("The file has no video track."))
         val notes = ArrayList<String>()
         val audioTrack = if (p.keepAudio) info.audio.firstOrNull() else null
         val speed = p.speed.coerceIn(0.05, 100.0)
@@ -97,9 +98,9 @@ class VideoTranscoder(
             decFormat.setInteger(MediaFormat.KEY_ROTATION, 0)
             if (info.hdr && Build.VERSION.SDK_INT >= 33) {
                 decFormat.setInteger(MediaFormat.KEY_COLOR_TRANSFER_REQUEST, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
-                notes.add("HDR video was converted to standard dynamic range (SDR).")
+                notes.add(tr("HDR video was converted to standard dynamic range (SDR)."))
             } else if (info.hdr) {
-                notes.add("HDR video: colours may look different after conversion on this Android version.")
+                notes.add(tr("HDR video: colours may look different after conversion on this Android version."))
             }
             decFormat.setInteger(MediaFormat.KEY_PRIORITY, 1)
             workload.codecOperatingRate?.let { decFormat.setInteger(MediaFormat.KEY_OPERATING_RATE, it) }
@@ -112,10 +113,10 @@ class VideoTranscoder(
                 audio = if (audioTrack.isAac && !changeSound) AudioPassthrough(audioEx, audioTrack)
                 else try {
                     AudioTranscode(audioEx, audioTrack, p.audioBitrate, p.audioRate, p.audioChannels, speed, 0).also {
-                        if (!audioTrack.isAac) notes.add("${audioTrack.codecLabel} audio was converted to AAC.")
+                        if (!audioTrack.isAac) notes.add(tr("{0} audio was converted to AAC.", audioTrack.codecLabel))
                     }
                 } catch (e: Exception) {
-                    notes.add("The ${audioTrack.codecLabel} audio couldn't be converted on this device, so the result has no sound.")
+                    notes.add(tr("The {0} audio couldn't be converted on this device, so the result has no sound.", audioTrack.codecLabel))
                     null
                 }
             } else if (p.silenceIfNoAudio) {
@@ -185,7 +186,7 @@ class VideoTranscoder(
                             }
                             decoder.releaseOutputBuffer(idx, render)
                             if (render) {
-                                if (!outSurface.awaitFrame()) throw UserFacingException("The video decoder stopped delivering frames.")
+                                if (!outSurface.awaitFrame()) throw UserFacingException(tr("The video decoder stopped delivering frames."))
                                 val draw = { renderer.draw(outSurface.stMatrix, p.outWidth, p.outHeight, rot, false, sx, sy) }
                                 val fx = p.effect
                                 if (fx != null && obscurer != null) {
@@ -241,10 +242,10 @@ class VideoTranscoder(
                 }
                 if (moved) lastActivity = System.currentTimeMillis()
                 else if (System.currentTimeMillis() - lastActivity > 15_000) {
-                    throw UserFacingException("Video processing stalled (the device codec stopped responding).")
+                    throw UserFacingException(tr("Video processing stalled (the device codec stopped responding)."))
                 }
             }
-            if (frames == 0L) throw UserFacingException("No video frames could be decoded from this file.")
+            if (frames == 0L) throw UserFacingException(tr("No video frames could be decoded from this file."))
             muxer.stop()
             muxing = false
             progress(1.0)
@@ -273,7 +274,7 @@ class VideoTranscoder(
         val codec = try {
             if (name != null) MediaCodec.createByCodecName(name) else MediaCodec.createDecoderByType(mime)
         } catch (e: Exception) {
-            throw UserFacingException("This device has no decoder for ${TrackInfo.codecName(mime)} video.", e)
+            throw UserFacingException(tr("This device has no decoder for {0} video.", TrackInfo.codecName(mime)), e)
         }
         try {
             codec.configure(decFormat, surface, null, 0)
@@ -285,7 +286,7 @@ class VideoTranscoder(
                 codec.configure(plain, surface, null, 0)
             } catch (e2: Exception) {
                 codec.release()
-                throw UserFacingException("The ${TrackInfo.codecName(mime)} decoder rejected this video (${info.codedWidth}×${info.codedHeight}).", e2)
+                throw UserFacingException(tr("The {0} decoder rejected this video ({1}×{2}).", TrackInfo.codecName(mime), info.codedWidth, info.codedHeight), e2)
             }
         }
         return codec
@@ -326,7 +327,7 @@ class VideoTranscoder(
         }
         val list = MediaCodecList(MediaCodecList.REGULAR_CODECS)
         val name = list.findEncoderForFormat(format(false))
-            ?: throw UserFacingException("This device has no H.264 encoder that supports ${p.outWidth}×${p.outHeight}.")
+            ?: throw UserFacingException(tr("This device has no H.264 encoder that supports {0}×{1}.", p.outWidth, p.outHeight))
         val codec = MediaCodec.createByCodecName(name)
         val caps = codec.codecInfo.getCapabilitiesForType(mime)
         val attempts = ArrayList<MediaFormat>()
@@ -356,7 +357,7 @@ class VideoTranscoder(
             }
         }
         codec.release()
-        throw UserFacingException("The H.264 encoder rejected the output settings (${p.outWidth}×${p.outHeight}).", last)
+        throw UserFacingException(tr("The H.264 encoder rejected the output settings ({0}×{1}).", p.outWidth, p.outHeight), last)
     }
 
     // ------------------------------------------------------------------ audio paths

@@ -164,7 +164,7 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val lastWord = p.substringAfterLast(' ')
         fun matches(vararg words: String) = lastWord.isEmpty() || words.any { w -> SearchParser.normalize(w).split(' ').any { it.startsWith(lastWord) } }
         val people = s.people.filter { matches(it.first.name ?: "") }
-        val cats = s.cats.filter { (c, _) -> matches(c.name, *c.words.toTypedArray()) }
+        val cats = s.cats.filter { (c, _) -> matches(c.name, *c.searchWords.toTypedArray()) }
         val albums = s.albums.filter { matches(it.second) }
         if (people.isNotEmpty()) {
             col.addView(UI.label(ctx, tr("People")), lp().apply { bottomMargin = ctx.dp(8) })

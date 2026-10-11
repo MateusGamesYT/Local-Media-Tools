@@ -217,7 +217,7 @@ class AutoEnhanceScreen(a: MainActivity) : ToolScreen(a, ToolId.AUTO_ENHANCE) {
             if (key != k) return@launch
             r.onSuccess { (b, out, e) ->
                 before.setImageBitmap(b); after.setImageBitmap(out)
-                note.text = tr("{0}: {1}.", e.scene.label, e.notes.joinToString(trc("between the items of a list", ", ")).ifBlank { tr("already well balanced, only small touches") })
+                note.text = tr("{0}: {1}.", e.scene.label, e.shownNotes.ifBlank { tr("already well balanced, only small touches") })
             }
             r.onFailure { e -> note.text = tr("Preview not available: {0}", Errors.describe(e)) }
         }

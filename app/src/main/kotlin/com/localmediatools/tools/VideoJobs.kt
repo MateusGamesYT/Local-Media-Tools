@@ -40,9 +40,9 @@ internal fun remuxToOutput(
                 Outputs.verifyMedia(ctx.app, pending.uri, tracks.any { it.isVideo }, tracks.any { it.isAudio })
             }
             return out
-        } catch (e: UserFacingException) {
+        } catch (e: com.localmediatools.video.ContainerRejectedException) {
+            // Another container may take these tracks.
             last = e
-            if (e.message?.contains("can't be stored") != true) throw e
         }
     }
     throw last ?: UserFacingException(tr("No suitable container for these tracks."))

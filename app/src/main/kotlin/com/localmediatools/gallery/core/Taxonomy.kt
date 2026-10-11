@@ -1,5 +1,9 @@
 package com.localmediatools.gallery.core
 
+import com.localmediatools.i18n.I18n
+import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+
 /**
  * A searchable category ("Dogs", "Beach", "Pizza"…) and how it is recognised: by the object
  * detector (COCO classes), by the scene classifier (summed probabilities of ImageNet-21k classes
@@ -8,9 +12,10 @@ package com.localmediatools.gallery.core
  */
 class Category(
     val key: String,
-    val name: String,
-    val group: String,
-    /** Words that find this category in search (lower case). */
+    /** In English, as in the table (shown in the app's language as [name]). */
+    val englishName: String,
+    private val englishGroup: String,
+    /** Words that find this category in search, in English (lower case). */
     val words: List<String>,
     val det: IntArray,
     val detThreshold: Float,
@@ -22,7 +27,16 @@ class Category(
     /** Index of a linear probe, or -1. */
     val probe: Int,
     val probeThreshold: Float,
-)
+) {
+    /** As shown, in the app's language ("Dogs", "Cães"). */
+    val name: String get() = tr(englishName)
+    /** The heading it is listed under ("Animals"). */
+    val group: String get() = tr(englishGroup)
+
+    /** Words that find it, in English and in the app's language (catalogs list them by category). */
+    val searchWords: List<String> get() =
+        (words + trc("search words for “$englishName”, separated by commas", words.joinToString(",")).split(',').map { it.trim().lowercase(I18n.locale) }).filter { it.isNotEmpty() }.distinct()
+}
 
 object Taxonomy {
     /** A photo is tagged with a category when its fused score reaches this. */
@@ -37,7 +51,7 @@ object Taxonomy {
             val c = line.split('\t')
             fun ints(s: String) = s.split(' ', ',').filter { it.isNotBlank() }.map { it.trim().toInt() }.toIntArray()
             Category(
-                key = c[0], name = c[1], group = c[2],
+                key = c[0], englishName = c[1], englishGroup = c[2],
                 words = c[3].split(',').map { it.trim().lowercase() }.filter { it.isNotEmpty() },
                 det = ints(c[4]), detThreshold = c[5].toFloat(), detMinArea = c[6].toFloat(),
                 scene = ints(c[7]), sceneThreshold = c[8].toFloat(),

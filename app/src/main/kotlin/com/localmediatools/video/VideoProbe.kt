@@ -6,6 +6,7 @@ import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 
 data class TrackInfo(
     val index: Int,
@@ -70,7 +71,7 @@ object VideoProbe {
             ex.setDataSource(ctx, uri, null)
         } catch (e: Exception) {
             ex.release()
-            throw UserFacingException("This file can't be read as a video. It may be damaged or use an unsupported container.", e)
+            throw UserFacingException(tr("This file can't be read as a video. It may be damaged or use an unsupported container."), e)
         }
         return ex
     }
@@ -82,7 +83,7 @@ object VideoProbe {
                 val f = ex.getTrackFormat(i)
                 TrackInfo(i, f.getString(MediaFormat.KEY_MIME) ?: "unknown", f)
             }
-            if (tracks.isEmpty()) throw UserFacingException("The file contains no audio or video tracks.")
+            if (tracks.isEmpty()) throw UserFacingException(tr("The file contains no audio or video tracks."))
             var rotation = 0
             var frameRate = 0.0
             var bitrate = 0

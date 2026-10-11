@@ -487,7 +487,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
             try {
                 val r = withContext(session.worker) { session.autoEnhance() }
                 val cur = session.current
-                autoNoteText = tr("{0}: {1}", r.scene.label, r.notes.joinToString(trc("between the items of a list", ", ")).ifBlank { tr("already well balanced") })
+                autoNoteText = tr("{0}: {1}", r.scene.label, r.shownNotes.ifBlank { tr("already well balanced") })
                 commit(cur.copy(adjust = r.adjust))
                 buildPanel(keepScroll = true)
                 requestRender(full = true)

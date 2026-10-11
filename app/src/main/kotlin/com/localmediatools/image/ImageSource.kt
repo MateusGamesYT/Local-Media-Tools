@@ -18,6 +18,7 @@ import com.localmediatools.core.MediaItem
 import com.localmediatools.core.MediaProbe
 import com.localmediatools.core.SniffedFormat
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import java.io.BufferedInputStream
 import java.io.Closeable
 import java.io.InputStream
@@ -75,7 +76,7 @@ class ImageSource private constructor(
     fun decode(sampleSize: Int = 1, budgetBytes: Long = Long.MAX_VALUE, unpremultiplied: Boolean = false, keepColorSpace: Boolean = false): Bitmap {
         val need = bytesFor(sampleSize) * (if (orientation.isIdentity) 1 else 2)
         if (need > budgetBytes) {
-            throw ImageTooLargeException("This image (${width}×$height) needs about ${need / (1024 * 1024)} MB of memory, more than is free right now.")
+            throw ImageTooLargeException(tr("This image ({0}×{1}) needs about {2} MB of memory, more than is free right now.", width, height, need / (1024 * 1024)))
         }
         val raw = when (mode) {
             Mode.PLATFORM -> decodePlatform(sampleSize, unpremultiplied, keepColorSpace)
@@ -93,7 +94,7 @@ class ImageSource private constructor(
             if (!keepColorSpace) inPreferredColorSpace = ColorSpace.get(ColorSpace.Named.SRGB)
         }
         val bmp = open().use { BitmapFactory.decodeStream(it, null, opts) }
-            ?: throw UserFacingException("The image data could not be decoded. The file may be damaged or use an unsupported variant of ${format.label}.")
+            ?: throw UserFacingException(tr("The image data could not be decoded. The file may be damaged or use an unsupported variant of {0}.", format.label))
         return BitmapOps.ensureArgb8888(bmp)
     }
 
@@ -151,7 +152,7 @@ class ImageSource private constructor(
                 if (!keepColorSpace) inPreferredColorSpace = ColorSpace.get(ColorSpace.Named.SRGB)
             }
             val part = decoder.decodeRegion(rawRect, opts)
-                ?: throw UserFacingException("Part of the image could not be decoded; the file may be damaged.")
+                ?: throw UserFacingException(tr("Part of the image could not be decoded; the file may be damaged."))
             return BitmapOps.orient(BitmapOps.ensureArgb8888(part), orientation, recycleSource = true)
         }
         // Fallback: crop from a cached full-resolution decode.
@@ -208,12 +209,12 @@ class ImageSource private constructor(
                     n += k
                 }
             }
-            if (n == 0) throw UserFacingException("The file is empty.")
+            if (n == 0) throw UserFacingException(tr("The file is empty."))
             val format = knownFormat?.takeIf { it != SniffedFormat.UNKNOWN } ?: SniffedFormat.sniff(head, n, name, null)
 
             if (SoftDecoders.handles(format)) {
                 val dims = SoftDecoders.readSize(ctx, uri, format)
-                    ?: throw UserFacingException("This ${format.label} file is damaged or uses an unsupported variant.")
+                    ?: throw UserFacingException(tr("This {0} file is damaged or uses an unsupported variant.", format.label))
                 return ImageSource(ctx, uri, name, format, dims.first, dims.second, Orientation.NORMAL, Mode.SOFTWARE)
             }
 
@@ -279,15 +280,15 @@ class ImageSource private constructor(
                     }
                 }
             }
-            if (truncated) throw UserFacingException("This ${format.label} file is incomplete (truncated). Processing it would produce grey or missing areas, so it was not used.")
+            if (truncated) throw UserFacingException(tr("This {0} file is incomplete (truncated). Processing it would produce grey or missing areas, so it was not used.", format.label))
         }
 
         private fun unsupportedMessage(f: SniffedFormat) = when (f) {
-            SniffedFormat.AVIF -> "AVIF images can't be decoded on this Android version."
-            SniffedFormat.HEIF -> "This HEIC/HEIF image can't be decoded on this device."
-            SniffedFormat.RAW_CAMERA -> "This camera RAW format isn't supported by Android's decoder."
-            SniffedFormat.UNKNOWN -> "This file is not an image format that can be decoded."
-            else -> "This ${f.label} image could not be decoded. It may be damaged."
+            SniffedFormat.AVIF -> tr("AVIF images can't be decoded on this Android version.")
+            SniffedFormat.HEIF -> tr("This HEIC/HEIF image can't be decoded on this device.")
+            SniffedFormat.RAW_CAMERA -> tr("This camera RAW format isn't supported by Android's decoder.")
+            SniffedFormat.UNKNOWN -> tr("This file is not an image format that can be decoded.")
+            else -> tr("This {0} image could not be decoded. It may be damaged.", f.label)
         }
 
         private fun resolveOrientation(ctx: Context, uri: Uri, format: SniffedFormat, head: ByteArray, n: Int, rw: Int, rh: Int): Orientation {

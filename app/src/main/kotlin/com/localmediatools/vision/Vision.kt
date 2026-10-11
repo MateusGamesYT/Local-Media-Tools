@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import com.localmediatools.gallery.ObjectTagger
+import com.localmediatools.i18n.tr
 import com.localmediatools.stitch.OpenCvLoader
 import com.localmediatools.vision.core.AutoEnhance
 import com.localmediatools.vision.core.EnhanceResult
@@ -17,12 +18,12 @@ import com.localmediatools.vision.core.FaceSample
 import com.localmediatools.vision.core.Matting
 import com.localmediatools.vision.core.SceneKind
 import com.localmediatools.vision.core.SceneMapper
-import org.opencv.android.Utils
-import org.opencv.core.Mat
-import org.opencv.imgproc.Imgproc
 import java.io.File
 import kotlin.math.max
 import kotlin.math.roundToInt
+import org.opencv.android.Utils
+import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 
 /**
  * The on-device vision models: face detection (YuNet) and recognition (ResNet-50 for the Gallery,
@@ -49,7 +50,7 @@ object VisionModels {
         dir.listFiles()?.filter { it.name.endsWith("-$name") }?.forEach { it.delete() }
         val tmp = File(dir, "$name.tmp")
         ctx.assets.open("models/$name").use { input -> tmp.outputStream().use { input.copyTo(it, 1 shl 16) } }
-        if (!tmp.renameTo(f)) throw java.io.IOException("Could not prepare the on-device model $name")
+        if (!tmp.renameTo(f)) throw java.io.IOException(tr("Could not prepare the on-device model {0}", name))
         return f
     }
 

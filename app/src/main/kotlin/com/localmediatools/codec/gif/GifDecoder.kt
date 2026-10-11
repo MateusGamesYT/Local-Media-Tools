@@ -1,5 +1,6 @@
 package com.localmediatools.codec.gif
 
+import com.localmediatools.i18n.tr
 import java.io.BufferedInputStream
 import java.io.EOFException
 import java.io.IOException
@@ -44,12 +45,12 @@ class GifDecoder(input: InputStream, maxCanvasPixels: Long = 64L * 1024 * 1024) 
 
     init {
         val sig = String(readBytes(6), Charsets.ISO_8859_1)
-        if (sig != "GIF87a" && sig != "GIF89a") throw GifFormatException("Not a GIF file")
+        if (sig != "GIF87a" && sig != "GIF89a") throw GifFormatException(tr("Not a GIF file"))
         width = u16()
         height = u16()
-        if (width <= 0 || height <= 0) throw GifFormatException("GIF has an empty canvas")
+        if (width <= 0 || height <= 0) throw GifFormatException(tr("GIF has an empty canvas"))
         if (width.toLong() * height > maxCanvasPixels) {
-            throw GifFormatException("GIF canvas ${width}x$height is too large to process on this device")
+            throw GifFormatException(tr("GIF canvas {0}×{1} is too large to process on this device", width, height))
         }
         val flags = u8()
         u8() // background colour index (viewers treat the initial canvas as transparent)
@@ -103,10 +104,10 @@ class GifDecoder(input: InputStream, maxCanvasPixels: Long = 64L * 1024 * 1024) 
                 }
                 0x2C -> return readImage(delay, disposal, transparent)
                 0x00 -> continue // stray padding seen in some encoders
-                else -> throw GifFormatException("Corrupt GIF block (0x${Integer.toHexString(b)}) after frame $frameIndex", frameIndex)
+                else -> throw GifFormatException(tr("Corrupt GIF block ({0}) after frame {1}", "0x" + Integer.toHexString(b), frameIndex), frameIndex)
             }
             } catch (e: EOFException) {
-                if (b == 0x2C) throw GifFormatException("GIF is truncated inside frame ${frameIndex + 1}", frameIndex)
+                if (b == 0x2C) throw GifFormatException(tr("GIF is truncated inside frame {0}", frameIndex + 1), frameIndex)
                 // The file ends inside trailing metadata after complete frames: nothing is lost.
                 done = true
                 return null
@@ -120,24 +121,24 @@ class GifDecoder(input: InputStream, maxCanvasPixels: Long = 64L * 1024 * 1024) 
         val flags = u8()
         val local = if (flags and 0x80 != 0) readPalette(2 shl (flags and 7)) else null
         val interlaced = flags and 0x40 != 0
-        val palette = local ?: globalPalette ?: throw GifFormatException("GIF frame $frameIndex has no colour table", frameIndex)
+        val palette = local ?: globalPalette ?: throw GifFormatException(tr("GIF frame {0} has no colour table", frameIndex), frameIndex)
         val minCodeSize = u8()
-        if (minCodeSize < 1 || minCodeSize > 11) throw GifFormatException("GIF frame $frameIndex has invalid LZW code size", frameIndex)
+        if (minCodeSize < 1 || minCodeSize > 11) throw GifFormatException(tr("GIF frame {0} has invalid LZW code size", frameIndex), frameIndex)
 
         if (disposal == 3) {
             restore = canvas.copyOf()
         }
         val pixels = fw.toLong() * fh
-        if (pixels > Int.MAX_VALUE / 2) throw GifFormatException("GIF frame $frameIndex is too large", frameIndex)
+        if (pixels > Int.MAX_VALUE / 2) throw GifFormatException(tr("GIF frame {0} is too large", frameIndex), frameIndex)
         val indices = ByteArray(pixels.toInt())
         val produced = try {
             lzwDecode(minCodeSize, indices)
         } catch (e: EOFException) {
-            throw GifFormatException("GIF is truncated inside frame ${frameIndex + 1}", frameIndex)
+            throw GifFormatException(tr("GIF is truncated inside frame {0}", frameIndex + 1), frameIndex)
         }
         if (produced < indices.size && produced < indices.size - fw) {
             // Some encoders end a frame a few pixels early; anything more is real corruption.
-            throw GifFormatException("GIF frame ${frameIndex + 1} is missing image data", frameIndex)
+            throw GifFormatException(tr("GIF frame {0} is missing image data", frameIndex + 1), frameIndex)
         }
         // Composite.
         val rowOrder = if (interlaced) interlaceRows(fh) else null
@@ -306,7 +307,7 @@ class GifDecoder(input: InputStream, maxCanvasPixels: Long = 64L * 1024 * 1024) 
         var off = 0
         while (off < n) {
             val k = ins.read(b, off, n - off)
-            if (k < 0) throw GifFormatException("GIF is truncated", frameIndex)
+            if (k < 0) throw GifFormatException(tr("GIF is truncated"), frameIndex)
             off += k
         }
         return b

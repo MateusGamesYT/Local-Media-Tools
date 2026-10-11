@@ -141,7 +141,7 @@ object Printers {
                 return@onLocalNetwork PrinterConnection(updated, client, caps)
             } catch (e: IppException) {
                 // A changed identity is a reason to stop, not to try the unencrypted way.
-                if (e.message?.contains("identity changed") == true || e.cause?.message?.contains("identity changed") == true) throw e
+                if (PinnedTrust.identityChanged(e)) throw e
                 last = e
             }
         }

@@ -24,6 +24,7 @@ import com.localmediatools.highlight.core.Frame
 import com.localmediatools.highlight.core.Plan
 import com.localmediatools.highlight.core.ShotKind
 import com.localmediatools.highlight.core.Timeline
+import com.localmediatools.i18n.tr
 import com.localmediatools.image.BitmapOps
 import com.localmediatools.image.ImageSource
 import com.localmediatools.ui.typeface
@@ -163,13 +164,13 @@ class HighlightRenderer(
                 }
                 if (desc.fade > 0f) gl.fill(desc.fade)
                 egl.setPresentationTime(n * 1_000_000_000L / fps)
-                if (!egl.swap()) throw UserFacingException("The video encoder stopped taking frames.")
+                if (!egl.swap()) throw UserFacingException(tr("The video encoder stopped taking frames."))
                 drain(false)
                 if (n % 10 == 0) { throttle(); progress(n.toDouble() / frames) }
             }
             encoder.signalEndOfInputStream()
             drain(true)
-            if (!muxing) throw UserFacingException("The video encoder produced nothing.")
+            if (!muxing) throw UserFacingException(tr("The video encoder produced nothing."))
             writeAudio(Long.MAX_VALUE)
             muxer.stop(); muxing = false
             progress(1.0)
@@ -262,7 +263,7 @@ class HighlightRenderer(
         private var pyramid: List<Gl.Target>? = null
 
         init {
-            val v = info.video ?: throw UserFacingException("no video track")
+            val v = info.video ?: throw UserFacingException(tr("This file has no video track."))
             var e: MediaExtractor? = null; var o: ExternalTextureRenderer? = null; var s: DecoderOutputSurface? = null; var d: MediaCodec? = null
             try {
                 e = VideoProbe.extractor(ctx, uri)
@@ -413,7 +414,7 @@ class HighlightRenderer(
             }
         }
         val name = MediaCodecList(MediaCodecList.REGULAR_CODECS).findEncoderForFormat(format(false))
-            ?: throw UserFacingException("This device has no H.264 encoder for ${w}×$h.")
+            ?: throw UserFacingException(tr("This device has no H.264 encoder for {0}×{1}.", w, h))
         val codec = MediaCodec.createByCodecName(name)
         val caps = codec.codecInfo.getCapabilitiesForType(mime)
         val rich = format(true)
@@ -428,7 +429,7 @@ class HighlightRenderer(
             try { codec.configure(f, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE); return codec } catch (e: Exception) { last = e; try { codec.reset() } catch (_: Exception) { } }
         }
         codec.release()
-        throw UserFacingException("The H.264 encoder rejected ${w}×$h.", last)
+        throw UserFacingException(tr("The H.264 encoder rejected {0}×{1}.", w, h), last)
     }
 
     // ------------------------------------------------------------------ GL

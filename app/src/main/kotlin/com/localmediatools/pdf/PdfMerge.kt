@@ -3,6 +3,7 @@ package com.localmediatools.pdf
 import android.content.Context
 import android.net.Uri
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import com.tom_roush.pdfbox.io.MemoryUsageSetting
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
@@ -41,31 +42,31 @@ object PdfMerge {
             for ((i, input) in inputs.withIndex()) {
                 throttle()
                 val (name, uri) = input
-                val stream = ctx.contentResolver.openInputStream(uri) ?: throw UserFacingException("\"$name\" could not be opened.")
+                val stream = ctx.contentResolver.openInputStream(uri) ?: throw UserFacingException(tr("\"{0}\" could not be opened.", name))
                 val doc = try {
                     stream.use { PDDocument.load(it, memory) }
                 } catch (e: InvalidPasswordException) {
-                    throw UserFacingException("\"$name\" is password-protected. Remove the password before merging.")
+                    throw UserFacingException(tr("\"{0}\" is password-protected. Remove the password before merging.", name))
                 } catch (e: OutOfMemoryError) {
                     throw e
                 } catch (e: Exception) {
-                    throw UserFacingException("\"$name\" is not a valid PDF or is damaged (${e.message ?: e.javaClass.simpleName}).", e)
+                    throw UserFacingException(tr("\"{0}\" is not a valid PDF or is damaged ({1}).", name, e.message ?: e.javaClass.simpleName), e)
                 }
                 opened.add(doc)
-                if (doc.numberOfPages == 0) throw UserFacingException("\"$name\" has no pages.")
+                if (doc.numberOfPages == 0) throw UserFacingException(tr("\"{0}\" has no pages.", name))
                 if (doc.isEncrypted) {
                     doc.isAllSecurityToBeRemoved = true
-                    notes.add("\"$name\" had usage restrictions (no password needed to open); they were not carried over.")
+                    notes.add(tr("\"{0}\" had usage restrictions (no password needed to open); they were not carried over.", name))
                 }
                 try {
                     merger.appendDocument(dest, doc)
                 } catch (e: Exception) {
-                    throw UserFacingException("\"$name\" has a structure that couldn't be merged (${e.message ?: e.javaClass.simpleName}).", e)
+                    throw UserFacingException(tr("\"{0}\" has a structure that couldn't be merged ({1}).", name, e.message ?: e.javaClass.simpleName), e)
                 }
                 total += doc.numberOfPages
                 progress(i + 1)
             }
-            if (dest.numberOfPages != total) throw UserFacingException("Merged page count doesn't match the inputs; nothing was saved.")
+            if (dest.numberOfPages != total) throw UserFacingException(tr("Merged page count doesn't match the inputs; nothing was saved."))
             dest.documentInformation.producer = "Local Media Tools"
             dest.save(output)
             return Result(total, notes)

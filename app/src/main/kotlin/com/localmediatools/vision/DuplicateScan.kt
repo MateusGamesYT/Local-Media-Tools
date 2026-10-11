@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.LruCache
 import android.util.Size
 import com.localmediatools.gallery.GalleryDb
+import com.localmediatools.i18n.tr
 import com.localmediatools.stitch.OpenCvLoader
 import com.localmediatools.stitch.TfliteEmbedder
 import com.localmediatools.vision.core.AutoEnhance
@@ -17,6 +18,14 @@ import com.localmediatools.vision.core.Duplicates
 import com.localmediatools.vision.core.FeatureCheck
 import com.localmediatools.vision.core.KeepCandidate
 import com.localmediatools.vision.core.PhotoInfo
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.File
+import java.security.MessageDigest
+import kotlin.coroutines.coroutineContext
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,14 +40,6 @@ import kotlinx.coroutines.launch
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.File
-import java.security.MessageDigest
-import kotlin.coroutines.coroutineContext
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.roundToInt
 
 /** A photo in the device's library. */
 class GalleryPhoto(
@@ -112,7 +113,7 @@ object DuplicateScanner {
     fun start(ctx: Context) {
         if (job?.isActive == true) return
         val app = ctx.applicationContext
-        _state.value = DupScanState.Running(0, 0, "Reading your photo library")
+        _state.value = DupScanState.Running(0, 0, tr("Reading your photo library"))
         job = scope.launch {
             try {
                 _state.value = scan(app)
@@ -120,7 +121,7 @@ object DuplicateScanner {
                 _state.value = DupScanState.Idle
             } catch (e: Throwable) {
                 android.util.Log.w("LMT", "duplicate scan failed", e)
-                _state.value = DupScanState.Failed(e.message ?: "The scan stopped unexpectedly.")
+                _state.value = DupScanState.Failed(e.message ?: tr("The scan stopped unexpectedly."))
             }
         }
     }
@@ -234,7 +235,7 @@ object DuplicateScanner {
             var done = 0
             for (start in photos.indices step 32) {
                 if (!coroutineContext.isActive) throw kotlinx.coroutines.CancellationException()
-                _state.value = DupScanState.Running(done, photos.size, "Looking at your photos")
+                _state.value = DupScanState.Running(done, photos.size, tr("Looking at your photos"))
                 val batch = (start until minOf(photos.size, start + 32)).toList()
                 coroutineScope {
                     batch.chunked((batch.size + parallel - 1) / parallel).map { part ->
@@ -264,7 +265,7 @@ object DuplicateScanner {
         }
         saveCache(ctx, fresh)
         // Identical files: only photos with the same size are read and compared.
-        _state.value = DupScanState.Running(photos.size, photos.size, "Comparing")
+        _state.value = DupScanState.Running(photos.size, photos.size, tr("Comparing"))
         val bySize = infos.groupBy { it.bytes }.filter { it.value.size > 1 }
         val digests = HashMap<Int, String>()
         for (g in bySize.values) for (inf in g) digest(ctx, photos[inf.index].uri)?.let { digests[inf.index] = it }

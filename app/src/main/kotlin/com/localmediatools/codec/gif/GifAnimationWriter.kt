@@ -1,6 +1,7 @@
 package com.localmediatools.codec.gif
 
 import com.localmediatools.codec.png.IntIntMap
+import com.localmediatools.i18n.tr
 import java.io.OutputStream
 
 /**
@@ -38,7 +39,7 @@ class GifAnimationWriter(
         require(target.size == width * height) { "Frame size mismatch" }
         for (c in target) {
             val a = c ushr 24
-            if (a != 0 && a != 0xFF) throw GifUnrepresentableException("GIF cannot store semi-transparent pixels")
+            if (a != 0 && a != 0xFF) throw GifUnrepresentableException(tr("GIF cannot store semi-transparent pixels"))
         }
         val p = pending
         if (p == null) {
@@ -95,7 +96,7 @@ class GifAnimationWriter(
         val encoded = encodeRect(t, minX, minY, rw, rh, allowDiffTransparency = true)
             ?: encodeRect(t, minX, minY, rw, rh, allowDiffTransparency = false)
             ?: throw GifUnrepresentableException(
-                "Frame ${framesWritten + 1} needs more than 256 colours including transparency, which GIF cannot store exactly"
+                tr("Frame {0} needs more than 256 colours including transparency, which GIF cannot store exactly", framesWritten + 1)
             )
         encoder.writeFrame(encoded.indices, minX, minY, rw, rh, encoded.localPalette, encoded.transparentIndex, delay, if (clearAfter) 2 else 1)
         framesWritten++

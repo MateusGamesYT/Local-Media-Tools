@@ -1,5 +1,6 @@
 package com.localmediatools.codec.meta
 
+import com.localmediatools.i18n.tr
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.EOFException
@@ -44,23 +45,23 @@ object MetadataStripper {
                 val tag = u16(e); val type = u16(e + 2)
                 when (tag) {
                     0x0112 -> if (kind == 0) report.orientation = (if (type == 3) u16(e + 8) else u32(e + 8).toInt()).let { if (it in 1..8) it else 1 }
-                    0x8825 -> { report.removed.add("GPS location"); ifd(u32(e + 8), 2, depth + 1) }
+                    0x8825 -> { report.removed.add(tr("GPS location")); ifd(u32(e + 8), 2, depth + 1) }
                     0x8769 -> ifd(u32(e + 8), 1, depth + 1)
-                    0x010F, 0x0110 -> report.removed.add("camera make & model")
-                    0x0132, 0x9003, 0x9004 -> report.removed.add("date & time")
-                    0x0131 -> report.removed.add("software")
-                    0x013B, 0x8298, 0x9C9D -> report.removed.add("author & copyright")
-                    0xA431, 0xA435 -> report.removed.add("camera serial number")
-                    0xA434, 0xA433 -> report.removed.add("lens details")
-                    0x927C -> report.removed.add("maker notes")
-                    0x9286, 0x9C9C, 0x010E -> report.removed.add("descriptions & comments")
-                    0x829A, 0x829D, 0x8827, 0x920A -> report.removed.add("shooting settings")
-                    0x0201 -> report.removed.add("embedded thumbnail")
+                    0x010F, 0x0110 -> report.removed.add(tr("camera make & model"))
+                    0x0132, 0x9003, 0x9004 -> report.removed.add(tr("date & time"))
+                    0x0131 -> report.removed.add(tr("software"))
+                    0x013B, 0x8298, 0x9C9D -> report.removed.add(tr("author & copyright"))
+                    0xA431, 0xA435 -> report.removed.add(tr("camera serial number"))
+                    0xA434, 0xA433 -> report.removed.add(tr("lens details"))
+                    0x927C -> report.removed.add(tr("maker notes"))
+                    0x9286, 0x9C9C, 0x010E -> report.removed.add(tr("descriptions & comments"))
+                    0x829A, 0x829D, 0x8827, 0x920A -> report.removed.add(tr("shooting settings"))
+                    0x0201 -> report.removed.add(tr("embedded thumbnail"))
                 }
             }
             if (kind == 0 && depth == 0) {
                 val next = u32(p + 2 + n * 12)
-                if (next > 0) { report.removed.add("embedded thumbnail"); ifd(next, 3, depth + 1) }
+                if (next > 0) { report.removed.add(tr("embedded thumbnail")); ifd(next, 3, depth + 1) }
             }
         }
         if (len >= 8) ifd(u32(off + 4), 0, 0)
@@ -78,7 +79,7 @@ object MetadataStripper {
     fun stripJpeg(input: InputStream, out: OutputStream): StripReport {
         val r = StripReport()
         val d = DataInputStream(input.buffered(1 shl 16))
-        if (d.readUnsignedByte() != 0xFF || d.readUnsignedByte() != 0xD8) throw IOException("Not a JPEG file")
+        if (d.readUnsignedByte() != 0xFF || d.readUnsignedByte() != 0xD8) throw IOException(tr("Not a JPEG file"))
         out.write(0xFF); out.write(0xD8)
         var wroteOrientation = false
         val pending = ArrayList<ByteArray>()
@@ -94,31 +95,31 @@ object MetadataStripper {
             if (m == 0xD9) { out.write(0xFF); out.write(0xD9); break }
             if (m in 0xD0..0xD7 || m == 0x01) { out.write(0xFF); out.write(m); continue }
             val len = d.readUnsignedShort()
-            if (len < 2) throw IOException("Damaged JPEG segment")
+            if (len < 2) throw IOException(tr("Damaged JPEG segment"))
             val data = ByteArray(len - 2); d.readFully(data)
             fun id(s: String) = data.size >= s.length && s.indices.all { data[it] == s[it].code.toByte() }
             var keep = true
             when (m) {
                 0xE0 -> if (id("JFIF\u0000")) {
                     // Keep the JFIF header but drop its thumbnail.
-                    if (data.size > 14 && ((data[12].toInt() and 255) > 0 || (data[13].toInt() and 255) > 0)) r.removed.add("embedded thumbnail")
+                    if (data.size > 14 && ((data[12].toInt() and 255) > 0 || (data[13].toInt() and 255) > 0)) r.removed.add(tr("embedded thumbnail"))
                     val head = data.copyOf(14); head[12] = 0; head[13] = 0
                     writeSegment(out, 0xE0, head); keep = false
-                } else { if (id("JFXX")) r.removed.add("embedded thumbnail") else r.removed.add("other application data"); keep = false }
+                } else { if (id("JFXX")) r.removed.add(tr("embedded thumbnail")) else r.removed.add(tr("other application data")); keep = false }
                 0xE1 -> {
                     if (id("Exif\u0000\u0000")) inspectExif(data, 6, data.size - 6, r)
-                    else if (id("http://ns.adobe.com/xap/1.0/") || id("http://ns.adobe.com/xmp/extension/")) r.removed.add("XMP metadata")
-                    else r.removed.add("other application data")
+                    else if (id("http://ns.adobe.com/xap/1.0/") || id("http://ns.adobe.com/xmp/extension/")) r.removed.add(tr("XMP metadata"))
+                    else r.removed.add(tr("other application data"))
                     keep = false
                 }
-                0xE2 -> if (id("ICC_PROFILE\u0000")) r.kept.add("colour profile") else {
-                    if (id("MPF\u0000")) r.removed.add("extra images (depth, HDR or motion data)") else r.removed.add("other application data")
+                0xE2 -> if (id("ICC_PROFILE\u0000")) r.kept.add(tr("colour profile")) else {
+                    if (id("MPF\u0000")) r.removed.add(tr("extra images (depth, HDR or motion data)")) else r.removed.add(tr("other application data"))
                     keep = false
                 }
-                0xEE -> if (id("Adobe")) r.kept.add("Adobe colour transform") else { r.removed.add("other application data"); keep = false }
-                0xED -> { r.removed.add("IPTC / Photoshop data"); keep = false }
-                in 0xE3..0xEF -> { r.removed.add("other application data"); keep = false }
-                0xFE -> { r.removed.add("descriptions & comments"); keep = false }
+                0xEE -> if (id("Adobe")) r.kept.add(tr("Adobe colour transform")) else { r.removed.add(tr("other application data")); keep = false }
+                0xED -> { r.removed.add(tr("IPTC / Photoshop data")); keep = false }
+                in 0xE3..0xEF -> { r.removed.add(tr("other application data")); keep = false }
+                0xFE -> { r.removed.add(tr("descriptions & comments")); keep = false }
             }
             if (!keep) continue
             if (!wroteOrientation && m !in 0xE0..0xEF) {
@@ -152,7 +153,7 @@ object MetadataStripper {
         val buf = ByteArrayOutputStream(1 shl 16)
         fun flush() { buf.writeTo(out); buf.reset() }
         while (true) {
-            val b = try { d.readUnsignedByte() } catch (e: EOFException) { flush(); throw IOException("The JPEG file is truncated") }
+            val b = try { d.readUnsignedByte() } catch (e: EOFException) { flush(); throw IOException(tr("The JPEG file is truncated")) }
             if (b != 0xFF) { buf.write(b); if (buf.size() >= 1 shl 16) flush(); continue }
             var m = d.readUnsignedByte()
             while (m == 0xFF) m = d.readUnsignedByte()
@@ -163,14 +164,14 @@ object MetadataStripper {
                     var extra = 0L
                     val skip = ByteArray(1 shl 16)
                     while (true) { val n = d.read(skip); if (n < 0) break; extra += n }
-                    if (extra > 0) { r.trailingBytes = extra; r.removed.add("extra images (depth, HDR or motion data)") }
+                    if (extra > 0) { r.trailingBytes = extra; r.removed.add(tr("extra images (depth, HDR or motion data)")) }
                     return
                 }
                 else -> {
                     // Marker between progressive scans (DHT, SOS, DQT, DRI…): copy; drop metadata segments.
                     val len = d.readUnsignedShort()
                     val data = ByteArray(len - 2); d.readFully(data)
-                    if (m in 0xE0..0xEF || m == 0xFE) { r.removed.add("other application data"); continue }
+                    if (m in 0xE0..0xEF || m == 0xFE) { r.removed.add(tr("other application data")); continue }
                     flush(); writeSegment(out, m, data)
                 }
             }
@@ -186,14 +187,14 @@ object MetadataStripper {
         val r = StripReport()
         val d = DataInputStream(input.buffered(1 shl 16))
         val sig = ByteArray(8); d.readFully(sig)
-        if (!sig.contentEquals(PNG_SIG)) throw IOException("Not a PNG file")
+        if (!sig.contentEquals(PNG_SIG)) throw IOException(tr("Not a PNG file"))
         out.write(sig)
         var orientationWritten = false
         while (true) {
             val len = d.readInt()
             val typeB = ByteArray(4); d.readFully(typeB)
             val type = String(typeB, Charsets.ISO_8859_1)
-            if (len < 0) throw IOException("Damaged PNG chunk")
+            if (len < 0) throw IOException(tr("Damaged PNG chunk"))
             val keep = type in PNG_KEEP || type[0].isUpperCase()
             if (!keep) {
                 when (type) {
@@ -202,17 +203,17 @@ object MetadataStripper {
                         val data = ByteArray(len); d.readFully(data); d.readInt()
                         val key = String(data, 0, data.indexOfFirst { it == 0.toByte() }.let { if (it < 0) minOf(79, data.size) else it }, Charsets.ISO_8859_1)
                         r.removed.add(when {
-                            key.startsWith("XML:com.adobe.xmp") -> "XMP metadata"
-                            key.equals("Raw profile type exif", true) || key.equals("Raw profile type APP1", true) -> "EXIF data"
-                            key.contains("Creation Time", true) -> "date & time"
-                            key.equals("Software", true) -> "software"
-                            key.equals("Author", true) || key.equals("Copyright", true) -> "author & copyright"
-                            else -> "text notes (${key.take(24)})"
+                            key.startsWith("XML:com.adobe.xmp") -> tr("XMP metadata")
+                            key.equals("Raw profile type exif", true) || key.equals("Raw profile type APP1", true) -> tr("EXIF data")
+                            key.contains("Creation Time", true) -> tr("date & time")
+                            key.equals("Software", true) -> tr("software")
+                            key.equals("Author", true) || key.equals("Copyright", true) -> tr("author & copyright")
+                            else -> tr("text notes ({0})", key.take(24))
                         })
                         continue
                     }
-                    "tIME" -> r.removed.add("date & time")
-                    else -> r.removed.add("other application data")
+                    "tIME" -> r.removed.add(tr("date & time"))
+                    else -> r.removed.add(tr("other application data"))
                 }
                 d.skipFully(len.toLong() + 4)
                 continue
@@ -221,7 +222,7 @@ object MetadataStripper {
                 if (r.orientation != 1) writePngChunk(out, "eXIf", minimalTiff(r.orientation))
                 orientationWritten = true
             }
-            if (type == "iCCP") r.kept.add("colour profile")
+            if (type == "iCCP") r.kept.add(tr("colour profile"))
             // Copy kept chunks as they are (streamed, IDAT can be huge).
             val header = ByteArray(8)
             header[0] = (len ushr 24).toByte(); header[1] = (len ushr 16).toByte(); header[2] = (len ushr 8).toByte(); header[3] = len.toByte()
@@ -232,7 +233,7 @@ object MetadataStripper {
                 var extra = 0L
                 val skip = ByteArray(8192)
                 while (true) { val n = d.read(skip); if (n < 0) break; extra += n }
-                if (extra > 0) { r.trailingBytes = extra; r.removed.add("hidden data after the image") }
+                if (extra > 0) { r.trailingBytes = extra; r.removed.add(tr("hidden data after the image")) }
                 return r
             }
         }
@@ -258,7 +259,7 @@ object MetadataStripper {
         open().use { input ->
             val d = DataInputStream(input.buffered(1 shl 16))
             val riff = ByteArray(12); d.readFully(riff)
-            if (String(riff, 0, 4, Charsets.ISO_8859_1) != "RIFF" || String(riff, 8, 4, Charsets.ISO_8859_1) != "WEBP") throw IOException("Not a WebP file")
+            if (String(riff, 0, 4, Charsets.ISO_8859_1) != "RIFF" || String(riff, 8, 4, Charsets.ISO_8859_1) != "WEBP") throw IOException(tr("Not a WebP file"))
             while (true) {
                 val h = ByteArray(8)
                 val n = d.readNBytesCompat(h)
@@ -271,9 +272,9 @@ object MetadataStripper {
                     "EXIF" -> { val data = ByteArray(len.toInt()); d.readFully(data); if (len and 1 == 1L) d.skipFully(1)
                         val off = if (data.size > 6 && String(data, 0, 4, Charsets.ISO_8859_1) == "Exif") 6 else 0
                         inspectExif(data, off, data.size - off, r); chunks.add(Chunk(type, len, false)) }
-                    "XMP " -> { r.removed.add("XMP metadata"); chunks.add(Chunk(type, len, false)); d.skipFully(padded) }
-                    "VP8 ", "VP8L", "ALPH", "ANIM", "ANMF", "ICCP" -> { if (type == "ICCP") r.kept.add("colour profile"); chunks.add(Chunk(type, len, true)); d.skipFully(padded) }
-                    else -> { r.removed.add("other application data"); chunks.add(Chunk(type, len, false)); d.skipFully(padded) }
+                    "XMP " -> { r.removed.add(tr("XMP metadata")); chunks.add(Chunk(type, len, false)); d.skipFully(padded) }
+                    "VP8 ", "VP8L", "ALPH", "ANIM", "ANMF", "ICCP" -> { if (type == "ICCP") r.kept.add(tr("colour profile")); chunks.add(Chunk(type, len, true)); d.skipFully(padded) }
+                    else -> { r.removed.add(tr("other application data")); chunks.add(Chunk(type, len, false)); d.skipFully(padded) }
                 }
             }
         }
@@ -312,7 +313,7 @@ object MetadataStripper {
         val d = DataInputStream(input.buffered(1 shl 16))
         val head = ByteArray(13); d.readFully(head)
         val sig = String(head, 0, 6, Charsets.ISO_8859_1)
-        if (sig != "GIF87a" && sig != "GIF89a") throw IOException("Not a GIF file")
+        if (sig != "GIF87a" && sig != "GIF89a") throw IOException(tr("Not a GIF file"))
         out.write(head)
         val packed = head[10].toInt() and 255
         if (packed and 0x80 != 0) copy(d, out, 3L * (1 shl ((packed and 7) + 1)))
@@ -337,17 +338,17 @@ object MetadataStripper {
                     val body = readSubBlocks()
                     val keep = when (label) {
                         0xF9, 0x01 -> true
-                        0xFE -> { r.removed.add("descriptions & comments"); false }
+                        0xFE -> { r.removed.add(tr("descriptions & comments")); false }
                         0xFF -> {
                             val app = if (body.size > 11) String(body, 1, 11, Charsets.ISO_8859_1) else ""
                             if (app == "NETSCAPE2.0" || app == "ANIMEXTS1.0") true
-                            else { r.removed.add(if (app.startsWith("XMP Data")) "XMP metadata" else "other application data"); false }
+                            else { r.removed.add(if (app.startsWith("XMP Data")) tr("XMP metadata") else tr("other application data")); false }
                         }
-                        else -> { r.removed.add("other application data"); false }
+                        else -> { r.removed.add(tr("other application data")); false }
                     }
                     if (keep) { out.write(0x21); out.write(label); out.write(body) }
                 }
-                else -> throw IOException("Damaged GIF (unexpected block 0x${Integer.toHexString(intro)})")
+                else -> throw IOException(tr("Damaged GIF (unexpected block {0})", "0x" + Integer.toHexString(intro)))
             }
         }
         return r
@@ -359,7 +360,7 @@ object MetadataStripper {
         var left = n
         while (left > 0) {
             val k = d.read(buf, 0, minOf(buf.size.toLong(), left).toInt())
-            if (k < 0) throw IOException("The file is truncated")
+            if (k < 0) throw IOException(tr("The file is truncated"))
             out.write(buf, 0, k); left -= k
         }
     }
@@ -368,7 +369,7 @@ object MetadataStripper {
         var left = n
         while (left > 0) {
             val k = skip(left)
-            if (k <= 0) { if (read() < 0) throw IOException("The file is truncated"); left-- } else left -= k
+            if (k <= 0) { if (read() < 0) throw IOException(tr("The file is truncated")); left-- } else left -= k
         }
     }
 

@@ -8,6 +8,7 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import java.io.File
 import java.io.InputStream
 
@@ -22,16 +23,16 @@ object PdfFiles {
         }
         val tmp = File.createTempFile("pdf", ".pdf", tempDir)
         ctx.contentResolver.openInputStream(uri)?.use { input -> tmp.outputStream().use { input.copyTo(it, 1 shl 16) } }
-            ?: throw UserFacingException("The PDF could not be opened.")
+            ?: throw UserFacingException(tr("The PDF could not be opened."))
         return ParcelFileDescriptor.open(tmp, ParcelFileDescriptor.MODE_READ_ONLY) to tmp
     }
 
     fun renderer(pfd: ParcelFileDescriptor): PdfRenderer = try {
         PdfRenderer(pfd)
     } catch (e: SecurityException) {
-        throw UserFacingException("This PDF is password-protected and can't be opened.")
+        throw UserFacingException(tr("This PDF is password-protected and can't be opened."))
     } catch (e: Exception) {
-        throw UserFacingException("This file is not a valid PDF or is damaged.", e)
+        throw UserFacingException(tr("This file is not a valid PDF or is damaged."), e)
     }
 
     /** Reads "%PDF" from the first bytes. */

@@ -7,6 +7,7 @@ import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.net.Uri
 import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import java.io.FileDescriptor
 import java.nio.ByteBuffer
 
@@ -35,6 +36,9 @@ enum class Container(val muxerFormat: Int, val ext: String, val mime: String) {
 }
 
 class RemuxStats(val samples: Long, val bytes: Long, val firstUs: Long, val lastUs: Long)
+
+/** The device's muxer won't take a track in this container (another container may). */
+class ContainerRejectedException(message: String, cause: Throwable?) : UserFacingException(message, cause)
 
 /**
  * Copies compressed samples from a source into a new container with MediaExtractor/MediaMuxer.
@@ -72,7 +76,8 @@ class Remuxer(
                 val idx = try {
                     muxer.addTrack(t.format)
                 } catch (e: Exception) {
-                    throw UserFacingException("${t.codecLabel} ${if (t.isVideo) "video" else "audio"} can't be stored in a ${container.ext.uppercase()} file on this device.", e)
+                    throw ContainerRejectedException(if (t.isVideo) tr("{0} video can't be stored in a {1} file on this device.", t.codecLabel, container.ext.uppercase())
+                        else tr("{0} audio can't be stored in a {1} file on this device.", t.codecLabel, container.ext.uppercase()), e)
                 }
                 readers.add(Reader(t, idx, startUs))
             }
@@ -116,7 +121,7 @@ class Remuxer(
                 }
             }
             if (readers.any { it.track.isVideo && it.written == 0L } || samples == 0L) {
-                throw UserFacingException("No media samples were found in this part of the file.")
+                throw UserFacingException(tr("No media samples were found in this part of the file."))
             }
             muxer.stop()
             started = false
