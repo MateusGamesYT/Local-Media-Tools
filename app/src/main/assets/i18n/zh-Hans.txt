@@ -504,8 +504,18 @@
 < Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
 > 相似照片检测需要本机 AI 模型，而这部手机上没有；仍可找到完全相同和重新保存的副本。
 
+< {0} photo couldn't be read, so it was only checked for identical copies.
+< {0} photos couldn't be read, so they were only checked for identical copies.
+> 有 {0} 张照片无法读取，因此只检查了它是否有完全相同的副本。
+
 < Scan again
 > 重新扫描
+
+< This app may see only the photos you selected, so only those are checked. Allow access to all photos to check your whole library.
+> 此应用可能只能看到您选择的照片，因此只检查这些照片。允许访问所有照片即可检查整个图库。
+
+< Allow all photos
+> 允许访问所有照片
 
 < Without access to your photos the duplicate finder can't look for copies.
 > 没有照片访问权限，重复项查找器就无法查找副本。
@@ -3851,6 +3861,12 @@
 < Looking at your photos
 > 正在查看你的照片
 
+< unknown error
+> 未知错误
+
+< none of your {0} photos could be read ({1}).
+> 您的 {0} 张照片都无法读取（{1}）。
+
 < Comparing
 > 正在比较
 
@@ -4549,9 +4565,6 @@
 
 < {0} failed: {1}
 > {0} 失败：{1}
-
-< unknown error
-> 未知错误
 
 < {0} left it unchanged: {1}
 > {0} 未改动它：{1}

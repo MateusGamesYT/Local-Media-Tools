@@ -512,8 +512,19 @@
 < Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
 > Il rilevamento degli scatti simili richiede il modello IA sul dispositivo, che non è disponibile su questo telefono; le copie esatte e quelle salvate di nuovo vengono comunque trovate.
 
+< {0} photo couldn't be read, so it was only checked for identical copies.
+< {0} photos couldn't be read, so they were only checked for identical copies.
+> Non è stato possibile leggere {0} foto, quindi è stata controllata solo per copie identiche.
+> Non è stato possibile leggere {0} foto, quindi sono state controllate solo per copie identiche.
+
 < Scan again
 > Analizza di nuovo
+
+< This app may see only the photos you selected, so only those are checked. Allow access to all photos to check your whole library.
+> Questa app potrebbe vedere solo le foto che hai selezionato, quindi vengono controllate solo quelle. Consenti l'accesso a tutte le foto per controllare l'intera libreria.
+
+< Allow all photos
+> Consenti tutte le foto
 
 < Without access to your photos the duplicate finder can't look for copies.
 > Senza accesso alle tue foto, la ricerca dei duplicati non può cercare copie.
@@ -3943,6 +3954,12 @@
 < Looking at your photos
 > Guardo le tue foto
 
+< unknown error
+> errore sconosciuto
+
+< none of your {0} photos could be read ({1}).
+> nessuna delle tue {0} foto è stata letta ({1}).
+
 < Comparing
 > Confronto
 
@@ -4682,9 +4699,6 @@
 
 < {0} failed: {1}
 > {0} non riuscito: {1}
-
-< unknown error
-> errore sconosciuto
 
 < {0} left it unchanged: {1}
 > {0} lo ha lasciato invariato: {1}

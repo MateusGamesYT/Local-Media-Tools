@@ -504,8 +504,18 @@
 < Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
 > 似た写真の検出には端末内AIモデルが必要ですが、この端末では利用できません。完全に同じ写真や再保存されたコピーは引き続き検出されます。
 
+< {0} photo couldn't be read, so it was only checked for identical copies.
+< {0} photos couldn't be read, so they were only checked for identical copies.
+> {0} 枚の写真を読み込めなかったため、完全に同じコピーかどうかだけを確認しました。
+
 < Scan again
 > もう一度スキャン
+
+< This app may see only the photos you selected, so only those are checked. Allow access to all photos to check your whole library.
+> このアプリには選択した写真しか見えていない可能性があるため、それらだけを確認します。ライブラリ全体を確認するには、すべての写真へのアクセスを許可してください。
+
+< Allow all photos
+> すべての写真を許可
 
 < Without access to your photos the duplicate finder can't look for copies.
 > 写真へのアクセスがないと、重複の検出はできません。
@@ -3851,6 +3861,12 @@
 < Looking at your photos
 > 写真を確認中
 
+< unknown error
+> 不明なエラー
+
+< none of your {0} photos could be read ({1}).
+> {0} 枚の写真をどれも読み込めませんでした（{1}）。
+
 < Comparing
 > 比較中
 
@@ -4549,9 +4565,6 @@
 
 < {0} failed: {1}
 > {0}が失敗しました：{1}
-
-< unknown error
-> 不明なエラー
 
 < {0} left it unchanged: {1}
 > {0}では変更されませんでした：{1}

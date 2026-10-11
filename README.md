@@ -14,7 +14,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.9.0.apk`](release/LocalMediaTools-1.9.0.apk)
+**Install:** [`release/LocalMediaTools-1.9.1.apk`](release/LocalMediaTools-1.9.1.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -50,7 +50,27 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.9.0: ten languages, a stronger face model, auto enhance that learned from experts
+## What's new in 1.9.1: duplicate finder fixes
+
+- **Copies of turned photos are found again.** The finder compared each photo's shape using the size
+  and orientation the phone's photo library reports, which some phones get the wrong way round for
+  photos taken upright; a copy then never matched its original. The shape now comes from the photo's
+  own upright thumbnail (the library's size is still used to pick the sharpest, largest copy).
+- **No more silent "Nice and tidy!".** A photo whose picture can't be read used to be dropped without
+  a word, so a phone where reading failed reported no duplicates at all. Such photos are now counted
+  and shown, still checked for identical copies (by their bytes), and if none can be read the scan
+  says so and why.
+- **Android 14's "selected photos" access is explained**: when the app may see only some photos, the
+  finder says only those were checked and offers to allow all photos.
+- The first scan after updating looks at every photo again (the saved measurements gained the
+  thumbnail's shape).
+- **Tested end to end now**: a new test runs the real scan (library, thumbnails, measurements, saved
+  measurements, identical files, grouping, the result screen) on the real test photos, with an exact
+  copy, a damaged file and a copy whose reported size is turned; before, only the grouping and the
+  screens were tested, each on its own. Not tried on a phone: if the finder still misbehaves on yours,
+  tell me what it shows.
+
+## What was new in 1.9.0: ten languages, a stronger face model, auto enhance that learned from experts
 
 - **The app speaks ten languages**: English, Português (Brasil), Español, Français, Deutsch, Italiano,
   Русский, 简体中文, 日本語 and 한국어. It follows the phone's language (Portuguese from anywhere gets the
@@ -523,7 +543,7 @@ so updates install over each other; use your own key for a store release.
   intact, date patterns valid and complete, search words that don't clash), each language's plural
   rules and number and date formats, search in Portuguese, Chinese, Japanese and Korean, shortening
   names by whole characters (emoji included), and auto enhance's model on real portraits.
-* `app/src/roboTest` — 64 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+* `app/src/roboTest` — 66 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -544,7 +564,8 @@ so updates install over each other; use your own key for a store release.
   draft edit, always in / left out, shape, length, renaming, music, and listening to the music the
   model writes); a pass that opens every tool from the home screen; and, new in 1.9, the home screen,
   every tool's screen and every tab opened, laid out and drawn in each of the nine other languages,
-  with no English titles and no unfilled placeholders. `LMT_SHOTS=<dir>` also renders the screenshots
+  with no English titles and no unfilled placeholders; new in 1.9.1, the duplicate finder's real scan
+  end to end on real photos (see above), and a scan that can read no photo saying so. `LMT_SHOTS=<dir>` also renders the screenshots
   above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is

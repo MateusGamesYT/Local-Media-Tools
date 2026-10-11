@@ -102,6 +102,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
                 statusCard.addView(UI.text(ctx, if (activity.hasPhotoAccess()) tr("Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos.")
                     else tr("The app needs permission to see your photos for this. It never uploads them."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
                 statusCard.addView(UI.primaryButton(ctx, tr("Scan my photos")) { start() }, lp().apply { topMargin = ctx.dp(14) })
+                partialAccessNote()
                 show(null)
             }
             is DupScanState.Running -> {
@@ -122,10 +123,21 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
                 statusCard.addView(UI.text(ctx, if (s.groups.isEmpty()) trn(s.scanned, "Checked {0} photo. Nice and tidy!", "Checked {0} photos. Nice and tidy!")
                     else trn(s.scanned, "Checked {0} photo. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.", "Checked {0} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
                 if (!s.aiUsed) statusCard.addView(UI.note(ctx, tr("Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
+                if (s.unreadable > 0) statusCard.addView(UI.note(ctx, trn(s.unreadable, "{0} photo couldn't be read, so it was only checked for identical copies.", "{0} photos couldn't be read, so they were only checked for identical copies."), UI.NoteKind.WARN), lp().apply { topMargin = ctx.dp(10) })
+                partialAccessNote()
                 statusCard.addView(UI.ghostButton(ctx, tr("Scan again"), R.drawable.ic_history) { start() }, lp().apply { topMargin = ctx.dp(8) })
                 show(s.groups)
             }
         }
+    }
+
+    /** Android 14+: with "selected photos" access only those can be checked; offers access to all. */
+    private fun partialAccessNote() {
+        if (!activity.hasPartialMediaAccess()) return
+        statusCard.addView(UI.note(ctx, tr("This app may see only the photos you selected, so only those are checked. Allow access to all photos to check your whole library."), UI.NoteKind.WARN), lp().apply { topMargin = ctx.dp(12) })
+        statusCard.addView(UI.secondaryButton(ctx, tr("Allow all photos")) {
+            activity.ensurePhotoAccess { render(DuplicateScanner.state.value) }
+        }, lp().apply { topMargin = ctx.dp(8) })
     }
 
     private fun start() {

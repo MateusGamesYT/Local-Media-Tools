@@ -520,8 +520,20 @@
 < Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
 > Для поиска похожих снимков нужна модель ИИ на устройстве, которая недоступна на этом телефоне; точные и пересохранённые копии по-прежнему находятся.
 
+< {0} photo couldn't be read, so it was only checked for identical copies.
+< {0} photos couldn't be read, so they were only checked for identical copies.
+> Не удалось прочитать {0} фото, поэтому для него искались только точные копии.
+> Не удалось прочитать {0} фото, поэтому для них искались только точные копии.
+> Не удалось прочитать {0} фото, поэтому для них искались только точные копии.
+
 < Scan again
 > Сканировать снова
+
+< This app may see only the photos you selected, so only those are checked. Allow access to all photos to check your whole library.
+> Приложение может видеть только выбранные вами фото, поэтому проверяются только они. Разрешите доступ ко всем фото, чтобы проверить всю медиатеку.
+
+< Allow all photos
+> Разрешить все фото
 
 < Without access to your photos the duplicate finder can't look for copies.
 > Без доступа к вашим фото поиск дубликатов не может искать копии.
@@ -4035,6 +4047,12 @@
 < Looking at your photos
 > Просмотр ваших фото
 
+< unknown error
+> неизвестная ошибка
+
+< none of your {0} photos could be read ({1}).
+> не удалось прочитать ни одно из {0} фото ({1}).
+
 < Comparing
 > Сравнение
 
@@ -4815,9 +4833,6 @@
 
 < {0} failed: {1}
 > Сбой {0}: {1}
-
-< unknown error
-> неизвестная ошибка
 
 < {0} left it unchanged: {1}
 > {0} оставил без изменений: {1}

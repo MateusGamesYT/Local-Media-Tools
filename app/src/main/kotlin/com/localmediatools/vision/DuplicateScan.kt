@@ -88,7 +88,8 @@ class DupResultGroup(
 sealed class DupScanState {
     object Idle : DupScanState()
     class Running(val done: Int, val total: Int, val phase: String) : DupScanState()
-    class Done(val groups: List<DupResultGroup>, val scanned: Int, val aiUsed: Boolean) : DupScanState()
+    /** [unreadable]: photos whose picture couldn't be read (still checked for identical copies). */
+    class Done(val groups: List<DupResultGroup>, val scanned: Int, val aiUsed: Boolean, val unreadable: Int = 0) : DupScanState()
     class Failed(val message: String) : DupScanState()
 }
 
@@ -104,10 +105,17 @@ object DuplicateScanner {
     private val _state = MutableStateFlow<DupScanState>(DupScanState.Idle)
     val state: StateFlow<DupScanState> = _state
 
+    /** Stand-ins for tests (no MediaStore, thumbnails or AI model in Robolectric): the library, a photo's thumbnail, its embedding. */
+    @Volatile var source: ((Context) -> List<GalleryPhoto>)? = null
+    @Volatile var thumbnails: ((Context, GalleryPhoto) -> Bitmap)? = null
+    @Volatile var embeddings: ((GalleryPhoto) -> FloatArray?)? = null
+
     private class Entry(
         val modified: Long, val size: Long, val dhash: Long, val sharpness: Double,
         val gridScale: Float, val grid: ByteArray, val contrast: Float,
         val scale: Float, val emb: ByteArray?,
+        /** The thumbnail's size: the picture's shape as shown (upright), whatever MediaStore says. */
+        val thumbW: Int, val thumbH: Int,
     )
 
     fun start(ctx: Context) {
@@ -141,7 +149,7 @@ object DuplicateScanner {
                 DupResultGroup(g.kind, left, if (g.best.uri in uris) left.maxByOrNull { it.width.toLong() * it.height }!! else g.best, pics, g.sharpness)
             }
         }
-        _state.value = DupScanState.Done(groups, s.scanned - uris.size, s.aiUsed)
+        _state.value = DupScanState.Done(groups, s.scanned - uris.size, s.aiUsed, s.unreadable)
     }
 
     /** Gallery people in each photo (by MediaStore id), for the "keep photos of…" rule. */
@@ -159,10 +167,11 @@ object DuplicateScanner {
         return out
     }
 
-    private fun cacheFile(ctx: Context) = File(ctx.filesDir, "duplicate-cache-v2.bin")
+    private fun cacheFile(ctx: Context) = File(ctx.filesDir, "duplicate-cache-v3.bin")
 
     private fun loadCache(ctx: Context): HashMap<Long, Entry> {
         File(ctx.filesDir, "duplicate-cache-v1.bin").delete()  // 1.6.0's, without the layout
+        File(ctx.filesDir, "duplicate-cache-v2.bin").delete()  // 1.7–1.9's, without the thumbnail's shape
         val map = HashMap<Long, Entry>()
         try {
             DataInputStream(cacheFile(ctx).inputStream().buffered(1 shl 16)).use { d ->
@@ -172,7 +181,8 @@ object DuplicateScanner {
                     val gs = d.readFloat(); val grid = ByteArray(256).also { d.readFully(it) }; val contrast = d.readFloat()
                     val scale = d.readFloat(); val len = d.readInt()
                     val emb = if (len > 0) ByteArray(len).also { d.readFully(it) } else null
-                    map[id] = Entry(mod, size, h, sh, gs, grid, contrast, scale, emb)
+                    val tw = d.readInt(); val th = d.readInt()
+                    map[id] = Entry(mod, size, h, sh, gs, grid, contrast, scale, emb, tw, th)
                 }
             }
         } catch (_: Exception) { }
@@ -188,6 +198,7 @@ object DuplicateScanner {
                     d.writeLong(id); d.writeLong(e.modified); d.writeLong(e.size); d.writeLong(e.dhash); d.writeDouble(e.sharpness)
                     d.writeFloat(e.gridScale); d.write(e.grid); d.writeFloat(e.contrast)
                     d.writeFloat(e.scale); d.writeInt(e.emb?.size ?: 0); e.emb?.let { d.write(it) }
+                    d.writeInt(e.thumbW); d.writeInt(e.thumbH)
                 }
             }
             tmp.renameTo(cacheFile(ctx))
@@ -221,13 +232,19 @@ object DuplicateScanner {
     }
 
     private suspend fun scan(ctx: Context): DupScanState {
-        val photos = query(ctx)
+        val photos = source?.invoke(ctx) ?: query(ctx)
         if (photos.size < 2) return DupScanState.Done(emptyList(), photos.size, false)
         val cache = loadCache(ctx)
         val (aiOk, _) = TfliteEmbedder.availability(ctx)
         val cores = Runtime.getRuntime().availableProcessors()
-        val embedder = if (aiOk) try { OpenCvLoader.ensure(); TfliteEmbedder.create(ctx, (cores / 2).coerceIn(2, 4)) } catch (_: Throwable) { null } else null
+        val embedder = if (aiOk) try { OpenCvLoader.ensure(); TfliteEmbedder.create(ctx, (cores / 2).coerceIn(2, 4)) } catch (e: Throwable) {
+            android.util.Log.w("LMT", "duplicate finder: image model unavailable", e); null
+        } else null
+        val stand = embeddings
+        val ai = embedder != null || stand != null
         val entries = arrayOfNulls<Entry>(photos.size)
+        val failures = java.util.concurrent.atomic.AtomicInteger()
+        val firstError = java.util.concurrent.atomic.AtomicReference<Throwable?>(null)
         val fresh = HashMap<Long, Entry>()
         try {
             // Thumbnails are read and measured a few at a time; the model itself is used by one at a time.
@@ -242,8 +259,11 @@ object DuplicateScanner {
                         async(Dispatchers.Default) {
                             for (i in part) {
                                 val p = photos[i]
-                                var e = cache[p.id]?.takeIf { it.modified == p.modified && it.size == p.size && (it.emb != null || embedder == null) }
-                                if (e == null) e = try { analyse(ctx, p, embedder) } catch (_: Throwable) { null }
+                                var e = cache[p.id]?.takeIf { it.modified == p.modified && it.size == p.size && (it.emb != null || !ai) }
+                                if (e == null) e = try { analyse(ctx, p, embedder) } catch (t: Throwable) {
+                                    if (failures.incrementAndGet() == 1) { firstError.set(t); android.util.Log.w("LMT", "duplicate finder: can't read ${p.name}", t) }
+                                    null
+                                }
                                 entries[i] = e
                             }
                         }
@@ -254,14 +274,25 @@ object DuplicateScanner {
         } finally {
             embedder?.close()
         }
+        val unreadable = failures.get()
+        if (unreadable == photos.size) {
+            val why = firstError.get()?.let { com.localmediatools.core.Errors.describe(it) } ?: tr("unknown error")
+            return DupScanState.Failed(tr("none of your {0} photos could be read ({1}).", photos.size, why))
+        }
         val infos = ArrayList<PhotoInfo>(photos.size)
         for ((i, p) in photos.withIndex()) {
-            val e = entries[i] ?: continue
+            val e = entries[i]
+            if (e == null) {
+                // Its picture couldn't be read: it can still be an identical copy of another file.
+                infos.add(PhotoInfo(i, p.size, max(1, p.width), max(1, p.height), 0L, null, null, 0f, 0.0, p.takenMs, null))
+                continue
+            }
             fresh[p.id] = e
             val emb = e.emb?.let { b -> FloatArray(b.size) { b[it] * e.scale } }
             if (emb != null) com.localmediatools.vision.core.FaceEngine.normalize(emb)
             val grid = FloatArray(256) { e.grid[it] * e.gridScale }
-            infos.add(PhotoInfo(i, p.size, max(1, p.width), max(1, p.height), e.dhash, emb, grid, e.contrast, e.sharpness, p.takenMs, null))
+            val (w, h) = shape(p, e)
+            infos.add(PhotoInfo(i, p.size, w, h, e.dhash, emb, grid, e.contrast, e.sharpness, p.takenMs, null))
         }
         saveCache(ctx, fresh)
         // Identical files: only photos with the same size are read and compared.
@@ -281,7 +312,7 @@ object DuplicateScanner {
             val members = g.members.map { photos[it] }
             DupResultGroup(g.kind, members, photos[g.best], g.pictures.map { p -> p.map { photos[it] } }, members.associate { it.uri to (sharp[it.uri] ?: 0.0) })
         }
-        return DupScanState.Done(result, photos.size, embedder != null)
+        return DupScanState.Done(result, photos.size, ai, unreadable)
     }
 
     /** Compares features of two photos' thumbnails, keeping the features of recently used ones. */
@@ -315,7 +346,7 @@ object DuplicateScanner {
     }
 
     private fun analyse(ctx: Context, p: GalleryPhoto, embedder: TfliteEmbedder?): Entry {
-        val thumb: Bitmap = ctx.contentResolver.loadThumbnail(p.uri, Size(256, 256), null)
+        val thumb: Bitmap = thumbnails?.invoke(ctx, p) ?: ctx.contentResolver.loadThumbnail(p.uri, Size(256, 256), null)
         try {
             val bmp = if (thumb.config == Bitmap.Config.ARGB_8888) thumb else thumb.copy(Bitmap.Config.ARGB_8888, false)
             // Difference hash from a 9×8 grey version.
@@ -335,19 +366,36 @@ object DuplicateScanner {
             val sharp = AutoEnhance.sharpness(spx, small.width, small.height)
             if (small !== bmp) small.recycle()
             var scale = 0f; var emb: ByteArray? = null
-            if (embedder != null) {
-                val m = Mat()
-                Utils.bitmapToMat(bmp, m)
-                val v = try { embedder.embed(m) } finally { m.release() }
+            val stand = embeddings
+            if (embedder != null || stand != null) {
+                val v = if (embedder != null) {
+                    val m = Mat()
+                    Utils.bitmapToMat(bmp, m)
+                    try { embedder.embed(m) } finally { m.release() }
+                } else stand!!(p) ?: throw IllegalStateException("no embedding")
                 val maxAbs = v.maxOf { abs(it) }.coerceAtLeast(1e-6f)
                 scale = maxAbs / 127f
                 emb = ByteArray(v.size) { (v[it] / scale).roundToInt().coerceIn(-127, 127).toByte() }
             }
             if (bmp !== thumb) bmp.recycle()
-            return Entry(p.modified, p.size, dhash, sharp, gScale, gq, contrast, scale, emb)
+            return Entry(p.modified, p.size, dhash, sharp, gScale, gq, contrast, scale, emb, thumb.width, thumb.height)
         } finally {
             thumb.recycle()
         }
+    }
+
+    /**
+     * Width and height for comparing shapes and resolutions: the thumbnail's shape (upright as
+     * shown; MediaStore's sizes and orientation are wrong on some phones, which kept copies of
+     * turned photos apart) at MediaStore's pixel count, or the thumbnail's own size without one.
+     */
+    private fun shape(p: GalleryPhoto, e: Entry): Pair<Int, Int> {
+        if (e.thumbW <= 0 || e.thumbH <= 0) return max(1, p.width) to max(1, p.height)
+        val px = p.width.toLong() * p.height
+        if (px <= 0) return e.thumbW to e.thumbH
+        val aspect = e.thumbW.toDouble() / e.thumbH
+        val w = Math.sqrt(px * aspect).roundToInt().coerceAtLeast(1)
+        return w to (px / w).toInt().coerceAtLeast(1)
     }
 
     private fun digest(ctx: Context, uri: Uri): String? = try {

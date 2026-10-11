@@ -77,7 +77,10 @@ class DuplicatesUiTest {
         app.getSharedPreferences("duplicates", android.content.Context.MODE_PRIVATE).edit().clear().commit()
         DupChoices.clear()
     }
-    @After fun tearDown() { DuplicateScanner.show(DupScanState.Idle); DupChoices.clear() }
+    @After fun tearDown() {
+        DuplicateScanner.show(DupScanState.Idle); DupChoices.clear()
+        DuplicateScanner.source = null; DuplicateScanner.thumbnails = null; DuplicateScanner.embeddings = null
+    }
 
     private fun golden(): Map<String, FloatArray> {
         val out = HashMap<String, FloatArray>()
@@ -266,5 +269,107 @@ class DuplicatesUiTest {
         bmp.eraseColor(0xFF0B0D12.toInt())
         root.draw(Canvas(bmp))
         File(dir, "$name.png").outputStream().use { Bitmap.createScaledBitmap(bmp, w / 2, h / 2, true).compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    /**
+     * The real scan, end to end: the library is read, every photo's thumbnail measured, the cache
+     * written, identical files found by their bytes and the rest grouped, on the real photos (with an
+     * exact copy of one and a file whose picture can't be read). Stand-ins replace only what
+     * Robolectric lacks: MediaStore's list and thumbnails (decoded from the files, at most 256 px like
+     * the system's) and the image model (its embeddings of these photos, golden.bin).
+     */
+    @Test fun theScanFindsCopiesAndShotsInARealLibrary() {
+        File(app.filesDir, "duplicate-cache-v3.bin").delete()
+        val dir = File(app.cacheDir, "dupscan").apply { deleteRecursively(); mkdirs() }
+        val emb = golden()
+        val t0 = 1_700_000_000_000L
+        val times = mapOf("court_1" to 0L, "court_2" to 3_000L, "bridge_1" to 600_000L, "bridge_2" to 604_000L, "cushion_1" to 1_200_000L, "cushion_2" to 1_209_000L,
+            "sunset_1" to 1_800_000L, "sunset_2" to 1_820_000L, "cemetery_1" to 2_400_000L, "cemetery_2" to 2_430_000L, "tank_1" to 3_000_000L, "tank_2" to 3_025_000L,
+            "clouds_a" to 3_600_000L, "clouds_b" to 3_612_000L, "night_a" to 4_200_000L, "night_b" to 4_208_000L, "document_a" to 4_800_000L, "document_b" to 4_810_000L,
+            "screen_a" to 5_400_000L, "screen_b" to 5_406_000L, "copy_lowq_bridge_1" to 600_000L)
+        val photos = ArrayList<GalleryPhoto>()
+        fun add(file: File, id: Long, taken: Long?, album: String) {
+            val o = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(file.path, o)
+            // Some phones report a turned photo's size the wrong way round; the copy must still be found.
+            val swap = file.name == "copy_lowq_bridge_1.jpg"
+            val w = maxOf(if (swap) o.outHeight else o.outWidth, 0); val h = maxOf(if (swap) o.outWidth else o.outHeight, 0)
+            photos.add(GalleryPhoto(id, Uri.fromFile(file), file.name, file.length(), w, h, taken, 1_000 + id, album))
+        }
+        for ((i, n) in emb.keys.sorted().withIndex()) {
+            val f = File(dir, "$n.jpg").also { it.writeBytes(javaClass.getResourceAsStream("/duplicates/$n.jpg")!!.readBytes()) }
+            add(f, 100L + i, times[n]?.let { t0 + it }, if (n.startsWith("copy")) "WhatsApp Images" else "Camera")
+        }
+        // A byte-for-byte copy saved by another app (no capture time), and a damaged file.
+        add(File(dir, "court_1 (1).jpg").also { it.writeBytes(File(dir, "court_1.jpg").readBytes()) }, 500L, null, "Download")
+        add(File(dir, "broken.jpg").also { it.writeBytes(ByteArray(3000) { k -> (k * 31).toByte() }) }, 501L, null, "Download")
+        DuplicateScanner.source = { photos }
+        DuplicateScanner.thumbnails = { _, p ->
+            val b = BitmapFactory.decodeFile(p.uri.path) ?: throw java.io.IOException("can't decode ${p.name}")
+            val s = 256f / maxOf(b.width, b.height)
+            if (s < 1f) Bitmap.createScaledBitmap(b, Math.round(b.width * s), Math.round(b.height * s), true) else b
+        }
+        DuplicateScanner.embeddings = { p -> emb[p.name.removeSuffix(".jpg").removeSuffix(" (1)")] }
+        DuplicateScanner.start(app)
+        waitFor("the scan", { DuplicateScanner.state.value.toString() }) { DuplicateScanner.state.value.let { it is DupScanState.Done || it is DupScanState.Failed } }
+        val s = DuplicateScanner.state.value as? DupScanState.Done ?: throw AssertionError((DuplicateScanner.state.value as DupScanState.Failed).message)
+        assertEquals(photos.size, s.scanned)
+        assertTrue(s.aiUsed)
+        assertEquals("the damaged file", 1, s.unreadable)
+        val named = s.groups.map { g -> g.photos.map { it.name.removeSuffix(".jpg") }.toSet() }
+        fun groupOf(n: String) = named.firstOrNull { n in it } ?: emptySet()
+        // The exact copy joins its photo's group as a copy of the same picture.
+        assertTrue(named.toString(), "court_1 (1)" in groupOf("court_1"))
+        val court = s.groups.first { g -> g.photos.any { it.name == "court_1.jpg" } }
+        assertEquals(setOf("court_1.jpg", "court_1 (1).jpg"), court.pictures.first { p -> p.any { it.name == "court_1.jpg" } }.map { it.name }.toSet())
+        assertEquals(DupKind.IDENTICAL, court.kind)
+        assertEquals("the damaged file is in no group", emptySet<String>(), groupOf("broken"))
+        // Everything else as the grouping finds it from the full-size photos (DuplicatesTest; here
+        // without the feature check, which needs OpenCV's native code): the scan's thumbnails, cache
+        // and bookkeeping change nothing.
+        val names = emb.keys.sorted()
+        val expected = Duplicates.group(names.mapIndexed { i, n ->
+            val b = BitmapFactory.decodeFile(File(dir, "$n.jpg").path)
+            val px = IntArray(b.width * b.height); b.getPixels(px, 0, b.width, 0, 0, b.width, b.height)
+            val (grid, contrast) = Duplicates.grid(px, b.width, b.height)
+            val tiny = Bitmap.createScaledBitmap(b, 9, 8, true)
+            val tp = IntArray(72); tiny.getPixels(tp, 0, 9, 0, 0, 9, 8)
+            val dh = Duplicates.dhash(IntArray(72) { val c = tp[it]; (299 * ((c shr 16) and 255) + 587 * ((c shr 8) and 255) + 114 * (c and 255)) / 1000 })
+            PhotoInfo(i, File(dir, "$n.jpg").length(), b.width, b.height, dh, emb.getValue(n), grid, contrast, 0.0, times[n]?.let { t0 + it }, null)
+        }).map { g -> g.members.map { names[it] }.toSet() }.toSet()
+        val found = named.map { it - "court_1 (1)" }.filter { it.size > 1 }.toSet()
+        assertEquals(expected, found)
+        assertTrue(expected.toString(), setOf("bridge_1", "copy_small_bridge_1", "copy_lowq_bridge_1").all { it in groupOf("bridge_1") })
+        assertTrue(expected.toString(), setOf("document_a", "copy_lowq_document_a") == groupOf("document_a"))
+        assertTrue("cache written", File(app.filesDir, "duplicate-cache-v3.bin").length() > 0)
+
+        // The screen shows the result, the unreadable file and the suggested copies.
+        val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
+        idle()
+        a.navigator.push(DuplicatesScreen(a)); idle(800)
+        val t = texts(a)
+        assertTrue(t.toString(), t.any { it.startsWith("${s.groups.size} groups") })
+        assertTrue(t.toString(), t.any { it.startsWith("1 photo couldn't be read") })
+
+        // A second scan uses the cache and finds the same.
+        DuplicateScanner.start(app)
+        waitFor("the second scan") { DuplicateScanner.state.value is DupScanState.Done }
+        assertEquals(named.toSet(), (DuplicateScanner.state.value as DupScanState.Done).groups.map { g -> g.photos.map { it.name.removeSuffix(".jpg") }.toSet() }.toSet())
+    }
+
+    /** When no photo can be read the scan says so, instead of "no duplicates". */
+    @Test fun aScanThatCanReadNothingSaysSo() {
+        File(app.filesDir, "duplicate-cache-v3.bin").delete()
+        val dir = File(app.cacheDir, "dupscan2").apply { deleteRecursively(); mkdirs() }
+        val photos = (0 until 3).map { i ->
+            val f = File(dir, "p$i.jpg").also { it.writeBytes(ByteArray(1000 + i)) }
+            GalleryPhoto(900L + i, Uri.fromFile(f), f.name, f.length(), 400, 300, null, 1L, "Camera")
+        }
+        DuplicateScanner.source = { photos }
+        DuplicateScanner.thumbnails = { _, p -> throw SecurityException("no access to ${p.name}") }
+        DuplicateScanner.start(app)
+        waitFor("the scan") { DuplicateScanner.state.value.let { it is DupScanState.Done || it is DupScanState.Failed } }
+        val f = DuplicateScanner.state.value as? DupScanState.Failed ?: throw AssertionError("expected a failure, got ${DuplicateScanner.state.value}")
+        assertTrue(f.message, f.message.contains("none of your 3 photos could be read"))
     }
 }
