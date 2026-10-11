@@ -1,0 +1,6377 @@
+# 简体中文 — translations of the app's English text (see buildtools/i18n/catalog.py).
+# "< " lines: the English (two lines: singular and plural); "> " lines: the translation (one per plural form);
+# "@ " lines: which meaning of the English is meant.
+
+< Exposure
+> 曝光
+
+< Brightness
+> 亮度
+
+< Contrast
+> 对比度
+
+< Highlights
+> 高光
+
+< Shadows
+> 阴影
+
+< Saturation
+> 饱和度
+
+< Vibrance
+> 自然饱和度
+
+< Warmth
+> 色温
+
+< Tint
+> 色调
+
+< Sharpness
+> 锐度
+
+< Vignette
+> 暗角
+
+< Original
+> 原图
+
+< Vivid
+> 鲜艳
+
+< Golden
+> 金色
+
+< Nordic
+> 北欧
+
+< Matte
+> 哑光
+
+< Vintage
+> 复古
+
+< Cinema
+> 电影
+
+< Drama
+> 戏剧
+
+< Mono
+> 单色
+
+< Noir
+> 黑色
+
+< Sepia
+> 棕褐
+
+< File is too large to decode in memory on this device
+> 文件太大，此设备的内存无法解码
+
+< Image has invalid dimensions
+> 图片尺寸无效
+
+< Image is too large ({0}×{1})
+> 图片太大（{0}×{1}）
+
+< Not a TIFF file
+> 不是 TIFF 文件
+
+< BigTIFF files are not supported
+> 不支持 BigTIFF 文件
+
+< TIFF file is truncated
+> TIFF 文件已被截断
+
+< Corrupt TIFF tag
+> TIFF 标签已损坏
+
+< TIFF has no image data
+> TIFF 没有图像数据
+
+< TIFF with mixed bit depths is not supported
+> 不支持位深度不一致的 TIFF
+
+< TIFF with {0}-bit samples is not supported
+> 不支持采样为 {0} 位的 TIFF
+
+< Floating-point TIFF is not supported
+> 不支持浮点 TIFF
+
+< TIFF compression {0} is not supported
+> 不支持 TIFF 压缩方式 {0}
+
+< TIFF colour model {0} is not supported
+> 不支持 TIFF 颜色模型 {0}
+
+< TIFF is missing image data
+> TIFF 缺少图像数据
+
+< Unsupported TIFF compression
+> 不支持的 TIFF 压缩方式
+
+< Palette TIFF without colour map
+> 调色板 TIFF 缺少颜色表
+
+< Corrupt compressed TIFF data
+> TIFF 压缩数据已损坏
+
+< Not a PSD file
+> 不是 PSD 文件
+
+< {0}-bit PSD is not supported
+> 不支持 {0} 位 PSD
+
+< PSD colour mode {0} is not supported (use RGB, Grayscale or CMYK)
+> 不支持 PSD 颜色模式 {0}（请使用 RGB、灰度或 CMYK）
+
+< PSD file is truncated
+> PSD 文件已被截断
+
+< PSD file has no merged image
+> PSD 文件没有合并图像
+
+< PSD with ZIP-compressed composite is not supported
+> 不支持使用 ZIP 压缩合成图的 PSD
+
+< Not a QOI file
+> 不是 QOI 文件
+
+< QOI file is truncated
+> QOI 文件已被截断
+
+< Corrupt PNM header
+> PNM 文件头已损坏
+
+< Not a PNM file
+> 不是 PNM 文件
+
+< Corrupt PAM header
+> PAM 文件头已损坏
+
+< PNM file is truncated
+> PNM 文件已被截断
+
+< PBM file is truncated
+> PBM 文件已被截断
+
+< Not a TGA file
+> 不是 TGA 文件
+
+< Not a supported TGA file
+> 不是受支持的 TGA 文件
+
+< Unsupported TGA pixel depth {0}
+> 不支持 TGA 像素深度 {0}
+
+< TGA file is truncated
+> TGA 文件已被截断
+
+< TGA colour index out of range
+> TGA 颜色索引超出范围
+
+< Truncated MP4 box header
+> MP4 box 头部已被截断
+
+< MP4 box '{0}' at {1} is truncated or corrupt
+> MP4 box“{0}”（位于 {1}）已被截断或损坏
+
+< The file has no movie header (moov box)
+> 文件没有影片头（moov box）
+
+< The file has no media data (mdat box)
+> 文件没有媒体数据（mdat box）
+
+< Movie header is unexpectedly large
+> 影片头异常地大
+
+< Chunk offsets do not fit even in 64-bit tables
+> 数据块偏移量即使用 64 位表也放不下
+
+< Corrupt '{0}' box in movie header
+> 影片头中的“{0}”box 已损坏
+
+< A media chunk points outside the file's data boxes
+> 某个媒体数据块指向了文件数据 box 之外
+
+< Corrupt chunk offset table
+> 数据块偏移表已损坏
+
+< Unexpected end of file
+> 文件意外结束
+
+< GIF cannot store semi-transparent pixels
+> GIF 无法存储半透明像素
+
+< Frame {0} needs more than 256 colours including transparency, which GIF cannot store exactly
+> 第{0}帧需要超过 256 种颜色（含透明色），GIF 无法精确存储
+
+< Not a GIF file
+> 不是 GIF 文件
+
+< GIF has an empty canvas
+> GIF 的画布为空
+
+< GIF canvas {0}×{1} is too large to process on this device
+> GIF 画布 {0}×{1} 太大，此设备无法处理
+
+< Corrupt GIF block ({0}) after frame {1}
+> 第{1}帧之后的 GIF 数据块（{0}）已损坏
+
+< GIF is truncated inside frame {0}
+> GIF 在第{0}帧内被截断
+
+< GIF frame {0} has no colour table
+> GIF 第{0}帧没有颜色表
+
+< GIF frame {0} has invalid LZW code size
+> GIF 第{0}帧的 LZW 码长无效
+
+< GIF frame {0} is too large
+> GIF 第{0}帧太大
+
+< GIF frame {0} is missing image data
+> GIF 第{0}帧缺少图像数据
+
+< GIF is truncated
+> GIF 已被截断
+
+< GPS location
+> GPS 位置
+
+< camera make & model
+> 相机品牌和型号
+
+< date & time
+> 日期和时间
+
+< software
+> 软件
+
+< author & copyright
+> 作者和版权
+
+< camera serial number
+> 相机序列号
+
+< lens details
+> 镜头信息
+
+< maker notes
+> 制造商备注
+
+< descriptions & comments
+> 说明和注释
+
+< shooting settings
+> 拍摄参数
+
+< embedded thumbnail
+> 内嵌缩略图
+
+< Not a JPEG file
+> 不是 JPEG 文件
+
+< Damaged JPEG segment
+> JPEG 数据段已损坏
+
+< other application data
+> 其他应用数据
+
+< XMP metadata
+> XMP 元数据
+
+< colour profile
+> 颜色配置文件
+
+< extra images (depth, HDR or motion data)
+> 额外图像（深度、HDR 或动态数据）
+
+< Adobe colour transform
+> Adobe 颜色变换
+
+< IPTC / Photoshop data
+> IPTC / Photoshop 数据
+
+< The JPEG file is truncated
+> JPEG 文件已被截断
+
+< Not a PNG file
+> 不是 PNG 文件
+
+< Damaged PNG chunk
+> PNG 数据块已损坏
+
+< EXIF data
+> EXIF 数据
+
+< text notes ({0})
+> 文字备注（{0}）
+
+< hidden data after the image
+> 图像之后的隐藏数据
+
+< Not a WebP file
+> 不是 WebP 文件
+
+< Damaged GIF (unexpected block {0})
+> GIF 已损坏（意外的数据块 {0}）
+
+< The file is truncated
+> 文件已被截断
+
+< {0} supports at most {1} px per side; the edited photo is {2}×{3}. Choose PNG or JPEG.
+> {0} 每边最多支持 {1} 像素；编辑后的照片为 {2}×{3}。请选择 PNG 或 JPEG。
+
+< This photo is too large to edit with the memory available right now. Close other apps or raise the export workload and try again.
+> 这张照片太大，当前可用内存不足以编辑。请关闭其他应用，或提高导出负载后重试。
+
+< {0} can't be written in pieces and this photo is too large for memory; choose JPEG or PNG.
+> {0} 无法分块写入，而这张照片对内存来说太大；请选择 JPEG 或 PNG。
+
+< Erase
+> 擦除
+
+< Blur
+> 模糊
+
+< Pixelate
+> 像素化
+
+< Could not store the retouched area
+> 无法保存修饰区域
+
+< A retouched area is missing; please redo it.
+> 有一处修饰区域丢失，请重新操作。
+
+< AI · MI-GAN on-device
+> AI · 本机 MI-GAN
+
+< Basic fill (AI unavailable)
+> 基本填充（AI 不可用）
+
+< This phone is set up as a low-memory device.
+> 这部手机被设置为低内存设备。
+
+< Needs at least 2 GB of RAM.
+> 至少需要 2 GB 内存。
+
+< Needs a 64-bit processor.
+> 需要 64 位处理器。
+
+< The on-device model is missing from this build.
+> 此版本中缺少本机模型。
+
+< On-device AI
+> 本机 AI
+
+< That area is too large to erase in one go with the memory available. Erase it in smaller parts.
+> 该区域太大，可用内存无法一次擦除。请分成较小的部分擦除。
+
+< That area is too large for the memory available. Do it in smaller parts.
+> 该区域对可用内存来说太大。请分成较小的部分操作。
+
+< Clear search
+> 清除搜索
+
+< , selected
+> ，已选中
+
+< , changed
+> ，已更改
+
+< Value {0}
+> 值 {0}
+
+< Most space
+> 占用空间最多
+
+< Newest
+> 最新
+
+< Oldest
+> 最早
+
+< Most photos
+> 照片最多
+
+< All
+> 全部
+
+< Copies
+> 副本
+
+< Similar shots
+> 相似照片
+
+< Keep all
+> 全部保留
+
+< Suggested
+> 建议
+
+< Next
+> 下一个
+
+< Group {0} of {1}
+> 第{0}组，共{1}组
+
+< Tap a photo to keep or remove it · long-press to open it · swipe for the next group
+> 点按照片可保留或移除 · 长按可打开 · 滑动可查看下一组
+
+< Done
+> 完成
+
+< {0} photo
+< {0} photos
+> {0}张照片
+
+< all kept
+> 全部保留
+
+< {0} to remove ({1})
+< {0} to remove ({1})
+> 待移除{0}张（{1}）
+
+< {0} selected in total
+< {0} selected in total
+> 共选中{0}张
+
+< Photos are compared on this phone. Nothing is deleted until you confirm, and removed photos go to the system trash, where they can be restored for 30 days.
+> 照片在本机进行比较。确认之前不会删除任何内容，被移除的照片会进入系统回收站，可在 30 天内恢复。
+
+< Move to trash
+> 移到回收站
+
+< Find duplicates in your photos
+> 查找照片中的重复项
+
+< Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos.
+> 扫描此应用能看到的每一张照片。首次扫描需要一些时间（约每千张照片一分钟）；之后只会扫描新照片。
+
+< The app needs permission to see your photos for this. It never uploads them.
+> 为此，应用需要获得查看你照片的权限。它绝不会上传照片。
+
+< Scan my photos
+> 扫描我的照片
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {1} / {0}张照片
+
+< Starting…
+> 正在开始…
+
+< Stop
+> 停止
+
+< The scan stopped: {0}
+> 扫描已停止：{0}
+
+< Try again
+> 重试
+
+< No duplicates found
+> 未发现重复项
+
+< {0} group
+< {0} groups
+> {0}组
+
+< {0} photo you could remove
+< {0} photos you could remove
+> {0}张可移除的照片
+
+< Checked {0} photo. Nice and tidy!
+< Checked {0} photos. Nice and tidy!
+> 已检查{0}张照片。一切井井有条！
+
+< Checked {0} photo. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+< Checked {0} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+> 已检查{0}张照片。建议移除图片的副本（最好的一张会保留）；相似照片由你决定，或让下面的规则来挑选。
+
+< Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
+> 相似照片检测需要本机 AI 模型，而这部手机上没有；仍可找到完全相同和重新保存的副本。
+
+< Scan again
+> 重新扫描
+
+< Without access to your photos the duplicate finder can't look for copies.
+> 没有照片访问权限，重复项查找器就无法查找副本。
+
+< RAWs
+> RAW 文件
+
+< favourites
+> 收藏
+
+< {0} person
+< {0} people
+> {0}人
+
+< Keep rules
+> 保留规则
+
+< Nothing always kept
+> 没有始终保留的内容
+
+< Always kept: {0}
+> 始终保留：{0}
+
+@ between the items of a list
+< , 
+> 、
+
+< picks the best similar shot
+> 挑选最佳的相似照片
+
+< Keep rules, expanded
+> 保留规则，已展开
+
+< Keep rules, collapsed
+> 保留规则，已折叠
+
+< Always keep RAW photos
+> 始终保留 RAW 照片
+
+< DNG, CR2, NEF, ARW and other camera RAW files; the best other copy stays next to them
+> DNG、CR2、NEF、ARW 和其他相机 RAW 文件；最好的其他副本会保留在它们旁边
+
+< Always keep favourites
+> 始终保留收藏的照片
+
+< Photos you starred in your gallery
+> 你在图库中加星标的照片
+
+< Suggest similar shots too
+> 同时建议相似照片
+
+< Keeps the best shot of each burst and suggests the rest
+> 保留每组连拍中最好的一张，并建议移除其余的
+
+< Which copy to keep
+> 保留哪个副本
+
+< Always keep photos of
+> 始终保留以下人物的照片
+
+< Name people in the Gallery's People tab to keep every photo they're in.
+> 在图库的“人物”标签页中为人物命名，即可保留他们出现的所有照片。
+
+< {0}, always kept
+> {0}，始终保留
+
+< {0}, not protected
+> {0}，未受保护
+
+< Rules apply to every group you haven't changed by hand.
+> 规则适用于你没有手动更改过的每一组。
+
+< Review one by one
+> 逐一查看
+
+< Reset to suggestions
+> 恢复为建议
+
+< Every group follows the keep rules again.
+> 每一组都会再次遵循保留规则。
+
+< {1} selected in {0} group · frees {2}
+< {1} selected in {0} groups · frees {2}
+> 已在{0}组中选中{1}张 · 可释放 {2}
+
+< Move {0} to trash
+< Move {0} to trash
+> 将{0}张移到回收站
+
+< Moving photos to the trash needs Android 11 or newer. Long-press a photo to open it in your gallery and delete it there.
+> 移到回收站需要 Android 11 或更高版本。请长按照片，在你的图库应用中打开并在那里删除。
+
+< These photos can't be moved to the trash: {0}
+> 这些照片无法移到回收站：{0}
+
+< Moved {0} photo to the trash. You can restore it from your gallery's trash for 30 days.
+< Moved {0} photos to the trash. You can restore them from your gallery's trash for 30 days.
+> 已将{0}张照片移到回收站。你可以在图库的回收站中于 30 天内恢复。
+
+@ badge on the photo to keep
+< Best
+> 最佳
+
+@ badge on a photo that is kept
+< Keep
+> 保留
+
+< {0} MP
+> {0} MP
+
+< {0}, will be moved to the trash
+> {0}，将移到回收站
+
+< {0}, kept
+> {0}，已保留
+
+< , always kept: {0}
+> ，始终保留：{0}
+
+< , best photo
+> ，最佳照片
+
+< Keep at least one photo of each group.
+> 每组至少保留一张照片。
+
+< Back
+> 返回
+
+< No installed app can open {0} files.
+> 没有已安装的应用可以打开 {0} 文件。
+
+< This file is no longer available.
+> 此文件已不可用。
+
+< Share
+> 分享
+
+< Waiting for the current export to finish
+> 正在等待当前导出完成
+
+< {0}%
+> {0}%
+
+< Export workload: {0} ({1}%)
+> 导出负载：{0}（{1}%）
+
+< {0} of {1} done
+> 已完成 {0}/{1}
+
+< 1 job
+> 1 个任务
+
+< Cancel
+> 取消
+
+< Workload
+> 负载
+
+< View results
+> 查看结果
+
+< Open
+> 打开
+
+< Cancel this export?
+> 取消此次导出？
+
+< Files already saved are kept. The file being processed is discarded, never left half-written.
+> 已保存的文件会保留。正在处理的文件会被丢弃，绝不会留下写了一半的文件。
+
+< Cancel export
+> 取消导出
+
+< Keep going
+> 继续
+
+< Custom setting.
+> 自定义设置。
+
+< Export workload
+> 导出负载
+
+< How hard exports may work the phone
+> 允许导出占用手机多少性能
+
+< This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.
+> 这不是精确的 CPU 百分比限制。它控制并行工作量、线程优先级、各步骤之间的暂停，以及导出可使用多少空闲内存。更改会在几秒内应用到正在运行的导出。
+
+< Export results
+> 导出结果
+
+< This export is no longer in the history.
+> 此次导出已不在历史记录中。
+
+< Share file
+> 分享文件
+
+< Share all {0}
+< Share all {0}
+> 分享全部{0}个
+
+< Print
+> 打印
+
+< Saved to {0}. Find them in your gallery, Files app or the folder named LocalMediaTools.
+> 已保存到 {0}。可在图库、“文件”应用或名为 LocalMediaTools 的文件夹中找到。
+
+< Failed ({0})
+> 失败（{0}）
+
+< Skipped ({0})
+> 已跳过（{0}）
+
+< Printed
+> 已打印
+
+< Saved ({0})
+> 已保存（{0}）
+
+< …and {0} more
+< …and {0} more
+> …以及另外{0}个
+
+< Finished {0}
+> 完成于 {0}
+
+< took {0}
+> 用时 {0}
+
+< workload {0}%
+> 负载 {0}%
+
+< Open {0}
+> 打开 {0}
+
+< Share {0}
+> 分享 {0}
+
+< …and {0} more file
+< …and {0} more files
+> …以及另外{0}个文件
+
+@ empty the list
+< Clear
+> 清空
+
+< Clear export history?
+> 清空导出历史？
+
+< Only the list is cleared; saved files stay on your phone.
+> 只会清空列表；已保存的文件仍保留在你的手机上。
+
+< Recent exports
+> 最近的导出
+
+< No exports yet. Results of every export appear here.
+> 还没有导出。每次导出的结果都会显示在这里。
+
+< Nothing here yet
+> 这里还没有内容
+
+< Choose an image
+> 选择一张图片
+
+< Choose images
+> 选择图片
+
+< Choose a video
+> 选择一个视频
+
+< Choose videos
+> 选择视频
+
+< Choose a GIF
+> 选择一个 GIF
+
+< Choose GIFs
+> 选择 GIF
+
+< Choose a PDF
+> 选择一个 PDF
+
+< Choose PDFs
+> 选择 PDF
+
+< Choose a photo or video
+> 选择照片或视频
+
+< Choose photos or videos
+> 选择照片或视频
+
+< Choose a file
+> 选择一个文件
+
+< Choose files
+> 选择文件
+
+< Choose a photo or PDF
+> 选择照片或 PDF
+
+< Choose photos or PDFs
+> 选择照片或 PDF
+
+< Select images
+> 选择图片
+
+< Select videos
+> 选择视频
+
+< Select GIFs
+> 选择 GIF
+
+< Select PDFs
+> 选择 PDF
+
+< Select photos or videos
+> 选择照片或视频
+
+< Select files
+> 选择文件
+
+< Select photos or PDFs
+> 选择照片或 PDF
+
+< Select images to continue
+> 选择图片以继续
+
+< Select videos to continue
+> 选择视频以继续
+
+< Select GIFs to continue
+> 选择 GIF 以继续
+
+< Select PDFs to continue
+> 选择 PDF 以继续
+
+< Select photos or videos to continue
+> 选择照片或视频以继续
+
+< Select files to continue
+> 选择文件以继续
+
+< Select photos or PDFs to continue
+> 选择照片或 PDF 以继续
+
+< Select at least {0} image
+< Select at least {0} images
+> 至少选择{0}张图片
+
+< Select at least {0} video
+< Select at least {0} videos
+> 至少选择{0}个视频
+
+< Select at least {0} GIF
+< Select at least {0} GIFs
+> 至少选择{0}个 GIF
+
+< Select at least {0} PDF
+< Select at least {0} PDFs
+> 至少选择{0}个 PDF
+
+< Select at least {0} photo or video
+< Select at least {0} photos or videos
+> 至少选择{0}张照片或视频
+
+< Select at least {0} file
+< Select at least {0} files
+> 至少选择{0}个文件
+
+< Select at least {0} photo or PDF
+< Select at least {0} photos or PDFs
+> 至少选择{0}张照片或 PDF
+
+< {0} image selected
+< {0} images selected
+> 已选择{0}张图片
+
+< {0} video selected
+< {0} videos selected
+> 已选择{0}个视频
+
+< {0} GIF selected
+< {0} GIFs selected
+> 已选择{0}个 GIF
+
+< {0} PDF selected
+< {0} PDFs selected
+> 已选择{0}个 PDF
+
+< {0} photo or video selected
+< {0} photos and videos selected
+> 已选择{0}张照片和视频
+
+< {0} file selected
+< {0} files selected
+> 已选择{0}个文件
+
+< {0} photo or PDF selected
+< {0} photos and PDFs selected
+> 已选择{0}张照片和 PDF
+
+< No images found in that folder.
+> 在该文件夹中未找到图片。
+
+< No videos found in that folder.
+> 在该文件夹中未找到视频。
+
+< No GIFs found in that folder.
+> 在该文件夹中未找到 GIF。
+
+< No PDFs found in that folder.
+> 在该文件夹中未找到 PDF。
+
+< No photos or videos found in that folder.
+> 在该文件夹中未找到照片或视频。
+
+< No files found in that folder.
+> 在该文件夹中未找到文件。
+
+< No photos or PDFs found in that folder.
+> 在该文件夹中未找到照片或 PDF。
+
+< Not a video file
+> 不是视频文件
+
+< Not a PDF file
+> 不是 PDF 文件
+
+< Not a photo or video
+> 不是照片或视频
+
+< Not a photo, video, GIF or PDF
+> 不是照片、视频、GIF 或 PDF
+
+< Not a photo or PDF
+> 不是照片或 PDF
+
+< Use the GIF optimizer for GIFs
+> GIF 请使用 GIF 优化器
+
+< Not an image file
+> 不是图片文件
+
+< One at a time
+> 一次选一个
+
+< They'll be used in the order you select them
+> 将按你选择的顺序使用
+
+< Select as many as you like
+> 可随意多选
+
+< Gallery
+> 图库
+
+< Files
+> 文件
+
+< Folder
+> 文件夹
+
+< Review & order
+> 查看和排序
+
+< Review
+> 查看
+
+< Reading the selected files…
+> 正在读取所选文件…
+
+< Nothing selected yet.
+> 尚未选择任何内容。
+
+< {0} can't be used
+< {0} can't be used
+> {0}个无法使用
+
+< {0} file will be skipped: {1}
+< {0} files will be skipped: {1}
+> 将跳过{0}个文件：{1}
+
+< {0}: {1}, can't be used
+> {0}：{1}，无法使用
+
+< Selected files
+> 所选文件
+
+< Files are processed from top to bottom. Use the arrows to change the order.
+> 文件将从上到下依次处理。可用箭头更改顺序。
+
+< {0} file
+< {0} files
+> {0}个文件
+
+< {0} will be skipped
+< {0} will be skipped
+> 将跳过{0}个
+
+< Move up
+> 上移
+
+< Move down
+> 下移
+
+< Remove
+> 移除
+
+< remove object person people erase delete clean ai inpaint
+> 移除 删除 物体 对象 人物 人 擦除 清理 ai 修复 魔法消除 橡皮擦
+
+< crop rotate straighten brightness contrast exposure saturation filter look edit adjust colour color warmth
+> 裁剪 旋转 矫正 拉直 亮度 对比度 曝光 饱和度 滤镜 风格 编辑 调整 颜色 色温
+
+< censor hide face plate privacy mosaic anonymize redact
+> 打码 遮挡 隐藏 人脸 车牌 隐私 马赛克 匿名 涂黑
+
+< stack chain pipeline workflow combine multiple steps several tools in a row automate batch then
+> 工具组合 组合 链 流程 工作流 合并 多个 步骤 多个工具 依次 自动化 批量 然后
+
+< cut out cutout remove background transparent png sticker subject product ai
+> 抠图 去背景 移除背景 背景 透明 png 贴纸 主体 产品 ai
+
+< auto fix improve brighten colour color one tap magic ai enhance
+> 自动 修复 优化 提亮 颜色 一键 魔法 ai 增强
+
+< face faces blur pixelate hide anonymize people video privacy censor ai
+> 人脸 脸 模糊 像素化 隐藏 匿名 人物 视频 隐私 打码 ai
+
+< duplicate similar same copies clean storage space free gallery burst
+> 重复 相似 相同 副本 清理 存储 空间 释放 图库 相册 连拍
+
+< join combine concatenate clips append video
+> 合并 拼接 连接 片段 视频
+
+< highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
+> 精彩 集锦 剪辑 蒙太奇 电影 影片 幻灯片 回忆 旅行 假期 度假 活动 音乐 回顾 自动
+
+< fast slow motion timelapse time lapse speed up hyperlapse
+> 快 慢 慢动作 延时 延时摄影 加速 变速 快进
+
+< cut shorten clip rotate sideways
+> 剪切 裁剪 缩短 片段 旋转 横向
+
+< cut parts segments whatsapp status
+> 剪切 分段 片段 whatsapp 状态
+
+< shrink smaller reduce size mp4 h264
+> 压缩 缩小 减小 大小 体积 mp4 h264
+
+< shrink smaller reduce size jpg jpeg webp resize
+> 压缩 缩小 减小 大小 体积 jpg jpeg webp 调整大小
+
+< heic avif jpg jpeg png webp tiff format
+> heic avif jpg jpeg png webp tiff 格式 转换
+
+< collage combine join stack
+> 拼图 合并 拼接 组合
+
+< panorama join overlap screenshots
+> 全景 全景图 拼接 重叠 截图
+
+< logo brand copyright text
+> 徽标 标志 品牌 版权 文字 水印
+
+< exif gps location privacy clean strip
+> exif gps 位置 定位 隐私 清除 清理 删除
+
+< mp3 m4a sound music
+> mp3 m4a 声音 音乐 音频
+
+< mute silent sound
+> 静音 无声 消音
+
+< scan document camera paper
+> 扫描 文档 相机 纸张
+
+< split pdf pages select
+> 拆分 提取 pdf 页面 选择
+
+< animation meme
+> 动画 表情包 动图
+
+< Tools
+> 工具
+
+< Activity
+> 活动
+
+< Settings
+> 设置
+
+< Private · offline · on-device
+> 私密 · 离线 · 本机运行
+
+< No uploads
+> 不上传
+
+< Edit, convert and\nclean up — privately.
+> 编辑、转换、\n清理——全程私密。
+
+< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
+< {0} tools that run entirely on this phone. No account, no cloud, no limits.
+> {0}个完全在这部手机上运行的工具。无需账号，无需云端，没有限制。
+
+< Search {0} tool
+< Search {0} tools
+> 搜索{0}个工具
+
+< Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
+> 你的照片、视频和文档都在这部手机上处理，绝不会上传——应用从不连接互联网上的服务器（打印只与你自己网络中的打印机通信）。结果会保存在 Pictures、Movies、Music 和 Documents 内的 LocalMediaTools 文件夹中。
+
+< No tool matches "{0}"
+> 没有与“{0}”匹配的工具
+
+< Try words like crop, gps, mp3, heic or panorama.
+> 试试“裁剪”“gps”“mp3”“heic”或“全景”等词。
+
+< {0} result
+< {0} results
+> {0}个结果
+
+< Exports keep running when you leave the app.
+> 离开应用后，导出仍会继续运行。
+
+< Start a tool and its results will be listed here, with files you can open or share.
+> 启动一个工具，其结果会列在这里，并附有可打开或分享的文件。
+
+< Language
+> 语言
+
+< App language
+> 应用语言
+
+< Performance
+> 性能
+
+< How hard exports may work the phone. Lower keeps it cool and responsive; higher finishes sooner.
+> 控制导出占用手机多少性能。调低可让手机保持凉爽、响应流畅；调高则完成更快。
+
+< Magic eraser model
+> 魔法消除模型
+
+< MI-GAN · runs on this phone · ready
+> MI-GAN · 在本机运行 · 已就绪
+
+< Unavailable: {0} Basic fill is used instead.
+> 不可用：{0} 将改用基本填充。
+
+< Stitcher alignment assist
+> 拼接对齐辅助
+
+< MobileNet-V3 · runs on this phone · ready
+> MobileNet-V3 · 在本机运行 · 已就绪
+
+< Organise in the background
+> 在后台整理
+
+< Finds people and things in new photos on this phone so you can search them. Slows down when the phone is warm; pauses when it's very hot or the battery is low.
+> 在这部手机上查找新照片中的人物和物品，方便你搜索。手机发热时会减速；过热或电量低时会暂停。
+
+< Recognition models
+> 识别模型
+
+< EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and ResNet-50 (faces and people) · all on this phone
+> EfficientDet-Lite2 和 EfficientNetV2（物品和地点）、YuNet 和 ResNet-50（人脸和人物）· 全部在本机运行
+
+< Storage
+> 存储
+
+< Where results go
+> 结果保存位置
+
+< LocalMediaTools folders in {0}
+> {0} 中的 LocalMediaTools 文件夹
+
+< Clear temporary files
+> 清除临时文件
+
+< Calculating…
+> 正在计算…
+
+< {0} in the app's cache · your files are not affected
+> 应用缓存中有 {0} · 不影响你的文件
+
+< Privacy
+> 隐私
+
+< Nothing goes to the internet
+> 不会向互联网发送任何内容
+
+< The app never connects to servers on the internet; printing talks only to printers on your own network.
+> 应用从不连接互联网上的服务器；打印只与你自己网络中的打印机通信。
+
+< Originals are never changed
+> 绝不更改原始文件
+
+< Every tool writes new files and checks them before saving.
+> 每个工具都会写入新文件，并在保存前检查。
+
+< About
+> 关于
+
+< {0} tool
+< {0} tools
+> {0}个工具
+
+< Open-source licences
+> 开源许可
+
+< Phone's language ({0})
+> 手机语言（{0}）
+
+< Clear temporary files?
+> 清除临时文件？
+
+< An export is running; temporary files will be cleared after it finishes. Try again then.
+> 正在导出；临时文件将在导出完成后清除。请稍后再试。
+
+< Thumbnails and leftovers from interrupted exports are removed. Your saved files are not affected.
+> 将移除缩略图和被中断的导出留下的残余文件。你保存的文件不受影响。
+
+@ delete files
+< Clear
+> 清除
+
+< Temporary files cleared
+> 临时文件已清除
+
+< Image alignment for the stitcher and basic fill.
+> 用于拼接和基本填充的图像对齐。
+
+< Merging PDFs and extracting pages.
+> 合并 PDF 和提取页面。
+
+< Runs the on-device AI models.
+> 运行本机 AI 模型。
+
+< Magic eraser model, converted to TensorFlow Lite.
+> 魔法消除模型，已转换为 TensorFlow Lite。
+
+< Stitcher alignment assist and similar-photo detection.
+> 拼接对齐辅助和相似照片检测。
+
+< Finding faces for face blur, the Gallery and auto enhance.
+> 查找人脸，用于人脸模糊、图库和自动增强。
+
+< Non-commercial research use only (code MIT)
+> 仅限非商业研究使用（代码为 MIT 许可）
+
+< Recognising the people in the Gallery.
+> 识别图库中的人物。
+
+< Recognising the same person across video frames and files for face blur.
+> 在视频帧和文件之间识别同一个人，用于人脸模糊。
+
+< Background remover.
+> 背景移除。
+
+< Finding people, animals, vehicles and objects in the gallery.
+> 在图库中查找人物、动物、车辆和物体。
+
+< Recognising scenes and kinds of things in the gallery and for auto enhance.
+> 识别图库中的场景和物品类型，也用于自动增强。
+
+< Writing the instrumental background music for highlight videos, on the phone.
+> 在手机上为精彩视频生成纯音乐背景音乐。
+
+< Grouping the classifier's classes into searchable categories.
+> 将分类器的类别归入可搜索的分类。
+
+< Human-verified labels used to calibrate and train the category recognisers.
+> 经人工核验的标签，用于校准和训练分类识别器。
+
+< Language runtime.
+> 语言运行时。
+
+< App typography.
+> 应用字体。
+
+< {0}: original
+> {0}：原始
+
+< Run several tools in a row. Each tool works on the results of the one before; only the final files are saved.
+> 依次运行多个工具。每个工具处理上一个工具的结果；只会保存最终文件。
+
+< Example: {0}
+> 示例：{0}
+
+< Pick your files
+> 选择你的文件
+
+< Steps
+> 步骤
+
+< Tap a step to change its settings
+> 点按步骤可更改其设置
+
+< Results
+> 结果
+
+< Also save the in-between results
+> 同时保存中间结果
+
+< Off: only the final files are saved; the rest are temporary
+> 关闭：只保存最终文件；其余均为临时文件
+
+< If a step has nothing to do for a file (for example it's already small), or can't work on that kind of file, the file goes on to the next step unchanged, so nothing is lost.
+> 如果某个步骤对某个文件无事可做（例如它已经很小），或无法处理该类文件，该文件会原样进入下一步，因此不会丢失任何内容。
+
+< Run stack
+> 运行组合
+
+< Starts with the files you pick
+> 从你选择的文件开始
+
+< Starts with {0} file: {1}
+< Starts with {0} files: {1}
+> 从{0}个文件开始：{1}
+
+< Gets no files it can work on: it needs {0}
+> 没有可处理的文件：需要{0}
+
+< Saved: {0}
+> 保存：{0}
+
+< then {0}
+> 然后是{0}
+
+< Add the first step
+> 添加第一个步骤
+
+< Add a step
+> 添加步骤
+
+< Add steps to see where the results go.
+> 添加步骤即可查看结果的去向。
+
+< The final files are saved where step {0} saves them: {1}. Files that the last step doesn't change are saved by the last step that did.
+> 最终文件会保存在第{0}步保存的位置：{1}。最后一步未更改的文件，由最后更改过它们的那一步保存。
+
+< Move step {0} up
+> 将第{0}步上移
+
+< Move step {0} down
+> 将第{0}步下移
+
+< Remove step {0}
+> 移除第{0}步
+
+< Step {0}: {1}. {2}. Tap to change
+> 第{0}步：{1}。{2}。点按可更改
+
+< Works on the files you pick.
+> 处理你选择的文件。
+
+< Works on the {0} file you picked.
+< Works on the {0} files you picked.
+> 处理你选择的{0}个文件。
+
+< Works on the {0} coming from step {1} ({2}).
+> 处理来自第{1}步（{2}）的{0}。
+
+< Pick files to continue
+> 选择文件以继续
+
+< Add at least one step
+> 至少添加一个步骤
+
+< Step {0} ({1}) gets no files it can work on
+> 第{0}步（{1}）没有可处理的文件
+
+< {0} step
+< {0} steps
+> {0}个步骤
+
+< starts after the current export
+> 将在当前导出之后开始
+
+< you can leave the app while it runs
+> 运行期间你可以离开应用
+
+< Add to queue
+> 加入队列
+
+< Queued — it starts when the current export finishes.
+> 已加入队列——当前导出完成后开始。
+
+< Stack started. You can leave the app; progress is shown in the notification.
+> 组合已开始。你可以离开应用；进度会显示在通知中。
+
+< Add step {0}
+> 添加第{0}步
+
+< This step gets {0}. Pick a tool; you'll set its options next.
+> 此步骤得到的是{0}。请选择一个工具；接下来设置它的选项。
+
+< Works on {0}, which this step doesn't get
+> 处理{0}，而此步骤得不到
+
+< {0}, not available at this step
+> {0}，在此步骤中不可用
+
+< Not available in stacks: {0}. They work on one photo by hand, look through your library or use the camera.
+> 组合中不可用：{0}。它们需要手动处理单张照片、浏览你的整个图库或使用相机。
+
+< Reading the files…
+> 正在读取文件…
+
+< Start export
+> 开始导出
+
+< Step {0}: {1}
+> 第{0}步：{1}
+
+< Options
+> 选项
+
+< On-device
+> 本机处理
+
+< Originals untouched
+> 不改动原件
+
+< Runs in background
+> 后台运行
+
+< Output
+> 输出
+
+< New files are always created; your originals are never changed. A file is only published after it has been fully written and checked.
+> 始终创建新文件；绝不更改你的原件。文件只有在完整写入并通过检查后才会正式保存。
+
+< Do more with the results?
+> 对结果做更多处理？
+
+< Stack another tool that works on them, e.g. compress after this
+> 再叠加一个处理这些结果的工具，例如在此之后压缩
+
+< Then run another tool
+> 然后运行另一个工具
+
+< Save step
+> 保存步骤
+
+< Add to stack
+> 添加到组合
+
+< Input
+> 输入
+
+< Files it can't work on go to the next step unchanged.
+> 无法处理的文件会原样进入下一步。
+
+< Previews use your file "{0}". Files it can't work on go to the next step unchanged.
+> 预览使用你的文件“{0}”。无法处理的文件会原样进入下一步。
+
+< Result
+> 结果
+
+< Goes to the next step. If this is the last step, the results are saved in {0}.
+> 进入下一步。如果这是最后一步，结果会保存在 {0}。
+
+< Check the options
+> 检查选项
+
+< Standard settings
+> 标准设置
+
+< Start a new tool stack?
+> 开始新的工具组合？
+
+< Your current stack ({0}) will be replaced.
+> 你当前的组合（{0}）将被替换。
+
+< Start new
+> 重新开始
+
+< Settings are kept with the step; tap it in the stack to change them
+> 设置会随步骤保存；在组合中点按该步骤即可更改
+
+< Another export is running; this one will start right after it.
+> 另一个导出正在运行；这个会紧接着开始。
+
+< {0} file ready · you can leave the app while it runs
+< {0} files ready · you can leave the app while it runs
+> {0}个文件已就绪 · 运行期间你可以离开应用
+
+< Export started. You can leave the app; progress is shown in the notification.
+> 导出已开始。你可以离开应用；进度会显示在通知中。
+
+< {0} value
+> {0}的值
+
+< {0} percent
+> {0}%
+
+< Crop
+> 裁剪
+
+< Adjust
+> 调整
+
+< Looks
+> 滤镜
+
+< Close editor
+> 关闭编辑器
+
+< Undo
+> 撤销
+
+< Redo
+> 重做
+
+< Hold to compare with the original
+> 按住可与原图对比
+
+< Save
+> 保存
+
+< Opening photo…
+> 正在打开照片…
+
+< This photo can't be edited: {0}
+> 无法编辑这张照片：{0}
+
+< Brush over what you want to remove
+> 涂抹你想移除的内容
+
+< Paint over what you want to hide
+> 涂抹你想隐藏的内容
+
+< Basic fill
+> 基本填充
+
+< Erasing…
+> 正在擦除…
+
+< Applying…
+> 正在应用…
+
+< Free
+> 自由
+
+< Square
+> 正方形
+
+< Straighten
+> 矫正
+
+< Rotate
+> 旋转
+
+< Flip
+> 翻转
+
+< Reset
+> 重置
+
+< Auto enhance
+> 自动增强
+
+< Double-tap a slider to reset
+> 双击滑块可重置
+
+< Strength
+> 强度
+
+< Brush size
+> 画笔大小
+
+< AI
+> AI
+
+< Loading the on-device model…
+> 正在加载本机模型…
+
+< Paint over a person or object, then lift your finger. Cover its shadow too. Zoom with two fingers for small details.
+> 涂抹人物或物体，然后抬起手指。连它的阴影也一并涂上。用两根手指缩放可处理小细节。
+
+< Enhancing…
+> 正在增强…
+
+< {0}: {1}
+> {0}：{1}
+
+< already well balanced
+> 已经很平衡
+
+< Finding faces…
+> 正在查找人脸…
+
+< No faces were found in this photo.
+> 这张照片中没有找到人脸。
+
+< Pixelated {0} face · undo to bring it back
+< Pixelated {0} faces · undo to bring them back
+> 已将{0}张人脸像素化 · 撤销可恢复
+
+< Blurred {0} face · undo to bring it back
+< Blurred {0} faces · undo to bring them back
+> 已将{0}张人脸模糊 · 撤销可恢复
+
+< Hide all faces
+> 隐藏所有人脸
+
+< full resolution
+> 完整分辨率
+
+< Quality
+> 质量
+
+< This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
+> 这张照片有透明区域：PNG 或 WebP 会保留；JPEG 会用白色填充。
+
+< A new copy is saved to {0}. The original is not changed. Location and camera details are not copied.
+> 新副本会保存到 {0}。原件不会更改。位置和相机信息不会被复制。
+
+< Save a copy
+> 保存副本
+
+< Saving in the background…
+> 正在后台保存…
+
+< Discard your edits?
+> 放弃你的编辑？
+
+< Nothing has been saved yet. Your original photo is not affected.
+> 尚未保存任何内容。你的原始照片不受影响。
+
+< Discard
+> 放弃
+
+< Keep editing
+> 继续编辑
+
+< Unnamed person
+> 未命名的人物
+
+< Who is this?
+> 这是谁？
+
+< You confirmed this · in {0} photo
+< You confirmed this · in {0} photos
+> 你已确认 · 出现在{0}张照片中
+
+< Recognised automatically · in {0} photo
+< Recognised automatically · in {0} photos
+> 自动识别 · 出现在{0}张照片中
+
+< This face is small, blurry or turned, so it's only grouped when it clearly matches someone
+> 这张脸较小、模糊或侧着，因此只有在与某人明显匹配时才会归组
+
+< Not grouped with anyone yet
+> 尚未归入任何人
+
+< Name this person
+> 为此人命名
+
+< Names the {0} face in this group
+< Names all {0} faces in this group
+> 为该组中的{0}张人脸命名
+
+< This is {0}
+> 这是 {0}
+
+< Looks similar
+> 看起来相似
+
+< Add a name
+> 添加名称
+
+< Start a person, or pick one you named
+> 新建一个人物，或选择你已命名的人物
+
+< This isn't {0}
+> 这不是 {0}
+
+< Removes it from {0} for good
+> 将其从 {0} 中永久移除
+
+< Not the same person
+> 不是同一个人
+
+< Takes this face out of the group
+> 将这张人脸从该组中移出
+
+< This is someone else…
+> 这是别人…
+
+< Pick or type their name
+> 选择或输入他们的名字
+
+< Use as {0}'s picture
+> 用作 {0} 的头像
+
+< Use as the group's picture
+> 用作该组的头像
+
+< Ignore this face
+> 忽略这张人脸
+
+< For strangers, posters or statues: it won't appear in People
+> 适用于陌生人、海报或雕像：它不会出现在“人物”中
+
+< Name
+> 名称
+
+< Add to {0}?
+> 添加到 {0}？
+
+< {1} already exists. This face will be added to {1}.
+< {1} already exists. These {0} faces will be added to {1}.
+> {1} 已存在。这{0}张人脸将被添加到 {1}。
+
+< Add
+> 添加
+
+< Named {0}
+> 已命名为 {0}
+
+< Named
+> 已命名
+
+< Unnamed groups
+> 未命名的组
+
+< On their own
+> 单独的人脸
+
+< Ignored
+> 已忽略
+
+< All faces
+> 所有人脸
+
+< Review faces
+> 查看人脸
+
+< Tap a face that isn't this person to remove it.
+> 点按不是此人的人脸即可将其移除。
+
+< Show this face in People again?
+> 在“人物”中重新显示这张人脸？
+
+< Show
+> 显示
+
+< Unnamed
+> 未命名
+
+< Small or blurry
+> 小或模糊
+
+< {0}. Tap to name or correct, long-press to open the photo.
+> {0}。点按可命名或更正，长按可打开照片。
+
+< You can share up to {0} items at a time ({1} selected).
+> 一次最多可分享{0}项（已选{1}项）。
+
+< You can delete up to {0} items at a time ({1} selected).
+> 一次最多可删除{0}项（已选{1}项）。
+
+< These items can't be moved to the trash: {0}
+> 这些项目无法移到回收站：{0}
+
+< Moved {0} item to the trash. You can restore it for 30 days.
+< Moved {0} items to the trash. You can restore them for 30 days.
+> 已将{0}项移到回收站。你可以在 30 天内恢复。
+
+< On Android 10, photos can be deleted one at a time (there is no trash).
+> 在 Android 10 上，照片只能逐张删除（没有回收站）。
+
+< Delete for good?
+> 永久删除？
+
+< Android 10 has no trash, so {0} can't be restored afterwards.
+> Android 10 没有回收站，因此 {0} 删除后将无法恢复。
+
+< Delete
+> 删除
+
+< Deleted.
+> 已删除。
+
+< This item can't be deleted.
+> 无法删除此项目。
+
+< This item can't be deleted: {0}
+> 无法删除此项目：{0}
+
+< No app can open this file.
+> 没有应用可以打开此文件。
+
+< Videos can't be printed.
+> 无法打印视频。
+
+< Videos are left out: only photos can be printed.
+> 已排除视频：只能打印照片。
+
+< No tool works on this selection.
+> 没有工具可处理当前所选内容。
+
+< Open in a tool
+> 在工具中打开
+
+< Use {0} item in a tool
+< Use {0} items in a tool
+> 在工具中使用{0}项
+
+< Search photos
+> 搜索照片
+
+< Gallery options
+> 图库选项
+
+< Search people, things, places…
+> 搜索人物、物品、地点…
+
+< Photos
+> 照片
+
+< Albums
+> 相册
+
+< People
+> 人物
+
+< Things
+> 物品
+
+< Showing only the photos you allowed. Tap to allow more.
+> 仅显示你允许访问的照片。点按可允许更多。
+
+< Allow more photos
+> 允许访问更多照片
+
+< No photos or videos yet
+> 还没有照片或视频
+
+< Photos and videos you take or save on this phone will show up here.
+> 你在这部手机上拍摄或保存的照片和视频会显示在这里。
+
+< Your photos, organised on this phone
+> 你的照片，在这部手机上整理
+
+< Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for "dog" or "Sophie" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet.
+> 允许访问后，即可在此查看你的照片和视频。应用会在其中找出人物、宠物、地点和物品，让你搜索“狗”或“小雪”——全程在这部手机上完成。不会上传任何内容：应用从不连接互联网上的服务器。
+
+< Allow access
+> 允许访问
+
+< No albums yet
+> 还没有相册
+
+< Folders with photos or videos appear here.
+> 包含照片或视频的文件夹会显示在这里。
+
+< Videos
+> 视频
+
+< Favourites
+> 收藏
+
+< Screenshots
+> 截图
+
+< {0} face found · named, unnamed and on their own
+< {0} faces found · named, unnamed and on their own
+> 找到{0}张人脸 · 已命名、未命名和单独的
+
+< Name people
+> 为人物命名
+
+< {0} group to name, one after another
+< {0} groups to name, one after another
+> 有{0}组待命名，逐一进行
+
+< Name people, {0} group to name
+< Name people, {0} groups to name
+> 为人物命名，有{0}组待命名
+
+< Finding people…
+> 正在查找人物…
+
+< No people yet
+> 还没有人物
+
+< Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos.
+> 正在这部手机上查找人脸并归组。同一张脸在几张照片中出现后，人物就会立即显示在这里。
+
+< When the same person appears in several photos, they show up here so you can name them.
+> 当同一个人出现在多张照片中时，他们会显示在这里，方便你为其命名。
+
+< Add names
+> 添加名称
+
+< Looking at your photos…
+> 正在查看你的照片…
+
+< Nothing recognised yet
+> 尚未识别出任何内容
+
+< Pets, food, places and things appear here as photos are analysed on this phone.
+> 随着照片在这部手机上被分析，宠物、食物、地点和物品会显示在这里。
+
+< Pets, food, vehicles, places and more appear here when photos show them.
+> 照片中出现宠物、食物、车辆、地点等内容时，会显示在这里。
+
+< Resume organising
+> 继续整理
+
+< Pause organising
+> 暂停整理
+
+< About recognition
+> 关于识别
+
+< Start over (forget people and names)
+> 重新开始（忘记人物和名称）
+
+< Start over?
+> 重新开始？
+
+< Names, people and everything found in your photos are forgotten and the photos are analysed again. Your photos themselves are not touched.
+> 名称、人物以及在你照片中找到的一切都会被忘记，照片将重新分析。你的照片本身不会受到影响。
+
+< Start over
+> 重新开始
+
+< on-device AI
+> 本机 AI
+
+< basic mode (the AI model couldn't run on this phone)
+> 基本模式（AI 模型无法在这部手机上运行）
+
+< unavailable
+> 不可用
+
+< starts with the first photo
+> 从第一张照片开始
+
+< {1} of {0} photo or video analysed.
+< {1} of {0} photos and videos analysed.
+> 已分析 {1} / {0} 张照片和视频。
+
+< Reading your library.
+> 正在读取你的图库。
+
+< Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
+> 之前找到的人脸正在用更新、更准确的人脸模型重新分析。名称、确认和更正都会保留；完成后会重新给人物归组。
+
+< Objects and scenes: {0}.
+> 物体和场景：{0}。
+
+< Faces and people: {0}.
+> 人脸和人物：{0}。
+
+< Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
+> 一切都在这部手机上以低优先级运行。手机变热时会减速，过热或电量低时会暂停，并从中断处继续。
+
+< Organising your gallery
+> 正在整理你的图库
+
+< OK
+> 确定
+
+< Resume
+> 继续
+
+< Pause
+> 暂停
+
+< Paused
+> 已暂停
+
+< {0} left
+< {0} left
+> 还剩{0}
+
+< Reading your library…
+> 正在读取你的图库…
+
+< Grouping faces into people…
+> 正在把人脸归为人物…
+
+< Updating face recognition · {0} of {1}
+> 正在更新人脸识别 · {0} / {1}
+
+< slower while the phone is warm
+> 手机发热时会变慢
+
+< names are kept
+> 名称会保留
+
+< Finding people and things · {0} of {1}
+> 正在查找人物和物品 · {0} / {1}
+
+< on this phone
+> 在这部手机上
+
+< {1}, {0} item
+< {1}, {0} items
+> {1}，{0}项
+
+< Add name
+> 添加名称
+
+< {1}, {0} photo
+< {1}, {0} photos
+> {1}，{0}张照片
+
+@ date pattern: a short month and its year
+< MMM yyyy
+> yyyy年M月
+
+< {0} item
+< {0} items
+> {0}项
+
+@ date pattern: a month and its year
+< MMMM yyyy
+> yyyy年M月
+
+< Today
+> 今天
+
+< Yesterday
+> 昨天
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> M月d日 EEE
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> yyyy年M月d日
+
+< Video
+> 视频
+
+< Photo
+> 照片
+
+< , not selected
+> ，未选中
+
+< Found on this phone by on-device AI.
+> 由本机 AI 在这部手机上找到。
+
+< Cancel selection
+> 取消选择
+
+< Select all
+> 全选
+
+< Use in a tool
+> 在工具中使用
+
+< Select items
+> 选择项目
+
+< {0} selected
+< {0} selected
+> 已选{0}项
+
+< Loading people…
+> 正在加载人物…
+
+< {0} of {1}
+> {0} / {1}
+
+< Type a name, then Enter
+> 输入名称，然后按回车
+
+< Skip
+> 跳过
+
+< No one I know
+> 我不认识
+
+< Some of these aren't the same person…
+> 其中有些不是同一个人…
+
+< {1} faces in {0} photo · long-press a face to see its photo
+< {1} faces in {0} photos · long-press a face to see its photo
+> {0}张照片中有{1}张人脸 · 长按人脸可查看其照片
+
+< Face
+> 人脸
+
+< Type a name, or tap Skip.
+> 输入名称，或点按“跳过”。
+
+< Added to {0}
+> 已添加到 {0}
+
+< Everyone is named
+> 所有人都已命名
+
+< All done
+> 全部完成
+
+< There are no unnamed groups right now. New ones appear as more photos are looked at.
+> 目前没有未命名的组。随着更多照片被分析，新的组会出现。
+
+< You went through {0} group and named {1}. Faces are regrouped with your names now.
+< You went through {0} groups and named {1}. Faces are regrouped with your names now.
+> 你已查看{0}组并命名了{1}个。现在人脸会按你的命名重新归组。
+
+< You went through {0} group. Faces are regrouped with your names now.
+< You went through {0} groups. Faces are regrouped with your names now.
+> 你已查看{0}组。现在人脸会按你的命名重新归组。
+
+< Back to People
+> 返回“人物”
+
+< {0} photo or video
+< {0} photos and videos
+> {0}张照片和视频
+
+< {0} face
+< {0} faces
+> {0}张人脸
+
+< Also {0}?
+> 也是 {0}？
+
+< These groups look similar. Confirm the ones that are {0}.
+> 这些组看起来很相似。请确认哪些是 {0}。
+
+< Open this group
+> 打开此组
+
+< Not {0}
+> 不是 {0}
+
+< Yes, {0}
+> 是的，是 {0}
+
+< Merge with {0}?
+> 与 {0} 合并？
+
+< {0} already exists. Merge {1} into {0}? All their photos will be under {0}.
+> {0} 已存在。要把 {1} 合并到 {0} 吗？他们所有的照片都会归入 {0}。
+
+< Merge
+> 合并
+
+< Rename
+> 重命名
+
+< Merge with…
+> 合并到…
+
+< Show in People
+> 在“人物”中显示
+
+< Hide from People
+> 从“人物”中隐藏
+
+< Shown in People
+> 已在“人物”中显示
+
+< Hidden from People
+> 已从“人物”中隐藏
+
+< Remove name
+> 移除名称
+
+< Remove {0}?
+> 移除 {0}？
+
+< The name is removed and these faces become unnamed again. Photos are not affected.
+> 名称将被移除，这些人脸会重新变为未命名。照片不受影响。
+
+< There is no one else to merge with yet.
+> 目前还没有可以合并的其他人。
+
+< Same person as…
+> 与…是同一个人
+
+< People, things, places, dates
+> 人物、物品、地点、日期
+
+< Showing results for {0} (you typed {1})
+> 显示“{0}”的结果（你输入的是“{1}”）
+
+< still analysing {0} more
+< still analysing {0} more
+> 还有{0}个仍在分析
+
+< No matches
+> 没有匹配项
+
+< Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
+> 试试你给某人起的名字，或“狗”“汽车”“海滩”“食物”“日落”“文档”之类的词。
+
+< No photo has all of these. Remove a word to see more.
+> 没有任何一张照片同时包含所有这些词。去掉一个词可查看更多。
+
+< Nothing found yet.
+> 还没有找到任何内容。
+
+< Things in your photos
+> 你照片中的物品
+
+< Try
+> 试试
+
+< Last month
+> 上个月
+
+< This year
+> 今年
+
+< Press search to look for "{0}".
+> 按搜索即可查找“{0}”。
+
+< Name people in Gallery › People to search for them, like "Sophie" or "John and Sophie".
+> 在“图库 › 人物”中为人物命名后即可搜索他们，例如“小雪”或“小明和小雪”。
+
+< Show faces
+> 显示人脸
+
+< Details
+> 详情
+
+< Edit
+> 编辑
+
+< Unnamed face, tap to name
+> 未命名的人脸，点按可命名
+
+< Hide faces
+> 隐藏人脸
+
+< Found in it: {0}
+> 其中有：{0}
+
+< People: {0}
+> 人物：{0}
+
+< {0} unnamed
+< {0} unnamed
+> {0}个未命名
+
+< This item hasn't been analysed yet.
+> 此项目尚未被分析。
+
+< Open with…
+> 打开方式…
+
+< Play video
+> 播放视频
+
+< Preview
+> 预览
+
+< Select a photo to see the cut-out.
+> 选择一张照片以查看抠图效果。
+
+< Background
+> 背景
+
+< What goes behind the subject
+> 主体后面放什么
+
+< Crop to the subject
+> 裁剪到主体
+
+< Trims the empty space around it
+> 裁掉其周围的空白
+
+< Works best with one clear subject: a person, pet, product or object. Fine hair and see-through things can keep a little of the background.
+> 主体清晰的照片效果最佳：人物、宠物、产品或物体。细发丝和透明的物体可能会残留一点背景。
+
+< Finding the subject in {0}…
+> 正在 {0} 中查找主体…
+
+< Preview not available: {0}
+> 无法预览：{0}
+
+< No clear subject found in this photo.
+> 这张照片中没有找到清晰的主体。
+
+< Preview of {0}
+> {0} 的预览
+
+< the other {0} photo is done the same way
+< the other {0} photos are done the same way
+> 另外{0}张照片也用同样的方式处理
+
+< saved at full resolution
+> 已按完整分辨率保存
+
+< name_cutout.png (transparent) · name_cutout.jpg (with a colour)
+> 文件名_cutout.png（透明）· 文件名_cutout.jpg（带颜色）
+
+< Before
+> 处理前
+
+< After
+> 处理后
+
+< Select photos to see what auto enhance does.
+> 选择照片以查看自动增强的效果。
+
+< Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there.
+> 每张照片都有各自的设置：人脸会被轻柔地提亮，食物更暖更浓郁，风景更有层次，文档更干净。想要微调？在照片编辑器中打开照片，然后点按“自动增强”。
+
+< Looking at {0}…
+> 正在查看 {0}…
+
+< {0}: {1}.
+> {0}：{1}。
+
+< already well balanced, only small touches
+> 已经很平衡，只做了细微调整
+
+< name_enhanced.jpg (PNG stays PNG)
+> 文件名_enhanced.jpg（PNG 仍为 PNG）
+
+< Pixelate chosen faces
+> 将所选人脸像素化
+
+< Blur chosen faces
+> 将所选人脸模糊
+
+< People found
+> 找到的人物
+
+< Select photos or videos; faces are found automatically.
+> 选择照片或视频；会自动查找人脸。
+
+< Find faces
+> 查找人脸
+
+< Hide everyone
+> 隐藏所有人
+
+< Hide no one
+> 都不隐藏
+
+< Style
+> 样式
+
+@ strength
+< Light
+> 轻
+
+@ strength
+< Medium
+> 中
+
+@ strength
+< Strong
+> 强
+
+< Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
+> 会逐帧跟踪人脸，并在所有所选文件中匹配，因此每个人只列出一次。视频会以接近原画质的质量重新编码为 H.264 MP4；声音会保留。
+
+< Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
+> 此步骤中找到的每张人脸都会被隐藏。若要选择人物，请把照片或视频放进组合。
+
+< Watching the video for faces…
+< Watching {0} videos for faces…
+> 正在查看{0}个视频中的人脸…
+
+< Looking for faces…
+> 正在查找人脸…
+
+< Find faces again
+> 重新查找人脸
+
+< No faces were found.
+> 没有找到人脸。
+
+< Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
+< Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
+> 找到{0}个人物。点按人脸可使其保持可见；高亮的人脸将被隐藏。
+
+< Stopped. Tap Find faces to look again.
+> 已停止。点按“查找人脸”可重新查找。
+
+< Faces couldn't be found: {0}
+> 无法查找人脸：{0}
+
+< {0} file couldn't be read: {1}.
+< {0} files couldn't be read: {1}.
+> 有{0}个文件无法读取：{1}。
+
+< Stopping…
+> 正在停止…
+
+< {0} video
+< {0} videos
+> {0}个视频
+
+< Hidden
+> 已隐藏
+
+< Visible
+> 可见
+
+< Person {0}, in {1}, will be hidden
+> 人物 {0}（出现在 {1}）将被隐藏
+
+< Person {0}, in {1}, stays visible
+> 人物 {0}（出现在 {1}）保持可见
+
+< Tap the people you want to hide
+> 点按你想隐藏的人物
+
+< Tap Find faces first
+> 请先点按“查找人脸”
+
+< No faces to hide in these files
+> 这些文件中没有可隐藏的人脸
+
+< name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
+> 文件名_blurred.jpg / .png（Pictures）· 文件名_blurred.mp4（Movies）
+
+< Hides every face
+> 隐藏所有人脸
+
+< Hides {1} of {0} person (others stay visible)
+< Hides {1} of {0} people (others stay visible)
+> 隐藏{0}人中的{1}人（其他人保持可见）
+
+< Find faces first
+> 请先查找人脸
+
+< The chosen people don't appear in these files
+> 所选人物没有出现在这些文件中
+
+< Output width
+> 输出宽度
+
+< 0 keeps the original width
+> 0 表示保持原始宽度
+
+< Frame rate
+> 帧率
+
+< 0 keeps the original timing; lower drops frames
+> 0 表示保持原始时间；调低会丢帧
+
+< Palette size
+> 调色板大小
+
+< Fewer colours = smaller file, less detail
+> 颜色越少 = 文件越小，细节越少
+
+< {0} colour
+< {0} colours
+> {0}种颜色
+
+< 32: tiny files, visible banding · 64: good for simple graphics · 128: balanced · 256: most detail
+> 32：文件极小，有明显色带 · 64：适合简单图形 · 128：均衡 · 256：细节最多
+
+< Dithering
+> 抖动
+
+< Pattern
+> 图案
+
+@ no dithering
+< None
+> 无
+
+< Diffusion
+> 扩散
+
+< Size, frame rate and colours all trade detail for file size. Results that wouldn't be smaller than the original aren't saved.
+> 尺寸、帧率和颜色都是用细节换取文件大小。结果若不会比原文件更小，则不会保存。
+
+< 0 keeps every pixel identical; other widths sample pixels without blending
+> 0 表示保持每个像素不变；其他宽度会直接采样像素而不混合
+
+< Playback frame rate
+> 播放帧率
+
+< 0 keeps the exact original timing
+> 0 表示保持精确的原始时间
+
+< Only keep smaller results
+> 只保留更小的结果
+
+< Re-encodes the GIF more efficiently (changed areas only, exact palettes, frame merging) while every displayed pixel stays identical. This is only possible when each frame fits GIF's limits: up to 256 colours including transparency, and on/off transparency only. Frames that don't fit are reported and the file is rejected rather than altered.
+> 重新编码 GIF 以提高效率（仅保存变化区域、精确调色板、合并帧），同时每个显示出来的像素保持完全一致。只有当每一帧都符合 GIF 的限制时才能做到：最多 256 种颜色（含透明色），且透明只有开/关两种。不符合的帧会被报告，文件会被拒绝而不是被改动。
+
+< Image format
+> 图片格式
+
+< lossless, crisp text
+> 无损，文字清晰
+
+< smaller files
+> 文件更小
+
+< JPEG quality
+> JPEG 质量
+
+< Render scale
+> 渲染比例
+
+< 100% = 72 DPI
+> 100% = 72 DPI
+
+< Every page becomes one image that looks exactly like the page on screen (white background). Text isn't extracted; links and selectable text don't carry over. Pages of any size are rendered in strips, so large posters work too.
+> 每一页都会变成一张与屏幕上看到的页面完全一样的图片（白色背景）。不会提取文字；链接和可选中的文字不会保留。任意大小的页面都会分条渲染，因此大幅海报也可以处理。
+
+< ≈ {0} DPI · an A4 page becomes {1} × {2} px
+> ≈ {0} DPI · 一页 A4 会变成 {1} × {2} 像素
+
+< name_p001.{0}, name_p002… one image per page
+> 文件名_p001.{0}、文件名_p002…… 每页一张图片
+
+< Create PDF
+> 创建 PDF
+
+< Page orientation
+> 页面方向
+
+< All pages are A4 with a small margin
+> 所有页面均为 A4，留有少量边距
+
+< Auto (match image)
+> 自动（匹配图片）
+
+< Image quality
+> 图片质量
+
+< no recompression
+> 不重新压缩
+
+< smaller PDF
+> PDF 更小
+
+< Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
+> “原始”会按字节原样嵌入 JPEG 照片，其他图片则无损嵌入。“紧凑”会将图片缩放到打印分辨率（A4 为 300 DPI）并存为 JPEG。
+
+< File name
+> 文件名
+
+@ default file name
+< Images
+> 图片
+
+< <date>
+> <日期>
+
+< One image per page, in the order shown above (use Review & order to change it). Pictures are fitted without distortion and keep their displayed orientation. This makes an image PDF — text in photos is not made searchable (no OCR).
+> 每页一张图片，按上方显示的顺序排列（可用“查看和排序”更改顺序）。图片按比例适配，不会变形，并保持其显示方向。这会生成图片型 PDF——照片中的文字不可搜索（无 OCR）。
+
+< Merge PDFs
+> 合并 PDF
+
+@ default file name
+< Merged
+> 合并
+
+< Documents are joined in the order shown above, page by page. Their real content is kept — text stays selectable, vector graphics and links keep working, and every page keeps its own size. Password-protected or damaged PDFs are rejected with the file name.
+> 文档会按上方显示的顺序逐页连接。它们的真实内容会保留——文字仍可选中，矢量图形和链接继续有效，每一页都保持自己的尺寸。受密码保护或已损坏的 PDF 会被拒绝，并显示文件名。
+
+< Save PDF
+> 保存 PDF
+
+< Pages
+> 页面
+
+< Capture page
+> 拍摄页面
+
+< Add from gallery
+> 从图库添加
+
+< Reorder
+> 重新排序
+
+< Clear pages
+> 清空页面
+
+< Remove all pages?
+> 移除所有页面？
+
+< Captured pages are deleted from the app's private storage; gallery photos aren't affected.
+> 拍摄的页面会从应用的私有存储中删除；图库中的照片不受影响。
+
+< Page {0}
+> 第{0}页
+
+< No pages yet
+> 还没有页面
+
+< {0} page
+< {0} pages
+> {0}页
+
+< Capture pages with the camera or add photos. Pages appear here in order.
+> 用相机拍摄页面或添加照片。页面会按顺序显示在这里。
+
+< Enhancement
+> 增强
+
+< Makes photographed pages look like scans
+> 让拍摄的页面看起来像扫描件
+
+< Clean document evens out shadows and boosts contrast (greyscale). Black & white gives crisp text and the smallest files.
+> “清晰文档”会均匀阴影并增强对比度（灰度）。“黑白”文字锐利，文件最小。
+
+< Auto (match photo)
+> 自动（匹配照片）
+
+< Portrait
+> 纵向
+
+@ default file name
+< Scan
+> 扫描
+
+< Each page becomes an A4 page with a small margin, upright as you see it. This is an image scanner: text stays part of the picture and is not searchable or selectable (no OCR).
+> 每一页都会变成带有少量边距的 A4 页面，按你看到的方向摆正。这是图像扫描：文字仍是图片的一部分，不可搜索或选择（无 OCR）。
+
+< Adding pages…
+> 正在添加页面…
+
+< Capture or add at least one page
+> 请至少拍摄或添加一页
+
+< Music
+> 音乐
+
+< Written on this phone for your video — always instrumental
+> 在这部手机上为你的视频创作——始终是纯音乐
+
+< No music
+> 无音乐
+
+< Listen
+> 试听
+
+< Another tune
+> 换一首
+
+< Length
+> 时长
+
+< {0} s
+> {0} 秒
+
+< Auto
+> 自动
+
+< Shape
+> 画幅
+
+< Captions
+> 字幕
+
+< The title at the start and each moment's name
+> 开头的标题和每个瞬间的名称
+
+< Sound from your videos
+> 视频原声
+
+< The music gets quieter while they play
+> 视频播放时音乐会变小
+
+< Title
+> 标题
+
+< Moments
+> 瞬间
+
+< Tap a shot to always include it; tap again to leave it out
+> 点按镜头可始终包含它；再次点按则排除
+
+< Auto ({0})
+> 自动（{0}）
+
+< landscape
+> 横向
+
+< portrait
+> 纵向
+
+< square
+> 方形
+
+< Pick the photos and videos of an event (two or more). They're put in the order they were taken.
+> 选择某次活动的照片和视频（两个或更多）。它们会按拍摄顺序排列。
+
+< Too few of these files could be read.
+> 这些文件中可读取的太少。
+
+< {0} of the files couldn't be read and is left out.
+< {0} of the files couldn't be read and are left out.
+> 有{0}个文件无法读取，已被排除。
+
+< Looking at your photos with on-device AI… {0} of {1}
+> 正在用本机 AI 查看你的照片… {0} / {1}
+
+< Looking at your videos with on-device AI… {0} of {1}
+> 正在用本机 AI 查看你的视频… {0} / {1}
+
+< Looking at your photos and videos with on-device AI… {0} of {1}
+> 正在用本机 AI 查看你的照片和视频… {0} / {1}
+
+< Everything is left out — tap a shot to bring it back.
+> 全部都被排除了——点按镜头可恢复。
+
+< not in the video
+> 不在视频中
+
+< {1} of {0} in the video
+< {1} of {0} in the video
+> {0}个中有{1}个在视频中
+
+< no music
+> 无音乐
+
+< {0} moment
+< {0} moments
+> {0}个瞬间
+
+< {0} clip
+< {0} clips
+> {0}个片段
+
+< Name this moment
+> 为此瞬间命名
+
+< Automatic
+> 自动
+
+< Pick a kind of music first.
+> 请先选择一种音乐。
+
+< Writing…
+> 正在创作…
+
+< The music can't be played on this phone right now.
+> 目前无法在这部手机上播放音乐。
+
+< Left out
+> 已排除
+
+< left out
+> 已排除
+
+< always in
+> 始终包含
+
+< in the video
+> 在视频中
+
+< not used
+> 未使用
+
+< Format
+> 格式
+
+< most compatible
+> 兼容性最好
+
+< smaller
+> 更小
+
+< JPEG works everywhere but has no transparency. WebP is typically 25–35% smaller at similar quality and keeps transparency.
+> JPEG 到处都能用，但不支持透明。WebP 在画质相近时通常小 25–35%，并且支持透明。
+
+< Lower = smaller file, more artefacts
+> 越低 = 文件越小，瑕疵越多
+
+< Maximum width
+> 最大宽度
+
+< 0 keeps the original size; never upscales
+> 0 表示保持原始尺寸；绝不放大
+
+< Aspect ratio and displayed orientation are always preserved. Metadata such as GPS location is not copied. If a result isn't smaller than the original (and wasn't resized), it isn't saved.
+> 宽高比和显示方向始终保留。GPS 位置等元数据不会被复制。如果结果没有比原文件更小（且没有调整大小），则不会保存。
+
+< Visually lossless for most photos; modest savings.
+> 对大多数照片来说视觉无损；节省空间有限。
+
+< Recommended: strong savings with little visible difference.
+> 推荐：大幅节省空间，肉眼几乎看不出差别。
+
+< Small files; artefacts visible on close inspection.
+> 文件较小；仔细观察可看到瑕疵。
+
+< Very small files; noticeable artefacts and blur.
+> 文件很小；有明显的瑕疵和模糊。
+
+< Maximum width must be 0 (original) or at least 16 px
+> 最大宽度必须为 0（原始）或至少 16 像素
+
+< name_q{0}.{1} (plus _1920w when resized)
+> 文件名_q{0}.{1}（调整大小时再加 _1920w）
+
+< Lossless format
+> 无损格式
+
+< usually smallest
+> 通常最小
+
+< PNG output picks the smallest exact colour mode (palette, greyscale, RGB or RGBA) and maximum compression.
+> PNG 输出会选择最小的精确颜色模式（调色板、灰度、RGB 或 RGBA）和最大压缩。
+
+< Discard a result that isn't smaller than its original
+> 放弃不比原文件更小的结果
+
+< Every pixel is preserved exactly — this is not lossy compression. Smaller files are not guaranteed: screenshots and graphics often shrink, while JPEG/HEIC photos usually get larger in a lossless format. 16-bit PNGs and animations are rejected rather than altered.
+> 每个像素都会被精确保留——这不是有损压缩。不保证文件更小：截图和图形通常会缩小，而 JPEG/HEIC 照片在无损格式下通常会变大。16 位 PNG 和动画会被拒绝而不是被改动。
+
+< name_lossless.{0} (in the same folder as the image compressor's results)
+> 文件名_lossless.{0}（与图片压缩结果在同一文件夹）
+
+< Convert to
+> 转换为
+
+< lossless
+> 无损
+
+< lossy
+> 有损
+
+< Quality (lossy formats)
+> 质量（有损格式）
+
+< 90 keeps photos visually identical
+> 90 可让照片看起来与原图无异
+
+< Reads JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG and other RAW previews (when the phone supports them), plus TIFF, PSD (flattened), QOI, PPM/PGM/PBM/PAM and TGA. Animated files use their first frame. Size, aspect ratio and displayed orientation are kept.
+> 支持读取 JPEG、PNG、WebP、HEIC/HEIF、AVIF、GIF、BMP、ICO、WBMP、DNG 及其他 RAW 预览图（手机支持时），以及 TIFF、PSD（已拼合）、QOI、PPM/PGM/PBM/PAM 和 TGA。动画文件使用其第一帧。尺寸、宽高比和显示方向保持不变。
+
+< name.{0} (same name, new format)
+> 文件名.{0}（同名，新格式）
+
+< Layout
+> 布局
+
+< Fills space around images of different sizes
+> 在不同尺寸的图片周围填充空白
+
+< Spacing between images
+> 图片间距
+
+@ no spacing
+< None
+> 无
+
+@ spacing
+< Small
+> 小
+
+@ spacing
+< Medium
+> 中
+
+@ spacing
+< Large
+> 大
+
+< Images are never scaled or cropped — each keeps its exact pixels and correct orientation. The result is a lossless PNG; very large results are written in strips, so they don't need to fit in memory.
+> 图片绝不会被缩放或裁剪——每张都保持精确的像素和正确的方向。结果是无损 PNG；特别大的结果会分条写入，因此不必全部放进内存。
+
+< Left
+> 靠左
+
+< Center
+> 居中
+
+< Right
+> 靠右
+
+< Top
+> 靠上
+
+< Bottom
+> 靠下
+
+< Alignment
+> 对齐方式
+
+< For images narrower or shorter than the widest one
+> 用于比最宽的图片更窄或更矮的图片
+
+< Select at least two images to see the layout.
+> 至少选择两张图片以查看布局。
+
+< Some images couldn't be read.
+> 有些图片无法读取。
+
+< Result: {0} × {1} px ({2} MP)
+> 结果：{0} × {1} 像素（{2} MP）
+
+< <date and time>
+> <日期和时间>
+
+< Merge layout preview
+> 合并布局预览
+
+< AI Assisted Alignment
+> AI 辅助对齐
+
+< Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.
+> 完全在这部手机上运行一个小型图像模型——绝不会上传任何图片。它能解决有歧义的对齐（重复图案、弱匹配），并帮助拼接缺少纹理的照片。没有它拼接也能工作。
+
+< Scene type
+> 场景类型
+
+< Auto detects how your photos were taken
+> “自动”会判断你的照片是怎么拍的
+
+< Flat surface
+> 平面
+
+< Panorama
+> 全景
+
+< Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid.
+> 平面：文档、白板、地图、截图（相机平行移动）。全景：相机在同一位置转动——水平、垂直或网格状。
+
+< Crop to clean edges
+> 裁剪为整齐边缘
+
+< Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)
+> 裁剪到被照片完全覆盖的最大矩形（否则空角会保持透明）
+
+< For best results: overlap neighbouring shots by about a third, keep exposure steady and avoid moving subjects. Featureless walls, sky-only frames and repetitive textures (tiles, fences) are hard to align. Any arrangement and selection order works; photos that don't connect are reported.
+> 为获得最佳效果：相邻照片重叠约三分之一，保持曝光稳定，避免移动的主体。没有特征的墙面、只有天空的画面和重复的纹理（瓷砖、栅栏）很难对齐。任何排列和选择顺序都可以；无法连接的照片会被报告。
+
+@ default file name
+< Stitched
+> 拼接
+
+< lossless, at the photos' native resolution when practical
+> 无损，尽可能使用照片的原始分辨率
+
+< Removed
+> 已移除
+
+< GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)
+> GPS 位置 · 相机品牌、型号和序列号 · 日期 · 软件 · 作者 · 注释 · XMP/IPTC · 隐藏的缩略图和额外图像（深度、动态、HDR 数据）
+
+< Kept
+> 已保留
+
+< The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
+> 逐字节保留的图像数据、方向（使照片保持正立）、颜色配置文件和 GIF 动画。视频：视频流和音频流（逐位保留）及其旋转信息。
+
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> 适用于 JPEG、PNG、WebP、GIF 和 MP4/MOV/WebM 视频。HEIC、AVIF 和 RAW 不重新编码就无法清理；请改用“转换图片”（转换后的副本不含元数据）。
+
+< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
+> 文件名_clean.jpg / .png / .webp / .gif / .mp4——照片在 Pictures，视频在 Movies
+
+< e.g. 1-3, 5, 8-
+> 例如 1-3, 5, 8-
+
+< Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
+> 页码之间用逗号分隔；范围如 4-9；“8-”表示从第 8 页到末尾。页面会按你写的顺序保存。
+
+< Save as
+> 另存为
+
+< name_pages.pdf
+> 文件名_pages.pdf
+
+< name_p3.pdf, name_p4.pdf …
+> 文件名_p3.pdf、文件名_p4.pdf……
+
+< Select a video to choose the part to keep.
+> 选择一个视频以选取要保留的部分。
+
+< Fix videos recorded sideways
+> 修正横着录制的视频
+
+@ no rotation
+< Keep
+> 保持不变
+
+< 90° right
+> 向右 90°
+
+< 90° left
+> 向左 90°
+
+< Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
+> 无损：直接复制数据流，不重新编码。起点会移到最近的前一个关键帧（通常相差不到一两秒）；终点是精确的。
+
+< Reading {0}…
+> 正在读取 {0}…
+
+< {0}: the duration couldn't be read.
+> {0}：无法读取时长。
+
+< Start {0}
+> 起点 {0}
+
+< End {0} · keeps {1}
+> 终点 {0} · 保留 {1}
+
+< Put a video in the stack to choose the part to keep
+> 把一个视频放进组合，即可选择要保留的部分
+
+< Select one video (trimming is set per video)
+> 请选择一个视频（剪辑按每个视频单独设置）
+
+< Reading the video…
+> 正在读取视频…
+
+< Keep at least a fraction of a second
+> 至少保留零点几秒
+
+< Move the handles or pick a rotation
+> 移动手柄或选择一个旋转角度
+
+< name_trim.mp4 (WebM stays WebM)
+> 文件名_trim.mp4（WebM 仍为 WebM）
+
+< Keep {0}–{1} of {2} ({3}–{4}% of each video)
+> 保留{2}中的{0}–{1}（每个视频的 {3}–{4}%）
+
+< Keep {0}–{1}% of each video
+> 保留每个视频的 {0}–{1}%
+
+< turn {0}° clockwise
+> 顺时针旋转 {0}°
+
+< Part of the video to keep
+> 要保留的视频部分
+
+< Select two or more videos. They are joined in the order shown above (tap Review to reorder).
+> 选择两个或更多视频。它们会按上方显示的顺序连接（点按“查看”可重新排序）。
+
+< Keep sound
+> 保留声音
+
+< Clips without sound get silence
+> 没有声音的片段会补上静音
+
+< Clips filmed on the same phone with the same settings are joined without re-encoding, in seconds and with no quality loss. Otherwise they're converted to one size (black bars where shapes differ) and format first.
+> 在同一部手机上用相同设置拍摄的片段会直接连接，无需重新编码，只需几秒，且没有画质损失。否则会先转换为统一的尺寸（形状不同处加黑边）和格式。
+
+< Checking the clips…
+> 正在检查片段…
+
+< One of the files couldn't be read as a video.
+> 其中一个文件无法作为视频读取。
+
+< {0} clip · {1} in total
+< {0} clips · {1} in total
+> {0}个片段 · 总计 {1}
+
+< these clips can be joined without re-encoding (no quality loss).
+> 这些片段无需重新编码即可连接（无画质损失）。
+
+< {0}, so they'll be converted to a common format first (slower).
+> {0}，因此它们会先转换为统一格式（较慢）。
+
+< Slow motion
+> 慢动作
+
+< Best with high-frame-rate recordings
+> 最适合高帧率录制的视频
+
+< Faster
+> 更快
+
+< Timelapse
+> 延时摄影
+
+< Hours become minutes
+> 数小时变成数分钟
+
+< Natural pitch, no chipmunk voices (up to 4×)
+> 音调自然，不会变成“花栗鼠”嗓音（最高 4 倍）
+
+< Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
+> 无声且最高 120 fps 时，视频只会重新调整时间：无需重新编码，没有画质损失。否则会重新编码为 H.264 MP4；延时摄影保持每秒 30 帧。
+
+< {0} becomes {1}
+> {0} 变为 {1}
+
+< only {0} frame per second, so it will look choppy
+< only {0} frames per second, so it will look choppy
+> 每秒仅{0}帧，因此画面会显得卡顿
+
+< no re-encoding
+> 无需重新编码
+
+< Speed {0}
+> 速度 {0}
+
+< Choose a speed
+> 选择速度
+
+< Segment length
+> 片段长度
+
+< Each part will be about this long
+> 每个部分大约这么长
+
+< Custom length (seconds)
+> 自定义长度（秒）
+
+< e.g. 45
+> 例如 45
+
+< No re-encoding: parts keep the original quality. Cuts happen at the nearest keyframe (sync point) at or before each boundary, so parts may be slightly shorter than the length you set. Videos with very few keyframes can give some longer parts.
+> 不重新编码：各部分保持原始画质。切割发生在每个分界点处或之前最近的关键帧（同步点），因此各部分可能比你设定的长度略短。关键帧很少的视频可能会产生一些较长的部分。
+
+< Enter a segment length between 1 second and 24 hours
+> 请输入 1 秒到 24 小时之间的片段长度
+
+< One file per part: name_part01.mp4, name_part02.mp4 … (WebM sources stay WebM)
+> 每个部分一个文件：文件名_part01.mp4、文件名_part02.mp4……（WebM 源文件仍为 WebM）
+
+< Lossless: video and audio streams are copied bit-for-bit, so quality is exactly the same. This is not compression — the size changes only slightly. Use Video compressor to make files much smaller.
+> 无损：视频流和音频流逐位复制，因此画质完全相同。这不是压缩——大小只有细微变化。要大幅缩小文件，请使用视频压缩。
+
+< What it improves: the index (moov) is moved to the start so playback and uploads begin immediately, and padding, subtitle and data tracks are removed. Location metadata isn't copied.
+> 改进之处：索引（moov）移到开头，使播放和上传可立即开始，并移除填充、字幕和数据轨道。位置元数据不会被复制。
+
+< Higher quality = larger file
+> 质量越高 = 文件越大
+
+< Maximum resolution
+> 最大分辨率
+
+< Shorter side; never upscales
+> 较短的一边；绝不放大
+
+< Output is H.264 video with AAC audio in MP4, which plays on virtually every device. Audio is kept (converted to AAC if needed). Orientation is preserved. If a result would be larger than the original, it is not saved.
+> 输出为 MP4 中的 H.264 视频和 AAC 音频，几乎所有设备都能播放。音频会保留（需要时转换为 AAC）。方向保持不变。如果结果会比原文件更大，则不会保存。
+
+< ≈ {0} Mbps for {1}p at 30 fps · about {2} MB per minute (lower if the source bitrate is lower)
+> ≈ {0} Mbps（{1}p、30 fps）· 每分钟约 {2} MB（源码率较低时会更低）
+
+< The video stream is copied unchanged (no quality loss); only the sound track is left out. Useful for silent clips and to save a little space. Videos that already have no audio are skipped.
+> 视频流原样复制（无画质损失）；只去掉音轨。适合无声片段，也能节省一点空间。本来就没有音频的视频会被跳过。
+
+< Keep source frame rate and size
+> 保持源帧率和尺寸
+
+< Uses the video's own frame rate (up to 50 fps) and displayed resolution
+> 使用视频自身的帧率（最高 50 fps）和显示分辨率
+
+< Fewer frames = much smaller GIF
+> 帧数越少 = GIF 小得多
+
+< Width
+> 宽度
+
+< Height follows the video's shape
+> 高度跟随视频的形状
+
+< Part of the video
+> 视频的一部分
+
+< Leave length at 0 to convert to the end
+> 时长保持为 0 即可转换到结尾
+
+< Start (s)
+> 起点（秒）
+
+< Length (s)
+> 时长（秒）
+
+< 0 = to the end
+> 0 = 到结尾
+
+< Colour dithering
+> 颜色抖动
+
+< How the 256-colour palette blends gradients
+> 256 色调色板如何混合渐变
+
+< Pattern (stable)
+> 图案（稳定）
+
+< None (sharpest)
+> 无（最锐利）
+
+< Diffusion (smoothest)
+> 扩散（最平滑）
+
+< GIF can only show 256 colours per frame, so file size grows quickly with frame rate and resolution. 10–15 fps at 320–480 px is a good start. Colours adapt to each scene; timing follows the video exactly.
+> GIF 每帧最多只能显示 256 种颜色，因此文件大小会随帧率和分辨率迅速增大。10–15 fps、320–480 像素是个不错的起点。颜色会适应每个场景；时间与视频完全一致。
+
+< Start and length can't be negative
+> 起点和时长不能为负数
+
+< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
+> AAC 音轨会原样复制到 .m4a 文件中——不重新编码，没有音质损失。音频不是 AAC（例如 Opus 或 AC-3）或没有声音的视频会在结果中明确列出。
+
+< Watermark preview
+> 水印预览
+
+< Select images to preview
+> 选择图片以预览
+
+< Watermark text
+> 水印文字
+
+< e.g. © Your Name {0}
+> 例如 © 你的名字 {0}
+
+< Logo image
+> 徽标图片
+
+< Optional — PNG with transparency works best
+> 可选——带透明度的 PNG 效果最好
+
+< Size
+> 大小
+
+< Of each image's shorter side; proportions never stretch
+> 相对于每张图片较短的一边；比例绝不会被拉伸
+
+< Opacity
+> 不透明度
+
+< Text colour
+> 文字颜色
+
+< White
+> 白色
+
+< Black
+> 黑色
+
+< Grey
+> 灰色
+
+< Gold
+> 金色
+
+< Default position
+> 默认位置
+
+< Used for every image shape you don't set separately
+> 用于你没有单独设置的每种图片形状
+
+< Placement by image shape
+> 按图片形状设置位置
+
+< Different shapes can use different positions
+> 不同的形状可以使用不同的位置
+
+< Choose logo
+> 选择徽标
+
+< From files
+> 从文件
+
+< Remove logo
+> 移除徽标
+
+< That file isn't an image.
+> 该文件不是图片。
+
+< Select images to see the shapes in your batch.
+> 选择图片以查看批次中的各种形状。
+
+< Set placement for each shape ({0})
+> 为每种形状设置位置（{0}）
+
+< Set placement for this shape
+> 为此形状设置位置
+
+< Reset to default position
+> 重置为默认位置
+
+< Add watermark text or choose a logo
+> 添加水印文字或选择徽标
+
+< name_wm.jpg / .png / .webp (same type of format as each original)
+> 文件名_wm.jpg / .png / .webp（与每个原图格式类型相同）
+
+< Watermark placement
+> 水印位置
+
+< No image sizes are known yet. Go back and wait for the selection to load.
+> 尚不知道任何图片的尺寸。请返回并等待所选内容加载完成。
+
+< Shape {0} of {1}
+> 第{0}种形状，共{1}种
+
+< {0} image with this shape
+< {0} images with this shape
+> {0}张图片为此形状
+
+< Choose where the watermark goes
+> 选择水印放置的位置
+
+< Review plan
+> 查看方案
+
+< Next shape
+> 下一种形状
+
+< Placement plan
+> 位置方案
+
+< This is how the watermark will be placed when you export.
+> 导出时水印将按此方式放置。
+
+< {0} image → {1}
+< {0} images → {1}
+> {0}张图片 → {1}
+
+< Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
+> 大小为较短边的 {0}% · 不透明度 {1}%。形状未列出的图片使用默认位置（{2}）。
+
+< Queued — it prints when the current job finishes.
+> 已加入队列——当前任务完成后开始打印。
+
+< Sending to the printer. You can leave the app; progress is shown in the notification.
+> 正在发送到打印机。你可以离开应用；进度会显示在通知中。
+
+< Only your Wi-Fi
+> 仅限你的 Wi-Fi
+
+< No printer app
+> 没有打印应用
+
+< Printer
+> 打印机
+
+< Can't reach the printer
+> 无法连接打印机
+
+< Choose your printer. It must be on the same Wi-Fi as this phone (or its own Wi-Fi Direct network).
+> 选择你的打印机。它必须与这部手机连接同一个 Wi-Fi（或使用其自己的 Wi-Fi Direct 网络）。
+
+< Find printers
+> 查找打印机
+
+< Connecting…
+> 正在连接…
+
+< Printing
+> 正在打印
+
+< Ready · {0}
+> 就绪 · {0}
+
+< Ready
+> 就绪
+
+< encrypted
+> 已加密
+
+< Change
+> 更改
+
+< unknown
+> 未知
+
+< Ink, as the printer estimates it
+> 墨水量（打印机估算）
+
+< Some ink is low. If your printer has refillable tanks, check them: the printer can only estimate.
+> 部分墨水不足。如果你的打印机有可补充的墨仓，请检查一下：打印机只能估算。
+
+< Choose a printer
+> 选择打印机
+
+< Close
+> 关闭
+
+@ printers kept in the app
+< Saved
+> 已保存
+
+< Forget {0}
+> 忘记 {0}
+
+< On this Wi-Fi
+> 在此 Wi-Fi 上
+
+< Looking for printers…
+> 正在查找打印机…
+
+< Add by IP address
+> 通过 IP 地址添加
+
+< If your printer isn't found (its IP address is on its network status page)
+> 如果找不到你的打印机（其 IP 地址在打印机的网络状态页上）
+
+< Printer's IP address
+> 打印机的 IP 地址
+
+< No printers answered. Check that the printer is on and connected to this Wi-Fi, or add it by IP address.
+> 没有打印机响应。请检查打印机是否已开机并连接到此 Wi-Fi，或通过 IP 地址添加。
+
+< Found {0}
+< Found {0}
+> 找到{0}台
+
+< Couldn't look for printers
+> 无法查找打印机
+
+< The paper sizes, paper types and other settings shown are the printer's own once it's connected.
+> 连接后，显示的纸张尺寸、纸张类型和其他设置均为打印机自身的设置。
+
+< Paper size
+> 纸张尺寸
+
+< Paper type
+> 纸张类型
+
+< Tell the printer what's loaded: it lays down the right amount of ink
+> 告诉打印机装的是什么纸：它会喷出合适的墨量
+
+< {0} per sheet
+< {0} per sheet
+> 每张纸{0}张
+
+< Whole photo
+> 整张照片
+
+< Fill (trims edges)
+> 填满（裁掉边缘）
+
+< Borderless
+> 无边距
+
+< Available once the printer is connected
+> 连接打印机后可用
+
+< Print to the edges of the paper
+> 打印到纸张边缘
+
+< Not available for {0} on this printer
+> 此打印机上的 {0} 不可用
+
+< Actual size
+> 实际尺寸
+
+< PDF pages at their real size instead of fitted to the paper
+> PDF 页面按实际大小打印，而不是适应纸张
+
+< All, or e.g. 1-3, 5, 8-
+> 全部，或例如 1-3, 5, 8-
+
+< Colour
+> 彩色
+
+< Black & white
+> 黑白
+
+< Draft
+> 草稿
+
+@ print quality
+< Best
+> 最佳
+
+< Normal
+> 标准
+
+< photos
+> 照片
+
+< Two-sided
+> 双面
+
+< Print on both sides of the paper
+> 在纸张两面打印
+
+< Select photos or PDFs to see the sheets
+> 选择照片或 PDF 以查看纸张
+
+< Couldn't prepare the preview
+> 无法准备预览
+
+< {0} sheet
+< {0} sheets
+> {0}张纸
+
+< first {0} shown
+< first {0} shown
+> 显示前{0}张
+
+< Sheet {0}
+> 第{0}张
+
+< {0} copy
+< {0} copies
+> {0}份
+
+< Connecting to the printer…
+> 正在连接打印机…
+
+< Choose a printer first
+> 请先选择打印机
+
+< The sheets are drawn on this phone and sent straight to the printer. Progress shows in the notification and in Activity, where you can cancel; problems such as no paper are explained there.
+> 纸张内容在这部手机上绘制并直接发送到打印机。进度会显示在通知和“活动”中，你可以在那里取消；缺纸等问题也会在那里说明。
+
+< Your files go only to the printer, over your own network. The app never connects to servers on the internet.
+> 你的文件只会通过你自己的网络发送到打印机。应用从不连接互联网上的服务器。
+
+< Couldn't read the shared files.
+> 无法读取分享的文件。
+
+< No app on this phone can handle this action.
+> 这部手机上没有应用可以处理此操作。
+
+< This device has no camera. Add pages from the gallery instead.
+> 此设备没有相机。请改为从图库添加页面。
+
+< No camera app is available on this phone. Add pages from the gallery instead.
+> 这部手机上没有可用的相机应用。请改为从图库添加页面。
+
+< The camera app didn't return a photo.
+> 相机应用没有返回照片。
+
+< This action isn't available on this phone.
+> 这部手机上无法使用此操作。
+
+< Nothing was produced.
+> 没有生成任何内容。
+
+< Waiting
+> 等待中
+
+< Waiting to start
+> 等待开始
+
+< Cancelled · {0} saved before cancelling
+< Cancelled · {0} saved before cancelling
+> 已取消 · 取消前已保存{0}个
+
+< Cancelled
+> 已取消
+
+< Not printed
+> 未打印
+
+< {0} file saved
+< {0} files saved
+> 已保存{0}个文件
+
+< {0} failed
+< {0} failed
+> {0}个失败
+
+< {0} skipped
+< {0} skipped
+> 已跳过{0}个
+
+< Export progress
+> 导出进度
+
+< Shows the progress of running exports
+> 显示正在运行的导出的进度
+
+< Finished exports
+> 导出完成
+
+< Tells you when an export finishes or fails
+> 导出完成或失败时通知你
+
+< Preparing export…
+> 正在准备导出…
+
+< {0} queued
+< {0} queued
+> {0}个在排队
+
+< Workload {0}%
+> 负载 {0}%
+
+< Export finished
+> 导出完成
+
+< Export finished with issues
+> 导出完成，但有问题
+
+< Export cancelled
+> 导出已取消
+
+< Export failed
+> 导出失败
+
+< Saved to {0}
+> 已保存到 {0}
+
+< File {0} of {1}
+> 第{0}个文件，共{1}个
+
+< Processing
+> 处理中
+
+< WebP lossless
+> WebP 无损
+
+< {0} supports at most {1} px per side; this image would be {2}×{3}. Choose a smaller width or another format.
+> {0} 每边最多支持 {1} 像素；此图片将为 {2}×{3}。请选择更小的宽度或其他格式。
+
+< This image is too large to encode as {0} with the memory available ({1}×{2}). Choose PNG or JPEG, or set a smaller width.
+> 此图片太大，可用内存无法将其编码为 {0}（{1}×{2}）。请选择 PNG 或 JPEG，或设置更小的宽度。
+
+< This {0} image is too large to process in pieces with the memory available.
+> 这张 {0} 图片太大，可用内存无法分块处理。
+
+< The JPEG encoder failed.
+> JPEG 编码器失败。
+
+< The WebP encoder failed.
+> WebP 编码器失败。
+
+< The lossless WebP encoder failed.
+> WebP 无损编码器失败。
+
+< The PNG encoder failed.
+> PNG 编码器失败。
+
+< {0} cannot be written in pieces.
+> {0} 无法分块写入。
+
+< This very large image uses the {0} colour profile, which can't be preserved exactly when processing it in pieces.
+> 这张超大图片使用 {0} 颜色配置文件，分块处理时无法精确保留。
+
+< The written file failed verification ({0}×{1}, expected {2}×{3}), so it was discarded.
+> 写入的文件未通过验证（{0}×{1}，应为 {2}×{3}），已被丢弃。
+
+< This image ({0}×{1}) needs about {2} MB of memory, more than is free right now.
+> 这张图片（{0}×{1}）大约需要 {2} MB 内存，超过了当前的可用空闲内存。
+
+< The image data could not be decoded. The file may be damaged or use an unsupported variant of {0}.
+> 无法解码图像数据。文件可能已损坏，或使用了 {0} 的不受支持的变体。
+
+< Part of the image could not be decoded; the file may be damaged.
+> 图像的一部分无法解码；文件可能已损坏。
+
+< The file is empty.
+> 文件为空。
+
+< This {0} file is damaged or uses an unsupported variant.
+> 这个 {0} 文件已损坏，或使用了不受支持的变体。
+
+< This {0} file is incomplete (truncated). Processing it would produce grey or missing areas, so it was not used.
+> 这个 {0} 文件不完整（被截断）。处理它会产生灰色或缺失的区域，因此未使用。
+
+< AVIF images can't be decoded on this Android version.
+> 此 Android 版本无法解码 AVIF 图片。
+
+< This HEIC/HEIF image can't be decoded on this device.
+> 此设备无法解码这张 HEIC/HEIF 图片。
+
+< This camera RAW format isn't supported by Android's decoder.
+> Android 的解码器不支持这种相机 RAW 格式。
+
+< This file is not an image format that can be decoded.
+> 此文件不是可解码的图片格式。
+
+< This {0} image could not be decoded. It may be damaged.
+> 这张 {0} 图片无法解码。它可能已损坏。
+
+< Unsupported {0} file
+> 不支持的 {0} 文件
+
+< Unsupported format
+> 不支持的格式
+
+< The {0} file could not be decoded
+> 无法解码 {0} 文件
+
+< The {0} file is damaged.
+> {0} 文件已损坏。
+
+< Top left
+> 左上
+
+< Top center
+> 上中
+
+< Top right
+> 右上
+
+< Center left
+> 左中
+
+< Center right
+> 右中
+
+< Bottom left
+> 左下
+
+< Bottom center
+> 下中
+
+< Bottom right
+> 右下
+
+< Landscape
+> 横向
+
+< Waiting for the phone to cool down
+> 正在等待手机降温
+
+< Paused to save battery (below 15%)
+> 为节省电量已暂停（低于 15%）
+
+< Paused while Battery Saver is on
+> 省电模式开启期间已暂停
+
+< Organising the gallery
+> 正在整理图库
+
+< Shows progress while photos are analysed on this phone for search and people
+> 在这部手机上分析照片以便搜索和识别人物时显示进度
+
+< Grouping faces into people
+> 正在把人脸归为人物
+
+< {1} of {0} photo or video · on this phone
+< {1} of {0} photos and videos · on this phone
+> {1} / {0}张照片和视频 · 在这部手机上
+
+< Reading your library
+> 正在读取你的图库
+
+< The photo library isn't available right now
+> 图库目前不可用
+
+< Other
+> 其他
+
+@ search words for videos, separated by commas
+< video,videos,clip,clips,movie,movies
+> 视频,影片,短片,录像
+
+@ search words for photos, separated by commas
+< photo,photos,picture,pictures,pic,pics,image,images
+> 照片,相片,图片,图像
+
+@ search words for screenshots, separated by commas
+< screenshot,screenshots,screen shot,screen shots,screengrab
+> 截图,截屏,屏幕截图
+
+@ search words for GIFs, separated by commas
+< gif,gifs,animation,animations
+> 动图,动画,动态图,表情包
+
+@ search words for favourites, separated by commas
+< favourite,favourites,favorite,favorites,starred
+> 收藏,最爱,喜欢,星标
+
+< GIFs
+> GIF
+
+@ search words for today, separated by commas
+< today
+> 今天,今日
+
+@ search words for yesterday, separated by commas
+< yesterday
+> 昨天,昨日
+
+@ search words for this week, separated by commas
+< this week
+> 本周,这周,这星期,这个星期
+
+@ search words for last week, separated by commas
+< last week
+> 上周,上星期,上个星期
+
+@ search words for this month, separated by commas
+< this month
+> 本月,这个月,这月
+
+@ search words for last month, separated by commas
+< last month
+> 上月,上个月
+
+@ search words for this year, separated by commas
+< this year
+> 今年,本年
+
+@ search words for last year, separated by commas
+< last year
+> 去年,上一年
+
+< This week
+> 本周
+
+< Last week
+> 上周
+
+< This month
+> 本月
+
+< Last year
+> 去年
+
+@ search: words to leave out of a search, separated by commas
+< a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
+> 的,和,与,及,或,在,于,从,到,给,把,我,你,他,她,们,找,搜,看,查,有,是,个,些,所,哪,里,一,全,部,显,示,起,拍,摄,附,近,以,者
+
+< Upbeat
+> 活泼
+
+< Bright, with a beat
+> 明亮，节奏感强
+
+< Chill
+> 悠闲
+
+< Relaxed, soft electric piano
+> 放松，柔和的电钢琴
+
+< Cinematic
+> 电影感
+
+< Slow and wide, piano and strings
+> 舒缓开阔，钢琴与弦乐
+
+< Upbeat music
+> 活泼的音乐
+
+< Chill music
+> 悠闲的音乐
+
+< Cinematic music
+> 电影感音乐
+
+< Reading your photo library
+> 正在读取你的图库
+
+< The scan stopped unexpectedly.
+> 扫描意外停止。
+
+< Looking at your photos
+> 正在查看你的照片
+
+< Comparing
+> 正在比较
+
+< Watching {0}
+> 正在观看 {0}
+
+< Looking at {0}
+> 正在查看 {0}
+
+< couldn't be read
+> 无法读取
+
+< Could not prepare the on-device model {0}
+> 无法准备本机模型 {0}
+
+@ kind of photo
+< Portrait
+> 人像
+
+@ kind of photo
+< Landscape
+> 风景
+
+< Food
+> 食物
+
+< Animal
+> 动物
+
+< Plants & flowers
+> 植物和花卉
+
+< City & buildings
+> 城市和建筑
+
+< Document
+> 文档
+
+< Night
+> 夜景
+
+< General
+> 通用
+
+< brightened the faces
+> 提亮了人脸
+
+< brightened
+> 已提亮
+
+< toned down the brightness
+> 调低了亮度
+
+< recovered highlights
+> 恢复了高光
+
+< lifted shadows
+> 提亮了阴影
+
+< added contrast
+> 增加了对比度
+
+< cooled a yellow cast
+> 减弱了偏黄
+
+< warmed a blue cast
+> 减弱了偏蓝
+
+< balanced colours
+> 平衡了颜色
+
+< removed a green tint
+> 去除了偏绿
+
+< removed a magenta tint
+> 去除了偏洋红
+
+< richer colours
+> 颜色更浓郁
+
+< Identical copies
+> 完全相同的副本
+
+< Byte-for-byte the same file
+> 逐字节完全相同的文件
+
+< Duplicates
+> 重复项
+
+< The same picture saved again, resized or re-compressed
+> 重新保存、调整大小或重新压缩后的同一张图片
+
+< Bursts and retakes of the same moment
+> 同一瞬间的连拍和重拍
+
+< Best quality
+> 画质最佳
+
+< Most pixels, then the sharpest
+> 像素最多，其次是最锐利的
+
+< The oldest file, before it was copied or edited
+> 最早的文件，即被复制或编辑之前的版本
+
+< The latest file, e.g. your edited version
+> 最新的文件，例如你编辑后的版本
+
+< Smallest file
+> 最小的文件
+
+< Saves the most space
+> 最节省空间
+
+< keeps the best-quality copy
+> 保留画质最佳的副本
+
+< keeps the original copy
+> 保留原始副本
+
+< keeps the newest copy
+> 保留最新的副本
+
+< keeps the smallest copy
+> 保留最小的副本
+
+< Favourite
+> 收藏
+
+< Person you keep
+> 你保留的人物
+
+< Transparent
+> 透明
+
+< Light grey
+> 浅灰色
+
+< Removing the background from {0} photo
+< Removing the background from {0} photos
+> 正在移除{0}张照片的背景
+
+< Finding the subject
+> 正在查找主体
+
+< No clear subject was found in this photo, so nothing was saved.
+> 这张照片中没有找到清晰的主体，因此没有保存任何内容。
+
+< The whole photo looks like the subject, so there was no background to remove.
+> 整张照片看起来都是主体，因此没有可移除的背景。
+
+< Very large photo: saved at {0}×{1}.
+> 照片非常大：已按 {0}×{1} 保存。
+
+< transparent PNG
+> 透明 PNG
+
+< {0} background
+> {0}背景
+
+@ strength
+< Subtle
+> 轻微
+
+@ strength
+< Natural
+> 自然
+
+< Enhancing {0} photo
+< Enhancing {0} photos
+> 正在增强{0}张照片
+
+< Looking at the photo
+> 正在查看照片
+
+< This photo already looks balanced; nothing to improve.
+> 这张照片看起来已经很平衡，无需改进。
+
+< fine-tuned
+> 已微调
+
+< Pixelating faces in {0} file
+< Pixelating faces in {0} files
+> 正在将{0}个文件中的人脸像素化
+
+< Blurring faces in {0} file
+< Blurring faces in {0} files
+> 正在将{0}个文件中的人脸模糊
+
+< No faces to hide were found in this file.
+> 在此文件中没有找到需要隐藏的人脸。
+
+< None of the chosen people appear in this file, so it was left as it is.
+> 所选人物都没有出现在此文件中，因此保持原样。
+
+< Finding faces
+> 正在查找人脸
+
+< Photo metadata (location, camera, dates) is not copied.
+> 照片元数据（位置、相机、日期）不会被复制。
+
+< {0} face pixelated
+< {0} faces pixelated
+> 已将{0}张人脸像素化
+
+< {0} face blurred
+< {0} faces blurred
+> 已将{0}张人脸模糊
+
+< This file has no video track.
+> 此文件没有视频轨道。
+
+< Blurring faces frame by frame
+> 正在逐帧模糊人脸
+
+< {0} face track pixelated
+< {0} face tracks pixelated
+> 已将{0}条人脸轨迹像素化
+
+< {0} face track blurred
+< {0} face tracks blurred
+> 已将{0}条人脸轨迹模糊
+
+< H.264 from {0}
+> 来自 {0} 的 H.264
+
+< Vertical
+> 垂直
+
+< One image below another
+> 一张图片在另一张下方
+
+< Horizontal
+> 水平
+
+< Images side by side
+> 图片并排
+
+< Smart pack
+> 智能排布
+
+< Compact arrangement of different sizes
+> 将不同尺寸的图片紧凑排列
+
+< Merging {0} image ({1})
+< Merging {0} images ({1})
+> 正在合并{0}张图片（{1}）
+
+< The merged image would be {0}×{1} pixels, which is too large to save.
+> 合并后的图片将是 {0}×{1} 像素，太大，无法保存。
+
+< The result is very large ({0}×{1}); some gallery apps may not be able to open it.
+> 结果非常大（{0}×{1}）；某些图库应用可能无法打开。
+
+< {0} image
+< {0} images
+> {0}张图片
+
+< Stitching {0} photo (AI assisted)
+< Stitching {0} photos (AI assisted)
+> 正在拼接{0}张照片（AI 辅助）
+
+< Stitching {0} photo
+< Stitching {0} photos
+> 正在拼接{0}张照片
+
+< AI assistance could not start on this device ({0}); stitched without it.
+> AI 辅助无法在此设备上启动（{0}）；已在没有它的情况下完成拼接。
+
+< AI resolved {0} alignment decision on-device.
+< AI resolved {0} alignment decisions on-device.
+> AI 在本机解决了{0}个对齐判断。
+
+< AI assistance was on but no ambiguous decisions needed it.
+> AI 辅助已开启，但没有需要它的含糊判断。
+
+< {0}% scale
+> 缩放 {0}%
+
+< Watermarking {0} image
+< Watermarking {0} images
+> 正在为{0}张图片添加水印
+
+< The logo image could not be loaded: {0}
+> 无法加载徽标图片：{0}
+
+< Add watermark text or a logo first.
+> 请先添加水印文字或徽标。
+
+< Saving edited photo
+> 正在保存编辑后的照片
+
+< cropped/rotated
+> 已裁剪/旋转
+
+< {0} retouch
+< {0} retouches
+> {0}处修饰
+
+< {0} adjustment
+< {0} adjustments
+> {0}项调整
+
+< {0} look
+> {0}滤镜
+
+< Photo metadata (location, camera, dates) is not copied to edited copies.
+> 照片元数据（位置、相机、日期）不会复制到编辑后的副本。
+
+< Converting {0} video to GIF
+< Converting {0} videos to GIF
+> 正在将{0}个视频转换为 GIF
+
+< The video's dimensions could not be read.
+> 无法读取视频的尺寸。
+
+< Frame rate limited to 50 fps, the fastest rate GIF viewers play.
+> 帧率已限制为 50 fps，这是 GIF 查看器能播放的最快速率。
+
+< The chosen start time is beyond the end of the video.
+> 所选起点超出了视频的结尾。
+
+< Analysing colours
+> 正在分析颜色
+
+< No frames could be decoded from the selected part of the video.
+> 无法从视频所选部分解码出任何帧。
+
+< {0} frame used its own colour palette for a scene with different colours.
+< {0} frames used their own colour palette for scenes with different colours.
+> 有{0}帧在颜色不同的场景中使用了自己的调色板。
+
+< {0} frame
+< {0} frames
+> {0}帧
+
+< The written GIF failed verification, so it was discarded.
+> 写入的 GIF 未通过验证，已被丢弃。
+
+< The written GIF has no frames, so it was discarded.
+> 写入的 GIF 没有任何帧，已被丢弃。
+
+< Compressing {0} GIF ({1} colours)
+< Compressing {0} GIFs ({1} colours)
+> 正在压缩{0}个 GIF（{1} 种颜色）
+
+< Analysing
+> 正在分析
+
+< The GIF contains no frames.
+> GIF 不包含任何帧。
+
+< The result would not be smaller ({0} vs {1}), so nothing was saved. Try fewer colours, a smaller width or a lower frame rate.
+> 结果不会更小（{0} 对 {1}），因此没有保存任何内容。请尝试更少的颜色、更小的宽度或更低的帧率。
+
+< {1} of {0} frame
+< {1} of {0} frames
+> {1} / {0}帧
+
+< Optimizing {0} GIF (pixel-preserving)
+< Optimizing {0} GIFs (pixel-preserving)
+> 正在优化{0}个 GIF（保留像素）
+
+< This GIF is already efficiently encoded (optimized: {0} vs {1}), so nothing was saved.
+> 这个 GIF 的编码已经很高效（优化后：{0} 对 {1}），因此没有保存任何内容。
+
+< pixel-identical frames
+> 像素完全一致的帧
+
+< resized with nearest-neighbour sampling (no new colours)
+> 已用最近邻采样调整大小（不产生新颜色）
+
+< Making a highlight video from {0} photo or video
+< Making a highlight video from {0} photos and videos
+> 正在用{0}张照片和视频制作精彩视频
+
+< Pick at least two photos or videos.
+> 请至少选择两张照片或视频。
+
+< Looking at the photos and videos ({0} of {1})
+> 正在查看照片和视频（{0} / {1}）
+
+< "{0}" couldn't be read and was left out.
+> 无法读取“{0}”，已排除。
+
+< Too few of the files could be read to make a video.
+> 可读取的文件太少，无法制作视频。
+
+< Writing the music
+> 正在创作音乐
+
+< Preparing the sound
+> 正在准备声音
+
+< Making the video
+> 正在制作视频
+
+< Saving
+> 正在保存
+
+< {0} of the files couldn't be read.
+< {0} of the files couldn't be read.
+> 有{0}个文件无法读取。
+
+< Compressing {0} image to {1} (quality {2})
+< Compressing {0} images to {1} (quality {2})
+> 正在将{0}张图片压缩为 {1}（质量 {2}）
+
+< Already compact: re-encoding at quality {0} would make it larger ({1} vs {2}). Nothing was saved.
+> 已经很精简：以质量 {0} 重新编码会使其更大（{1} 对 {2}）。没有保存任何内容。
+
+< Transparent areas were filled with white because JPEG has no transparency.
+> 透明区域已填充为白色，因为 JPEG 不支持透明。
+
+< Only the first frame of the animation was used.
+> 只使用了动画的第一帧。
+
+< Optimizing {0} image losslessly ({1})
+< Optimizing {0} images losslessly ({1})
+> 正在无损优化{0}张图片（{1}）
+
+< GIFs are optimized with the GIF optimizer tool (this tool would keep only one frame).
+> GIF 请使用 GIF 优化器工具处理（此工具只会保留一帧）。
+
+< Animated WebP can't be optimized here without losing its animation.
+> 动态 WebP 在这里无法在不丢失动画的情况下优化。
+
+< 16-bit-per-channel PNG can't be kept pixel-identical (Android decodes 8 bits per channel). Nothing was saved.
+> 每通道 16 位的 PNG 无法保持像素完全一致（Android 每通道只解码 8 位）。没有保存任何内容。
+
+< {0} photos are already lossy-compressed; storing their pixels losslessly takes more space.
+> {0} 照片本来就是有损压缩的；无损存储它们的像素会占用更多空间。
+
+< Not smaller than the original ({0} vs {1}), so nothing was saved.
+> 没有比原文件更小（{0} 对 {1}），因此没有保存任何内容。
+
+< orientation applied to pixels
+> 方向已应用到像素
+
+< pixel-identical
+> 像素完全一致
+
+< Converting {0} image to {1}
+< Converting {0} images to {1}
+> 正在将{0}张图片转换为 {1}
+
+< {0} supports at most {1} px per side; this image is {2}×{3}. Choose PNG or JPEG.
+> {0} 每边最多支持 {1} 像素；此图片为 {2}×{3}。请选择 PNG 或 JPEG。
+
+< Only the first frame of the animation was converted.
+> 只转换了动画的第一帧。
+
+< quality {0}
+> 质量 {0}
+
+< The written file failed verification (missing track), so it was discarded.
+> 写入的文件未通过验证（缺少轨道），已被丢弃。
+
+< The written file failed verification (no samples), so it was discarded.
+> 写入的文件未通过验证（没有采样），已被丢弃。
+
+< The written file could not be read back, so it was discarded.
+> 写入的文件无法回读，已被丢弃。
+
+< Removing metadata from {0} file
+< Removing metadata from {0} files
+> 正在从{0}个文件中移除元数据
+
+< {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
+> {0} 文件不重新编码就无法清理。请使用“转换图片”生成干净的 JPEG 或 PNG 副本（转换后的文件不含元数据）。
+
+< The file is damaged or uses an unusual layout ({0}); nothing was saved.
+> 文件已损坏或使用了不常见的结构（{0}）；没有保存任何内容。
+
+< No metadata found — this file is already clean. Nothing was saved.
+> 没有发现元数据——此文件本来就是干净的。没有保存任何内容。
+
+< The cleaned copy failed verification, so it was discarded.
+> 清理后的副本未通过验证，已被丢弃。
+
+< orientation
+> 方向
+
+< Removed: {0}.
+> 已移除：{0}。
+
+< Kept: {0}.
+> 已保留：{0}。
+
+< image data copied unchanged
+> 图像数据原样复制
+
+< Location, camera, date and other container metadata were not copied. Rotation is kept.
+> 位置、相机、日期和其他容器元数据未被复制。旋转信息已保留。
+
+< video and audio copied bit-for-bit
+> 视频和音频逐位复制
+
+< Trimming {0}
+> 正在剪辑 {0}
+
+< Trimming {0} video
+< Trimming {0} videos
+> 正在剪辑{0}个视频
+
+< The selected part is too short.
+> 所选部分太短。
+
+< Finding keyframes
+> 正在查找关键帧
+
+< Nothing to change: the whole video is selected and it isn't rotated.
+> 无需更改：已选中整个视频，且未旋转。
+
+< Starts {0} earlier than chosen, at the previous keyframe (cutting elsewhere would need re-encoding).
+> 起点比所选时间提前了 {0}，位于上一个关键帧处（在别处切割需要重新编码）。
+
+< Turned {0}° clockwise (players read the rotation flag; pixels are untouched).
+> 已顺时针旋转 {0}°（播放器会读取旋转标记；像素不变）。
+
+< One PDF
+> 一个 PDF
+
+< One PDF per page
+> 每页一个 PDF
+
+< Enter the pages to keep, like 1-3, 5
+> 输入要保留的页面，例如 1-3, 5
+
+< "{0}" isn't a valid page range
+> “{0}”不是有效的页码范围
+
+< Page {1} doesn't exist; the PDF has {0} page
+< Page {1} doesn't exist; the PDF has {0} pages
+> 第{1}页不存在；该 PDF 共有{0}页
+
+< "{0}" isn't a page number
+> “{0}”不是页码
+
+< Extracting pages from {0} PDF
+< Extracting pages from {0} PDFs
+> 正在从{0}个 PDF 中提取页面
+
+< This PDF is password-protected. Remove the password first.
+> 此 PDF 受密码保护。请先移除密码。
+
+< Not a valid PDF or damaged ({0}).
+> 不是有效的 PDF 或已损坏（{0}）。
+
+< {1} of {0} page
+< {1} of {0} pages
+> {1} / {0}页
+
+< {0} PDF
+< {0} PDFs
+> {0}个 PDF
+
+< text and links kept
+> 保留文字和链接
+
+< The written PDF could not be read back.
+> 无法回读写入的 PDF。
+
+< The written PDF failed verification, so it was discarded.
+> 写入的 PDF 未通过验证，已被丢弃。
+
+< The written PDF has {0} pages instead of {1}, so it was discarded.
+> 写入的 PDF 有{0}页而不是{1}页，已被丢弃。
+
+< Rendering {0} PDF to {1} at {2}%
+< Rendering {0} PDFs to {1} at {2}%
+> 正在以 {2}% 将{0}个 PDF 渲染为 {1}
+
+< The PDF has no pages.
+> 该 PDF 没有页面。
+
+< Page {0} of {1}
+> 第{0}页，共{1}页
+
+< Page {0} could not be opened; the PDF may be damaged.
+> 第{0}页无法打开；PDF 可能已损坏。
+
+< Page {0} would be {1}×{2} px at {3}%, beyond the limit of {4}. Use a lower scale.
+> 第{0}页在 {3}% 下将为 {1}×{2} 像素，超过了 {4} 的限制。请使用更低的缩放比例。
+
+< {0} page image
+< {0} page images
+> {0}张页面图片
+
+< last page {0}
+> 最后一页 {0}
+
+< Compact
+> 紧凑
+
+< Original colour
+> 原始色彩
+
+< Clean document
+> 清晰文档
+
+< Creating a {0}-page PDF
+< Creating a {0}-page PDF
+> 正在创建{0}页的 PDF
+
+< Page {0} ("{1}"): {2}
+> 第{0}页（“{1}”）：{2}
+
+< {0} JPEG photo was embedded without recompression.
+< {0} JPEG photos were embedded without recompression.
+> 有{0}张 JPEG 照片未经重新压缩直接嵌入。
+
+< {0} very large image was scaled down to fit in memory.
+< {0} very large images were scaled down to fit in memory.
+> 有{0}张超大图片被缩小以适应内存。
+
+< Pages are images; the text is not searchable or selectable.
+> 页面是图片；文字不可搜索或选择。
+
+< {0} A4 page
+< {0} A4 pages
+> {0}页 A4
+
+< Merging {0} PDF
+< Merging {0} PDFs
+> 正在合并{0}个 PDF
+
+< Reading documents
+> 正在读取文档
+
+< Added {0} of {1}
+> 已添加 {0} / {1}
+
+< text, links and page sizes kept
+> 文字、链接和页面尺寸均保留
+
+< videos
+> 视频
+
+< PDFs
+> PDF
+
+< audio files
+> 音频文件
+
+< nothing
+> 无内容
+
+< Edits one photo by hand, so it can't run in a stack
+> 手动编辑单张照片，因此无法在组合中运行
+
+< Looks through your whole photo library, so it can't run in a stack
+> 浏览你的整个照片库，因此无法在组合中运行
+
+< Uses the camera; to make a PDF from files in a stack use Images → PDF
+> 使用相机；要在组合中用文件制作 PDF，请使用“图片转 PDF”
+
+< Prints instead of saving files, so it can't be a step of a stack
+> 直接打印而不是保存文件，因此不能作为组合的一个步骤
+
+< Makes one film from the moments you review, so it can't run in a stack
+> 用你审阅的瞬间制作一部影片，因此无法在组合中运行
+
+< Can't be part of a stack
+> 无法作为组合的一部分
+
+< Stack: {0}
+> 组合：{0}
+
+< Saved as it came out of an earlier step
+> 按前面某一步的输出原样保存
+
+< No step changed this file.
+> 没有任何步骤更改过此文件。
+
+< Step {0} ({1})
+> 第{0}步（{1}）
+
+< {0} doesn't work on {1}, so it was skipped.
+> {0}不适用于{1}，因此已跳过。
+
+< {0} doesn't work on this kind of file, so it was skipped.
+> {0} 不适用于这类文件，因此已跳过。
+
+< {1} needs at least {0} file, so it was skipped.
+< {1} needs at least {0} files, so it was skipped.
+> {1} 至少需要{0}个文件，因此已跳过。
+
+< Step {0} of {1}: {2}
+> 第{0}步，共{1}步：{2}
+
+< Step {0} of {1} · {2}: {3}
+> 第{0}步，共{1}步 · {2}：{3}
+
+< {0} · after step {1}
+> {0} · 第{1}步之后
+
+< {0} failed: {1}
+> {0} 失败：{1}
+
+< unknown error
+> 未知错误
+
+< {0} left it unchanged: {1}
+> {0} 未改动它：{1}
+
+< nothing to do
+> 无事可做
+
+< it produced no result
+> 它没有产生结果
+
+< Stacks
+> 组合
+
+< Run several tools in a row
+> 依次运行多个工具
+
+< Edit & AI
+> 编辑和 AI
+
+< Retouch, cut out and anonymise with on-device AI
+> 用本机 AI 修饰、抠图和匿名化
+
+< Images
+> 图片
+
+< Compress, convert, combine and brand photos
+> 压缩、转换、合并图片，并为照片加上标识
+
+< Trim, cut, repackage and shrink videos
+> 剪辑、切割、重新封装和压缩视频
+
+< GIF
+> GIF
+
+< Create and slim down animations
+> 创建动图并减小体积
+
+< PDF
+> PDF
+
+< Pages, scans and merges
+> 页面、扫描和合并
+
+< Photos and documents on your Wi-Fi printer
+> 在你的 Wi-Fi 打印机上打印照片和文档
+
+< Privacy & audio
+> 隐私和音频
+
+< Clean metadata and extract sound
+> 清除元数据并提取声音
+
+< Tool stack
+> 工具组合
+
+< Chain tools: each works on the last one's results
+> 串联工具：每个工具处理上一个工具的结果
+
+< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> 只需选择一次文件，按顺序添加你想要的工具——例如“人脸模糊 → 视频压缩 → 视频转 GIF → GIF 优化器”——然后一键全部运行。每个工具都保留其全部设置；只保存最终结果。
+
+< Photo editor
+> 照片编辑器
+
+< Crop, straighten, light, colour and looks
+> 裁剪、矫正、调光、调色和滤镜
+
+< Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched.
+> 裁剪和矫正，微调光线与颜色，应用滤镜，然后保存一份全分辨率的副本。你的原件保持不变。
+
+< Magic eraser
+> 魔法消除
+
+< Brush away people and objects with AI
+> 用 AI 抹去人物和物体
+
+< Brush over what you don't want and an AI model running on this phone fills the gap with matching background. Nothing is uploaded.
+> 涂抹你不想要的内容，手机上运行的 AI 模型会用匹配的背景填补空缺。不会上传任何内容。
+
+< Blur & pixelate
+> 模糊和像素化
+
+< Hide faces, plates and private details
+> 隐藏人脸、车牌和私人细节
+
+< Paint over faces, number plates, addresses or screens to blur or pixelate them before you share a photo.
+> 在分享照片之前，涂抹人脸、车牌、地址或屏幕，将其模糊或像素化。
+
+< Background remover
+> 背景移除
+
+< Cut out the subject as a transparent PNG
+> 将主体抠成透明 PNG
+
+< An AI model on this phone finds the main subject (people, pets, products, objects) and removes everything behind it. Save as a transparent PNG or on a plain colour.
+> 手机上的 AI 模型会找出主要主体（人物、宠物、产品、物体）并移除其后的一切。可保存为透明 PNG 或纯色背景。
+
+< One tap: light, colour and detail by AI
+> 一键：用 AI 调整光线、颜色和细节
+
+< On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
+> 本机 AI 会识别人脸和场景类型（食物、风景、夜景、文档……），并相应修正曝光、对比度、偏色和锐度。可批量处理。
+
+< Blur faces
+> 人脸模糊
+
+< Find faces in photos and videos, pick who to hide
+> 在照片和视频中查找人脸，选择要隐藏的人
+
+< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
+> 本机 AI 会找出你照片和视频中的每一张人脸，并按人物分组。选择要模糊或像素化的人；人脸会在整段视频中被持续跟踪。
+
+< Highlight video
+> 精彩视频
+
+< Your best moments, cut to music, automatically
+> 你的最佳瞬间，自动配乐剪辑
+
+< Pick the photos and videos of a day out, a trip or a party. On-device AI puts them in the order they were taken, finds the moments (setting off, lunch, the beach…), picks the best shots and the liveliest part of each video, and edits them into a short film on the beat of background music it writes for it — always instrumental, and quieter while your videos speak. Review the moments, change anything, then save. Nothing is uploaded.
+> 选择一次出游、旅行或聚会的照片和视频。本机 AI 会按拍摄顺序排列它们，找出各个瞬间（出发、午餐、海滩……），挑选最佳镜头和每段视频中最精彩的部分，并配合它为此创作的背景音乐节拍，剪辑成一部短片——始终是纯音乐，在你的视频说话时会变小声。查看这些瞬间，随意更改，然后保存。不会上传任何内容。
+
+< Split videos
+> 视频分割
+
+< Cut into equal-length parts without re-encoding
+> 不重新编码，切成等长的部分
+
+< Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.
+> 将每个视频分成你选择长度的连续片段。数据流直接复制而不重新编码，因此每个部分都保持原始画质。
+
+< Trim & rotate video
+> 剪辑并旋转视频
+
+< Cut the start and end, fix sideways videos
+> 裁掉开头和结尾，修正横着录制的视频
+
+< Keeps only the part you choose and can turn the video by 90° steps. Streams are copied, not re-encoded, so quality is untouched; the start snaps to the nearest earlier keyframe.
+> 只保留你选择的部分，并可按 90° 为单位旋转视频。数据流直接复制而不重新编码，因此画质不受影响；起点会对齐到最近的前一个关键帧。
+
+< Lossless video optimizer
+> 无损视频优化器
+
+< Repackage for fast start; quality untouched
+> 重新封装以便快速启动；画质不变
+
+< Copies the existing video and audio streams bit-for-bit into a clean MP4 with the index at the front (plays and uploads faster). This is not compression: quality is identical and the size changes only slightly.
+> 将现有的视频流和音频流逐位复制到索引位于开头的干净 MP4 中（播放和上传更快）。这不是压缩：画质完全相同，大小只有细微变化。
+
+< Video compressor
+> 视频压缩
+
+< Re-encode to smaller H.264 MP4 files
+> 重新编码为更小的 H.264 MP4 文件
+
+< Re-encodes videos to H.264 + AAC MP4 at the quality you choose. Lower quality gives smaller files.
+> 按你选择的画质将视频重新编码为 H.264 + AAC 的 MP4。画质越低，文件越小。
+
+< Merge videos
+> 合并视频
+
+< Join clips into one video, in your order
+> 按你的顺序将片段连成一个视频
+
+< Joins videos end to end. Clips recorded with the same settings are joined without re-encoding (no quality loss); others are converted to a common size and format first.
+> 将视频首尾相连。用相同设置录制的片段无需重新编码即可连接（无画质损失）；其他片段会先转换为统一的尺寸和格式。
+
+< Speed & timelapse
+> 变速和延时摄影
+
+< Slow motion, fast forward, timelapses
+> 慢动作、快进、延时摄影
+
+< Plays videos from 0.25× to 60× speed. The sound keeps its natural pitch, or can be muted; long recordings become smooth timelapses.
+> 以 0.25 倍到 60 倍速度播放视频。声音保持自然音调，也可以静音；长时间的录像会变成流畅的延时摄影。
+
+< Remove video audio
+> 移除视频音频
+
+< Silent copies with the video untouched
+> 得到无声副本，画面保持不变
+
+< Creates copies of your videos without the sound track. The picture is copied as-is, with no quality loss.
+> 创建不含音轨的视频副本。画面原样复制，没有画质损失。
+
+< Image compressor
+> 图片压缩
+
+< JPEG or WebP with quality and size limits
+> JPEG 或 WebP，可限制质量和尺寸
+
+< Re-encodes photos as JPEG or WebP at the quality you choose, optionally limiting the width. Aspect ratio and orientation are always preserved.
+> 按你选择的质量将照片重新编码为 JPEG 或 WebP，还可限制宽度。宽高比和方向始终保留。
+
+< Lossless image optimizer
+> 无损图片优化器
+
+< Pixel-identical PNG or lossless WebP
+> 像素完全一致的 PNG 或无损 WebP
+
+< Stores every pixel exactly as it is in an efficiently compressed lossless file. Savings depend on the source and are not guaranteed.
+> 把每个像素原样存入经过高效压缩的无损文件。节省的空间取决于源文件，不作保证。
+
+< Convert images
+> 转换图片
+
+< PNG, JPEG or WebP from most formats
+> 从大多数格式转为 PNG、JPEG 或 WebP
+
+< Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.
+> 将图片（HEIC、AVIF、TIFF、BMP、PSD、RAW 预览图等）转换为 PNG、JPEG 或 WebP。
+
+< Merge images
+> 合并图片
+
+< Stack, line up or pack images into one PNG
+> 把图片堆叠、对齐或紧凑拼成一张 PNG
+
+< Combines two or more images into a single PNG without scaling or cropping any of them.
+> 将两张或更多图片合并为一张 PNG，不缩放也不裁剪其中任何一张。
+
+< Multi-shot stitcher
+> 多图拼接
+
+< Join overlapping photos into a panorama
+> 将有重叠的照片拼成全景图
+
+< Finds where your overlapping photos meet, aligns them and blends them into one high-resolution lossless PNG.
+> 找出重叠照片的衔接处，将它们对齐并融合成一张高分辨率无损 PNG。
+
+< Bulk watermark
+> 批量水印
+
+< Text or logo on every photo in a batch
+> 为批次中的每张照片添加文字或徽标
+
+< Adds a text and/or logo watermark to every image, with independent placement for each image shape.
+> 为每张图片添加文字和/或徽标水印，每种图片形状可独立设置位置。
+
+< Duplicate finder
+> 重复项查找器
+
+< Find copies and similar shots, free space
+> 查找副本和相似照片，释放空间
+
+< Scans your photos on this phone for identical copies, re-saved duplicates and near-identical shots, suggests the best one to keep and moves the rest to the trash when you confirm.
+> 扫描这部手机上的照片，找出完全相同的副本、重新保存的重复图片和近乎相同的照片，建议保留最好的一张，并在你确认后把其余的移到回收站。
+
+< Video → GIF
+> 视频转 GIF
+
+< Animated GIFs with adaptive colours
+> 自适应颜色的动态 GIF
+
+< Turns videos into animated GIFs with an adaptive colour palette and accurate frame timing.
+> 将视频转换为动态 GIF，采用自适应调色板和准确的帧时间。
+
+< GIF compressor
+> GIF 压缩
+
+< Smaller GIFs: size, frame rate, colours
+> 更小的 GIF：尺寸、帧率、颜色
+
+< Shrinks existing GIFs by reducing their dimensions, frame rate and colour palette.
+> 通过减小尺寸、帧率和调色板来缩小现有的 GIF。
+
+< GIF optimizer
+> GIF 优化器
+
+< Re-pack GIFs while keeping every pixel
+> 在保留每个像素的前提下重新封装 GIF
+
+< Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
+> 更高效地重新编码 GIF，同时保持每个显示出来的像素完全一致。
+
+< PDF → images
+> PDF 转图片
+
+< Every page as a PNG or JPEG
+> 每一页导出为 PNG 或 JPEG
+
+< Renders each page of a PDF to an image exactly as it looks on screen.
+> 把 PDF 的每一页渲染成与屏幕上看到的完全一样的图片。
+
+< Images → PDF
+> 图片转 PDF
+
+< One A4 page per image, in your order
+> 每张图片一页 A4，按你的顺序
+
+< Builds an A4 PDF with one image per page, in the order you choose.
+> 生成每页一张图片的 A4 PDF，按你选择的顺序排列。
+
+< Combine PDFs, keeping text and links
+> 合并 PDF，保留文字和链接
+
+< Joins PDFs into one document, keeping their original text, vector graphics, links and page sizes.
+> 将多个 PDF 合并成一个文档，保留其原有的文字、矢量图形、链接和页面尺寸。
+
+< Extract PDF pages
+> 提取 PDF 页面
+
+< Pick pages into a new PDF or separate files
+> 将选定页面存为新 PDF 或单独的文件
+
+< Choose page numbers or ranges (like 1-3, 7, 10-) and save them as one new PDF or one PDF per page. Pages are copied as they are: text, links and quality are kept.
+> 选择页码或范围（如 1-3, 7, 10-），并将它们保存为一个新 PDF 或每页一个 PDF。页面原样复制：文字、链接和画质都会保留。
+
+< PDF scanner
+> PDF 扫描
+
+< Camera or gallery pages into a PDF
+> 将相机或图库中的页面做成 PDF
+
+< Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.
+> 用相机拍摄页面或从图库添加照片，并保存为 A4 PDF。
+
+< Photos and PDFs on your Wi-Fi printer, no printer app
+> 在你的 Wi-Fi 打印机上打印照片和 PDF，无需打印机应用
+
+< Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
+> 直接将照片和 PDF 打印到你 Wi-Fi 上的打印机——Epson、HP、Canon、Brother 以及其他支持 AirPrint、Mopria 或 IPP Everywhere 的打印机——无需打印机厂商的应用。可选择纸张尺寸和类型、无边距、每张纸多张照片、彩色或黑白、质量和份数，并可预览每一张纸。应用只与你自己网络中的打印机通信。
+
+< Remove metadata
+> 移除元数据
+
+< Strip location, camera and date info
+> 去除位置、相机和日期信息
+
+< Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
+> 生成不含 GPS 位置、相机详情、日期、注释或隐藏缩略图的干净照片和视频副本。照片像素和视频流原样复制（无画质损失）；方向和颜色配置文件会保留。
+
+< Extract audio
+> 提取音频
+
+< Save a video's AAC sound as M4A
+> 将视频的 AAC 声音保存为 M4A
+
+< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
+> 不重新编码，将每个视频的 AAC 音轨复制到 M4A 音频文件中。
+
+< Merging {0} video
+< Merging {0} videos
+> 正在合并{0}个视频
+
+< Reading the clips
+> 正在读取片段
+
+< "{0}" has no video track.
+> “{0}”没有视频轨道。
+
+< Joining without re-encoding
+> 不重新编码直接连接
+
+< joined without re-encoding
+> 已不重新编码直接连接
+
+< The clips couldn't be joined directly ({0}), so they were converted to one size and format first.
+> 这些片段无法直接连接（{0}），因此先转换成了统一的尺寸和格式。
+
+< Converting clip {0} of {1}
+> 正在转换第{0}个片段，共{1}个
+
+< The converted clips still can't be joined on this device ({0}).
+> 转换后的片段在此设备上仍然无法连接（{0}）。
+
+< Joining
+> 正在连接
+
+< Finishing
+> 正在完成
+
+< Sound was left out, as chosen.
+> 已按你的选择去掉声音。
+
+< Changing the speed of {0} video to {1}
+< Changing the speed of {0} videos to {1}
+> 正在将{0}个视频的速度更改为 {1}
+
+< Sound was left out: above {0} it can't be followed.
+> 已去掉声音：超过 {0} 后无法跟随。
+
+< Slow motion looks smoothest with high-frame-rate recordings (this one has {0} fps).
+> 慢动作在高帧率录制的视频上最流畅（这个视频是 {0} fps）。
+
+< natural-pitch sound
+> 自然音调的声音
+
+< No suitable container for these tracks.
+> 没有适合这些轨道的容器。
+
+< Splitting {0} video into {1} parts
+< Splitting {0} videos into {1} parts
+> 正在将{0}个视频分割为 {1} 个部分
+
+< {0} long — already within one {1} part, nothing to split.
+> 时长 {0}——不超过一个 {1} 的部分，无需分割。
+
+< The video has no keyframes after the start, so it can't be split without re-encoding.
+> 视频在起点之后没有关键帧，因此无法在不重新编码的情况下分割。
+
+< Part {0} of {1}
+> 第{0}部分，共{1}部分
+
+< Some parts are longer than {0} because the video has few keyframes (longest {1}).
+> 有些部分比 {0} 更长，因为视频的关键帧很少（最长 {1}）。
+
+< {0} part
+< {0} parts
+> {0}个部分
+
+< cuts at keyframes
+> 在关键帧处切割
+
+< Optimizing {0} video (lossless)
+< Optimizing {0} videos (lossless)
+> 正在优化{0}个视频（无损）
+
+< {0} non-audio/video track (subtitles or metadata) was not copied.
+< {0} non-audio/video tracks (subtitles or metadata) were not copied.
+> 有{0}个非音视频轨道（字幕或元数据）未被复制。
+
+< Moving the index to the front
+> 正在把索引移到开头
+
+< Fast start: the video index is at the beginning, so it starts playing and uploading sooner.
+> 快速启动：视频索引位于开头，因此可以更早开始播放和上传。
+
+< streams copied bit-for-bit
+> 数据流逐位复制
+
+< Compressing {0} video (quality {1})
+< Compressing {0} videos (quality {1})
+> 正在压缩{0}个视频（质量 {1}）
+
+< The compressed video would be larger than the original ({0} vs {1}), so nothing was saved. Try a lower quality or resolution.
+> 压缩后的视频会比原视频更大（{0} 对 {1}），因此没有保存任何内容。请尝试更低的质量或分辨率。
+
+< from {0}
+> 来自 {0}
+
+< Removing audio from {0} video
+< Removing audio from {0} videos
+> 正在移除{0}个视频的音频
+
+< This video already has no audio track.
+> 此视频本来就没有音轨。
+
+< video copied as-is
+> 视频原样复制
+
+< Extracting audio from {0} video
+< Extracting audio from {0} videos
+> 正在提取{0}个视频的音频
+
+< This video has no audio track.
+> 此视频没有音轨。
+
+< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
+> 没有兼容的 AAC 音轨（此视频的音频是 {0}）。没有提取任何内容。
+
+< {0} non-AAC audio track was not extracted.
+< {0} non-AAC audio tracks were not extracted.
+> 有{0}个非 AAC 音轨未被提取。
+
+< AAC copied without re-encoding
+> AAC 未经重新编码直接复制
+
+< The video encoder stopped taking frames.
+> 视频编码器不再接收帧。
+
+< The video encoder produced nothing.
+> 视频编码器没有产生任何内容。
+
+< This device has no H.264 encoder for {0}×{1}.
+> 此设备没有适用于 {0}×{1} 的 H.264 编码器。
+
+< The H.264 encoder rejected {0}×{1}.
+> H.264 编码器拒绝了 {0}×{1}。
+
+< Landscape 16:9
+> 横向 16:9
+
+< Portrait 9:16
+> 纵向 9:16
+
+< More {1}
+> {1}（续）
+
+< Day {0} · {1}
+> 第{0}天 · {1}
+
+< The wedding
+> 婚礼
+
+< At the concert
+> 音乐会
+
+< At the beach
+> 海滩
+
+< By the pool
+> 泳池边
+
+< In the snow
+> 雪地
+
+< At the waterfall
+> 瀑布
+
+< In the mountains
+> 山间
+
+< By the water
+> 水边
+
+< In the woods
+> 林间
+
+< Sunset
+> 日落
+
+< At the castle
+> 城堡
+
+< The city at night
+> 夜晚的城市
+
+< In the city
+> 城市
+
+< Late bite
+> 夜宵
+
+< Breakfast
+> 早餐
+
+< Lunch
+> 午餐
+
+< Afternoon snack
+> 下午茶
+
+< Dinner
+> 晚餐
+
+< Setting off
+> 出发
+
+< On the way
+> 在路上
+
+< Game time
+> 比赛时间
+
+< Outdoors
+> 户外
+
+< With the animals
+> 与动物在一起
+
+< Night out
+> 夜生活
+
+< Together
+> 在一起
+
+< Late night
+> 深夜
+
+< Morning
+> 早晨
+
+< Midday
+> 中午
+
+< Afternoon
+> 下午
+
+< Evening
+> 晚上
+
+@ date pattern: a day, with its weekday
+< EEEE, d MMMM yyyy
+> yyyy年M月d日 EEEE
+
+@ dates from one day to another in one month
+< {0}–{1}
+> {0}–{1}
+
+@ date pattern: the first day of a range in one month
+< d
+> yyyy年M月d日
+
+@ date pattern: the last day of a range in one month
+< d MMMM yyyy
+> d日
+
+@ dates from one day to another
+< {0} – {1}
+> {0}–{1}
+
+@ date pattern: the first day of a range in one year
+< d MMMM
+> yyyy年M月d日
+
+@ date pattern: the last day of a range in one year
+< d MMMM yyyy
+> M月d日
+
+@ date pattern: a day
+< d MMMM yyyy
+> yyyy年M月d日
+
+@ time pattern: when a moment starts
+< h:mm a
+> HH:mm
+
+< A clip has no video track.
+> 有一个片段没有视频轨道。
+
+< No media samples were found in these clips.
+> 在这些片段中没有找到媒体样本。
+
+< a clip has no video
+> 有片段没有视频
+
+< {0} video can't be joined directly
+> 有{0}个视频无法直接连接
+
+< the clips use different video formats
+> 片段使用了不同的视频格式
+
+< the clips have different picture sizes
+> 片段的画面尺寸不同
+
+< the clips have different orientations
+> 片段的方向不同
+
+< the clips were recorded with different encoder settings
+> 片段是用不同的编码器设置录制的
+
+< some clips have sound and others don't
+> 有些片段有声音，有些没有
+
+< the clips' sound uses different formats
+> 片段的声音使用了不同的格式
+
+< the clips' sound uses different settings
+> 片段的声音使用了不同的设置
+
+< The file has no video track.
+> 文件没有视频轨道。
+
+< This device has no decoder for {0} video.
+> 此设备没有适用于 {0} 视频的解码器。
+
+< The video decoder stopped delivering frames.
+> 视频解码器停止输出帧。
+
+< Video decoding stalled.
+> 视频解码卡住了。
+
+< {0} video can't be stored in a {1} file on this device.
+> 此设备无法将 {0} 视频存入 {1} 文件。
+
+< {0} audio can't be stored in a {1} file on this device.
+> 此设备无法将 {0} 音频存入 {1} 文件。
+
+< No media samples were found in this part of the file.
+> 在文件的这一部分中没有找到媒体样本。
+
+< This file can't be read as a video. It may be damaged or use an unsupported container.
+> 无法将此文件作为视频读取。它可能已损坏，或使用了不支持的容器。
+
+< The file contains no audio or video tracks.
+> 文件不包含音频或视频轨道。
+
+< HDR video was converted to standard dynamic range (SDR).
+> HDR 视频已转换为标准动态范围 (SDR)。
+
+< HDR video: colours may look different after conversion on this Android version.
+> HDR 视频：在此 Android 版本上转换后颜色可能会有所不同。
+
+< {0} audio was converted to AAC.
+> {0} 音频已转换为 AAC。
+
+< The {0} audio couldn't be converted on this device, so the result has no sound.
+> 此设备无法转换 {0} 音频，因此结果没有声音。
+
+< Video processing stalled (the device codec stopped responding).
+> 视频处理卡住了（设备的编解码器停止响应）。
+
+< No video frames could be decoded from this file.
+> 无法从此文件解码出任何视频帧。
+
+< The {0} decoder rejected this video ({1}×{2}).
+> {0} 解码器拒绝了此视频（{1}×{2}）。
+
+< This device has no H.264 encoder that supports {0}×{1}.
+> 此设备没有支持 {0}×{1} 的 H.264 编码器。
+
+< The H.264 encoder rejected the output settings ({0}×{1}).
+> H.264 编码器拒绝了输出设置（{0}×{1}）。
+
+< Printing {0} file on {1}
+< Printing {0} files on {1}
+> 正在 {1} 上打印{0}个文件
+
+< Connecting to {0}
+> 正在连接 {0}
+
+< Preparing
+> 正在准备
+
+< There's nothing to print (no pages chosen)
+> 没有要打印的内容（未选择页面）
+
+< The printer couldn't be reached
+> 无法连接到打印机
+
+< Not a printer address
+> 不是打印机地址
+
+< Connect the phone to the same Wi-Fi as the printer to find it.
+> 请将手机连接到与打印机相同的 Wi-Fi 才能找到它。
+
+< the printer didn't understand the request
+> 打印机无法理解该请求
+
+< the printer refused the request
+> 打印机拒绝了该请求
+
+< the printer asks for a password
+> 打印机要求输入密码
+
+< the printer refused access
+> 打印机拒绝访问
+
+< the printer can't do that
+> 打印机无法执行该操作
+
+< the printer has no such job
+> 打印机上没有这个任务
+
+< the printer doesn't accept this kind of file
+> 打印机不接受这种文件
+
+< the printer doesn't support some of these settings
+> 打印机不支持其中某些设置
+
+< the printer isn't accepting jobs right now
+> 打印机目前不接受任务
+
+< the printer is busy
+> 打印机正忙
+
+< the printer had an internal problem (code {0})
+> 打印机出现内部问题（代码 {0}）
+
+< the printer answered {0}
+> 打印机的回应是 {0}
+
+< Not a printer address: {0}
+> 不是打印机地址：{0}
+
+< Use the printer's IP address (like 192.168.1.20), not a name: "{0}"
+> 请使用打印机的 IP 地址（如 192.168.1.20），而不是名称：“{0}”
+
+< The printer sent no certificate
+> 打印机没有发送证书
+
+< The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again.
+> 打印机的身份在添加后发生了变化。如果它被重置或更换过，请将其移除后重新添加。
+
+< Couldn't set up a secure connection to the printer: {0}
+> 无法与打印机建立安全连接：{0}
+
+< Couldn't set up a secure connection to the printer
+> 无法与打印机建立安全连接
+
+< Can't reach the printer at {0}
+> 无法连接到 {0} 处的打印机
+
+< The connection to the printer was lost while sending
+> 发送时与打印机的连接中断了
+
+< The printer stopped answering
+> 打印机停止了响应
+
+< The connection to the printer was lost
+> 与打印机的连接中断了
+
+< Can't reach the printer at {0} (is it on, and is the phone on the same Wi-Fi?)
+> 无法连接到 {0} 处的打印机（它开机了吗？手机和它在同一个 Wi-Fi 上吗？）
+
+< The printer closed the connection without answering
+> 打印机未作回应就关闭了连接
+
+< The printer sent an unexpected answer: {0}
+> 打印机发回了意外的响应：{0}
+
+< The printer asks for a password; this app can't print to protected printers
+> 打印机要求输入密码；此应用无法向受保护的打印机打印
+
+< The printer only accepts secure connections
+> 打印机只接受安全连接
+
+< The printer has no print service at {0}
+> 打印机在 {0} 处没有打印服务
+
+< The printer answered HTTP {0}
+> 打印机返回了 HTTP {0}
+
+< The printer sent an answer that couldn't be read
+> 打印机发回了无法读取的响应
+
+< The printer sent an overlong header
+> 打印机发送了过长的标头
+
+< {0} isn't on your local network; this app only talks to devices on it
+> {0} 不在你的本地网络中；此应用只与本地网络中的设备通信
+
+< This printer doesn't take any kind of file this app can send (it takes {0})
+> 此打印机不接受此应用能发送的任何文件类型（它接受 {0}）
+
+< nothing it names
+> 它没有列出任何类型
+
+< Checking with the printer
+> 正在与打印机确认
+
+< The printer isn't accepting jobs right now
+> 打印机目前不接受任务
+
+< The printer says {0}
+> 打印机提示：{0}
+
+< The printer accepted the job but gave it no number
+> 打印机接受了任务，但没有给出编号
+
+< Sending to the printer
+> 正在发送到打印机
+
+< Sending sheet {0} of {1}
+> 正在发送第{0}张，共{1}张
+
+< Sent to the printer; it is still working on it
+> 已发送到打印机；它仍在处理
+
+< The job was cancelled at the printer
+> 任务已在打印机上被取消
+
+< The printer gave up on the job: {0}
+> 打印机放弃了该任务：{0}
+
+< The printer gave up on the job
+> 打印机放弃了该任务
+
+< {0} — printing continues once it's sorted
+> {0}——问题解决后将继续打印
+
+< Waiting for the printer
+> 正在等待打印机
+
+< Printing sheet {0} of {1}
+> 正在打印第{0}张，共{1}张
+
+< Printed {0} sheet
+< Printed {0} sheets
+> 已打印{0}张
+
+< The printer didn't describe itself ({0})
+> 打印机没有描述自己（{0}）
+
+< Letter
+> Letter
+
+< Legal
+> Legal
+
+< Card (54 × 86 mm)
+> 卡片（54 × 86 毫米）
+
+< Envelope DL
+> DL 信封
+
+< Envelope #10
+> #10 信封
+
+< Envelope C6
+> C6 信封
+
+< Envelope C5
+> C5 信封
+
+< Executive
+> Executive
+
+< Square 89 × 89 mm
+> 方形 89 × 89 毫米
+
+< Plain paper
+> 普通纸
+
+< Heavy paper
+> 厚纸
+
+< Light paper
+> 薄纸
+
+< Letterhead
+> 信头纸
+
+< Inkjet paper
+> 喷墨纸
+
+< Photo paper
+> 相纸
+
+< Glossy photo paper
+> 光面相纸
+
+< High-gloss photo paper
+> 高光相纸
+
+< Semi-gloss photo paper
+> 半光泽相纸
+
+< Satin photo paper
+> 绢面相纸
+
+< Matte photo paper
+> 哑光相纸
+
+< Photo film
+> 相片胶片
+
+< Envelope
+> 信封
+
+@ paper type
+< Card
+> 卡纸
+
+< Labels
+> 标签纸
+
+< Transparency
+> 透明胶片
+
+< Add paper
+> 请添加纸张
+
+< Paper is running low
+> 纸张快用完了
+
+< Paper jam: open the printer and remove the stuck paper
+> 卡纸：请打开打印机并取出卡住的纸张
+
+< The paper didn't feed: check the paper tray
+> 进纸失败：请检查纸盒
+
+< Out of ink
+> 墨水用完了
+
+< Ink is low
+> 墨水不足
+
+< The ink pad (maintenance box) is almost full
+> 废墨垫（维护盒）快满了
+
+< The ink pad (maintenance box) is full: service needed
+> 废墨垫（维护盒）已满：需要维修
+
+< A cover is open
+> 盖子是打开的
+
+< The printer is offline
+> 打印机已离线
+
+< The printer is paused
+> 打印机已暂停
+
+< The printer's memory is full
+> 打印机内存已满
+
+< Not enough free memory (RAM) to process this file. Close other apps, lower the export workload, or choose a smaller output size.
+> 可用内存 (RAM) 不足，无法处理此文件。请关闭其他应用、调低导出负载，或选择更小的输出尺寸。
+
+< Not enough free storage space to save the result.
+> 可用存储空间不足，无法保存结果。
+
+< Android no longer allows reading this file. Please select it again.
+> Android 不再允许读取此文件。请重新选择它。
+
+< The file could not be opened. It may have been moved, deleted or is stored in the cloud only.
+> 无法打开该文件。它可能已被移动、删除，或仅存储在云端。
+
+< This device's video codec failed while processing the file (temporary codec problem — try again).
+> 处理文件时，此设备的视频编解码器出错（临时的编解码器问题——请重试）。
+
+< This device's video codec failed while processing the file.
+> 处理文件时，此设备的视频编解码器出错。
+
+< The video file is damaged or incomplete: {0}
+> 视频文件已损坏或不完整：{0}
+
+< This file's video or audio codec can't be stored in the output container on this device.
+> 在此设备上，此文件的视频或音频编码无法存入输出容器。
+
+< Read/write error: {0}
+> 读写错误：{0}
+
+< Audio
+> 音频
+
+< Unknown
+> 未知
+
+< The file is empty
+> 文件为空
+
+< Permission to read this file was not granted
+> 未获得读取此文件的权限
+
+< The file can't be opened ({0})
+> 无法打开该文件（{0}）
+
+< {0} B
+> {0} B
+
+< {0} KB
+> {0} KB
+
+< {0} MB
+> {0} MB
+
+< {0} GB
+> {0} GB
+
+< {0} min
+> {0} 分钟
+
+< {0} min {1} s
+> {0} 分 {1} 秒
+
+< Could not open the output file for writing
+> 无法打开输出文件进行写入
+
+< The system media store refused to create "{0}"
+> 系统媒体库拒绝创建“{0}”
+
+< Not enough free storage: about {0} is needed but only {1} is free.
+> 可用存储空间不足：大约需要 {0}，但只剩 {1}。
+
+< Efficient
+> 节能
+
+< Gentle on battery and heat; exports take longer.
+> 省电、发热少；导出耗时更长。
+
+< Balanced
+> 均衡
+
+< Good speed while the phone stays responsive.
+> 速度不错，同时手机保持流畅。
+
+< Fast
+> 高速
+
+< Uses the device fully; best when plugged in.
+> 充分利用设备性能；接通电源时效果最佳。
+
+< Custom · light
+> 自定义 · 低
+
+< Custom · moderate
+> 自定义 · 中
+
+< Custom · high
+> 自定义 · 高
+
+< {0} file at a time
+< up to {0} files at once
+> 最多同时处理{0}个文件
+
+< no pauses
+> 无停顿
+
+< short pauses (~{0}% of the time)
+> 短暂停顿（约占 {0}% 的时间）
+
+< Images: {0} · {1} · {2}
+> 图片：{0} · {1} · {2}
+
+< background priority
+> 后台优先级
+
+< normal priority
+> 正常优先级
+
+< "{0}" could not be opened.
+> 无法打开“{0}”。
+
+< "{0}" is password-protected. Remove the password before merging.
+> “{0}”受密码保护。合并前请先移除密码。
+
+< "{0}" is not a valid PDF or is damaged ({1}).
+> “{0}”不是有效的 PDF 或已损坏（{1}）。
+
+< "{0}" has no pages.
+> “{0}”没有页面。
+
+< "{0}" had usage restrictions (no password needed to open); they were not carried over.
+> “{0}”有使用限制（打开无需密码）；这些限制未被保留。
+
+< "{0}" has a structure that couldn't be merged ({1}).
+> “{0}”的结构无法合并（{1}）。
+
+< Merged page count doesn't match the inputs; nothing was saved.
+> 合并后的页数与输入不符；没有保存任何内容。
+
+< The PDF could not be opened.
+> 无法打开该 PDF。
+
+< This PDF is password-protected and can't be opened.
+> 此 PDF 受密码保护，无法打开。
+
+< This file is not a valid PDF or is damaged.
+> 此文件不是有效的 PDF，或已损坏。
+
+< Not available: this phone is configured as a low-memory device.
+> 不可用：这部手机被配置为低内存设备。
+
+< Not available: needs at least 4 GB of RAM (this phone has {0} GB).
+> 不可用：至少需要 4 GB 内存（这部手机有 {0} GB）。
+
+< Not available: needs a 64-bit processor.
+> 不可用：需要 64 位处理器。
+
+< Not available: needs at least 4 CPU cores.
+> 不可用：至少需要 4 个 CPU 核心。
+
+< Not available: the on-device model is missing from this build.
+> 不可用：此版本中缺少本机模型。
+
+< Available on this device · runs fully offline
+> 此设备可用 · 完全离线运行
+
+< panorama (rectilinear)
+> 全景（直线投影）
+
+< panorama (cylindrical)
+> 全景（柱面投影）
+
+< panorama (spherical)
+> 全景（球面投影）
+
+< The aligned photos produced an empty result.
+> 对齐后的照片生成了空白结果。
+
+< The panorama was reduced to {0}% of full resolution to stay within the size limit.
+> 全景图已缩小到完整分辨率的 {0}%，以符合尺寸限制。
+
+< The panorama was scaled to fit PNG viewers' 65000 px limit.
+> 全景图已缩放，以符合 PNG 查看器 65000 像素的限制。
+
+< Rendering
+> 正在渲染
+
+< {0}↔{1}: ambiguous match (repetitive pattern) rejected
+> {0}↔{1}：已拒绝含糊匹配（重复图案）
+
+< {0}↔{1}: AI could not separate two alignments; pair skipped
+> {0}↔{1}：AI 无法区分两种对齐；已跳过这一对
+
+< {0}↔{1}: AI chose between two candidate alignments
+> {0}↔{1}：AI 在两种候选对齐中做了选择
+
+< {0}↔{1}: weak match rejected by AI check
+> {0}↔{1}：弱匹配未通过 AI 检查，已拒绝
+
+< {0}↔{1}: weak match confirmed by AI check
+> {0}↔{1}：弱匹配已通过 AI 检查确认
+
+< {0}↔{1}: aligned by AI dense matching (low texture)
+> {0}↔{1}：由 AI 密集匹配对齐（低纹理）
+
+< Select at least two overlapping photos.
+> 请至少选择两张有重叠的照片。
+
+< Finding features ({0}/{1})
+> 正在查找特征（{0}/{1}）
+
+< Matching photos ({0}/{1})
+> 正在匹配照片（{0}/{1}）
+
+< No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content.
+> 在这些照片之间找不到重叠。请确保相邻的照片重叠约三分之一，并包含相同的细节内容。
+
+< Turning on AI Assisted Alignment may help with low-texture scenes.
+> 开启“AI 辅助对齐”可能有助于处理低纹理场景。
+
+< None of the photos overlap clearly enough to be joined.
+> 没有任何照片的重叠足够清晰，无法拼接。
+
+< Not connected to the others, left out: {0}.
+> 与其他照片没有关联，已排除：{0}。
+
+< Aligning
+> 正在对齐
+
+< flat (similarity)
+> 平面（相似变换）
+
+< flat (affine)
+> 平面（仿射）
+
+< The photos could not be aligned consistently (the scene may have moved between shots or overlaps are too small).
+> 无法一致地对齐这些照片（场景可能在拍摄之间发生了移动，或重叠太小）。
+
+< perspective
+> 透视
+
+< Finding clean edges
+> 正在查找整齐边缘
+
+@ search words for “People”, separated by commas
+< person,people,human,humans,man,men,woman,women,kid,kids,friends,family
+> 人,人们,男人,女人,男孩,女孩,孩子,小孩,儿童,朋友,家人,家庭
+
+< Dogs
+> 狗
+
+< Animals
+> 动物
+
+@ search words for “Dogs”, separated by commas
+< dog,dogs,puppy,puppies,pup,doggy,doggo,canine
+> 狗,狗狗,小狗,犬,幼犬,宠物狗,汪星人
+
+< Cats
+> 猫
+
+@ search words for “Cats”, separated by commas
+< cat,cats,kitten,kittens,kitty,feline
+> 猫,猫咪,小猫,猫猫,喵星人,幼猫
+
+< Birds
+> 鸟
+
+@ search words for “Birds”, separated by commas
+< bird,birds,parrot,pigeon,seagull,duck,chicken
+> 鸟,鸟类,小鸟,鹦鹉,鸽子,海鸥,鸭,鸭子,鸡
+
+< Horses
+> 马
+
+@ search words for “Horses”, separated by commas
+< horse,horses,pony,ponies
+> 马,骏马,小马,马匹
+
+< Fish
+> 鱼
+
+@ search words for “Fish”, separated by commas
+< fish,fishes,aquarium
+> 鱼,鱼类,金鱼,水族馆,鱼缸
+
+< Insects
+> 昆虫
+
+@ search words for “Insects”, separated by commas
+< insect,insects,bug,bugs,bee,ladybug,beetle,dragonfly
+> 昆虫,虫,虫子,蜜蜂,蜂,瓢虫,甲虫,蜻蜓
+
+< Butterflies
+> 蝴蝶
+
+@ search words for “Butterflies”, separated by commas
+< butterfly,butterflies,moth
+> 蝴蝶,蝶,飞蛾,蛾
+
+< Cows
+> 牛
+
+@ search words for “Cows”, separated by commas
+< cow,cows,cattle,bull,calf,ox
+> 牛,奶牛,公牛,小牛,牛群,黄牛
+
+< Sheep
+> 羊
+
+@ search words for “Sheep”, separated by commas
+< sheep,lamb,lambs
+> 羊,绵羊,羔羊,小羊
+
+< Goats
+> 山羊
+
+@ search words for “Goats”, separated by commas
+< goat,goats
+> 山羊,公山羊
+
+< Pigs
+> 猪
+
+@ search words for “Pigs”, separated by commas
+< pig,pigs,piglet,hog
+> 猪,小猪,猪仔,野猪
+
+< Elephants
+> 大象
+
+@ search words for “Elephants”, separated by commas
+< elephant,elephants
+> 大象,象,象群
+
+< Zebras
+> 斑马
+
+@ search words for “Zebras”, separated by commas
+< zebra,zebras
+> 斑马
+
+< Giraffes
+> 长颈鹿
+
+@ search words for “Giraffes”, separated by commas
+< giraffe,giraffes
+> 长颈鹿
+
+< Monkeys
+> 猴子
+
+@ search words for “Monkeys”, separated by commas
+< monkey,monkeys,ape,apes,gorilla,chimpanzee
+> 猴子,猴,猿,猩猩,大猩猩,黑猩猩
+
+< Lions
+> 狮子
+
+@ search words for “Lions”, separated by commas
+< lion,lions
+> 狮子,狮
+
+< Tigers
+> 老虎
+
+@ search words for “Tigers”, separated by commas
+< tiger,tigers
+> 老虎,虎
+
+< Rabbits
+> 兔子
+
+@ search words for “Rabbits”, separated by commas
+< rabbit,rabbits,bunny,bunnies,hare
+> 兔子,兔,小兔,野兔
+
+< Reptiles
+> 爬行动物
+
+@ search words for “Reptiles”, separated by commas
+< reptile,reptiles,lizard,snake,snakes,turtle,turtles,tortoise,crocodile
+> 爬行动物,爬虫,蜥蜴,蛇,乌龟,龟,海龟,鳄鱼
+
+@ search words for “Animals”, separated by commas
+< animal,animals,wildlife,pet,pets
+> 动物,野生动物,宠物,萌宠
+
+< Cars
+> 汽车
+
+< Vehicles
+> 交通工具
+
+@ search words for “Cars”, separated by commas
+< car,cars,auto,automobile,vehicle
+> 汽车,车,轿车,小汽车,机动车,车辆
+
+< Buses
+> 公共汽车
+
+@ search words for “Buses”, separated by commas
+< bus,buses,coach
+> 公共汽车,公交车,公交,巴士,大巴,客车
+
+< Motorcycles
+> 摩托车
+
+@ search words for “Motorcycles”, separated by commas
+< motorcycle,motorcycles,motorbike,scooter,moped
+> 摩托车,摩托,机车,电动车,踏板车,电瓶车
+
+< Bicycles
+> 自行车
+
+@ search words for “Bicycles”, separated by commas
+< bicycle,bicycles,bike,bikes,cycling
+> 自行车,单车,脚踏车,骑行,骑车
+
+< Trains
+> 火车
+
+@ search words for “Trains”, separated by commas
+< train,trains,railway,locomotive,tram,subway
+> 火车,列车,铁路,有轨电车,电车,地铁,高铁,动车
+
+< Airplanes
+> 飞机
+
+@ search words for “Airplanes”, separated by commas
+< airplane,airplanes,plane,planes,aeroplane,aircraft,jet
+> 飞机,客机,航班,喷气式飞机,战斗机,航空器
+
+< Helicopters
+> 直升机
+
+@ search words for “Helicopters”, separated by commas
+< helicopter,helicopters
+> 直升机,直升飞机
+
+< Boats
+> 船
+
+@ search words for “Boats”, separated by commas
+< boat,boats,ship,ships,yacht,sailboat,ferry,canoe,kayak
+> 船,轮船,游艇,帆船,渡轮,渡船,独木舟,皮划艇,小船,船只
+
+@ search words for “Food”, separated by commas
+< food,meal,dish,dinner,lunch,breakfast,eating
+> 食物,美食,吃的,饭菜,菜肴,餐点,晚餐,午餐,早餐,吃饭,用餐
+
+< Pizza
+> 披萨
+
+@ search words for “Pizza”, separated by commas
+< pizza,pizzas
+> 披萨,比萨,匹萨
+
+< Cakes
+> 蛋糕
+
+@ search words for “Cakes”, separated by commas
+< cake,cakes,birthday cake,cupcake
+> 蛋糕,生日蛋糕,纸杯蛋糕,杯子蛋糕
+
+< Burgers
+> 汉堡
+
+@ search words for “Burgers”, separated by commas
+< burger,burgers,hamburger,cheeseburger
+> 汉堡,汉堡包,芝士汉堡,牛肉汉堡
+
+< Sushi
+> 寿司
+
+@ search words for “Sushi”, separated by commas
+< sushi
+> 寿司
+
+< Ice cream
+> 冰淇淋
+
+@ search words for “Ice cream”, separated by commas
+< ice cream,icecream,gelato,sundae
+> 冰淇淋,冰激凌,雪糕,冰棍,圣代
+
+< Fruit
+> 水果
+
+@ search words for “Fruit”, separated by commas
+< fruit,fruits,banana,apple,orange,strawberry,grapes
+> 水果,香蕉,苹果,橙子,橘子,草莓,葡萄
+
+< Salads
+> 沙拉
+
+@ search words for “Salads”, separated by commas
+< salad,salads
+> 沙拉,色拉,凉拌菜
+
+< Desserts
+> 甜点
+
+@ search words for “Desserts”, separated by commas
+< dessert,desserts,sweets,pastry,cookies,chocolate,donut
+> 甜点,甜品,点心,糕点,饼干,曲奇,巧克力,甜甜圈,甜食
+
+< Coffee
+> 咖啡
+
+@ search words for “Coffee”, separated by commas
+< coffee,espresso,cappuccino,latte
+> 咖啡,浓缩咖啡,卡布奇诺,拿铁
+
+< Drinks
+> 饮料
+
+@ search words for “Drinks”, separated by commas
+< drink,drinks,beverage,juice,tea,soda
+> 饮料,饮品,果汁,茶,汽水,苏打水,冷饮
+
+< Wine
+> 葡萄酒
+
+@ search words for “Wine”, separated by commas
+< wine,red wine,white wine
+> 葡萄酒,红酒,红葡萄酒,白葡萄酒,干红,干白
+
+< Beer
+> 啤酒
+
+@ search words for “Beer”, separated by commas
+< beer,beers,lager
+> 啤酒,扎啤,生啤,拉格
+
+< Cocktails
+> 鸡尾酒
+
+@ search words for “Cocktails”, separated by commas
+< cocktail,cocktails,mojito,margarita
+> 鸡尾酒,莫吉托,玛格丽塔,调酒
+
+< Beach
+> 海滩
+
+< Nature
+> 自然
+
+@ search words for “Beach”, separated by commas
+< beach,beaches,seaside,shore,coast,sand
+> 海滩,沙滩,海边,海岸,海滨,沙子
+
+< Sea
+> 大海
+
+@ search words for “Sea”, separated by commas
+< sea,ocean,waves,seascape
+> 大海,海,海洋,海浪,浪,波浪,海景
+
+< Mountains
+> 山
+
+@ search words for “Mountains”, separated by commas
+< mountain,mountains,peak,alps,hills,volcano
+> 山,山脉,山峰,山峦,山丘,丘陵,火山,雪山
+
+< Lakes
+> 湖泊
+
+@ search words for “Lakes”, separated by commas
+< lake,lakes,pond
+> 湖,湖泊,湖水,池塘,水塘
+
+< Rivers
+> 河流
+
+@ search words for “Rivers”, separated by commas
+< river,rivers,stream,creek
+> 河,河流,小溪,溪流,溪,江,河边
+
+< Waterfalls
+> 瀑布
+
+@ search words for “Waterfalls”, separated by commas
+< waterfall,waterfalls,falls
+> 瀑布,飞瀑
+
+< Forest
+> 森林
+
+@ search words for “Forest”, separated by commas
+< forest,woods,jungle
+> 森林,树林,林,丛林,树,树木,林地
+
+< Flowers
+> 花
+
+@ search words for “Flowers”, separated by commas
+< flower,flowers,rose,roses,tulip,sunflower,bouquet,blossom
+> 花,花朵,花卉,玫瑰,郁金香,向日葵,花束,鲜花,开花
+
+< Snow
+> 雪
+
+@ search words for “Snow”, separated by commas
+< snow,snowy,winter,skiing,ski,snowboard
+> 雪,积雪,雪景,下雪,冬天,冬季,雪地
+
+< Sky
+> 天空
+
+@ search words for “Sky”, separated by commas
+< sky,clouds,cloud,blue sky
+> 天空,蓝天,云,云朵,白云,云彩,天际
+
+< Sunsets
+> 日落
+
+@ search words for “Sunsets”, separated by commas
+< sunset,sunsets,sunrise,dusk,dawn,golden hour
+> 日落,夕阳,落日,日出,黄昏,傍晚,黎明,晚霞,朝霞,黄金时刻
+
+@ search words for “Night”, separated by commas
+< night,nighttime,night sky,stars
+> 夜晚,夜景,夜空,夜,晚上,黑夜,星星,星空,夜里
+
+< Desert
+> 沙漠
+
+@ search words for “Desert”, separated by commas
+< desert,dunes,sand dunes
+> 沙漠,沙丘,荒漠,戈壁
+
+< Grass & fields
+> 草地和田野
+
+@ search words for “Grass & fields”, separated by commas
+< grass,lawn,field,fields,meadow
+> 草,草地,草坪,草原,田野,田地,原野,牧场
+
+< Rocks & cliffs
+> 岩石和悬崖
+
+@ search words for “Rocks & cliffs”, separated by commas
+< rock,rocks,cliff,cliffs,canyon,cave
+> 岩石,石头,石,悬崖,峭壁,峡谷,山洞,洞穴,礁石
+
+< City
+> 城市
+
+< Places
+> 地点
+
+@ search words for “City”, separated by commas
+< city,cities,downtown,skyline,cityscape,urban
+> 城市,都市,市区,市中心,天际线,城市风光,城市景观
+
+< Castles
+> 城堡
+
+@ search words for “Castles”, separated by commas
+< castle,castles,palace,fortress
+> 城堡,宫殿,堡垒,要塞,古堡
+
+< Bridges
+> 桥
+
+@ search words for “Bridges”, separated by commas
+< bridge,bridges
+> 桥,桥梁,大桥,天桥
+
+< Streets
+> 街道
+
+@ search words for “Streets”, separated by commas
+< street,streets,road,roads,highway
+> 街道,街,马路,道路,公路,路,高速公路,大街
+
+< Swimming pools
+> 游泳池
+
+@ search words for “Swimming pools”, separated by commas
+< pool,swimming pool,swimming
+> 游泳池,泳池,游泳,戏水
+
+< Kitchens
+> 厨房
+
+@ search words for “Kitchens”, separated by commas
+< kitchen,kitchens
+> 厨房,灶台,橱柜,厨
+
+< Bedrooms
+> 卧室
+
+@ search words for “Bedrooms”, separated by commas
+< bedroom,bedrooms
+> 卧室,睡房,寝室
+
+< Bathrooms
+> 浴室
+
+@ search words for “Bathrooms”, separated by commas
+< bathroom,bathrooms,toilet
+> 浴室,卫生间,厕所,洗手间,盥洗室,浴缸
+
+< Towers
+> 塔
+
+@ search words for “Towers”, separated by commas
+< tower,towers
+> 塔,塔楼,高塔,铁塔,钟楼
+
+< Fountains
+> 喷泉
+
+@ search words for “Fountains”, separated by commas
+< fountain,fountains
+> 喷泉,喷水池
+
+< Weddings
+> 婚礼
+
+< Events
+> 场合
+
+@ search words for “Weddings”, separated by commas
+< wedding,weddings,bride,groom
+> 婚礼,结婚,新娘,新郎,婚纱,婚宴,新人
+
+< Concerts
+> 演唱会
+
+@ search words for “Concerts”, separated by commas
+< concert,concerts,gig,festival,stage
+> 演唱会,音乐会,演出,音乐节,舞台,巡演
+
+< Football
+> 足球
+
+< Sports
+> 运动
+
+@ search words for “Football”, separated by commas
+< football,soccer
+> 足球,踢足球,足球赛,球场
+
+< Tennis
+> 网球
+
+@ search words for “Tennis”, separated by commas
+< tennis
+> 网球,打网球,网球场
+
+< Skiing
+> 滑雪
+
+@ search words for “Skiing”, separated by commas
+< skiing,ski,skis,snowboarding
+> 滑雪,滑雪板,单板滑雪,双板滑雪,雪场
+
+< Surfing
+> 冲浪
+
+@ search words for “Surfing”, separated by commas
+< surfing,surf,surfboard
+> 冲浪,冲浪板,浪板
+
+< Documents
+> 文档
+
+@ search words for “Documents”, separated by commas
+< document,documents,paper,papers,receipt,text,letter,page
+> 文档,文件,文稿,纸张,纸,收据,小票,发票,文字,信件,证件,合同,打印件,扫描件
+
+< Phones
+> 手机
+
+@ search words for “Phones”, separated by commas
+< phone,phones,smartphone,mobile,cellphone,iphone
+> 手机,电话,智能手机,移动电话,安卓手机
+
+< Bags
+> 包
+
+@ search words for “Bags”, separated by commas
+< bag,bags,handbag,purse,backpack,suitcase,luggage
+> 包,包包,手提包,挎包,钱包,背包,双肩包,行李箱,行李,旅行箱,书包
+
+< Furniture
+> 家具
+
+@ search words for “Furniture”, separated by commas
+< furniture,chair,chairs,sofa,couch,table,bed
+> 家具,椅子,椅,桌子,桌,桌椅,柜子,书桌,茶几,餐桌
+
+< Sofas
+> 沙发
+
+@ search words for “Sofas”, separated by commas
+< sofa,sofas,couch,couches
+> 沙发,长沙发,布艺沙发
+
+< Beds
+> 床
+
+@ search words for “Beds”, separated by commas
+< bed,beds
+> 床,床铺,大床,单人床,双人床
+
+< Clocks
+> 时钟
+
+@ search words for “Clocks”, separated by commas
+< clock,clocks
+> 时钟,钟,钟表,挂钟,闹钟,座钟
+
+< Bottles
+> 瓶子
+
+@ search words for “Bottles”, separated by commas
+< bottle,bottles
+> 瓶子,瓶,水瓶,酒瓶,玻璃瓶
+
+< Umbrellas
+> 雨伞
+
+@ search words for “Umbrellas”, separated by commas
+< umbrella,umbrellas
+> 雨伞,伞,阳伞,遮阳伞
+
+< Guitars
+> 吉他
+
+@ search words for “Guitars”, separated by commas
+< guitar,guitars
+> 吉他,电吉他,木吉他,弹吉他
+
+< Pianos
+> 钢琴
+
+@ search words for “Pianos”, separated by commas
+< piano,pianos,keyboard
+> 钢琴,电钢琴,电子琴,琴键
+
+@ search words for “Music”, separated by commas
+< music,musical instrument,instruments,drums,violin,guitar,piano
+> 音乐,乐器,鼓,架子鼓,小提琴,大提琴,萨克斯,长笛,乐队

@@ -1,0 +1,6669 @@
+# Русский — translations of the app's English text (see buildtools/i18n/catalog.py).
+# "< " lines: the English (two lines: singular and plural); "> " lines: the translation (one per plural form);
+# "@ " lines: which meaning of the English is meant.
+
+< Exposure
+> Экспозиция
+
+< Brightness
+> Яркость
+
+< Contrast
+> Контраст
+
+< Highlights
+> Света
+
+< Shadows
+> Тени
+
+< Saturation
+> Насыщенность
+
+< Vibrance
+> Красочность
+
+< Warmth
+> Теплота
+
+< Tint
+> Оттенок
+
+< Sharpness
+> Резкость
+
+< Vignette
+> Виньетирование
+
+< Original
+> Оригинал
+
+< Vivid
+> Яркий
+
+< Golden
+> Золотой
+
+< Nordic
+> Северный
+
+< Matte
+> Матовый
+
+< Vintage
+> Винтаж
+
+< Cinema
+> Кино
+
+< Drama
+> Драма
+
+< Mono
+> Моно
+
+< Noir
+> Нуар
+
+< Sepia
+> Сепия
+
+< File is too large to decode in memory on this device
+> Файл слишком большой, чтобы декодировать его в памяти этого устройства
+
+< Image has invalid dimensions
+> У изображения недопустимые размеры
+
+< Image is too large ({0}×{1})
+> Изображение слишком большое ({0}×{1})
+
+< Not a TIFF file
+> Это не файл TIFF
+
+< BigTIFF files are not supported
+> Файлы BigTIFF не поддерживаются
+
+< TIFF file is truncated
+> Файл TIFF обрезан
+
+< Corrupt TIFF tag
+> Повреждённый тег TIFF
+
+< TIFF has no image data
+> В TIFF нет данных изображения
+
+< TIFF with mixed bit depths is not supported
+> TIFF с разной глубиной цвета каналов не поддерживается
+
+< TIFF with {0}-bit samples is not supported
+> TIFF с {0}-битными сэмплами не поддерживается
+
+< Floating-point TIFF is not supported
+> TIFF с плавающей запятой не поддерживается
+
+< TIFF compression {0} is not supported
+> Сжатие TIFF {0} не поддерживается
+
+< TIFF colour model {0} is not supported
+> Цветовая модель TIFF {0} не поддерживается
+
+< TIFF is missing image data
+> В TIFF отсутствуют данные изображения
+
+< Unsupported TIFF compression
+> Неподдерживаемое сжатие TIFF
+
+< Palette TIFF without colour map
+> TIFF с палитрой без таблицы цветов
+
+< Corrupt compressed TIFF data
+> Повреждённые сжатые данные TIFF
+
+< Not a PSD file
+> Это не файл PSD
+
+< {0}-bit PSD is not supported
+> {0}-битный PSD не поддерживается
+
+< PSD colour mode {0} is not supported (use RGB, Grayscale or CMYK)
+> Цветовой режим PSD {0} не поддерживается (используйте RGB, оттенки серого или CMYK)
+
+< PSD file is truncated
+> Файл PSD обрезан
+
+< PSD file has no merged image
+> В файле PSD нет объединённого изображения
+
+< PSD with ZIP-compressed composite is not supported
+> PSD с композитом, сжатым ZIP, не поддерживается
+
+< Not a QOI file
+> Это не файл QOI
+
+< QOI file is truncated
+> Файл QOI обрезан
+
+< Corrupt PNM header
+> Повреждённый заголовок PNM
+
+< Not a PNM file
+> Это не файл PNM
+
+< Corrupt PAM header
+> Повреждённый заголовок PAM
+
+< PNM file is truncated
+> Файл PNM обрезан
+
+< PBM file is truncated
+> Файл PBM обрезан
+
+< Not a TGA file
+> Это не файл TGA
+
+< Not a supported TGA file
+> Это не поддерживаемый файл TGA
+
+< Unsupported TGA pixel depth {0}
+> Неподдерживаемая глубина пикселя TGA: {0}
+
+< TGA file is truncated
+> Файл TGA обрезан
+
+< TGA colour index out of range
+> Индекс цвета TGA вне диапазона
+
+< Truncated MP4 box header
+> Обрезанный заголовок блока MP4
+
+< MP4 box '{0}' at {1} is truncated or corrupt
+> Блок MP4 '{0}' в {1} обрезан или повреждён
+
+< The file has no movie header (moov box)
+> В файле нет заголовка фильма (блок moov)
+
+< The file has no media data (mdat box)
+> В файле нет медиаданных (блок mdat)
+
+< Movie header is unexpectedly large
+> Заголовок фильма неожиданно большой
+
+< Chunk offsets do not fit even in 64-bit tables
+> Смещения фрагментов не помещаются даже в 64-битные таблицы
+
+< Corrupt '{0}' box in movie header
+> Повреждённый блок '{0}' в заголовке фильма
+
+< A media chunk points outside the file's data boxes
+> Медиафрагмент указывает за пределы блоков данных файла
+
+< Corrupt chunk offset table
+> Повреждённая таблица смещений фрагментов
+
+< Unexpected end of file
+> Неожиданный конец файла
+
+< GIF cannot store semi-transparent pixels
+> GIF не может хранить полупрозрачные пиксели
+
+< Frame {0} needs more than 256 colours including transparency, which GIF cannot store exactly
+> Кадру {0} нужно больше 256 цветов, включая прозрачность, а GIF не может хранить их точно
+
+< Not a GIF file
+> Это не файл GIF
+
+< GIF has an empty canvas
+> У GIF пустой холст
+
+< GIF canvas {0}×{1} is too large to process on this device
+> Холст GIF {0}×{1} слишком велик для обработки на этом устройстве
+
+< Corrupt GIF block ({0}) after frame {1}
+> Повреждённый блок GIF ({0}) после кадра {1}
+
+< GIF is truncated inside frame {0}
+> GIF обрезан внутри кадра {0}
+
+< GIF frame {0} has no colour table
+> У кадра {0} GIF нет таблицы цветов
+
+< GIF frame {0} has invalid LZW code size
+> У кадра {0} GIF недопустимый размер кода LZW
+
+< GIF frame {0} is too large
+> Кадр {0} GIF слишком большой
+
+< GIF frame {0} is missing image data
+> У кадра {0} GIF отсутствуют данные изображения
+
+< GIF is truncated
+> GIF обрезан
+
+< GPS location
+> местоположение GPS
+
+< camera make & model
+> производитель и модель камеры
+
+< date & time
+> дата и время
+
+< software
+> программа
+
+< author & copyright
+> автор и авторские права
+
+< camera serial number
+> серийный номер камеры
+
+< lens details
+> сведения об объективе
+
+< maker notes
+> примечания производителя
+
+< descriptions & comments
+> описания и комментарии
+
+< shooting settings
+> параметры съёмки
+
+< embedded thumbnail
+> встроенная миниатюра
+
+< Not a JPEG file
+> Это не файл JPEG
+
+< Damaged JPEG segment
+> Повреждённый сегмент JPEG
+
+< other application data
+> прочие данные приложений
+
+< XMP metadata
+> метаданные XMP
+
+< colour profile
+> цветовой профиль
+
+< extra images (depth, HDR or motion data)
+> дополнительные изображения (глубина, HDR или движение)
+
+< Adobe colour transform
+> цветовое преобразование Adobe
+
+< IPTC / Photoshop data
+> данные IPTC / Photoshop
+
+< The JPEG file is truncated
+> Файл JPEG обрезан
+
+< Not a PNG file
+> Это не файл PNG
+
+< Damaged PNG chunk
+> Повреждённый блок PNG
+
+< EXIF data
+> данные EXIF
+
+< text notes ({0})
+> текстовые заметки ({0})
+
+< hidden data after the image
+> скрытые данные после изображения
+
+< Not a WebP file
+> Это не файл WebP
+
+< Damaged GIF (unexpected block {0})
+> Повреждённый GIF (неожиданный блок {0})
+
+< The file is truncated
+> Файл обрезан
+
+< {0} supports at most {1} px per side; the edited photo is {2}×{3}. Choose PNG or JPEG.
+> {0} поддерживает не более {1} пикселей по стороне; отредактированное фото — {2}×{3}. Выберите PNG или JPEG.
+
+< This photo is too large to edit with the memory available right now. Close other apps or raise the export workload and try again.
+> Это фото слишком большое для редактирования при доступной сейчас памяти. Закройте другие приложения или повысьте нагрузку экспорта и повторите попытку.
+
+< {0} can't be written in pieces and this photo is too large for memory; choose JPEG or PNG.
+> {0} нельзя записывать по частям, а это фото слишком велико для памяти; выберите JPEG или PNG.
+
+< Erase
+> Стереть
+
+< Blur
+> Размыть
+
+< Pixelate
+> Пикселизировать
+
+< Could not store the retouched area
+> Не удалось сохранить отретушированную область
+
+< A retouched area is missing; please redo it.
+> Отретушированная область отсутствует; сделайте её заново.
+
+< AI · MI-GAN on-device
+> ИИ · MI-GAN на устройстве
+
+< Basic fill (AI unavailable)
+> Простая заливка (ИИ недоступен)
+
+< This phone is set up as a low-memory device.
+> Этот телефон настроен как устройство с малым объёмом памяти.
+
+< Needs at least 2 GB of RAM.
+> Требуется не менее 2 ГБ ОЗУ.
+
+< Needs a 64-bit processor.
+> Требуется 64-разрядный процессор.
+
+< The on-device model is missing from this build.
+> Модель на устройстве отсутствует в этой сборке.
+
+< On-device AI
+> ИИ на устройстве
+
+< That area is too large to erase in one go with the memory available. Erase it in smaller parts.
+> Эта область слишком велика, чтобы стереть её за один раз при доступной памяти. Стирайте её по частям.
+
+< That area is too large for the memory available. Do it in smaller parts.
+> Эта область слишком велика для доступной памяти. Сделайте это по частям.
+
+< Clear search
+> Очистить поиск
+
+< , selected
+> , выбрано
+
+< , changed
+> , изменено
+
+< Value {0}
+> Значение {0}
+
+< Most space
+> Больше места
+
+< Newest
+> Новые
+
+< Oldest
+> Старые
+
+< Most photos
+> Больше фото
+
+< All
+> Все
+
+< Copies
+> Копии
+
+< Similar shots
+> Похожие снимки
+
+< Keep all
+> Оставить все
+
+< Suggested
+> Рекомендуемые
+
+< Next
+> Далее
+
+< Group {0} of {1}
+> Группа {0} из {1}
+
+< Tap a photo to keep or remove it · long-press to open it · swipe for the next group
+> Коснитесь фото, чтобы оставить или удалить его · удерживайте, чтобы открыть · проведите пальцем к следующей группе
+
+< Done
+> Готово
+
+< {0} photo
+< {0} photos
+> {0} фото
+> {0} фото
+> {0} фото
+
+< all kept
+> все остаются
+
+< {0} to remove ({1})
+< {0} to remove ({1})
+> К удалению: {0} ({1})
+> К удалению: {0} ({1})
+> К удалению: {0} ({1})
+
+< {0} selected in total
+< {0} selected in total
+> Всего выбрано: {0}
+> Всего выбрано: {0}
+> Всего выбрано: {0}
+
+< Photos are compared on this phone. Nothing is deleted until you confirm, and removed photos go to the system trash, where they can be restored for 30 days.
+> Фото сравниваются на этом телефоне. Ничего не удаляется, пока вы не подтвердите, а удалённые фото попадают в системную корзину, где их можно восстановить в течение 30 дней.
+
+< Move to trash
+> Переместить в корзину
+
+< Find duplicates in your photos
+> Найти дубликаты среди фото
+
+< Scans every photo this app can see. The first scan takes a while (about a minute per thousand photos); later scans only look at new photos.
+> Сканирует все фото, которые видит это приложение. Первое сканирование занимает время (около минуты на тысячу фото); последующие проверяют только новые фото.
+
+< The app needs permission to see your photos for this. It never uploads them.
+> Для этого приложению нужно разрешение на доступ к вашим фото. Оно никогда их не загружает.
+
+< Scan my photos
+> Сканировать мои фото
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {1} из {0} фото
+> {1} из {0} фото
+> {1} из {0} фото
+
+< Starting…
+> Запуск…
+
+< Stop
+> Остановить
+
+< The scan stopped: {0}
+> Сканирование остановлено: {0}
+
+< Try again
+> Повторить
+
+< No duplicates found
+> Дубликатов не найдено
+
+< {0} group
+< {0} groups
+> {0} группа
+> {0} группы
+> {0} групп
+
+< {0} photo you could remove
+< {0} photos you could remove
+> {0} фото можно удалить
+> {0} фото можно удалить
+> {0} фото можно удалить
+
+< Checked {0} photo. Nice and tidy!
+< Checked {0} photos. Nice and tidy!
+> Проверено: {0} фото. Всё в порядке!
+> Проверено: {0} фото. Всё в порядке!
+> Проверено: {0} фото. Всё в порядке!
+
+< Checked {0} photo. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+< Checked {0} photos. Copies of a picture are suggested for removal (the best one stays); similar shots are up to you, or let the rules below pick.
+> Проверено: {0} фото. Копии одного снимка предлагаются к удалению (лучшая остаётся); похожие снимки решаете вы, или пусть выберут правила ниже.
+> Проверено: {0} фото. Копии одного снимка предлагаются к удалению (лучшая остаётся); похожие снимки решаете вы, или пусть выберут правила ниже.
+> Проверено: {0} фото. Копии одного снимка предлагаются к удалению (лучшая остаётся); похожие снимки решаете вы, или пусть выберут правила ниже.
+
+< Similar-shot detection needs the on-device AI model, which isn't available on this phone; exact and re-saved copies are still found.
+> Для поиска похожих снимков нужна модель ИИ на устройстве, которая недоступна на этом телефоне; точные и пересохранённые копии по-прежнему находятся.
+
+< Scan again
+> Сканировать снова
+
+< Without access to your photos the duplicate finder can't look for copies.
+> Без доступа к вашим фото поиск дубликатов не может искать копии.
+
+< RAWs
+> RAW-файлы
+
+< favourites
+> избранное
+
+< {0} person
+< {0} people
+> {0} человек
+> {0} человека
+> {0} человек
+
+< Keep rules
+> Правила сохранения
+
+< Nothing always kept
+> Ничего не сохраняется всегда
+
+< Always kept: {0}
+> Всегда сохраняются: {0}
+
+@ between the items of a list
+< , 
+> , 
+
+< picks the best similar shot
+> выбирает лучший из похожих снимков
+
+< Keep rules, expanded
+> Правила сохранения, развёрнуто
+
+< Keep rules, collapsed
+> Правила сохранения, свёрнуто
+
+< Always keep RAW photos
+> Всегда оставлять фото RAW
+
+< DNG, CR2, NEF, ARW and other camera RAW files; the best other copy stays next to them
+> DNG, CR2, NEF, ARW и другие RAW-файлы камер; лучшая из остальных копий остаётся рядом с ними
+
+< Always keep favourites
+> Всегда оставлять избранное
+
+< Photos you starred in your gallery
+> Фото, которые вы отметили звёздочкой в галерее
+
+< Suggest similar shots too
+> Предлагать и похожие снимки
+
+< Keeps the best shot of each burst and suggests the rest
+> Оставляет лучший снимок из каждой серии и предлагает удалить остальные
+
+< Which copy to keep
+> Какую копию оставить
+
+< Always keep photos of
+> Всегда оставлять фото с
+
+< Name people in the Gallery's People tab to keep every photo they're in.
+> Назовите людей на вкладке «Люди» в Галерее, чтобы сохранять все фото с ними.
+
+< {0}, always kept
+> {0}, всегда сохраняется
+
+< {0}, not protected
+> {0}, не защищено
+
+< Rules apply to every group you haven't changed by hand.
+> Правила применяются к каждой группе, которую вы не меняли вручную.
+
+< Review one by one
+> Просмотреть по одной
+
+< Reset to suggestions
+> Вернуть рекомендации
+
+< Every group follows the keep rules again.
+> Каждая группа снова следует правилам сохранения.
+
+< {1} selected in {0} group · frees {2}
+< {1} selected in {0} groups · frees {2}
+> Выбрано: {1} в {0} группе · освободит {2}
+> Выбрано: {1} в {0} группах · освободит {2}
+> Выбрано: {1} в {0} группах · освободит {2}
+
+< Move {0} to trash
+< Move {0} to trash
+> Переместить в корзину: {0}
+> Переместить в корзину: {0}
+> Переместить в корзину: {0}
+
+< Moving photos to the trash needs Android 11 or newer. Long-press a photo to open it in your gallery and delete it there.
+> Для перемещения фото в корзину нужен Android 11 или новее. Удерживайте фото, чтобы открыть его в галерее и удалить там.
+
+< These photos can't be moved to the trash: {0}
+> Эти фото нельзя переместить в корзину: {0}
+
+< Moved {0} photo to the trash. You can restore it from your gallery's trash for 30 days.
+< Moved {0} photos to the trash. You can restore them from your gallery's trash for 30 days.
+> В корзину перемещено: {0} фото. Восстановить их можно из корзины галереи в течение 30 дней.
+> В корзину перемещено: {0} фото. Восстановить их можно из корзины галереи в течение 30 дней.
+> В корзину перемещено: {0} фото. Восстановить их можно из корзины галереи в течение 30 дней.
+
+@ badge on the photo to keep
+< Best
+> Лучшее
+
+@ badge on a photo that is kept
+< Keep
+> Оставить
+
+< {0} MP
+> {0} Мп
+
+< {0}, will be moved to the trash
+> {0}, будет перемещено в корзину
+
+< {0}, kept
+> {0}, оставлено
+
+< , always kept: {0}
+> , всегда сохраняется: {0}
+
+< , best photo
+> , лучшее фото
+
+< Keep at least one photo of each group.
+> Оставьте хотя бы одно фото из каждой группы.
+
+< Back
+> Назад
+
+< No installed app can open {0} files.
+> Нет установленных приложений, которые могут открыть файлы {0}.
+
+< This file is no longer available.
+> Этот файл больше недоступен.
+
+< Share
+> Поделиться
+
+< Waiting for the current export to finish
+> Ожидание завершения текущего экспорта
+
+< {0}%
+> {0}%
+
+< Export workload: {0} ({1}%)
+> Нагрузка экспорта: {0} ({1}%)
+
+< {0} of {1} done
+> Готово: {0} из {1}
+
+< 1 job
+> 1 задача
+
+< Cancel
+> Отмена
+
+< Workload
+> Нагрузка
+
+< View results
+> Посмотреть результаты
+
+< Open
+> Открыть
+
+< Cancel this export?
+> Отменить этот экспорт?
+
+< Files already saved are kept. The file being processed is discarded, never left half-written.
+> Уже сохранённые файлы остаются. Обрабатываемый файл удаляется и никогда не остаётся недописанным.
+
+< Cancel export
+> Отменить экспорт
+
+< Keep going
+> Продолжить
+
+< Custom setting.
+> Пользовательская настройка.
+
+< Export workload
+> Нагрузка экспорта
+
+< How hard exports may work the phone
+> Насколько сильно экспорт может нагружать телефон
+
+< This is not an exact CPU-percentage limit. It sets parallel work, thread priority, pauses between steps and how much free memory an export may use. Changes apply to running exports within seconds.
+> Это не точный предел в процентах загрузки процессора. Параметр задаёт параллельность работы, приоритет потоков, паузы между шагами и объём свободной памяти, который может использовать экспорт. Изменения применяются к идущим экспортам в течение нескольких секунд.
+
+< Export results
+> Результаты экспорта
+
+< This export is no longer in the history.
+> Этого экспорта больше нет в истории.
+
+< Share file
+> Поделиться файлом
+
+< Share all {0}
+< Share all {0}
+> Поделиться всеми: {0}
+> Поделиться всеми: {0}
+> Поделиться всеми: {0}
+
+< Print
+> Печать
+
+< Saved to {0}. Find them in your gallery, Files app or the folder named LocalMediaTools.
+> Сохранено в {0}. Найдите файлы в галерее, в приложении «Файлы» или в папке LocalMediaTools.
+
+< Failed ({0})
+> Не удалось ({0})
+
+< Skipped ({0})
+> Пропущено ({0})
+
+< Printed
+> Напечатано
+
+< Saved ({0})
+> Сохранено ({0})
+
+< …and {0} more
+< …and {0} more
+> …и ещё {0}
+> …и ещё {0}
+> …и ещё {0}
+
+< Finished {0}
+> Завершено {0}
+
+< took {0}
+> заняло {0}
+
+< workload {0}%
+> нагрузка {0}%
+
+< Open {0}
+> Открыть {0}
+
+< Share {0}
+> Поделиться {0}
+
+< …and {0} more file
+< …and {0} more files
+> …и ещё {0} файл
+> …и ещё {0} файла
+> …и ещё {0} файлов
+
+@ empty the list
+< Clear
+> Очистить
+
+< Clear export history?
+> Очистить историю экспорта?
+
+< Only the list is cleared; saved files stay on your phone.
+> Очищается только список; сохранённые файлы остаются на телефоне.
+
+< Recent exports
+> Недавние экспорты
+
+< No exports yet. Results of every export appear here.
+> Экспортов пока нет. Здесь появятся результаты каждого экспорта.
+
+< Nothing here yet
+> Здесь пока ничего нет
+
+< Choose an image
+> Выберите изображение
+
+< Choose images
+> Выберите изображения
+
+< Choose a video
+> Выберите видео
+
+< Choose videos
+> Выберите видео
+
+< Choose a GIF
+> Выберите GIF
+
+< Choose GIFs
+> Выберите GIF
+
+< Choose a PDF
+> Выберите PDF
+
+< Choose PDFs
+> Выберите PDF
+
+< Choose a photo or video
+> Выберите фото или видео
+
+< Choose photos or videos
+> Выберите фото или видео
+
+< Choose a file
+> Выберите файл
+
+< Choose files
+> Выберите файлы
+
+< Choose a photo or PDF
+> Выберите фото или PDF
+
+< Choose photos or PDFs
+> Выберите фото или PDF
+
+< Select images
+> Выбрать изображения
+
+< Select videos
+> Выбрать видео
+
+< Select GIFs
+> Выбрать GIF
+
+< Select PDFs
+> Выбрать PDF
+
+< Select photos or videos
+> Выбрать фото или видео
+
+< Select files
+> Выбрать файлы
+
+< Select photos or PDFs
+> Выбрать фото или PDF
+
+< Select images to continue
+> Выберите изображения, чтобы продолжить
+
+< Select videos to continue
+> Выберите видео, чтобы продолжить
+
+< Select GIFs to continue
+> Выберите GIF, чтобы продолжить
+
+< Select PDFs to continue
+> Выберите PDF, чтобы продолжить
+
+< Select photos or videos to continue
+> Выберите фото или видео, чтобы продолжить
+
+< Select files to continue
+> Выберите файлы, чтобы продолжить
+
+< Select photos or PDFs to continue
+> Выберите фото или PDF, чтобы продолжить
+
+< Select at least {0} image
+< Select at least {0} images
+> Выберите не менее {0} изображения
+> Выберите не менее {0} изображений
+> Выберите не менее {0} изображений
+
+< Select at least {0} video
+< Select at least {0} videos
+> Выберите не менее {0} видео
+> Выберите не менее {0} видео
+> Выберите не менее {0} видео
+
+< Select at least {0} GIF
+< Select at least {0} GIFs
+> Выберите не менее {0} GIF
+> Выберите не менее {0} GIF
+> Выберите не менее {0} GIF
+
+< Select at least {0} PDF
+< Select at least {0} PDFs
+> Выберите не менее {0} PDF
+> Выберите не менее {0} PDF
+> Выберите не менее {0} PDF
+
+< Select at least {0} photo or video
+< Select at least {0} photos or videos
+> Выберите не менее {0} фото или видео
+> Выберите не менее {0} фото или видео
+> Выберите не менее {0} фото или видео
+
+< Select at least {0} file
+< Select at least {0} files
+> Выберите не менее {0} файла
+> Выберите не менее {0} файлов
+> Выберите не менее {0} файлов
+
+< Select at least {0} photo or PDF
+< Select at least {0} photos or PDFs
+> Выберите не менее {0} фото или PDF
+> Выберите не менее {0} фото или PDF
+> Выберите не менее {0} фото или PDF
+
+< {0} image selected
+< {0} images selected
+> Выбрано изображений: {0}
+> Выбрано изображений: {0}
+> Выбрано изображений: {0}
+
+< {0} video selected
+< {0} videos selected
+> Выбрано видео: {0}
+> Выбрано видео: {0}
+> Выбрано видео: {0}
+
+< {0} GIF selected
+< {0} GIFs selected
+> Выбрано GIF: {0}
+> Выбрано GIF: {0}
+> Выбрано GIF: {0}
+
+< {0} PDF selected
+< {0} PDFs selected
+> Выбрано PDF: {0}
+> Выбрано PDF: {0}
+> Выбрано PDF: {0}
+
+< {0} photo or video selected
+< {0} photos and videos selected
+> Выбрано фото и видео: {0}
+> Выбрано фото и видео: {0}
+> Выбрано фото и видео: {0}
+
+< {0} file selected
+< {0} files selected
+> Выбрано файлов: {0}
+> Выбрано файлов: {0}
+> Выбрано файлов: {0}
+
+< {0} photo or PDF selected
+< {0} photos and PDFs selected
+> Выбрано фото и PDF: {0}
+> Выбрано фото и PDF: {0}
+> Выбрано фото и PDF: {0}
+
+< No images found in that folder.
+> В этой папке нет изображений.
+
+< No videos found in that folder.
+> В этой папке нет видео.
+
+< No GIFs found in that folder.
+> В этой папке нет GIF.
+
+< No PDFs found in that folder.
+> В этой папке нет PDF.
+
+< No photos or videos found in that folder.
+> В этой папке нет фото или видео.
+
+< No files found in that folder.
+> В этой папке нет файлов.
+
+< No photos or PDFs found in that folder.
+> В этой папке нет фото или PDF.
+
+< Not a video file
+> Это не видеофайл
+
+< Not a PDF file
+> Это не файл PDF
+
+< Not a photo or video
+> Это не фото и не видео
+
+< Not a photo, video, GIF or PDF
+> Это не фото, не видео, не GIF и не PDF
+
+< Not a photo or PDF
+> Это не фото и не PDF
+
+< Use the GIF optimizer for GIFs
+> Для GIF используйте оптимизатор GIF
+
+< Not an image file
+> Это не файл изображения
+
+< One at a time
+> По одному
+
+< They'll be used in the order you select them
+> Они будут использоваться в том порядке, в котором вы их выберете
+
+< Select as many as you like
+> Выбирайте сколько угодно
+
+< Gallery
+> Галерея
+
+< Files
+> Файлы
+
+< Folder
+> Папка
+
+< Review & order
+> Проверка и порядок
+
+< Review
+> Проверка
+
+< Reading the selected files…
+> Чтение выбранных файлов…
+
+< Nothing selected yet.
+> Пока ничего не выбрано.
+
+< {0} can't be used
+< {0} can't be used
+> Нельзя использовать: {0}
+> Нельзя использовать: {0}
+> Нельзя использовать: {0}
+
+< {0} file will be skipped: {1}
+< {0} files will be skipped: {1}
+> Будут пропущены файлы ({0}): {1}
+> Будут пропущены файлы ({0}): {1}
+> Будут пропущены файлы ({0}): {1}
+
+< {0}: {1}, can't be used
+> {0}: {1}, нельзя использовать
+
+< Selected files
+> Выбранные файлы
+
+< Files are processed from top to bottom. Use the arrows to change the order.
+> Файлы обрабатываются сверху вниз. Меняйте порядок стрелками.
+
+< {0} file
+< {0} files
+> {0} файл
+> {0} файла
+> {0} файлов
+
+< {0} will be skipped
+< {0} will be skipped
+> Будет пропущено: {0}
+> Будет пропущено: {0}
+> Будет пропущено: {0}
+
+< Move up
+> Вверх
+
+< Move down
+> Вниз
+
+< Remove
+> Убрать
+
+< remove object person people erase delete clean ai inpaint
+> удалить убрать объект человек люди стереть очистить ии ластик ретушь
+
+< crop rotate straighten brightness contrast exposure saturation filter look edit adjust colour color warmth
+> обрезать кадрировать повернуть выровнять яркость контраст экспозиция насыщенность фильтр стиль редактировать настроить цвет теплота
+
+< censor hide face plate privacy mosaic anonymize redact
+> цензура скрыть лицо лица номер номерной знак приватность мозаика анонимизировать закрасить размыть
+
+< stack chain pipeline workflow combine multiple steps several tools in a row automate batch then
+> цепочка последовательность поток объединить несколько шагов инструментов подряд автоматизировать пакет затем
+
+< cut out cutout remove background transparent png sticker subject product ai
+> вырезать контур удалить фон прозрачный png стикер объект товар ии
+
+< auto fix improve brighten colour color one tap magic ai enhance
+> авто исправить улучшить осветлить цвет в одно касание магия ии улучшение
+
+< face faces blur pixelate hide anonymize people video privacy censor ai
+> лицо лица размыть размытие пикселизация скрыть анонимизировать люди видео приватность цензура ии
+
+< duplicate similar same copies clean storage space free gallery burst
+> дубликат дубликаты похожие одинаковые копии очистить память место освободить галерея серия
+
+< join combine concatenate clips append video
+> объединить склеить соединить клипы добавить видео
+
+< highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
+> лучшие моменты обзор монтаж фильм слайдшоу воспоминания поездка отпуск событие музыка итоги редактировать авто
+
+< fast slow motion timelapse time lapse speed up hyperlapse
+> быстро медленно замедленная съёмка таймлапс ускорить скорость гиперлапс
+
+< cut shorten clip rotate sideways
+> обрезать сократить подрезать клип повернуть набок
+
+< cut parts segments whatsapp status
+> разрезать части сегменты фрагменты whatsapp статус
+
+< shrink smaller reduce size mp4 h264
+> уменьшить меньше сжать размер mp4 h264
+
+< shrink smaller reduce size jpg jpeg webp resize
+> уменьшить меньше сжать размер jpg jpeg webp изменить размер
+
+< heic avif jpg jpeg png webp tiff format
+> heic avif jpg jpeg png webp tiff формат конвертировать
+
+< collage combine join stack
+> коллаж объединить соединить сложить
+
+< panorama join overlap screenshots
+> панорама склеить перекрытие скриншоты
+
+< logo brand copyright text
+> логотип бренд авторское право текст водяной знак
+
+< exif gps location privacy clean strip
+> exif gps местоположение приватность очистить удалить метаданные
+
+< mp3 m4a sound music
+> mp3 m4a звук музыка аудио
+
+< mute silent sound
+> без звука тихий беззвучный отключить звук
+
+< scan document camera paper
+> сканировать сканер документ камера бумага
+
+< split pdf pages select
+> разделить отделить pdf страницы выбрать извлечь
+
+< animation meme
+> анимация мем
+
+< Tools
+> Инструменты
+
+< Activity
+> Активность
+
+< Settings
+> Настройки
+
+< Private · offline · on-device
+> Приватно · офлайн · на устройстве
+
+< No uploads
+> Без загрузки в сеть
+
+< Edit, convert and\nclean up — privately.
+> Редактируйте, конвертируйте и\nочищайте — приватно.
+
+< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
+< {0} tools that run entirely on this phone. No account, no cloud, no limits.
+> {0} инструмент работает полностью на этом телефоне. Без аккаунта, без облака, без ограничений.
+> {0} инструмента работают полностью на этом телефоне. Без аккаунта, без облака, без ограничений.
+> {0} инструментов работают полностью на этом телефоне. Без аккаунта, без облака, без ограничений.
+
+< Search {0} tool
+< Search {0} tools
+> Поиск по {0} инструменту
+> Поиск по {0} инструментам
+> Поиск по {0} инструментам
+
+< Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
+> Ваши фото, видео и документы обрабатываются на этом телефоне и никогда не загружаются — приложение никогда не подключается к серверам в интернете (печать общается только с вашим принтером в вашей собственной сети). Результаты сохраняются в папках LocalMediaTools внутри Pictures, Movies, Music и Documents.
+
+< No tool matches "{0}"
+> Нет инструментов, подходящих под «{0}»
+
+< Try words like crop, gps, mp3, heic or panorama.
+> Попробуйте слова вроде «обрезать», «gps», «mp3», «heic» или «панорама».
+
+< {0} result
+< {0} results
+> {0} результат
+> {0} результата
+> {0} результатов
+
+< Exports keep running when you leave the app.
+> Экспорт продолжается, когда вы выходите из приложения.
+
+< Start a tool and its results will be listed here, with files you can open or share.
+> Запустите инструмент, и его результаты появятся здесь вместе с файлами, которые можно открыть или отправить.
+
+< Language
+> Язык
+
+< App language
+> Язык приложения
+
+< Performance
+> Производительность
+
+< How hard exports may work the phone. Lower keeps it cool and responsive; higher finishes sooner.
+> Насколько сильно экспорт может нагружать телефон. Меньше — телефон остаётся прохладным и отзывчивым; больше — экспорт завершается быстрее.
+
+< Magic eraser model
+> Модель волшебного ластика
+
+< MI-GAN · runs on this phone · ready
+> MI-GAN · работает на этом телефоне · готово
+
+< Unavailable: {0} Basic fill is used instead.
+> Недоступно: {0} Вместо этого используется простая заливка.
+
+< Stitcher alignment assist
+> Помощь с выравниванием при сшивании фото
+
+< MobileNet-V3 · runs on this phone · ready
+> MobileNet-V3 · работает на этом телефоне · готово
+
+< Organise in the background
+> Упорядочивать в фоне
+
+< Finds people and things in new photos on this phone so you can search them. Slows down when the phone is warm; pauses when it's very hot or the battery is low.
+> Находит людей и предметы на новых фото на этом телефоне, чтобы вы могли искать их. Замедляется, когда телефон нагрелся; приостанавливается, когда он сильно горячий или батарея почти разряжена.
+
+< Recognition models
+> Модели распознавания
+
+< EfficientDet-Lite2 and EfficientNetV2 (things and places), YuNet and ResNet-50 (faces and people) · all on this phone
+> EfficientDet-Lite2 и EfficientNetV2 (предметы и места), YuNet и ResNet-50 (лица и люди) · всё на этом телефоне
+
+< Storage
+> Хранилище
+
+< Where results go
+> Куда попадают результаты
+
+< LocalMediaTools folders in {0}
+> Папки LocalMediaTools в {0}
+
+< Clear temporary files
+> Очистить временные файлы
+
+< Calculating…
+> Подсчёт…
+
+< {0} in the app's cache · your files are not affected
+> {0} в кэше приложения · ваши файлы не затрагиваются
+
+< Privacy
+> Конфиденциальность
+
+< Nothing goes to the internet
+> Ничего не уходит в интернет
+
+< The app never connects to servers on the internet; printing talks only to printers on your own network.
+> Приложение никогда не подключается к серверам в интернете; печать общается только с принтерами в вашей собственной сети.
+
+< Originals are never changed
+> Оригиналы никогда не меняются
+
+< Every tool writes new files and checks them before saving.
+> Каждый инструмент записывает новые файлы и проверяет их перед сохранением.
+
+< About
+> О приложении
+
+< {0} tool
+< {0} tools
+> {0} инструмент
+> {0} инструмента
+> {0} инструментов
+
+< Open-source licences
+> Лицензии открытого ПО
+
+< Phone's language ({0})
+> Язык телефона ({0})
+
+< Clear temporary files?
+> Очистить временные файлы?
+
+< An export is running; temporary files will be cleared after it finishes. Try again then.
+> Идёт экспорт; временные файлы будут очищены после его завершения. Повторите попытку тогда.
+
+< Thumbnails and leftovers from interrupted exports are removed. Your saved files are not affected.
+> Миниатюры и остатки прерванных экспортов удаляются. Ваши сохранённые файлы не затрагиваются.
+
+@ delete files
+< Clear
+> Очистить
+
+< Temporary files cleared
+> Временные файлы очищены
+
+< Image alignment for the stitcher and basic fill.
+> Выравнивание изображений для сшивания фото и простой заливки.
+
+< Merging PDFs and extracting pages.
+> Объединение PDF и извлечение страниц.
+
+< Runs the on-device AI models.
+> Запускает модели ИИ на устройстве.
+
+< Magic eraser model, converted to TensorFlow Lite.
+> Модель волшебного ластика, преобразованная в TensorFlow Lite.
+
+< Stitcher alignment assist and similar-photo detection.
+> Помощь с выравниванием при сшивании фото и обнаружение похожих фото.
+
+< Finding faces for face blur, the Gallery and auto enhance.
+> Поиск лиц для размытия лиц, Галереи и автоулучшения.
+
+< Non-commercial research use only (code MIT)
+> Только для некоммерческих исследований (код под лицензией MIT)
+
+< Recognising the people in the Gallery.
+> Распознавание людей в Галерее.
+
+< Recognising the same person across video frames and files for face blur.
+> Распознавание одного и того же человека в кадрах видео и в файлах для размытия лиц.
+
+< Background remover.
+> Удаление фона.
+
+< Finding people, animals, vehicles and objects in the gallery.
+> Поиск людей, животных, транспорта и предметов в галерее.
+
+< Recognising scenes and kinds of things in the gallery and for auto enhance.
+> Распознавание сцен и видов предметов в галерее и для автоулучшения.
+
+< Writing the instrumental background music for highlight videos, on the phone.
+> Сочинение инструментальной фоновой музыки для видео из лучших моментов, на телефоне.
+
+< Grouping the classifier's classes into searchable categories.
+> Объединение классов классификатора в категории для поиска.
+
+< Human-verified labels used to calibrate and train the category recognisers.
+> Проверенные людьми метки для калибровки и обучения распознавателей категорий.
+
+< Language runtime.
+> Среда выполнения языка.
+
+< App typography.
+> Шрифты приложения.
+
+< {0}: original
+> {0}: оригинал
+
+< Run several tools in a row. Each tool works on the results of the one before; only the final files are saved.
+> Запускайте несколько инструментов подряд. Каждый инструмент работает с результатами предыдущего; сохраняются только итоговые файлы.
+
+< Example: {0}
+> Пример: {0}
+
+< Pick your files
+> Выберите файлы
+
+< Steps
+> Шаги
+
+< Tap a step to change its settings
+> Коснитесь шага, чтобы изменить его настройки
+
+< Results
+> Результаты
+
+< Also save the in-between results
+> Сохранять и промежуточные результаты
+
+< Off: only the final files are saved; the rest are temporary
+> Выкл.: сохраняются только итоговые файлы, остальные временные
+
+< If a step has nothing to do for a file (for example it's already small), or can't work on that kind of file, the file goes on to the next step unchanged, so nothing is lost.
+> Если шагу нечего делать с файлом (например, он уже маленький) или он не может работать с файлами такого типа, файл без изменений переходит к следующему шагу, так что ничего не теряется.
+
+< Run stack
+> Запустить цепочку
+
+< Starts with the files you pick
+> Начинается с выбранных вами файлов
+
+< Starts with {0} file: {1}
+< Starts with {0} files: {1}
+> Начинается с {0} файла: {1}
+> Начинается с {0} файлов: {1}
+> Начинается с {0} файлов: {1}
+
+< Gets no files it can work on: it needs {0}
+> Не получает файлов, с которыми может работать: нужны {0}
+
+< Saved: {0}
+> Сохраняется: {0}
+
+< then {0}
+> затем {0}
+
+< Add the first step
+> Добавить первый шаг
+
+< Add a step
+> Добавить шаг
+
+< Add steps to see where the results go.
+> Добавьте шаги, чтобы увидеть, куда попадают результаты.
+
+< The final files are saved where step {0} saves them: {1}. Files that the last step doesn't change are saved by the last step that did.
+> Итоговые файлы сохраняются там же, где сохраняет шаг {0}: {1}. Файлы, которые последний шаг не меняет, сохраняет последний шаг, который их менял.
+
+< Move step {0} up
+> Шаг {0}: переместить вверх
+
+< Move step {0} down
+> Шаг {0}: переместить вниз
+
+< Remove step {0}
+> Убрать шаг {0}
+
+< Step {0}: {1}. {2}. Tap to change
+> Шаг {0}: {1}. {2}. Коснитесь, чтобы изменить
+
+< Works on the files you pick.
+> Работает с выбранными вами файлами.
+
+< Works on the {0} file you picked.
+< Works on the {0} files you picked.
+> Работает с выбранными вами файлами: {0}.
+> Работает с выбранными вами файлами: {0}.
+> Работает с выбранными вами файлами: {0}.
+
+< Works on the {0} coming from step {1} ({2}).
+> Работает с результатами шага {1} ({2}): {0}.
+
+< Pick files to continue
+> Выберите файлы, чтобы продолжить
+
+< Add at least one step
+> Добавьте хотя бы один шаг
+
+< Step {0} ({1}) gets no files it can work on
+> Шаг {0} ({1}) не получает файлов, с которыми может работать
+
+< {0} step
+< {0} steps
+> {0} шаг
+> {0} шага
+> {0} шагов
+
+< starts after the current export
+> начнётся после текущего экспорта
+
+< you can leave the app while it runs
+> во время работы можно выйти из приложения
+
+< Add to queue
+> Добавить в очередь
+
+< Queued — it starts when the current export finishes.
+> В очереди — начнётся, когда завершится текущий экспорт.
+
+< Stack started. You can leave the app; progress is shown in the notification.
+> Цепочка запущена. Можно выйти из приложения; ход выполнения виден в уведомлении.
+
+< Add step {0}
+> Добавить шаг {0}
+
+< This step gets {0}. Pick a tool; you'll set its options next.
+> Этот шаг получает: {0}. Выберите инструмент; его параметры вы настроите дальше.
+
+< Works on {0}, which this step doesn't get
+> Работает с: {0}, чего этот шаг не получает
+
+< {0}, not available at this step
+> {0}, недоступно на этом шаге
+
+< Not available in stacks: {0}. They work on one photo by hand, look through your library or use the camera.
+> Недоступно в цепочках: {0}. Они работают с одним фото вручную, просматривают всю вашу библиотеку или используют камеру.
+
+< Reading the files…
+> Чтение файлов…
+
+< Start export
+> Начать экспорт
+
+< Step {0}: {1}
+> Шаг {0}: {1}
+
+< Options
+> Параметры
+
+< On-device
+> На устройстве
+
+< Originals untouched
+> Оригиналы не затрагиваются
+
+< Runs in background
+> Работает в фоне
+
+< Output
+> Вывод
+
+< New files are always created; your originals are never changed. A file is only published after it has been fully written and checked.
+> Всегда создаются новые файлы; ваши оригиналы никогда не меняются. Файл публикуется только после того, как полностью записан и проверен.
+
+< Do more with the results?
+> Сделать с результатами что-то ещё?
+
+< Stack another tool that works on them, e.g. compress after this
+> Добавьте ещё один инструмент, который работает с ними, например сжатие после этого
+
+< Then run another tool
+> Затем запустить другой инструмент
+
+< Save step
+> Сохранить шаг
+
+< Add to stack
+> Добавить в цепочку
+
+< Input
+> Вход
+
+< Files it can't work on go to the next step unchanged.
+> Файлы, с которыми он не может работать, без изменений переходят к следующему шагу.
+
+< Previews use your file "{0}". Files it can't work on go to the next step unchanged.
+> В предпросмотре используется ваш файл «{0}». Файлы, с которыми он не может работать, без изменений переходят к следующему шагу.
+
+< Result
+> Результат
+
+< Goes to the next step. If this is the last step, the results are saved in {0}.
+> Переходит к следующему шагу. Если это последний шаг, результаты сохраняются в {0}.
+
+< Check the options
+> Проверьте параметры
+
+< Standard settings
+> Стандартные настройки
+
+< Start a new tool stack?
+> Начать новую цепочку инструментов?
+
+< Your current stack ({0}) will be replaced.
+> Ваша текущая цепочка ({0}) будет заменена.
+
+< Start new
+> Начать заново
+
+< Settings are kept with the step; tap it in the stack to change them
+> Настройки хранятся вместе с шагом; коснитесь его в цепочке, чтобы изменить
+
+< Another export is running; this one will start right after it.
+> Идёт другой экспорт; этот начнётся сразу после него.
+
+< {0} file ready · you can leave the app while it runs
+< {0} files ready · you can leave the app while it runs
+> Файлов готово: {0} · во время работы можно выйти из приложения
+> Файлов готово: {0} · во время работы можно выйти из приложения
+> Файлов готово: {0} · во время работы можно выйти из приложения
+
+< Export started. You can leave the app; progress is shown in the notification.
+> Экспорт запущен. Можно выйти из приложения; ход выполнения виден в уведомлении.
+
+< {0} value
+> {0}: значение
+
+< {0} percent
+> {0} процентов
+
+< Crop
+> Кадрирование
+
+< Adjust
+> Коррекция
+
+< Looks
+> Стили
+
+< Close editor
+> Закрыть редактор
+
+< Undo
+> Отменить
+
+< Redo
+> Повторить
+
+< Hold to compare with the original
+> Удерживайте, чтобы сравнить с оригиналом
+
+< Save
+> Сохранить
+
+< Opening photo…
+> Открытие фото…
+
+< This photo can't be edited: {0}
+> Это фото нельзя редактировать: {0}
+
+< Brush over what you want to remove
+> Закрасьте то, что хотите удалить
+
+< Paint over what you want to hide
+> Закрасьте то, что хотите скрыть
+
+< Basic fill
+> Простая заливка
+
+< Erasing…
+> Стирание…
+
+< Applying…
+> Применение…
+
+< Free
+> Свободно
+
+< Square
+> Квадрат
+
+< Straighten
+> Выровнять
+
+< Rotate
+> Повернуть
+
+< Flip
+> Отразить
+
+< Reset
+> Сбросить
+
+< Auto enhance
+> Автоулучшение
+
+< Double-tap a slider to reset
+> Дважды коснитесь ползунка, чтобы сбросить его
+
+< Strength
+> Сила
+
+< Brush size
+> Размер кисти
+
+< AI
+> ИИ
+
+< Loading the on-device model…
+> Загрузка модели на устройстве…
+
+< Paint over a person or object, then lift your finger. Cover its shadow too. Zoom with two fingers for small details.
+> Закрасьте человека или объект, затем отпустите палец. Закрасьте и его тень. Увеличивайте двумя пальцами для мелких деталей.
+
+< Enhancing…
+> Улучшение…
+
+< {0}: {1}
+> {0}: {1}
+
+< already well balanced
+> уже хорошо сбалансировано
+
+< Finding faces…
+> Поиск лиц…
+
+< No faces were found in this photo.
+> На этом фото лица не найдены.
+
+< Pixelated {0} face · undo to bring it back
+< Pixelated {0} faces · undo to bring them back
+> Пикселизировано лиц: {0} · отмена вернёт их
+> Пикселизировано лиц: {0} · отмена вернёт их
+> Пикселизировано лиц: {0} · отмена вернёт их
+
+< Blurred {0} face · undo to bring it back
+< Blurred {0} faces · undo to bring them back
+> Размыто лиц: {0} · отмена вернёт их
+> Размыто лиц: {0} · отмена вернёт их
+> Размыто лиц: {0} · отмена вернёт их
+
+< Hide all faces
+> Скрыть все лица
+
+< full resolution
+> полное разрешение
+
+< Quality
+> Качество
+
+< This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
+> На этом фото есть прозрачные области: PNG и WebP их сохраняют; JPEG заполняет их белым.
+
+< A new copy is saved to {0}. The original is not changed. Location and camera details are not copied.
+> Новая копия сохраняется в {0}. Оригинал не меняется. Местоположение и данные камеры не копируются.
+
+< Save a copy
+> Сохранить копию
+
+< Saving in the background…
+> Сохранение в фоне…
+
+< Discard your edits?
+> Отменить правки?
+
+< Nothing has been saved yet. Your original photo is not affected.
+> Пока ничего не сохранено. Ваше исходное фото не затронуто.
+
+< Discard
+> Отменить
+
+< Keep editing
+> Продолжить редактирование
+
+< Unnamed person
+> Человек без имени
+
+< Who is this?
+> Кто это?
+
+< You confirmed this · in {0} photo
+< You confirmed this · in {0} photos
+> Подтверждено вами · на {0} фото
+> Подтверждено вами · на {0} фото
+> Подтверждено вами · на {0} фото
+
+< Recognised automatically · in {0} photo
+< Recognised automatically · in {0} photos
+> Распознано автоматически · на {0} фото
+> Распознано автоматически · на {0} фото
+> Распознано автоматически · на {0} фото
+
+< This face is small, blurry or turned, so it's only grouped when it clearly matches someone
+> Это лицо маленькое, размытое или повёрнуто, поэтому оно попадает в группу, только если явно совпадает с кем-то
+
+< Not grouped with anyone yet
+> Пока не отнесено ни к кому
+
+< Name this person
+> Назвать этого человека
+
+< Names the {0} face in this group
+< Names all {0} faces in this group
+> Называет {0} лицо в этой группе
+> Называет все {0} лица в этой группе
+> Называет все {0} лиц в этой группе
+
+< This is {0}
+> Это {0}
+
+< Looks similar
+> Похоже
+
+< Add a name
+> Добавить имя
+
+< Start a person, or pick one you named
+> Создайте человека или выберите уже названного
+
+< This isn't {0}
+> Это не {0}
+
+< Removes it from {0} for good
+> Убирает из «{0}» навсегда
+
+< Not the same person
+> Это другой человек
+
+< Takes this face out of the group
+> Убирает это лицо из группы
+
+< This is someone else…
+> Это кто-то другой…
+
+< Pick or type their name
+> Выберите или введите имя
+
+< Use as {0}'s picture
+> Использовать как фото: {0}
+
+< Use as the group's picture
+> Использовать как фото группы
+
+< Ignore this face
+> Игнорировать это лицо
+
+< For strangers, posters or statues: it won't appear in People
+> Для незнакомцев, плакатов или статуй: оно не появится в разделе «Люди»
+
+< Name
+> Имя
+
+< Add to {0}?
+> Добавить в «{0}»?
+
+< {1} already exists. This face will be added to {1}.
+< {1} already exists. These {0} faces will be added to {1}.
+> «{1}» уже существует. К «{1}» будут добавлены лица: {0}.
+> «{1}» уже существует. К «{1}» будут добавлены лица: {0}.
+> «{1}» уже существует. К «{1}» будут добавлены лица: {0}.
+
+< Add
+> Добавить
+
+< Named {0}
+> Назначено имя: {0}
+
+< Named
+> С именем
+
+< Unnamed groups
+> Группы без имени
+
+< On their own
+> Отдельные
+
+< Ignored
+> Игнорируемые
+
+< All faces
+> Все лица
+
+< Review faces
+> Проверка лиц
+
+< Tap a face that isn't this person to remove it.
+> Коснитесь лица, которое не принадлежит этому человеку, чтобы убрать его.
+
+< Show this face in People again?
+> Снова показывать это лицо в разделе «Люди»?
+
+< Show
+> Показать
+
+< Unnamed
+> Без имени
+
+< Small or blurry
+> Маленькие или размытые
+
+< {0}. Tap to name or correct, long-press to open the photo.
+> {0}. Коснитесь, чтобы назвать или исправить, удерживайте, чтобы открыть фото.
+
+< You can share up to {0} items at a time ({1} selected).
+> Можно поделиться не более чем {0} элементами за раз (выбрано: {1}).
+
+< You can delete up to {0} items at a time ({1} selected).
+> Можно удалить не более {0} элементов за раз (выбрано: {1}).
+
+< These items can't be moved to the trash: {0}
+> Эти элементы нельзя переместить в корзину: {0}
+
+< Moved {0} item to the trash. You can restore it for 30 days.
+< Moved {0} items to the trash. You can restore them for 30 days.
+> В корзину перемещено элементов: {0}. Их можно восстановить в течение 30 дней.
+> В корзину перемещено элементов: {0}. Их можно восстановить в течение 30 дней.
+> В корзину перемещено элементов: {0}. Их можно восстановить в течение 30 дней.
+
+< On Android 10, photos can be deleted one at a time (there is no trash).
+> В Android 10 фото можно удалять только по одному (корзины нет).
+
+< Delete for good?
+> Удалить навсегда?
+
+< Android 10 has no trash, so {0} can't be restored afterwards.
+> В Android 10 нет корзины, поэтому {0} потом нельзя будет восстановить.
+
+< Delete
+> Удалить
+
+< Deleted.
+> Удалено.
+
+< This item can't be deleted.
+> Этот элемент нельзя удалить.
+
+< This item can't be deleted: {0}
+> Этот элемент нельзя удалить: {0}
+
+< No app can open this file.
+> Ни одно приложение не может открыть этот файл.
+
+< Videos can't be printed.
+> Видео нельзя печатать.
+
+< Videos are left out: only photos can be printed.
+> Видео исключены: печатать можно только фото.
+
+< No tool works on this selection.
+> Ни один инструмент не работает с этой подборкой.
+
+< Open in a tool
+> Открыть в инструменте
+
+< Use {0} item in a tool
+< Use {0} items in a tool
+> Использовать {0} элемент в инструменте
+> Использовать {0} элемента в инструменте
+> Использовать {0} элементов в инструменте
+
+< Search photos
+> Поиск фото
+
+< Gallery options
+> Параметры галереи
+
+< Search people, things, places…
+> Поиск людей, предметов, мест…
+
+< Photos
+> Фото
+
+< Albums
+> Альбомы
+
+< People
+> Люди
+
+< Things
+> Предметы
+
+< Showing only the photos you allowed. Tap to allow more.
+> Показаны только разрешённые вами фото. Коснитесь, чтобы разрешить больше.
+
+< Allow more photos
+> Разрешить больше фото
+
+< No photos or videos yet
+> Пока нет ни фото, ни видео
+
+< Photos and videos you take or save on this phone will show up here.
+> Фото и видео, которые вы снимаете или сохраняете на этом телефоне, появятся здесь.
+
+< Your photos, organised on this phone
+> Ваши фото, упорядоченные на этом телефоне
+
+< Allow access to see your photos and videos here. The app finds people, pets, places and things in them so you can search for "dog" or "Sophie" — entirely on this phone. Nothing is uploaded: the app never connects to servers on the internet.
+> Разрешите доступ, чтобы видеть здесь свои фото и видео. Приложение находит в них людей, питомцев, места и предметы, чтобы вы могли искать «собака» или «Софья» — всё на этом телефоне. Ничего не загружается: приложение никогда не подключается к серверам в интернете.
+
+< Allow access
+> Разрешить доступ
+
+< No albums yet
+> Пока нет альбомов
+
+< Folders with photos or videos appear here.
+> Папки с фото или видео появляются здесь.
+
+< Videos
+> Видео
+
+< Favourites
+> Избранное
+
+< Screenshots
+> Скриншоты
+
+< {0} face found · named, unnamed and on their own
+< {0} faces found · named, unnamed and on their own
+> Найдено лиц: {0} · с именами, без имён и отдельных
+> Найдено лиц: {0} · с именами, без имён и отдельных
+> Найдено лиц: {0} · с именами, без имён и отдельных
+
+< Name people
+> Назвать людей
+
+< {0} group to name, one after another
+< {0} groups to name, one after another
+> Групп, которым нужно дать имя, по очереди: {0}
+> Групп, которым нужно дать имя, по очереди: {0}
+> Групп, которым нужно дать имя, по очереди: {0}
+
+< Name people, {0} group to name
+< Name people, {0} groups to name
+> Назвать людей, групп без имени: {0}
+> Назвать людей, групп без имени: {0}
+> Назвать людей, групп без имени: {0}
+
+< Finding people…
+> Поиск людей…
+
+< No people yet
+> Пока нет людей
+
+< Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos.
+> Лица находятся и группируются на этом телефоне. Люди появляются здесь, как только одно и то же лицо встречается на нескольких фото.
+
+< When the same person appears in several photos, they show up here so you can name them.
+> Когда один и тот же человек встречается на нескольких фото, он появляется здесь, и вы можете его назвать.
+
+< Add names
+> Добавить имена
+
+< Looking at your photos…
+> Просмотр ваших фото…
+
+< Nothing recognised yet
+> Пока ничего не распознано
+
+< Pets, food, places and things appear here as photos are analysed on this phone.
+> Питомцы, еда, места и предметы появляются здесь по мере анализа фото на этом телефоне.
+
+< Pets, food, vehicles, places and more appear here when photos show them.
+> Питомцы, еда, транспорт, места и многое другое появляются здесь, когда есть на фото.
+
+< Resume organising
+> Продолжить упорядочивание
+
+< Pause organising
+> Приостановить упорядочивание
+
+< About recognition
+> О распознавании
+
+< Start over (forget people and names)
+> Начать заново (забыть людей и имена)
+
+< Start over?
+> Начать заново?
+
+< Names, people and everything found in your photos are forgotten and the photos are analysed again. Your photos themselves are not touched.
+> Имена, люди и всё, что найдено на ваших фото, будут забыты, а фото проанализированы заново. Сами фото не затрагиваются.
+
+< Start over
+> Начать заново
+
+< on-device AI
+> ИИ на устройстве
+
+< basic mode (the AI model couldn't run on this phone)
+> базовый режим (модель ИИ не смогла запуститься на этом телефоне)
+
+< unavailable
+> недоступно
+
+< starts with the first photo
+> начнётся с первого фото
+
+< {1} of {0} photo or video analysed.
+< {1} of {0} photos and videos analysed.
+> Проанализировано: {1} из {0} фото и видео.
+> Проанализировано: {1} из {0} фото и видео.
+> Проанализировано: {1} из {0} фото и видео.
+
+< Reading your library.
+> Чтение вашей библиотеки.
+
+< Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
+> Ранее найденные лица заново просматриваются новой, более точной моделью лиц. Имена, подтверждения и исправления сохраняются; по завершении люди будут сгруппированы заново.
+
+< Objects and scenes: {0}.
+> Объекты и сцены: {0}.
+
+< Faces and people: {0}.
+> Лица и люди: {0}.
+
+< Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
+> Всё работает на этом телефоне с низким приоритетом. Замедляется, когда телефон нагревается, приостанавливается, когда он сильно горячий или батарея почти разряжена, и продолжает с того места, где остановилось.
+
+< Organising your gallery
+> Упорядочивание галереи
+
+< OK
+> ОК
+
+< Resume
+> Продолжить
+
+< Pause
+> Пауза
+
+< Paused
+> На паузе
+
+< {0} left
+< {0} left
+> Осталось: {0}
+> Осталось: {0}
+> Осталось: {0}
+
+< Reading your library…
+> Чтение вашей библиотеки…
+
+< Grouping faces into people…
+> Группировка лиц по людям…
+
+< Updating face recognition · {0} of {1}
+> Обновление распознавания лиц · {0} из {1}
+
+< slower while the phone is warm
+> медленнее, пока телефон тёплый
+
+< names are kept
+> имена сохраняются
+
+< Finding people and things · {0} of {1}
+> Поиск людей и предметов · {0} из {1}
+
+< on this phone
+> на этом телефоне
+
+< {1}, {0} item
+< {1}, {0} items
+> {1}, {0} элемент
+> {1}, {0} элемента
+> {1}, {0} элементов
+
+< Add name
+> Добавить имя
+
+< {1}, {0} photo
+< {1}, {0} photos
+> {1}, {0} фото
+> {1}, {0} фото
+> {1}, {0} фото
+
+@ date pattern: a short month and its year
+< MMM yyyy
+> LLL yyyy
+
+< {0} item
+< {0} items
+> {0} элемент
+> {0} элемента
+> {0} элементов
+
+@ date pattern: a month and its year
+< MMMM yyyy
+> LLLL yyyy
+
+< Today
+> Сегодня
+
+< Yesterday
+> Вчера
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> EEE, d MMM
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> d MMM yyyy
+
+< Video
+> Видео
+
+< Photo
+> Фото
+
+< , not selected
+> , не выбрано
+
+< Found on this phone by on-device AI.
+> Найдено на этом телефоне ИИ на устройстве.
+
+< Cancel selection
+> Отменить выбор
+
+< Select all
+> Выбрать все
+
+< Use in a tool
+> Использовать в инструменте
+
+< Select items
+> Выбрать элементы
+
+< {0} selected
+< {0} selected
+> Выбрано: {0}
+> Выбрано: {0}
+> Выбрано: {0}
+
+< Loading people…
+> Загрузка людей…
+
+< {0} of {1}
+> {0} из {1}
+
+< Type a name, then Enter
+> Введите имя и нажмите Enter
+
+< Skip
+> Пропустить
+
+< No one I know
+> Никого не знаю
+
+< Some of these aren't the same person…
+> Некоторые из них — не один и тот же человек…
+
+< {1} faces in {0} photo · long-press a face to see its photo
+< {1} faces in {0} photos · long-press a face to see its photo
+> Лиц: {1} на {0} фото · удерживайте лицо, чтобы увидеть его фото
+> Лиц: {1} на {0} фото · удерживайте лицо, чтобы увидеть его фото
+> Лиц: {1} на {0} фото · удерживайте лицо, чтобы увидеть его фото
+
+< Face
+> Лицо
+
+< Type a name, or tap Skip.
+> Введите имя или коснитесь «Пропустить».
+
+< Added to {0}
+> Добавлено к «{0}»
+
+< Everyone is named
+> У всех есть имена
+
+< All done
+> Всё готово
+
+< There are no unnamed groups right now. New ones appear as more photos are looked at.
+> Сейчас нет групп без имени. Новые появятся, когда будет просмотрено больше фото.
+
+< You went through {0} group and named {1}. Faces are regrouped with your names now.
+< You went through {0} groups and named {1}. Faces are regrouped with your names now.
+> Вы просмотрели групп: {0} и назвали: {1}. Теперь лица перегруппируются с учётом ваших имён.
+> Вы просмотрели групп: {0} и назвали: {1}. Теперь лица перегруппируются с учётом ваших имён.
+> Вы просмотрели групп: {0} и назвали: {1}. Теперь лица перегруппируются с учётом ваших имён.
+
+< You went through {0} group. Faces are regrouped with your names now.
+< You went through {0} groups. Faces are regrouped with your names now.
+> Вы просмотрели групп: {0}. Теперь лица перегруппируются с учётом ваших имён.
+> Вы просмотрели групп: {0}. Теперь лица перегруппируются с учётом ваших имён.
+> Вы просмотрели групп: {0}. Теперь лица перегруппируются с учётом ваших имён.
+
+< Back to People
+> Назад к разделу «Люди»
+
+< {0} photo or video
+< {0} photos and videos
+> Фото и видео: {0}
+> Фото и видео: {0}
+> Фото и видео: {0}
+
+< {0} face
+< {0} faces
+> {0} лицо
+> {0} лица
+> {0} лиц
+
+< Also {0}?
+> Это тоже {0}?
+
+< These groups look similar. Confirm the ones that are {0}.
+> Эти группы выглядят похоже. Подтвердите те, что относятся к: {0}.
+
+< Open this group
+> Открыть эту группу
+
+< Not {0}
+> Это не {0}
+
+< Yes, {0}
+> Да, это {0}
+
+< Merge with {0}?
+> Объединить с «{0}»?
+
+< {0} already exists. Merge {1} into {0}? All their photos will be under {0}.
+> «{0}» уже существует. Объединить «{1}» с «{0}»? Все их фото окажутся в «{0}».
+
+< Merge
+> Объединить
+
+< Rename
+> Переименовать
+
+< Merge with…
+> Объединить с…
+
+< Show in People
+> Показывать в разделе «Люди»
+
+< Hide from People
+> Скрыть из раздела «Люди»
+
+< Shown in People
+> Показывается в разделе «Люди»
+
+< Hidden from People
+> Скрыто из раздела «Люди»
+
+< Remove name
+> Убрать имя
+
+< Remove {0}?
+> Убрать «{0}»?
+
+< The name is removed and these faces become unnamed again. Photos are not affected.
+> Имя будет убрано, и эти лица снова станут без имени. Фото не затрагиваются.
+
+< There is no one else to merge with yet.
+> Пока не с кем объединять.
+
+< Same person as…
+> Тот же человек, что и…
+
+< People, things, places, dates
+> Люди, предметы, места, даты
+
+< Showing results for {0} (you typed {1})
+> Результаты для «{0}» (вы ввели «{1}»)
+
+< still analysing {0} more
+< still analysing {0} more
+> Ещё анализируется: {0}
+> Ещё анализируется: {0}
+> Ещё анализируется: {0}
+
+< No matches
+> Нет совпадений
+
+< Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
+> Попробуйте имя, которое вы кому-то дали, или слова вроде «собака», «машина», «пляж», «еда», «закат» или «документ».
+
+< No photo has all of these. Remove a word to see more.
+> Нет фото, где есть всё это. Уберите слово, чтобы увидеть больше.
+
+< Nothing found yet.
+> Пока ничего не найдено.
+
+< Things in your photos
+> Предметы на ваших фото
+
+< Try
+> Попробуйте
+
+< Last month
+> В прошлом месяце
+
+< This year
+> В этом году
+
+< Press search to look for "{0}".
+> Нажмите «Поиск», чтобы найти «{0}».
+
+< Name people in Gallery › People to search for them, like "Sophie" or "John and Sophie".
+> Назовите людей в разделе «Галерея › Люди», чтобы искать их, например «Софья» или «Иван и Софья».
+
+< Show faces
+> Показать лица
+
+< Details
+> Подробности
+
+< Edit
+> Изменить
+
+< Unnamed face, tap to name
+> Лицо без имени, коснитесь, чтобы назвать
+
+< Hide faces
+> Скрыть лица
+
+< Found in it: {0}
+> Найдено в нём: {0}
+
+< People: {0}
+> Люди: {0}
+
+< {0} unnamed
+< {0} unnamed
+> Без имени: {0}
+> Без имени: {0}
+> Без имени: {0}
+
+< This item hasn't been analysed yet.
+> Этот элемент ещё не проанализирован.
+
+< Open with…
+> Открыть с помощью…
+
+< Play video
+> Воспроизвести видео
+
+< Preview
+> Предпросмотр
+
+< Select a photo to see the cut-out.
+> Выберите фото, чтобы увидеть вырезанный объект.
+
+< Background
+> Фон
+
+< What goes behind the subject
+> Что находится за объектом
+
+< Crop to the subject
+> Обрезать по объекту
+
+< Trims the empty space around it
+> Убирает пустое место вокруг него
+
+< Works best with one clear subject: a person, pet, product or object. Fine hair and see-through things can keep a little of the background.
+> Лучше всего работает с чётким объектом: человеком, питомцем, товаром или предметом. Тонкие волосы и прозрачные предметы могут сохранить немного фона.
+
+< Finding the subject in {0}…
+> Поиск объекта в {0}…
+
+< Preview not available: {0}
+> Предпросмотр недоступен: {0}
+
+< No clear subject found in this photo.
+> На этом фото не найден чёткий объект.
+
+< Preview of {0}
+> Предпросмотр: {0}
+
+< the other {0} photo is done the same way
+< the other {0} photos are done the same way
+> Остальных фото: {0} — они обрабатываются так же
+> Остальных фото: {0} — они обрабатываются так же
+> Остальных фото: {0} — они обрабатываются так же
+
+< saved at full resolution
+> сохранено в полном разрешении
+
+< name_cutout.png (transparent) · name_cutout.jpg (with a colour)
+> имя_cutout.png (прозрачный) · имя_cutout.jpg (с цветом)
+
+< Before
+> До
+
+< After
+> После
+
+< Select photos to see what auto enhance does.
+> Выберите фото, чтобы увидеть, что делает автоулучшение.
+
+< Each photo gets its own settings: faces are brightened gently, food gets warmer and richer, landscapes more depth, documents cleaner. Want to fine-tune? Open the photo in the Photo editor and tap Auto enhance there.
+> Каждое фото получает свои настройки: лица мягко осветляются, еда становится теплее и насыщеннее, пейзажи — глубже, документы — чище. Хотите подстроить? Откройте фото в фоторедакторе и коснитесь там «Автоулучшение».
+
+< Looking at {0}…
+> Просмотр {0}…
+
+< {0}: {1}.
+> {0}: {1}.
+
+< already well balanced, only small touches
+> уже хорошо сбалансировано, только мелкие правки
+
+< name_enhanced.jpg (PNG stays PNG)
+> имя_enhanced.jpg (PNG остаётся PNG)
+
+< Pixelate chosen faces
+> Пикселизировать выбранные лица
+
+< Blur chosen faces
+> Размыть выбранные лица
+
+< People found
+> Найденные люди
+
+< Select photos or videos; faces are found automatically.
+> Выберите фото или видео; лица находятся автоматически.
+
+< Find faces
+> Найти лица
+
+< Hide everyone
+> Скрыть всех
+
+< Hide no one
+> Никого не скрывать
+
+< Style
+> Стиль
+
+@ strength
+< Light
+> Слабо
+
+@ strength
+< Medium
+> Средне
+
+@ strength
+< Strong
+> Сильно
+
+< Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
+> Лица отслеживаются от кадра к кадру и сопоставляются во всех выбранных файлах, поэтому каждый человек указан один раз. Видео перекодируются в H.264 MP4 с качеством, близким к исходному; звук сохраняется.
+
+< Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
+> Все лица, найденные на этом шаге, будут скрыты. Чтобы выбрать людей, добавьте в цепочку фото или видео.
+
+< Watching the video for faces…
+< Watching {0} videos for faces…
+> Поиск лиц в видео: {0}…
+> Поиск лиц в видео: {0}…
+> Поиск лиц в видео: {0}…
+
+< Looking for faces…
+> Поиск лиц…
+
+< Find faces again
+> Найти лица заново
+
+< No faces were found.
+> Лица не найдены.
+
+< Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
+< Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
+> Найдено людей: {0}. Коснитесь лица, чтобы оставить его видимым; выделенные лица будут скрыты.
+> Найдено людей: {0}. Коснитесь лица, чтобы оставить его видимым; выделенные лица будут скрыты.
+> Найдено людей: {0}. Коснитесь лица, чтобы оставить его видимым; выделенные лица будут скрыты.
+
+< Stopped. Tap Find faces to look again.
+> Остановлено. Коснитесь «Найти лица», чтобы искать снова.
+
+< Faces couldn't be found: {0}
+> Не удалось найти лица: {0}
+
+< {0} file couldn't be read: {1}.
+< {0} files couldn't be read: {1}.
+> Не удалось прочитать файлы ({0}): {1}.
+> Не удалось прочитать файлы ({0}): {1}.
+> Не удалось прочитать файлы ({0}): {1}.
+
+< Stopping…
+> Остановка…
+
+< {0} video
+< {0} videos
+> {0} видео
+> {0} видео
+> {0} видео
+
+< Hidden
+> Скрыто
+
+< Visible
+> Видно
+
+< Person {0}, in {1}, will be hidden
+> Человек {0} в {1} будет скрыт
+
+< Person {0}, in {1}, stays visible
+> Человек {0} в {1} остаётся видимым
+
+< Tap the people you want to hide
+> Коснитесь людей, которых хотите скрыть
+
+< Tap Find faces first
+> Сначала коснитесь «Найти лица»
+
+< No faces to hide in these files
+> В этих файлах нет лиц, которые нужно скрыть
+
+< name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
+> имя_blurred.jpg / .png (Pictures) · имя_blurred.mp4 (Movies)
+
+< Hides every face
+> Скрывает все лица
+
+< Hides {1} of {0} person (others stay visible)
+< Hides {1} of {0} people (others stay visible)
+> Скрывает {1} из {0} человека (остальные остаются видимыми)
+> Скрывает {1} из {0} человек (остальные остаются видимыми)
+> Скрывает {1} из {0} человек (остальные остаются видимыми)
+
+< Find faces first
+> Сначала найдите лица
+
+< The chosen people don't appear in these files
+> Выбранные люди не встречаются в этих файлах
+
+< Output width
+> Ширина результата
+
+< 0 keeps the original width
+> 0 сохраняет исходную ширину
+
+< Frame rate
+> Частота кадров
+
+< 0 keeps the original timing; lower drops frames
+> 0 сохраняет исходный тайминг; меньшее значение отбрасывает кадры
+
+< Palette size
+> Размер палитры
+
+< Fewer colours = smaller file, less detail
+> Меньше цветов = меньше файл, меньше деталей
+
+< {0} colour
+< {0} colours
+> {0} цвет
+> {0} цвета
+> {0} цветов
+
+< 32: tiny files, visible banding · 64: good for simple graphics · 128: balanced · 256: most detail
+> 32: крошечные файлы, заметные полосы · 64: подходит для простой графики · 128: сбалансированно · 256: максимум деталей
+
+< Dithering
+> Дизеринг
+
+< Pattern
+> Узор
+
+@ no dithering
+< None
+> Нет
+
+< Diffusion
+> Диффузия
+
+< Size, frame rate and colours all trade detail for file size. Results that wouldn't be smaller than the original aren't saved.
+> Размер, частота кадров и цвета меняют детали на размер файла. Результаты, которые не будут меньше оригинала, не сохраняются.
+
+< 0 keeps every pixel identical; other widths sample pixels without blending
+> 0 сохраняет каждый пиксель без изменений; другие значения ширины выбирают пиксели без смешивания
+
+< Playback frame rate
+> Частота воспроизведения
+
+< 0 keeps the exact original timing
+> 0 сохраняет точный исходный тайминг
+
+< Only keep smaller results
+> Сохранять только меньшие результаты
+
+< Re-encodes the GIF more efficiently (changed areas only, exact palettes, frame merging) while every displayed pixel stays identical. This is only possible when each frame fits GIF's limits: up to 256 colours including transparency, and on/off transparency only. Frames that don't fit are reported and the file is rejected rather than altered.
+> Перекодирует GIF эффективнее (только изменённые области, точные палитры, объединение кадров), при этом каждый показываемый пиксель остаётся идентичным. Это возможно, только если каждый кадр укладывается в ограничения GIF: до 256 цветов, включая прозрачность, и только прозрачность «вкл/выкл». Кадры, не подходящие под них, перечисляются, а файл отклоняется, а не изменяется.
+
+< Image format
+> Формат изображения
+
+< lossless, crisp text
+> без потерь, чёткий текст
+
+< smaller files
+> файлы меньше
+
+< JPEG quality
+> Качество JPEG
+
+< Render scale
+> Масштаб рендеринга
+
+< 100% = 72 DPI
+> 100% = 72 DPI
+
+< Every page becomes one image that looks exactly like the page on screen (white background). Text isn't extracted; links and selectable text don't carry over. Pages of any size are rendered in strips, so large posters work too.
+> Каждая страница становится изображением, выглядящим точно как страница на экране (белый фон). Текст не извлекается; ссылки и выделяемый текст не сохраняются. Страницы любого размера рендерятся полосами, поэтому большие постеры тоже работают.
+
+< ≈ {0} DPI · an A4 page becomes {1} × {2} px
+> ≈ {0} DPI · страница A4 станет {1} × {2} пикс.
+
+< name_p001.{0}, name_p002… one image per page
+> имя_p001.{0}, имя_p002… одно изображение на страницу
+
+< Create PDF
+> Создать PDF
+
+< Page orientation
+> Ориентация страницы
+
+< All pages are A4 with a small margin
+> Все страницы A4 с небольшим полем
+
+< Auto (match image)
+> Авто (как у изображения)
+
+< Image quality
+> Качество изображения
+
+< no recompression
+> без повторного сжатия
+
+< smaller PDF
+> PDF меньше
+
+< Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
+> «Оригинал» встраивает фото JPEG байт в байт, а остальные изображения — без потерь. «Компактно» уменьшает их до разрешения печати (300 DPI на A4) в формате JPEG.
+
+< File name
+> Имя файла
+
+@ default file name
+< Images
+> Изображения
+
+< <date>
+> <дата>
+
+< One image per page, in the order shown above (use Review & order to change it). Pictures are fitted without distortion and keep their displayed orientation. This makes an image PDF — text in photos is not made searchable (no OCR).
+> Одно изображение на страницу, в порядке, показанном выше (измените его в «Проверка и порядок»). Изображения вписываются без искажений и сохраняют показываемую ориентацию. Получается PDF из изображений — текст на фото не становится доступным для поиска (без OCR).
+
+< Merge PDFs
+> Объединение PDF
+
+@ default file name
+< Merged
+> Объединённый
+
+< Documents are joined in the order shown above, page by page. Their real content is kept — text stays selectable, vector graphics and links keep working, and every page keeps its own size. Password-protected or damaged PDFs are rejected with the file name.
+> Документы соединяются в показанном выше порядке, страница за страницей. Их настоящее содержимое сохраняется — текст остаётся выделяемым, векторная графика и ссылки продолжают работать, а каждая страница сохраняет свой размер. PDF с паролем или повреждённые отклоняются с указанием имени файла.
+
+< Save PDF
+> Сохранить PDF
+
+< Pages
+> Страницы
+
+< Capture page
+> Снять страницу
+
+< Add from gallery
+> Добавить из галереи
+
+< Reorder
+> Изменить порядок
+
+< Clear pages
+> Очистить страницы
+
+< Remove all pages?
+> Убрать все страницы?
+
+< Captured pages are deleted from the app's private storage; gallery photos aren't affected.
+> Снятые страницы удаляются из личного хранилища приложения; фото в галерее не затрагиваются.
+
+< Page {0}
+> Страница {0}
+
+< No pages yet
+> Пока нет страниц
+
+< {0} page
+< {0} pages
+> {0} страница
+> {0} страницы
+> {0} страниц
+
+< Capture pages with the camera or add photos. Pages appear here in order.
+> Снимайте страницы камерой или добавляйте фото. Страницы появляются здесь по порядку.
+
+< Enhancement
+> Улучшение
+
+< Makes photographed pages look like scans
+> Делает снятые страницы похожими на сканы
+
+< Clean document evens out shadows and boosts contrast (greyscale). Black & white gives crisp text and the smallest files.
+> «Чистый документ» выравнивает тени и повышает контраст (оттенки серого). «Чёрно-белое» даёт чёткий текст и самые маленькие файлы.
+
+< Auto (match photo)
+> Авто (как у фото)
+
+< Portrait
+> Книжная
+
+@ default file name
+< Scan
+> Скан
+
+< Each page becomes an A4 page with a small margin, upright as you see it. This is an image scanner: text stays part of the picture and is not searchable or selectable (no OCR).
+> Каждая страница становится страницей A4 с небольшим полем, прямо, как вы её видите. Это сканер изображений: текст остаётся частью картинки и недоступен для поиска и выделения (без OCR).
+
+< Adding pages…
+> Добавление страниц…
+
+< Capture or add at least one page
+> Снимите или добавьте хотя бы одну страницу
+
+< Music
+> Музыка
+
+< Written on this phone for your video — always instrumental
+> Сочинена на этом телефоне для вашего видео — всегда инструментальная
+
+< No music
+> Без музыки
+
+< Listen
+> Слушать
+
+< Another tune
+> Другая мелодия
+
+< Length
+> Длительность
+
+< {0} s
+> {0} с
+
+< Auto
+> Авто
+
+< Shape
+> Формат
+
+< Captions
+> Титры
+
+< The title at the start and each moment's name
+> Заголовок в начале и название каждого момента
+
+< Sound from your videos
+> Звук ваших видео
+
+< The music gets quieter while they play
+> Музыка становится тише, пока они воспроизводятся
+
+< Title
+> Заголовок
+
+< Moments
+> Моменты
+
+< Tap a shot to always include it; tap again to leave it out
+> Коснитесь кадра, чтобы всегда включать его; коснитесь ещё раз, чтобы исключить
+
+< Auto ({0})
+> Авто ({0})
+
+< landscape
+> горизонтальный
+
+< portrait
+> вертикальный
+
+< square
+> квадратный
+
+< Pick the photos and videos of an event (two or more). They're put in the order they were taken.
+> Выберите фото и видео события (два или больше). Они расположатся в порядке съёмки.
+
+< Too few of these files could be read.
+> Удалось прочитать слишком мало из этих файлов.
+
+< {0} of the files couldn't be read and is left out.
+< {0} of the files couldn't be read and are left out.
+> Не удалось прочитать файлов: {0}, они исключены.
+> Не удалось прочитать файлов: {0}, они исключены.
+> Не удалось прочитать файлов: {0}, они исключены.
+
+< Looking at your photos with on-device AI… {0} of {1}
+> Просмотр ваших фото ИИ на устройстве… {0} из {1}
+
+< Looking at your videos with on-device AI… {0} of {1}
+> Просмотр ваших видео ИИ на устройстве… {0} из {1}
+
+< Looking at your photos and videos with on-device AI… {0} of {1}
+> Просмотр ваших фото и видео ИИ на устройстве… {0} из {1}
+
+< Everything is left out — tap a shot to bring it back.
+> Всё исключено — коснитесь кадра, чтобы вернуть его.
+
+< not in the video
+> нет в видео
+
+< {1} of {0} in the video
+< {1} of {0} in the video
+> {1} из {0} в видео
+> {1} из {0} в видео
+> {1} из {0} в видео
+
+< no music
+> без музыки
+
+< {0} moment
+< {0} moments
+> {0} момент
+> {0} момента
+> {0} моментов
+
+< {0} clip
+< {0} clips
+> {0} клип
+> {0} клипа
+> {0} клипов
+
+< Name this moment
+> Назвать этот момент
+
+< Automatic
+> Автоматически
+
+< Pick a kind of music first.
+> Сначала выберите вид музыки.
+
+< Writing…
+> Сочинение…
+
+< The music can't be played on this phone right now.
+> Сейчас музыку нельзя воспроизвести на этом телефоне.
+
+< Left out
+> Исключённые
+
+< left out
+> исключено
+
+< always in
+> всегда включено
+
+< in the video
+> в видео
+
+< not used
+> не используется
+
+< Format
+> Формат
+
+< most compatible
+> самый совместимый
+
+< smaller
+> меньше
+
+< JPEG works everywhere but has no transparency. WebP is typically 25–35% smaller at similar quality and keeps transparency.
+> JPEG работает везде, но не поддерживает прозрачность. WebP при сходном качестве обычно на 25–35% меньше и сохраняет прозрачность.
+
+< Lower = smaller file, more artefacts
+> Ниже = меньше файл, больше артефактов
+
+< Maximum width
+> Максимальная ширина
+
+< 0 keeps the original size; never upscales
+> 0 сохраняет исходный размер; никогда не увеличивает
+
+< Aspect ratio and displayed orientation are always preserved. Metadata such as GPS location is not copied. If a result isn't smaller than the original (and wasn't resized), it isn't saved.
+> Соотношение сторон и показываемая ориентация сохраняются всегда. Метаданные, такие как местоположение GPS, не копируются. Если результат не меньше оригинала (и размер не менялся), он не сохраняется.
+
+< Visually lossless for most photos; modest savings.
+> Визуально без потерь для большинства фото; скромная экономия.
+
+< Recommended: strong savings with little visible difference.
+> Рекомендуется: большая экономия при малой заметной разнице.
+
+< Small files; artefacts visible on close inspection.
+> Небольшие файлы; артефакты видны при близком рассмотрении.
+
+< Very small files; noticeable artefacts and blur.
+> Очень маленькие файлы; заметные артефакты и размытие.
+
+< Maximum width must be 0 (original) or at least 16 px
+> Максимальная ширина должна быть 0 (оригинал) или не менее 16 пикселей
+
+< name_q{0}.{1} (plus _1920w when resized)
+> имя_q{0}.{1} (плюс _1920w при изменении размера)
+
+< Lossless format
+> Формат без потерь
+
+< usually smallest
+> обычно самый маленький
+
+< PNG output picks the smallest exact colour mode (palette, greyscale, RGB or RGBA) and maximum compression.
+> При выводе PNG выбирается самый маленький точный цветовой режим (палитра, оттенки серого, RGB или RGBA) и максимальное сжатие.
+
+< Discard a result that isn't smaller than its original
+> Отбрасывать результат, который не меньше оригинала
+
+< Every pixel is preserved exactly — this is not lossy compression. Smaller files are not guaranteed: screenshots and graphics often shrink, while JPEG/HEIC photos usually get larger in a lossless format. 16-bit PNGs and animations are rejected rather than altered.
+> Каждый пиксель сохраняется точно — это не сжатие с потерями. Файлы меньшего размера не гарантируются: скриншоты и графика часто уменьшаются, а фото JPEG/HEIC в формате без потерь обычно увеличиваются. 16-битные PNG и анимации отклоняются, а не изменяются.
+
+< name_lossless.{0} (in the same folder as the image compressor's results)
+> имя_lossless.{0} (в той же папке, что и результаты сжатия изображений)
+
+< Convert to
+> Конвертировать в
+
+< lossless
+> без потерь
+
+< lossy
+> с потерями
+
+< Quality (lossy formats)
+> Качество (форматы с потерями)
+
+< 90 keeps photos visually identical
+> 90 сохраняет фото визуально идентичными
+
+< Reads JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG and other RAW previews (when the phone supports them), plus TIFF, PSD (flattened), QOI, PPM/PGM/PBM/PAM and TGA. Animated files use their first frame. Size, aspect ratio and displayed orientation are kept.
+> Читает JPEG, PNG, WebP, HEIC/HEIF, AVIF, GIF, BMP, ICO, WBMP, DNG и другие превью RAW (если телефон их поддерживает), а также TIFF, PSD (сведённый), QOI, PPM/PGM/PBM/PAM и TGA. У анимированных файлов используется первый кадр. Размер, соотношение сторон и показываемая ориентация сохраняются.
+
+< name.{0} (same name, new format)
+> имя.{0} (то же имя, новый формат)
+
+< Layout
+> Раскладка
+
+< Fills space around images of different sizes
+> Заполняет место вокруг изображений разного размера
+
+< Spacing between images
+> Расстояние между изображениями
+
+@ no spacing
+< None
+> Нет
+
+@ spacing
+< Small
+> Малое
+
+@ spacing
+< Medium
+> Среднее
+
+@ spacing
+< Large
+> Большое
+
+< Images are never scaled or cropped — each keeps its exact pixels and correct orientation. The result is a lossless PNG; very large results are written in strips, so they don't need to fit in memory.
+> Изображения никогда не масштабируются и не обрезаются — каждое сохраняет свои точные пиксели и правильную ориентацию. Результат — PNG без потерь; очень большие результаты записываются полосами, поэтому им не нужно помещаться в памяти.
+
+< Left
+> Слева
+
+< Center
+> По центру
+
+< Right
+> Справа
+
+< Top
+> Сверху
+
+< Bottom
+> Снизу
+
+< Alignment
+> Выравнивание
+
+< For images narrower or shorter than the widest one
+> Для изображений, более узких или низких, чем самое широкое
+
+< Select at least two images to see the layout.
+> Выберите хотя бы два изображения, чтобы увидеть раскладку.
+
+< Some images couldn't be read.
+> Некоторые изображения не удалось прочитать.
+
+< Result: {0} × {1} px ({2} MP)
+> Результат: {0} × {1} пикс. ({2} Мп)
+
+< <date and time>
+> <дата и время>
+
+< Merge layout preview
+> Предпросмотр объединённой раскладки
+
+< AI Assisted Alignment
+> Выравнивание с помощью ИИ
+
+< Runs a small image model entirely on this phone — no image is ever uploaded. It settles ambiguous alignments (repetitive patterns, weak matches) and helps join low-texture photos. Stitching works without it.
+> Запускает небольшую модель изображений целиком на этом телефоне — ни одно изображение не загружается. Она разрешает неоднозначные выравнивания (повторяющиеся узоры, слабые совпадения) и помогает соединять фото с малой текстурой. Сшивание работает и без неё.
+
+< Scene type
+> Тип сцены
+
+< Auto detects how your photos were taken
+> Авто определяет, как были сняты ваши фото
+
+< Flat surface
+> Плоская поверхность
+
+< Panorama
+> Панорама
+
+< Flat surface: documents, whiteboards, maps, screenshots (camera moved parallel). Panorama: camera turned from one spot — horizontal, vertical or in a grid.
+> Плоская поверхность: документы, доски, карты, скриншоты (камера смещалась параллельно). Панорама: камера поворачивалась из одной точки — по горизонтали, вертикали или сеткой.
+
+< Crop to clean edges
+> Обрезать до ровных краёв
+
+< Trim to the largest rectangle fully covered by photos (otherwise empty corners stay transparent)
+> Обрезает до наибольшего прямоугольника, полностью покрытого фото (иначе пустые углы остаются прозрачными)
+
+< For best results: overlap neighbouring shots by about a third, keep exposure steady and avoid moving subjects. Featureless walls, sky-only frames and repetitive textures (tiles, fences) are hard to align. Any arrangement and selection order works; photos that don't connect are reported.
+> Для лучшего результата: перекрывайте соседние кадры примерно на треть, держите экспозицию стабильной и избегайте движущихся объектов. Однотонные стены, кадры с одним небом и повторяющиеся текстуры (плитка, заборы) трудно выровнять. Подойдёт любое расположение и порядок выбора; фото, которые не соединяются, перечисляются.
+
+@ default file name
+< Stitched
+> Сшито
+
+< lossless, at the photos' native resolution when practical
+> без потерь, в исходном разрешении фото, когда это возможно
+
+< Removed
+> Удалено
+
+< GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)
+> Местоположение GPS · производитель, модель и серийный номер камеры · даты · программа · автор · комментарии · XMP/IPTC · скрытые миниатюры и дополнительные изображения (глубина, движение, данные HDR)
+
+< Kept
+> Сохранено
+
+< The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
+> Данные изображения байт в байт, ориентация (чтобы фото оставались прямыми), цветовой профиль и анимация GIF. Видео: видео- и аудиопотоки бит в бит и их поворот.
+
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> Работает с JPEG, PNG, WebP, GIF и видео MP4/MOV/WebM. HEIC, AVIF и RAW нельзя очистить без перекодирования; вместо этого конвертируйте их инструментом «Конвертация изображений» (у конвертированных копий нет метаданных).
+
+< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
+> имя_clean.jpg / .png / .webp / .gif / .mp4 — фото в Pictures, видео в Movies
+
+< e.g. 1-3, 5, 8-
+> напр. 1-3, 5, 8-
+
+< Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
+> Разделяйте страницы запятыми; диапазоны вида 4-9; «8-» означает с 8-й страницы до конца. Страницы сохраняются в том порядке, в котором вы их напишете.
+
+< Save as
+> Сохранить как
+
+< name_pages.pdf
+> имя_pages.pdf
+
+< name_p3.pdf, name_p4.pdf …
+> имя_p3.pdf, имя_p4.pdf …
+
+< Select a video to choose the part to keep.
+> Выберите видео, чтобы выбрать сохраняемую часть.
+
+< Fix videos recorded sideways
+> Исправить видео, снятые набок
+
+@ no rotation
+< Keep
+> Оставить
+
+< 90° right
+> 90° вправо
+
+< 90° left
+> 90° влево
+
+< Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
+> Без потерь: потоки копируются, а не перекодируются. Начало сдвигается на ближайший предыдущий ключевой кадр (обычно меньше секунды-двух); конец точный.
+
+< Reading {0}…
+> Чтение {0}…
+
+< {0}: the duration couldn't be read.
+> {0}: не удалось прочитать длительность.
+
+< Start {0}
+> Начало {0}
+
+< End {0} · keeps {1}
+> Конец {0} · остаётся {1}
+
+< Put a video in the stack to choose the part to keep
+> Добавьте в цепочку видео, чтобы выбрать сохраняемую часть
+
+< Select one video (trimming is set per video)
+> Выберите одно видео (обрезка настраивается для каждого видео)
+
+< Reading the video…
+> Чтение видео…
+
+< Keep at least a fraction of a second
+> Оставьте хотя бы долю секунды
+
+< Move the handles or pick a rotation
+> Переместите маркеры или выберите поворот
+
+< name_trim.mp4 (WebM stays WebM)
+> имя_trim.mp4 (WebM остаётся WebM)
+
+< Keep {0}–{1} of {2} ({3}–{4}% of each video)
+> Оставить {0}–{1} из {2} ({3}–{4}% каждого видео)
+
+< Keep {0}–{1}% of each video
+> Оставить {0}–{1}% каждого видео
+
+< turn {0}° clockwise
+> повернуть на {0}° по часовой стрелке
+
+< Part of the video to keep
+> Сохраняемая часть видео
+
+< Select two or more videos. They are joined in the order shown above (tap Review to reorder).
+> Выберите два или больше видео. Они соединяются в показанном выше порядке (коснитесь «Проверка», чтобы изменить порядок).
+
+< Keep sound
+> Сохранить звук
+
+< Clips without sound get silence
+> В клипах без звука будет тишина
+
+< Clips filmed on the same phone with the same settings are joined without re-encoding, in seconds and with no quality loss. Otherwise they're converted to one size (black bars where shapes differ) and format first.
+> Клипы, снятые на одном телефоне с одинаковыми настройками, соединяются без перекодирования — за секунды и без потери качества. Иначе их сначала приводят к одному размеру (чёрные полосы там, где форма отличается) и формату.
+
+< Checking the clips…
+> Проверка клипов…
+
+< One of the files couldn't be read as a video.
+> Один из файлов не удалось прочитать как видео.
+
+< {0} clip · {1} in total
+< {0} clips · {1} in total
+> {0} клип · всего {1}
+> {0} клипа · всего {1}
+> {0} клипов · всего {1}
+
+< these clips can be joined without re-encoding (no quality loss).
+> эти клипы можно соединить без перекодирования (без потери качества).
+
+< {0}, so they'll be converted to a common format first (slower).
+> {0}, поэтому они сначала будут преобразованы в общий формат (медленнее).
+
+< Slow motion
+> Замедленная съёмка
+
+< Best with high-frame-rate recordings
+> Лучше всего для записей с высокой частотой кадров
+
+< Faster
+> Быстрее
+
+< Timelapse
+> Таймлапс
+
+< Hours become minutes
+> Часы превращаются в минуты
+
+< Natural pitch, no chipmunk voices (up to 4×)
+> Естественная высота звука, без «бурундучьих» голосов (до 4×)
+
+< Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
+> Без звука и до 120 кадр/с видео только перетайминговывается: без перекодирования, без потери качества. Иначе оно перекодируется в H.264 MP4; таймлапсы сохраняют 30 кадров в секунду.
+
+< {0} becomes {1}
+> {0} становится {1}
+
+< only {0} frame per second, so it will look choppy
+< only {0} frames per second, so it will look choppy
+> всего {0} кадр в секунду, поэтому будет казаться дёрганым
+> всего {0} кадра в секунду, поэтому будет казаться дёрганым
+> всего {0} кадров в секунду, поэтому будет казаться дёрганым
+
+< no re-encoding
+> без перекодирования
+
+< Speed {0}
+> Скорость {0}
+
+< Choose a speed
+> Выберите скорость
+
+< Segment length
+> Длительность сегмента
+
+< Each part will be about this long
+> Каждая часть будет примерно такой длины
+
+< Custom length (seconds)
+> Своя длительность (секунды)
+
+< e.g. 45
+> напр. 45
+
+< No re-encoding: parts keep the original quality. Cuts happen at the nearest keyframe (sync point) at or before each boundary, so parts may be slightly shorter than the length you set. Videos with very few keyframes can give some longer parts.
+> Без перекодирования: части сохраняют исходное качество. Разрезы делаются по ближайшему ключевому кадру (точке синхронизации) на границе или перед ней, поэтому части могут быть немного короче заданной длины. Видео с очень малым числом ключевых кадров могут давать несколько более длинных частей.
+
+< Enter a segment length between 1 second and 24 hours
+> Введите длительность сегмента от 1 секунды до 24 часов
+
+< One file per part: name_part01.mp4, name_part02.mp4 … (WebM sources stay WebM)
+> Один файл на часть: имя_part01.mp4, имя_part02.mp4 … (источники WebM остаются WebM)
+
+< Lossless: video and audio streams are copied bit-for-bit, so quality is exactly the same. This is not compression — the size changes only slightly. Use Video compressor to make files much smaller.
+> Без потерь: видео- и аудиопотоки копируются бит в бит, поэтому качество точно такое же. Это не сжатие — размер меняется лишь слегка. Чтобы сильно уменьшить файлы, используйте «Сжатие видео».
+
+< What it improves: the index (moov) is moved to the start so playback and uploads begin immediately, and padding, subtitle and data tracks are removed. Location metadata isn't copied.
+> Что улучшается: индекс (moov) переносится в начало, чтобы воспроизведение и загрузка начинались сразу, а дорожки заполнения, субтитров и данных удаляются. Метаданные местоположения не копируются.
+
+< Higher quality = larger file
+> Выше качество = больше файл
+
+< Maximum resolution
+> Максимальное разрешение
+
+< Shorter side; never upscales
+> Меньшая сторона; никогда не увеличивает
+
+< Output is H.264 video with AAC audio in MP4, which plays on virtually every device. Audio is kept (converted to AAC if needed). Orientation is preserved. If a result would be larger than the original, it is not saved.
+> Результат — видео H.264 со звуком AAC в MP4, которое воспроизводится практически на любом устройстве. Звук сохраняется (при необходимости преобразуется в AAC). Ориентация сохраняется. Если результат получился бы больше оригинала, он не сохраняется.
+
+< ≈ {0} Mbps for {1}p at 30 fps · about {2} MB per minute (lower if the source bitrate is lower)
+> ≈ {0} Мбит/с для {1}p при 30 кадр/с · около {2} МБ в минуту (меньше, если битрейт источника ниже)
+
+< The video stream is copied unchanged (no quality loss); only the sound track is left out. Useful for silent clips and to save a little space. Videos that already have no audio are skipped.
+> Видеопоток копируется без изменений (без потери качества); пропускается только звуковая дорожка. Полезно для немых клипов и для небольшой экономии места. Видео без звука пропускаются.
+
+< Keep source frame rate and size
+> Сохранить частоту кадров и размер источника
+
+< Uses the video's own frame rate (up to 50 fps) and displayed resolution
+> Использует собственную частоту кадров видео (до 50 кадр/с) и показываемое разрешение
+
+< Fewer frames = much smaller GIF
+> Меньше кадров = гораздо меньше GIF
+
+< Width
+> Ширина
+
+< Height follows the video's shape
+> Высота определяется формой видео
+
+< Part of the video
+> Часть видео
+
+< Leave length at 0 to convert to the end
+> Оставьте длительность 0, чтобы конвертировать до конца
+
+< Start (s)
+> Начало (с)
+
+< Length (s)
+> Длительность (с)
+
+< 0 = to the end
+> 0 = до конца
+
+< Colour dithering
+> Дизеринг цветов
+
+< How the 256-colour palette blends gradients
+> Как палитра из 256 цветов смешивает градиенты
+
+< Pattern (stable)
+> Узор (стабильный)
+
+< None (sharpest)
+> Нет (самый чёткий)
+
+< Diffusion (smoothest)
+> Диффузия (самый мягкий)
+
+< GIF can only show 256 colours per frame, so file size grows quickly with frame rate and resolution. 10–15 fps at 320–480 px is a good start. Colours adapt to each scene; timing follows the video exactly.
+> GIF может показывать только 256 цветов на кадр, поэтому размер файла быстро растёт с частотой кадров и разрешением. 10–15 кадр/с при 320–480 пикселях — хорошее начало. Цвета подстраиваются под каждую сцену; тайминг точно следует за видео.
+
+< Start and length can't be negative
+> Начало и длительность не могут быть отрицательными
+
+< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
+> Звуковая дорожка AAC копируется в файл .m4a как есть — без перекодирования, без потери качества. Видео, у которых звук не AAC (например, Opus или AC-3) или нет звука, чётко перечисляются в результатах.
+
+< Watermark preview
+> Предпросмотр водяного знака
+
+< Select images to preview
+> Выберите изображения для предпросмотра
+
+< Watermark text
+> Текст водяного знака
+
+< e.g. © Your Name {0}
+> напр. © Ваше имя {0}
+
+< Logo image
+> Изображение логотипа
+
+< Optional — PNG with transparency works best
+> Необязательно — лучше всего подходит PNG с прозрачностью
+
+< Size
+> Размер
+
+< Of each image's shorter side; proportions never stretch
+> Относительно меньшей стороны каждого изображения; пропорции никогда не растягиваются
+
+< Opacity
+> Непрозрачность
+
+< Text colour
+> Цвет текста
+
+< White
+> Белый
+
+< Black
+> Чёрный
+
+< Grey
+> Серый
+
+< Gold
+> Золотой
+
+< Default position
+> Положение по умолчанию
+
+< Used for every image shape you don't set separately
+> Используется для каждой формы изображения, которую вы не настроили отдельно
+
+< Placement by image shape
+> Размещение по форме изображения
+
+< Different shapes can use different positions
+> Разные формы могут использовать разные положения
+
+< Choose logo
+> Выбрать логотип
+
+< From files
+> Из файлов
+
+< Remove logo
+> Убрать логотип
+
+< That file isn't an image.
+> Этот файл не является изображением.
+
+< Select images to see the shapes in your batch.
+> Выберите изображения, чтобы увидеть формы в вашей партии.
+
+< Set placement for each shape ({0})
+> Настроить размещение для каждой формы ({0})
+
+< Set placement for this shape
+> Настроить размещение для этой формы
+
+< Reset to default position
+> Сбросить к положению по умолчанию
+
+< Add watermark text or choose a logo
+> Добавьте текст водяного знака или выберите логотип
+
+< name_wm.jpg / .png / .webp (same type of format as each original)
+> имя_wm.jpg / .png / .webp (тот же тип формата, что и у каждого оригинала)
+
+< Watermark placement
+> Размещение водяного знака
+
+< No image sizes are known yet. Go back and wait for the selection to load.
+> Размеры изображений пока неизвестны. Вернитесь назад и дождитесь загрузки выбранного.
+
+< Shape {0} of {1}
+> Форма {0} из {1}
+
+< {0} image with this shape
+< {0} images with this shape
+> Изображений с этой формой: {0}
+> Изображений с этой формой: {0}
+> Изображений с этой формой: {0}
+
+< Choose where the watermark goes
+> Выберите, где будет водяной знак
+
+< Review plan
+> Проверить план
+
+< Next shape
+> Следующая форма
+
+< Placement plan
+> План размещения
+
+< This is how the watermark will be placed when you export.
+> Так будет размещён водяной знак при экспорте.
+
+< {0} image → {1}
+< {0} images → {1}
+> Изображений: {0} → {1}
+> Изображений: {0} → {1}
+> Изображений: {0} → {1}
+
+< Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
+> Размер {0}% меньшей стороны · непрозрачность {1}%. Изображения, форма которых не указана, используют положение по умолчанию ({2}).
+
+< Queued — it prints when the current job finishes.
+> В очереди — печать начнётся, когда завершится текущее задание.
+
+< Sending to the printer. You can leave the app; progress is shown in the notification.
+> Отправка на принтер. Можно выйти из приложения; ход выполнения виден в уведомлении.
+
+< Only your Wi-Fi
+> Только ваш Wi-Fi
+
+< No printer app
+> Нет приложения принтера
+
+< Printer
+> Принтер
+
+< Can't reach the printer
+> Не удаётся связаться с принтером
+
+< Choose your printer. It must be on the same Wi-Fi as this phone (or its own Wi-Fi Direct network).
+> Выберите принтер. Он должен быть в той же сети Wi-Fi, что и этот телефон (или в собственной сети Wi-Fi Direct).
+
+< Find printers
+> Найти принтеры
+
+< Connecting…
+> Подключение…
+
+< Printing
+> Печать
+
+< Ready · {0}
+> Готов · {0}
+
+< Ready
+> Готов
+
+< encrypted
+> зашифровано
+
+< Change
+> Изменить
+
+< unknown
+> неизвестно
+
+< Ink, as the printer estimates it
+> Чернила по оценке принтера
+
+< Some ink is low. If your printer has refillable tanks, check them: the printer can only estimate.
+> Чернила заканчиваются. Если у вашего принтера перезаправляемые ёмкости, проверьте их: принтер может только оценивать.
+
+< Choose a printer
+> Выберите принтер
+
+< Close
+> Закрыть
+
+@ printers kept in the app
+< Saved
+> Сохранён
+
+< Forget {0}
+> Забыть {0}
+
+< On this Wi-Fi
+> В этой сети Wi-Fi
+
+< Looking for printers…
+> Поиск принтеров…
+
+< Add by IP address
+> Добавить по IP-адресу
+
+< If your printer isn't found (its IP address is on its network status page)
+> Если принтер не найден (его IP-адрес указан на странице состояния сети)
+
+< Printer's IP address
+> IP-адрес принтера
+
+< No printers answered. Check that the printer is on and connected to this Wi-Fi, or add it by IP address.
+> Ни один принтер не ответил. Проверьте, что принтер включён и подключён к этой сети Wi-Fi, или добавьте его по IP-адресу.
+
+< Found {0}
+< Found {0}
+> Найдено: {0}
+> Найдено: {0}
+> Найдено: {0}
+
+< Couldn't look for printers
+> Не удалось выполнить поиск принтеров
+
+< The paper sizes, paper types and other settings shown are the printer's own once it's connected.
+> Показанные форматы бумаги, типы бумаги и другие настройки — собственные настройки принтера после подключения.
+
+< Paper size
+> Формат бумаги
+
+< Paper type
+> Тип бумаги
+
+< Tell the printer what's loaded: it lays down the right amount of ink
+> Сообщите принтеру, что загружено: он нанесёт нужное количество чернил
+
+< {0} per sheet
+< {0} per sheet
+> {0} на лист
+> {0} на лист
+> {0} на лист
+
+< Whole photo
+> Фото целиком
+
+< Fill (trims edges)
+> Заполнить (обрезает края)
+
+< Borderless
+> Без полей
+
+< Available once the printer is connected
+> Доступно после подключения принтера
+
+< Print to the edges of the paper
+> Печать до краёв бумаги
+
+< Not available for {0} on this printer
+> Недоступно для {0} на этом принтере
+
+< Actual size
+> Реальный размер
+
+< PDF pages at their real size instead of fitted to the paper
+> Страницы PDF в реальном размере, а не вписанные в бумагу
+
+< All, or e.g. 1-3, 5, 8-
+> Все или напр. 1-3, 5, 8-
+
+< Colour
+> Цвет
+
+< Black & white
+> Чёрно-белое
+
+< Draft
+> Черновик
+
+@ print quality
+< Best
+> Лучшее
+
+< Normal
+> Обычное
+
+< photos
+> фото
+
+< Two-sided
+> Двусторонняя
+
+< Print on both sides of the paper
+> Печать на обеих сторонах бумаги
+
+< Select photos or PDFs to see the sheets
+> Выберите фото или PDF, чтобы увидеть листы
+
+< Couldn't prepare the preview
+> Не удалось подготовить предпросмотр
+
+< {0} sheet
+< {0} sheets
+> {0} лист
+> {0} листа
+> {0} листов
+
+< first {0} shown
+< first {0} shown
+> показаны первые {0}
+> показаны первые {0}
+> показаны первые {0}
+
+< Sheet {0}
+> Лист {0}
+
+< {0} copy
+< {0} copies
+> {0} копия
+> {0} копии
+> {0} копий
+
+< Connecting to the printer…
+> Подключение к принтеру…
+
+< Choose a printer first
+> Сначала выберите принтер
+
+< The sheets are drawn on this phone and sent straight to the printer. Progress shows in the notification and in Activity, where you can cancel; problems such as no paper are explained there.
+> Листы рисуются на этом телефоне и отправляются прямо на принтер. Ход выполнения показывается в уведомлении и в разделе «Активность», где можно отменить; проблемы вроде отсутствия бумаги объясняются там.
+
+< Your files go only to the printer, over your own network. The app never connects to servers on the internet.
+> Ваши файлы отправляются только на принтер по вашей собственной сети. Приложение никогда не подключается к серверам в интернете.
+
+< Couldn't read the shared files.
+> Не удалось прочитать полученные файлы.
+
+< No app on this phone can handle this action.
+> Ни одно приложение на этом телефоне не может выполнить это действие.
+
+< This device has no camera. Add pages from the gallery instead.
+> На этом устройстве нет камеры. Добавьте страницы из галереи.
+
+< No camera app is available on this phone. Add pages from the gallery instead.
+> На этом телефоне нет приложения камеры. Добавьте страницы из галереи.
+
+< The camera app didn't return a photo.
+> Приложение камеры не вернуло фото.
+
+< This action isn't available on this phone.
+> Это действие недоступно на этом телефоне.
+
+< Nothing was produced.
+> Ничего не создано.
+
+< Waiting
+> Ожидание
+
+< Waiting to start
+> Ожидание запуска
+
+< Cancelled · {0} saved before cancelling
+< Cancelled · {0} saved before cancelling
+> Отменено · сохранено до отмены: {0}
+> Отменено · сохранено до отмены: {0}
+> Отменено · сохранено до отмены: {0}
+
+< Cancelled
+> Отменено
+
+< Not printed
+> Не напечатано
+
+< {0} file saved
+< {0} files saved
+> Сохранено файлов: {0}
+> Сохранено файлов: {0}
+> Сохранено файлов: {0}
+
+< {0} failed
+< {0} failed
+> Не удалось: {0}
+> Не удалось: {0}
+> Не удалось: {0}
+
+< {0} skipped
+< {0} skipped
+> Пропущено: {0}
+> Пропущено: {0}
+> Пропущено: {0}
+
+< Export progress
+> Ход экспорта
+
+< Shows the progress of running exports
+> Показывает ход выполняющихся экспортов
+
+< Finished exports
+> Завершённые экспорты
+
+< Tells you when an export finishes or fails
+> Сообщает, когда экспорт завершается или не удаётся
+
+< Preparing export…
+> Подготовка экспорта…
+
+< {0} queued
+< {0} queued
+> В очереди: {0}
+> В очереди: {0}
+> В очереди: {0}
+
+< Workload {0}%
+> Нагрузка {0}%
+
+< Export finished
+> Экспорт завершён
+
+< Export finished with issues
+> Экспорт завершён с проблемами
+
+< Export cancelled
+> Экспорт отменён
+
+< Export failed
+> Экспорт не удался
+
+< Saved to {0}
+> Сохранено в {0}
+
+< File {0} of {1}
+> Файл {0} из {1}
+
+< Processing
+> Обработка
+
+< WebP lossless
+> WebP без потерь
+
+< {0} supports at most {1} px per side; this image would be {2}×{3}. Choose a smaller width or another format.
+> {0} поддерживает не более {1} пикселей по стороне; это изображение было бы {2}×{3}. Выберите меньшую ширину или другой формат.
+
+< This image is too large to encode as {0} with the memory available ({1}×{2}). Choose PNG or JPEG, or set a smaller width.
+> Это изображение слишком большое, чтобы закодировать его как {0} при доступной памяти ({1}×{2}). Выберите PNG или JPEG либо задайте меньшую ширину.
+
+< This {0} image is too large to process in pieces with the memory available.
+> Это изображение {0} слишком велико, чтобы обрабатывать его по частям при доступной памяти.
+
+< The JPEG encoder failed.
+> Кодировщик JPEG завершился с ошибкой.
+
+< The WebP encoder failed.
+> Кодировщик WebP завершился с ошибкой.
+
+< The lossless WebP encoder failed.
+> Кодировщик WebP без потерь завершился с ошибкой.
+
+< The PNG encoder failed.
+> Кодировщик PNG завершился с ошибкой.
+
+< {0} cannot be written in pieces.
+> {0} нельзя записывать по частям.
+
+< This very large image uses the {0} colour profile, which can't be preserved exactly when processing it in pieces.
+> Это очень большое изображение использует цветовой профиль {0}, который нельзя точно сохранить при обработке по частям.
+
+< The written file failed verification ({0}×{1}, expected {2}×{3}), so it was discarded.
+> Записанный файл не прошёл проверку ({0}×{1}, ожидалось {2}×{3}), поэтому был отброшен.
+
+< This image ({0}×{1}) needs about {2} MB of memory, more than is free right now.
+> Этому изображению ({0}×{1}) нужно около {2} МБ памяти — больше, чем сейчас свободно.
+
+< The image data could not be decoded. The file may be damaged or use an unsupported variant of {0}.
+> Не удалось декодировать данные изображения. Файл может быть повреждён или использовать неподдерживаемый вариант {0}.
+
+< Part of the image could not be decoded; the file may be damaged.
+> Часть изображения не удалось декодировать; файл может быть повреждён.
+
+< The file is empty.
+> Файл пуст.
+
+< This {0} file is damaged or uses an unsupported variant.
+> Этот файл {0} повреждён или использует неподдерживаемый вариант.
+
+< This {0} file is incomplete (truncated). Processing it would produce grey or missing areas, so it was not used.
+> Этот файл {0} неполный (обрезан). Его обработка дала бы серые или отсутствующие области, поэтому он не использовался.
+
+< AVIF images can't be decoded on this Android version.
+> Изображения AVIF нельзя декодировать в этой версии Android.
+
+< This HEIC/HEIF image can't be decoded on this device.
+> Это изображение HEIC/HEIF нельзя декодировать на этом устройстве.
+
+< This camera RAW format isn't supported by Android's decoder.
+> Этот формат камеры RAW не поддерживается декодером Android.
+
+< This file is not an image format that can be decoded.
+> Этот файл не является форматом изображения, который можно декодировать.
+
+< This {0} image could not be decoded. It may be damaged.
+> Это изображение {0} не удалось декодировать. Возможно, оно повреждено.
+
+< Unsupported {0} file
+> Неподдерживаемый файл {0}
+
+< Unsupported format
+> Неподдерживаемый формат
+
+< The {0} file could not be decoded
+> Файл {0} не удалось декодировать
+
+< The {0} file is damaged.
+> Файл {0} повреждён.
+
+< Top left
+> Вверху слева
+
+< Top center
+> Вверху по центру
+
+< Top right
+> Вверху справа
+
+< Center left
+> По центру слева
+
+< Center right
+> По центру справа
+
+< Bottom left
+> Внизу слева
+
+< Bottom center
+> Внизу по центру
+
+< Bottom right
+> Внизу справа
+
+< Landscape
+> Альбомная
+
+< Waiting for the phone to cool down
+> Ожидание, пока телефон остынет
+
+< Paused to save battery (below 15%)
+> Приостановлено для экономии заряда (ниже 15%)
+
+< Paused while Battery Saver is on
+> Приостановлено, пока включён режим экономии заряда
+
+< Organising the gallery
+> Упорядочивание галереи
+
+< Shows progress while photos are analysed on this phone for search and people
+> Показывает ход анализа фото на этом телефоне для поиска и людей
+
+< Grouping faces into people
+> Группировка лиц по людям
+
+< {1} of {0} photo or video · on this phone
+< {1} of {0} photos and videos · on this phone
+> {1} из {0} фото или видео · на этом телефоне
+> {1} из {0} фото и видео · на этом телефоне
+> {1} из {0} фото и видео · на этом телефоне
+
+< Reading your library
+> Чтение вашей библиотеки
+
+< The photo library isn't available right now
+> Библиотека фото сейчас недоступна
+
+< Other
+> Другое
+
+@ search words for videos, separated by commas
+< video,videos,clip,clips,movie,movies
+> видео,ролик,ролики,клип,клипы,фильм,фильмы,видеозапись,видеозаписи
+
+@ search words for photos, separated by commas
+< photo,photos,picture,pictures,pic,pics,image,images
+> фото,фотография,фотографии,фотку,фотки,фотка,снимок,снимки,изображение,изображения,картинка,картинки
+
+@ search words for screenshots, separated by commas
+< screenshot,screenshots,screen shot,screen shots,screengrab
+> скриншот,скриншоты,снимок экрана,снимки экрана,скрин,скрины
+
+@ search words for GIFs, separated by commas
+< gif,gifs,animation,animations
+> анимация,анимации,гифка,гифки,гиф,анимированный
+
+@ search words for favourites, separated by commas
+< favourite,favourites,favorite,favorites,starred
+> избранное,избранные,избранный,любимое,любимые,со звёздочкой
+
+< GIFs
+> GIF
+
+@ search words for today, separated by commas
+< today
+> сегодня
+
+@ search words for yesterday, separated by commas
+< yesterday
+> вчера
+
+@ search words for this week, separated by commas
+< this week
+> на этой неделе,эта неделя,эту неделю,этой неделе
+
+@ search words for last week, separated by commas
+< last week
+> на прошлой неделе,прошлая неделя,прошлую неделю,прошлой неделе
+
+@ search words for this month, separated by commas
+< this month
+> в этом месяце,этот месяц,этом месяце
+
+@ search words for last month, separated by commas
+< last month
+> в прошлом месяце,прошлый месяц,прошлом месяце
+
+@ search words for this year, separated by commas
+< this year
+> в этом году,этот год,этом году
+
+@ search words for last year, separated by commas
+< last year
+> в прошлом году,прошлый год,прошлом году
+
+< This week
+> На этой неделе
+
+< Last week
+> На прошлой неделе
+
+< This month
+> В этом месяце
+
+< Last year
+> В прошлом году
+
+@ search: words to leave out of a search, separated by commas
+< a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
+> и,а,но,в,во,на,с,со,от,до,из,у,к,ко,по,за,для,про,под,над,при,без,о,об,обо,около,вместе,мой,моя,моё,мои,моих,наш,наша,наши,покажи,покажите,показать,найди,найти,поиск,искать,все,всё,некоторые,где,есть,был,была,были,было,или,оба,кто,что,который,которая,которые,снятые,снятое,снятый,сделанные,рядом,возле
+
+< Upbeat
+> Бодрая
+
+< Bright, with a beat
+> Яркая, с ритмом
+
+< Chill
+> Расслабленная
+
+< Relaxed, soft electric piano
+> Расслабленная, мягкое электропианино
+
+< Cinematic
+> Кинематографичная
+
+< Slow and wide, piano and strings
+> Медленная и широкая, фортепиано и струнные
+
+< Upbeat music
+> Бодрая музыка
+
+< Chill music
+> Расслабляющая музыка
+
+< Cinematic music
+> Кинематографичная музыка
+
+< Reading your photo library
+> Чтение вашей библиотеки фото
+
+< The scan stopped unexpectedly.
+> Сканирование неожиданно остановилось.
+
+< Looking at your photos
+> Просмотр ваших фото
+
+< Comparing
+> Сравнение
+
+< Watching {0}
+> Просмотр {0}
+
+< Looking at {0}
+> Просмотр {0}
+
+< couldn't be read
+> не удалось прочитать
+
+< Could not prepare the on-device model {0}
+> Не удалось подготовить модель на устройстве {0}
+
+@ kind of photo
+< Portrait
+> Портрет
+
+@ kind of photo
+< Landscape
+> Пейзаж
+
+< Food
+> Еда
+
+< Animal
+> Животное
+
+< Plants & flowers
+> Растения и цветы
+
+< City & buildings
+> Город и здания
+
+< Document
+> Документ
+
+< Night
+> Ночь
+
+< General
+> Общее
+
+< brightened the faces
+> лица осветлены
+
+< brightened
+> осветлено
+
+< toned down the brightness
+> яркость уменьшена
+
+< recovered highlights
+> света восстановлены
+
+< lifted shadows
+> тени подняты
+
+< added contrast
+> добавлен контраст
+
+< cooled a yellow cast
+> убран жёлтый оттенок
+
+< warmed a blue cast
+> убран синий оттенок
+
+< balanced colours
+> цвета сбалансированы
+
+< removed a green tint
+> убран зелёный оттенок
+
+< removed a magenta tint
+> убран пурпурный оттенок
+
+< richer colours
+> насыщеннее цвета
+
+< Identical copies
+> Идентичные копии
+
+< Byte-for-byte the same file
+> Точно такой же файл, байт в байт
+
+< Duplicates
+> Дубликаты
+
+< The same picture saved again, resized or re-compressed
+> То же изображение, сохранённое заново, уменьшенное или пересжатое
+
+< Bursts and retakes of the same moment
+> Серии и повторы одного и того же момента
+
+< Best quality
+> Лучшее качество
+
+< Most pixels, then the sharpest
+> Больше всего пикселей, затем самый чёткий
+
+< The oldest file, before it was copied or edited
+> Самый старый файл, до того как его скопировали или отредактировали
+
+< The latest file, e.g. your edited version
+> Самый новый файл, например ваша отредактированная версия
+
+< Smallest file
+> Самый маленький файл
+
+< Saves the most space
+> Больше всего экономит места
+
+< keeps the best-quality copy
+> оставляет копию лучшего качества
+
+< keeps the original copy
+> оставляет исходную копию
+
+< keeps the newest copy
+> оставляет самую новую копию
+
+< keeps the smallest copy
+> оставляет самую маленькую копию
+
+< Favourite
+> Избранное
+
+< Person you keep
+> Человек, которого вы оставляете
+
+< Transparent
+> Прозрачный
+
+< Light grey
+> Светло-серый
+
+< Removing the background from {0} photo
+< Removing the background from {0} photos
+> Удаление фона с фото: {0}
+> Удаление фона с фото: {0}
+> Удаление фона с фото: {0}
+
+< Finding the subject
+> Поиск объекта
+
+< No clear subject was found in this photo, so nothing was saved.
+> На этом фото не найден чёткий объект, поэтому ничего не сохранено.
+
+< The whole photo looks like the subject, so there was no background to remove.
+> Всё фото похоже на объект, поэтому удалять фон не пришлось.
+
+< Very large photo: saved at {0}×{1}.
+> Очень большое фото: сохранено в {0}×{1}.
+
+< transparent PNG
+> прозрачный PNG
+
+< {0} background
+> фон: {0}
+
+@ strength
+< Subtle
+> Едва заметно
+
+@ strength
+< Natural
+> Естественно
+
+< Enhancing {0} photo
+< Enhancing {0} photos
+> Улучшение фото: {0}
+> Улучшение фото: {0}
+> Улучшение фото: {0}
+
+< Looking at the photo
+> Просмотр фото
+
+< This photo already looks balanced; nothing to improve.
+> Это фото уже выглядит сбалансированным; улучшать нечего.
+
+< fine-tuned
+> тонко настроено
+
+< Pixelating faces in {0} file
+< Pixelating faces in {0} files
+> Пикселизация лиц в файлах: {0}
+> Пикселизация лиц в файлах: {0}
+> Пикселизация лиц в файлах: {0}
+
+< Blurring faces in {0} file
+< Blurring faces in {0} files
+> Размытие лиц в файлах: {0}
+> Размытие лиц в файлах: {0}
+> Размытие лиц в файлах: {0}
+
+< No faces to hide were found in this file.
+> В этом файле не найдено лиц, которые нужно скрыть.
+
+< None of the chosen people appear in this file, so it was left as it is.
+> Никто из выбранных людей не встречается в этом файле, поэтому он оставлен как есть.
+
+< Finding faces
+> Поиск лиц
+
+< Photo metadata (location, camera, dates) is not copied.
+> Метаданные фото (местоположение, камера, даты) не копируются.
+
+< {0} face pixelated
+< {0} faces pixelated
+> Пикселизировано лиц: {0}
+> Пикселизировано лиц: {0}
+> Пикселизировано лиц: {0}
+
+< {0} face blurred
+< {0} faces blurred
+> Размыто лиц: {0}
+> Размыто лиц: {0}
+> Размыто лиц: {0}
+
+< This file has no video track.
+> В этом файле нет видеодорожки.
+
+< Blurring faces frame by frame
+> Размытие лиц кадр за кадром
+
+< {0} face track pixelated
+< {0} face tracks pixelated
+> Пикселизировано дорожек лиц: {0}
+> Пикселизировано дорожек лиц: {0}
+> Пикселизировано дорожек лиц: {0}
+
+< {0} face track blurred
+< {0} face tracks blurred
+> Размыто дорожек лиц: {0}
+> Размыто дорожек лиц: {0}
+> Размыто дорожек лиц: {0}
+
+< H.264 from {0}
+> H.264 из {0}
+
+< Vertical
+> Вертикально
+
+< One image below another
+> Одно изображение под другим
+
+< Horizontal
+> Горизонтально
+
+< Images side by side
+> Изображения рядом
+
+< Smart pack
+> Умная упаковка
+
+< Compact arrangement of different sizes
+> Компактная раскладка разных размеров
+
+< Merging {0} image ({1})
+< Merging {0} images ({1})
+> Объединение изображений: {0} ({1})
+> Объединение изображений: {0} ({1})
+> Объединение изображений: {0} ({1})
+
+< The merged image would be {0}×{1} pixels, which is too large to save.
+> Объединённое изображение было бы {0}×{1} пикселей — слишком большое для сохранения.
+
+< The result is very large ({0}×{1}); some gallery apps may not be able to open it.
+> Результат очень большой ({0}×{1}); некоторые приложения галереи могут не суметь его открыть.
+
+< {0} image
+< {0} images
+> {0} изображение
+> {0} изображения
+> {0} изображений
+
+< Stitching {0} photo (AI assisted)
+< Stitching {0} photos (AI assisted)
+> Сшивание фото (с помощью ИИ): {0}
+> Сшивание фото (с помощью ИИ): {0}
+> Сшивание фото (с помощью ИИ): {0}
+
+< Stitching {0} photo
+< Stitching {0} photos
+> Сшивание фото: {0}
+> Сшивание фото: {0}
+> Сшивание фото: {0}
+
+< AI assistance could not start on this device ({0}); stitched without it.
+> Помощь ИИ не смогла запуститься на этом устройстве ({0}); сшито без неё.
+
+< AI resolved {0} alignment decision on-device.
+< AI resolved {0} alignment decisions on-device.
+> ИИ принял на устройстве решений о выравнивании: {0}.
+> ИИ принял на устройстве решений о выравнивании: {0}.
+> ИИ принял на устройстве решений о выравнивании: {0}.
+
+< AI assistance was on but no ambiguous decisions needed it.
+> Помощь ИИ была включена, но ни одно неоднозначное решение в ней не нуждалось.
+
+< {0}% scale
+> масштаб {0}%
+
+< Watermarking {0} image
+< Watermarking {0} images
+> Добавление водяного знака к изображениям: {0}
+> Добавление водяного знака к изображениям: {0}
+> Добавление водяного знака к изображениям: {0}
+
+< The logo image could not be loaded: {0}
+> Не удалось загрузить изображение логотипа: {0}
+
+< Add watermark text or a logo first.
+> Сначала добавьте текст водяного знака или логотип.
+
+< Saving edited photo
+> Сохранение отредактированного фото
+
+< cropped/rotated
+> обрезано/повёрнуто
+
+< {0} retouch
+< {0} retouches
+> ретушь: {0}
+> ретушь: {0}
+> ретушь: {0}
+
+< {0} adjustment
+< {0} adjustments
+> правок: {0}
+> правок: {0}
+> правок: {0}
+
+< {0} look
+> стиль «{0}»
+
+< Photo metadata (location, camera, dates) is not copied to edited copies.
+> Метаданные фото (местоположение, камера, даты) не копируются в отредактированные копии.
+
+< Converting {0} video to GIF
+< Converting {0} videos to GIF
+> Конвертация видео в GIF: {0}
+> Конвертация видео в GIF: {0}
+> Конвертация видео в GIF: {0}
+
+< The video's dimensions could not be read.
+> Не удалось прочитать размеры видео.
+
+< Frame rate limited to 50 fps, the fastest rate GIF viewers play.
+> Частота кадров ограничена 50 кадр/с — самой высокой, которую воспроизводят программы просмотра GIF.
+
+< The chosen start time is beyond the end of the video.
+> Выбранное время начала находится за концом видео.
+
+< Analysing colours
+> Анализ цветов
+
+< No frames could be decoded from the selected part of the video.
+> Не удалось декодировать ни одного кадра из выбранной части видео.
+
+< {0} frame used its own colour palette for a scene with different colours.
+< {0} frames used their own colour palette for scenes with different colours.
+> Кадров, использовавших собственную палитру для сцены с другими цветами: {0}.
+> Кадров, использовавших собственную палитру для сцены с другими цветами: {0}.
+> Кадров, использовавших собственную палитру для сцены с другими цветами: {0}.
+
+< {0} frame
+< {0} frames
+> {0} кадр
+> {0} кадра
+> {0} кадров
+
+< The written GIF failed verification, so it was discarded.
+> Записанный GIF не прошёл проверку, поэтому был отброшен.
+
+< The written GIF has no frames, so it was discarded.
+> В записанном GIF нет кадров, поэтому он был отброшен.
+
+< Compressing {0} GIF ({1} colours)
+< Compressing {0} GIFs ({1} colours)
+> Сжатие GIF: {0} ({1} цветов)
+> Сжатие GIF: {0} ({1} цветов)
+> Сжатие GIF: {0} ({1} цветов)
+
+< Analysing
+> Анализ
+
+< The GIF contains no frames.
+> В GIF нет кадров.
+
+< The result would not be smaller ({0} vs {1}), so nothing was saved. Try fewer colours, a smaller width or a lower frame rate.
+> Результат не был бы меньше ({0} против {1}), поэтому ничего не сохранено. Попробуйте меньше цветов, меньшую ширину или меньшую частоту кадров.
+
+< {1} of {0} frame
+< {1} of {0} frames
+> {1} из {0} кадра
+> {1} из {0} кадров
+> {1} из {0} кадров
+
+< Optimizing {0} GIF (pixel-preserving)
+< Optimizing {0} GIFs (pixel-preserving)
+> Оптимизация GIF (с сохранением пикселей): {0}
+> Оптимизация GIF (с сохранением пикселей): {0}
+> Оптимизация GIF (с сохранением пикселей): {0}
+
+< This GIF is already efficiently encoded (optimized: {0} vs {1}), so nothing was saved.
+> Этот GIF уже эффективно закодирован (оптимизирован: {0} против {1}), поэтому ничего не сохранено.
+
+< pixel-identical frames
+> кадры, идентичные до пикселя
+
+< resized with nearest-neighbour sampling (no new colours)
+> размер изменён выборкой по ближайшему соседу (новых цветов нет)
+
+< Making a highlight video from {0} photo or video
+< Making a highlight video from {0} photos and videos
+> Создание видео из лучших моментов, фото и видео: {0}
+> Создание видео из лучших моментов, фото и видео: {0}
+> Создание видео из лучших моментов, фото и видео: {0}
+
+< Pick at least two photos or videos.
+> Выберите хотя бы два фото или видео.
+
+< Looking at the photos and videos ({0} of {1})
+> Просмотр фото и видео ({0} из {1})
+
+< "{0}" couldn't be read and was left out.
+> «{0}» не удалось прочитать, он исключён.
+
+< Too few of the files could be read to make a video.
+> Удалось прочитать слишком мало файлов, чтобы сделать видео.
+
+< Writing the music
+> Сочинение музыки
+
+< Preparing the sound
+> Подготовка звука
+
+< Making the video
+> Создание видео
+
+< Saving
+> Сохранение
+
+< {0} of the files couldn't be read.
+< {0} of the files couldn't be read.
+> Не удалось прочитать файлов: {0}.
+> Не удалось прочитать файлов: {0}.
+> Не удалось прочитать файлов: {0}.
+
+< Compressing {0} image to {1} (quality {2})
+< Compressing {0} images to {1} (quality {2})
+> Сжатие изображений в {1} (качество {2}): {0}
+> Сжатие изображений в {1} (качество {2}): {0}
+> Сжатие изображений в {1} (качество {2}): {0}
+
+< Already compact: re-encoding at quality {0} would make it larger ({1} vs {2}). Nothing was saved.
+> Уже компактно: перекодирование с качеством {0} увеличило бы размер ({1} против {2}). Ничего не сохранено.
+
+< Transparent areas were filled with white because JPEG has no transparency.
+> Прозрачные области заполнены белым, потому что JPEG не поддерживает прозрачность.
+
+< Only the first frame of the animation was used.
+> Использован только первый кадр анимации.
+
+< Optimizing {0} image losslessly ({1})
+< Optimizing {0} images losslessly ({1})
+> Оптимизация изображений без потерь ({1}): {0}
+> Оптимизация изображений без потерь ({1}): {0}
+> Оптимизация изображений без потерь ({1}): {0}
+
+< GIFs are optimized with the GIF optimizer tool (this tool would keep only one frame).
+> GIF оптимизируются инструментом «Оптимизатор GIF» (этот инструмент оставил бы только один кадр).
+
+< Animated WebP can't be optimized here without losing its animation.
+> Анимированный WebP здесь нельзя оптимизировать без потери анимации.
+
+< 16-bit-per-channel PNG can't be kept pixel-identical (Android decodes 8 bits per channel). Nothing was saved.
+> PNG с 16 битами на канал нельзя сохранить идентичным до пикселя (Android декодирует 8 бит на канал). Ничего не сохранено.
+
+< {0} photos are already lossy-compressed; storing their pixels losslessly takes more space.
+> Фото {0} уже сжаты с потерями; хранение их пикселей без потерь занимает больше места.
+
+< Not smaller than the original ({0} vs {1}), so nothing was saved.
+> Не меньше оригинала ({0} против {1}), поэтому ничего не сохранено.
+
+< orientation applied to pixels
+> ориентация применена к пикселям
+
+< pixel-identical
+> идентично до пикселя
+
+< Converting {0} image to {1}
+< Converting {0} images to {1}
+> Конвертация изображений в {1}: {0}
+> Конвертация изображений в {1}: {0}
+> Конвертация изображений в {1}: {0}
+
+< {0} supports at most {1} px per side; this image is {2}×{3}. Choose PNG or JPEG.
+> {0} поддерживает не более {1} пикселей по стороне; это изображение {2}×{3}. Выберите PNG или JPEG.
+
+< Only the first frame of the animation was converted.
+> Конвертирован только первый кадр анимации.
+
+< quality {0}
+> качество {0}
+
+< The written file failed verification (missing track), so it was discarded.
+> Записанный файл не прошёл проверку (нет дорожки), поэтому был отброшен.
+
+< The written file failed verification (no samples), so it was discarded.
+> Записанный файл не прошёл проверку (нет сэмплов), поэтому был отброшен.
+
+< The written file could not be read back, so it was discarded.
+> Записанный файл не удалось прочитать обратно, поэтому он был отброшен.
+
+< Removing metadata from {0} file
+< Removing metadata from {0} files
+> Удаление метаданных из файлов: {0}
+> Удаление метаданных из файлов: {0}
+> Удаление метаданных из файлов: {0}
+
+< {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
+> Файлы {0} нельзя очистить без перекодирования. Используйте «Конвертацию изображений», чтобы получить чистую копию JPEG или PNG (у конвертированных файлов нет метаданных).
+
+< The file is damaged or uses an unusual layout ({0}); nothing was saved.
+> Файл повреждён или имеет необычную структуру ({0}); ничего не сохранено.
+
+< No metadata found — this file is already clean. Nothing was saved.
+> Метаданные не найдены — этот файл уже чистый. Ничего не сохранено.
+
+< The cleaned copy failed verification, so it was discarded.
+> Очищенная копия не прошла проверку, поэтому была отброшена.
+
+< orientation
+> ориентация
+
+< Removed: {0}.
+> Удалено: {0}.
+
+< Kept: {0}.
+> Сохранено: {0}.
+
+< image data copied unchanged
+> данные изображения скопированы без изменений
+
+< Location, camera, date and other container metadata were not copied. Rotation is kept.
+> Местоположение, камера, дата и другие метаданные контейнера не копировались. Поворот сохраняется.
+
+< video and audio copied bit-for-bit
+> видео и аудио скопированы бит в бит
+
+< Trimming {0}
+> Обрезка {0}
+
+< Trimming {0} video
+< Trimming {0} videos
+> Обрезка видео: {0}
+> Обрезка видео: {0}
+> Обрезка видео: {0}
+
+< The selected part is too short.
+> Выбранная часть слишком короткая.
+
+< Finding keyframes
+> Поиск ключевых кадров
+
+< Nothing to change: the whole video is selected and it isn't rotated.
+> Нечего менять: выбрано всё видео, и оно не повёрнуто.
+
+< Starts {0} earlier than chosen, at the previous keyframe (cutting elsewhere would need re-encoding).
+> Начинается на {0} раньше выбранного, на предыдущем ключевом кадре (резать в другом месте потребовало бы перекодирования).
+
+< Turned {0}° clockwise (players read the rotation flag; pixels are untouched).
+> Повёрнуто на {0}° по часовой стрелке (проигрыватели читают флаг поворота; пиксели не затрагиваются).
+
+< One PDF
+> Один PDF
+
+< One PDF per page
+> Один PDF на страницу
+
+< Enter the pages to keep, like 1-3, 5
+> Введите страницы, которые нужно оставить, например 1-3, 5
+
+< "{0}" isn't a valid page range
+> «{0}» — недопустимый диапазон страниц
+
+< Page {1} doesn't exist; the PDF has {0} page
+< Page {1} doesn't exist; the PDF has {0} pages
+> Страницы {1} не существует; в PDF {0} страница
+> Страницы {1} не существует; в PDF {0} страницы
+> Страницы {1} не существует; в PDF {0} страниц
+
+< "{0}" isn't a page number
+> «{0}» — не номер страницы
+
+< Extracting pages from {0} PDF
+< Extracting pages from {0} PDFs
+> Извлечение страниц из PDF: {0}
+> Извлечение страниц из PDF: {0}
+> Извлечение страниц из PDF: {0}
+
+< This PDF is password-protected. Remove the password first.
+> Этот PDF защищён паролем. Сначала снимите пароль.
+
+< Not a valid PDF or damaged ({0}).
+> Недопустимый PDF или повреждён ({0}).
+
+< {1} of {0} page
+< {1} of {0} pages
+> {1} из {0} страницы
+> {1} из {0} страниц
+> {1} из {0} страниц
+
+< {0} PDF
+< {0} PDFs
+> {0} PDF
+> {0} PDF
+> {0} PDF
+
+< text and links kept
+> текст и ссылки сохранены
+
+< The written PDF could not be read back.
+> Записанный PDF не удалось прочитать обратно.
+
+< The written PDF failed verification, so it was discarded.
+> Записанный PDF не прошёл проверку, поэтому был отброшен.
+
+< The written PDF has {0} pages instead of {1}, so it was discarded.
+> В записанном PDF страниц: {0} вместо {1}, поэтому он был отброшен.
+
+< Rendering {0} PDF to {1} at {2}%
+< Rendering {0} PDFs to {1} at {2}%
+> Рендеринг {0} PDF-файла в {1} при {2}%
+> Рендеринг {0} PDF-файлов в {1} при {2}%
+> Рендеринг {0} PDF-файлов в {1} при {2}%
+
+< The PDF has no pages.
+> В PDF нет страниц.
+
+< Page {0} of {1}
+> Страница {0} из {1}
+
+< Page {0} could not be opened; the PDF may be damaged.
+> Не удалось открыть страницу {0}; PDF может быть повреждён.
+
+< Page {0} would be {1}×{2} px at {3}%, beyond the limit of {4}. Use a lower scale.
+> Страница {0} при {3}% была бы {1}×{2} пикс., что превышает предел {4}. Используйте меньший масштаб.
+
+< {0} page image
+< {0} page images
+> {0} изображение страницы
+> {0} изображения страниц
+> {0} изображений страниц
+
+< last page {0}
+> последняя страница {0}
+
+< Compact
+> Компактно
+
+< Original colour
+> Исходный цвет
+
+< Clean document
+> Чистый документ
+
+< Creating a {0}-page PDF
+< Creating a {0}-page PDF
+> Создание PDF из страниц: {0}
+> Создание PDF из страниц: {0}
+> Создание PDF из страниц: {0}
+
+< Page {0} ("{1}"): {2}
+> Страница {0} («{1}»): {2}
+
+< {0} JPEG photo was embedded without recompression.
+< {0} JPEG photos were embedded without recompression.
+> Фото JPEG встроено без повторного сжатия: {0}.
+> Фото JPEG встроено без повторного сжатия: {0}.
+> Фото JPEG встроено без повторного сжатия: {0}.
+
+< {0} very large image was scaled down to fit in memory.
+< {0} very large images were scaled down to fit in memory.
+> Очень больших изображений, уменьшенных для помещения в память: {0}.
+> Очень больших изображений, уменьшенных для помещения в память: {0}.
+> Очень больших изображений, уменьшенных для помещения в память: {0}.
+
+< Pages are images; the text is not searchable or selectable.
+> Страницы — это изображения; текст недоступен для поиска и выделения.
+
+< {0} A4 page
+< {0} A4 pages
+> {0} страница A4
+> {0} страницы A4
+> {0} страниц A4
+
+< Merging {0} PDF
+< Merging {0} PDFs
+> Объединение PDF: {0}
+> Объединение PDF: {0}
+> Объединение PDF: {0}
+
+< Reading documents
+> Чтение документов
+
+< Added {0} of {1}
+> Добавлено {0} из {1}
+
+< text, links and page sizes kept
+> текст, ссылки и размеры страниц сохранены
+
+< videos
+> видео
+
+< PDFs
+> PDF
+
+< audio files
+> аудиофайлы
+
+< nothing
+> ничего
+
+< Edits one photo by hand, so it can't run in a stack
+> Редактирует одно фото вручную, поэтому не может выполняться в цепочке
+
+< Looks through your whole photo library, so it can't run in a stack
+> Просматривает всю вашу библиотеку фото, поэтому не может выполняться в цепочке
+
+< Uses the camera; to make a PDF from files in a stack use Images → PDF
+> Использует камеру; чтобы создать PDF из файлов в цепочке, используйте «Изображения → PDF»
+
+< Prints instead of saving files, so it can't be a step of a stack
+> Печатает, а не сохраняет файлы, поэтому не может быть шагом цепочки
+
+< Makes one film from the moments you review, so it can't run in a stack
+> Делает один фильм из моментов, которые вы проверяете, поэтому не может выполняться в цепочке
+
+< Can't be part of a stack
+> Не может быть частью цепочки
+
+< Stack: {0}
+> Цепочка: {0}
+
+< Saved as it came out of an earlier step
+> Сохранено в том виде, как вышло из предыдущего шага
+
+< No step changed this file.
+> Ни один шаг не изменил этот файл.
+
+< Step {0} ({1})
+> Шаг {0} ({1})
+
+< {0} doesn't work on {1}, so it was skipped.
+> {0} не работает с: {1}, поэтому пропущен.
+
+< {0} doesn't work on this kind of file, so it was skipped.
+> {0} не работает с файлами этого типа, поэтому пропущен.
+
+< {1} needs at least {0} file, so it was skipped.
+< {1} needs at least {0} files, so it was skipped.
+> {1} требуется не менее {0} файла, поэтому пропущен.
+> {1} требуется не менее {0} файлов, поэтому пропущен.
+> {1} требуется не менее {0} файлов, поэтому пропущен.
+
+< Step {0} of {1}: {2}
+> Шаг {0} из {1}: {2}
+
+< Step {0} of {1} · {2}: {3}
+> Шаг {0} из {1} · {2}: {3}
+
+< {0} · after step {1}
+> {0} · после шага {1}
+
+< {0} failed: {1}
+> Сбой {0}: {1}
+
+< unknown error
+> неизвестная ошибка
+
+< {0} left it unchanged: {1}
+> {0} оставил без изменений: {1}
+
+< nothing to do
+> нечего делать
+
+< it produced no result
+> не дал результата
+
+< Stacks
+> Цепочки
+
+< Run several tools in a row
+> Запуск нескольких инструментов подряд
+
+< Edit & AI
+> Правка и ИИ
+
+< Retouch, cut out and anonymise with on-device AI
+> Ретушь, вырезание и анонимизация с помощью ИИ на устройстве
+
+< Images
+> Изображения
+
+< Compress, convert, combine and brand photos
+> Сжатие, конвертация, объединение и подпись фото
+
+< Trim, cut, repackage and shrink videos
+> Обрезка, нарезка, переупаковка и сжатие видео
+
+< GIF
+> GIF
+
+< Create and slim down animations
+> Создание анимаций и уменьшение их размера
+
+< PDF
+> PDF
+
+< Pages, scans and merges
+> Страницы, сканы и объединение
+
+< Photos and documents on your Wi-Fi printer
+> Фото и документы на принтере в вашей сети Wi-Fi
+
+< Privacy & audio
+> Конфиденциальность и звук
+
+< Clean metadata and extract sound
+> Очистка метаданных и извлечение звука
+
+< Tool stack
+> Цепочка инструментов
+
+< Chain tools: each works on the last one's results
+> Соединяйте инструменты: каждый работает с результатами предыдущего
+
+< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> Выберите файлы один раз, добавьте нужные инструменты по порядку — например, «Размытие лиц» → «Сжатие видео» → «Видео → GIF» → «Оптимизатор GIF» — и запустите все одним касанием. Каждый инструмент сохраняет все свои настройки; сохраняются только итоговые результаты.
+
+< Photo editor
+> Фоторедактор
+
+< Crop, straighten, light, colour and looks
+> Кадрирование, выравнивание, свет, цвет и стили
+
+< Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched.
+> Кадрируйте и выравнивайте, настраивайте свет и цвет, применяйте стили, затем сохраняйте копию в полном разрешении. Ваш оригинал остаётся нетронутым.
+
+< Magic eraser
+> Волшебный ластик
+
+< Brush away people and objects with AI
+> Убирайте людей и предметы с помощью ИИ
+
+< Brush over what you don't want and an AI model running on this phone fills the gap with matching background. Nothing is uploaded.
+> Закрасьте то, что вам не нужно, и модель ИИ, работающая на этом телефоне, заполнит пустое место подходящим фоном. Ничего не загружается.
+
+< Blur & pixelate
+> Размытие и пикселизация
+
+< Hide faces, plates and private details
+> Скрывайте лица, номера и личные детали
+
+< Paint over faces, number plates, addresses or screens to blur or pixelate them before you share a photo.
+> Закрашивайте лица, номерные знаки, адреса или экраны, чтобы размыть или пикселизировать их перед тем, как поделиться фото.
+
+< Background remover
+> Удаление фона
+
+< Cut out the subject as a transparent PNG
+> Вырезайте объект в прозрачный PNG
+
+< An AI model on this phone finds the main subject (people, pets, products, objects) and removes everything behind it. Save as a transparent PNG or on a plain colour.
+> Модель ИИ на этом телефоне находит главный объект (людей, питомцев, товары, предметы) и удаляет всё позади него. Сохраняйте как прозрачный PNG или на однотонном фоне.
+
+< One tap: light, colour and detail by AI
+> Одно касание: свет, цвет и детали с помощью ИИ
+
+< On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
+> ИИ на устройстве распознаёт лица и тип сцены (еда, пейзаж, ночь, документы…) и исправляет экспозицию, контраст, цветовые оттенки и резкость соответственно. Работает с целой партией.
+
+< Blur faces
+> Размытие лиц
+
+< Find faces in photos and videos, pick who to hide
+> Находите лица на фото и видео, выбирайте, кого скрыть
+
+< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
+> ИИ на устройстве находит каждое лицо на ваших фото и видео и группирует их по людям. Выберите, кого размыть или пикселизировать; лица отслеживаются на протяжении всего видео.
+
+< Highlight video
+> Видео из лучших моментов
+
+< Your best moments, cut to music, automatically
+> Ваши лучшие моменты, смонтированные под музыку, автоматически
+
+< Pick the photos and videos of a day out, a trip or a party. On-device AI puts them in the order they were taken, finds the moments (setting off, lunch, the beach…), picks the best shots and the liveliest part of each video, and edits them into a short film on the beat of background music it writes for it — always instrumental, and quieter while your videos speak. Review the moments, change anything, then save. Nothing is uploaded.
+> Выберите фото и видео поездки, путешествия или вечеринки. ИИ на устройстве расставляет их в порядке съёмки, находит моменты (отправление, обед, пляж…), выбирает лучшие кадры и самую оживлённую часть каждого видео и монтирует короткий фильм в ритме фоновой музыки, которую сочиняет сам, — всегда инструментальной и тише, когда говорят ваши видео. Просмотрите моменты, измените что угодно и сохраните. Ничего не загружается.
+
+< Split videos
+> Разделение видео
+
+< Cut into equal-length parts without re-encoding
+> Нарезка на части равной длины без перекодирования
+
+< Divides each video into consecutive segments of the length you choose. Streams are copied, not re-encoded, so every part keeps the original quality.
+> Делит каждое видео на последовательные сегменты выбранной длины. Потоки копируются, а не перекодируются, поэтому каждая часть сохраняет исходное качество.
+
+< Trim & rotate video
+> Обрезка и поворот видео
+
+< Cut the start and end, fix sideways videos
+> Обрежьте начало и конец, исправьте видео, снятые набок
+
+< Keeps only the part you choose and can turn the video by 90° steps. Streams are copied, not re-encoded, so quality is untouched; the start snaps to the nearest earlier keyframe.
+> Оставляет только выбранную часть и может поворачивать видео шагами по 90°. Потоки копируются, а не перекодируются, поэтому качество не затрагивается; начало привязывается к ближайшему предыдущему ключевому кадру.
+
+< Lossless video optimizer
+> Оптимизатор видео без потерь
+
+< Repackage for fast start; quality untouched
+> Переупаковка для быстрого старта; качество не меняется
+
+< Copies the existing video and audio streams bit-for-bit into a clean MP4 with the index at the front (plays and uploads faster). This is not compression: quality is identical and the size changes only slightly.
+> Копирует имеющиеся видео- и аудиопотоки бит в бит в чистый MP4 с индексом в начале (воспроизводится и загружается быстрее). Это не сжатие: качество идентично, а размер меняется лишь слегка.
+
+< Video compressor
+> Сжатие видео
+
+< Re-encode to smaller H.264 MP4 files
+> Перекодирование в файлы H.264 MP4 меньшего размера
+
+< Re-encodes videos to H.264 + AAC MP4 at the quality you choose. Lower quality gives smaller files.
+> Перекодирует видео в H.264 + AAC MP4 с выбранным вами качеством. Меньшее качество даёт файлы меньшего размера.
+
+< Merge videos
+> Объединение видео
+
+< Join clips into one video, in your order
+> Соединяйте клипы в одно видео в нужном порядке
+
+< Joins videos end to end. Clips recorded with the same settings are joined without re-encoding (no quality loss); others are converted to a common size and format first.
+> Соединяет видео встык. Клипы, снятые с одинаковыми настройками, соединяются без перекодирования (без потери качества); остальные сначала приводятся к общему размеру и формату.
+
+< Speed & timelapse
+> Скорость и таймлапс
+
+< Slow motion, fast forward, timelapses
+> Замедленная съёмка, ускорение, таймлапсы
+
+< Plays videos from 0.25× to 60× speed. The sound keeps its natural pitch, or can be muted; long recordings become smooth timelapses.
+> Воспроизводит видео со скоростью от 0,25× до 60×. Звук сохраняет естественную высоту или может быть отключён; длинные записи превращаются в плавные таймлапсы.
+
+< Remove video audio
+> Удаление звука из видео
+
+< Silent copies with the video untouched
+> Беззвучные копии, видео без изменений
+
+< Creates copies of your videos without the sound track. The picture is copied as-is, with no quality loss.
+> Создаёт копии ваших видео без звуковой дорожки. Изображение копируется как есть, без потери качества.
+
+< Image compressor
+> Сжатие изображений
+
+< JPEG or WebP with quality and size limits
+> JPEG или WebP с ограничениями качества и размера
+
+< Re-encodes photos as JPEG or WebP at the quality you choose, optionally limiting the width. Aspect ratio and orientation are always preserved.
+> Перекодирует фото в JPEG или WebP с выбранным вами качеством, при желании ограничивая ширину. Соотношение сторон и ориентация всегда сохраняются.
+
+< Lossless image optimizer
+> Оптимизатор изображений без потерь
+
+< Pixel-identical PNG or lossless WebP
+> PNG, идентичный до пикселя, или WebP без потерь
+
+< Stores every pixel exactly as it is in an efficiently compressed lossless file. Savings depend on the source and are not guaranteed.
+> Хранит каждый пиксель точно как есть в эффективно сжатом файле без потерь. Экономия зависит от источника и не гарантируется.
+
+< Convert images
+> Конвертация изображений
+
+< PNG, JPEG or WebP from most formats
+> PNG, JPEG или WebP из большинства форматов
+
+< Converts images (HEIC, AVIF, TIFF, BMP, PSD, RAW previews and more) to PNG, JPEG or WebP.
+> Конвертирует изображения (HEIC, AVIF, TIFF, BMP, PSD, превью RAW и другие) в PNG, JPEG или WebP.
+
+< Merge images
+> Объединение изображений
+
+< Stack, line up or pack images into one PNG
+> Складывайте, выравнивайте или упаковывайте изображения в один PNG
+
+< Combines two or more images into a single PNG without scaling or cropping any of them.
+> Объединяет два или больше изображений в один PNG без масштабирования и обрезки каких-либо из них.
+
+< Multi-shot stitcher
+> Сшивание фото
+
+< Join overlapping photos into a panorama
+> Соединяйте перекрывающиеся фото в панораму
+
+< Finds where your overlapping photos meet, aligns them and blends them into one high-resolution lossless PNG.
+> Находит, где встречаются ваши перекрывающиеся фото, выравнивает их и сливает в один PNG без потерь высокого разрешения.
+
+< Bulk watermark
+> Пакетный водяной знак
+
+< Text or logo on every photo in a batch
+> Текст или логотип на каждом фото партии
+
+< Adds a text and/or logo watermark to every image, with independent placement for each image shape.
+> Добавляет текстовый и/или логотип-водяной знак на каждое изображение с независимым размещением для каждой формы изображения.
+
+< Duplicate finder
+> Поиск дубликатов
+
+< Find copies and similar shots, free space
+> Находите копии и похожие снимки, освобождайте место
+
+< Scans your photos on this phone for identical copies, re-saved duplicates and near-identical shots, suggests the best one to keep and moves the rest to the trash when you confirm.
+> Сканирует фото на этом телефоне в поисках одинаковых копий, пересохранённых дубликатов и почти одинаковых снимков, предлагает лучший для сохранения и перемещает остальные в корзину, когда вы подтвердите.
+
+< Video → GIF
+> Видео → GIF
+
+< Animated GIFs with adaptive colours
+> Анимированные GIF с адаптивными цветами
+
+< Turns videos into animated GIFs with an adaptive colour palette and accurate frame timing.
+> Превращает видео в анимированные GIF с адаптивной цветовой палитрой и точным таймингом кадров.
+
+< GIF compressor
+> Сжатие GIF
+
+< Smaller GIFs: size, frame rate, colours
+> GIF меньше: размер, частота кадров, цвета
+
+< Shrinks existing GIFs by reducing their dimensions, frame rate and colour palette.
+> Уменьшает существующие GIF, снижая их размеры, частоту кадров и цветовую палитру.
+
+< GIF optimizer
+> Оптимизатор GIF
+
+< Re-pack GIFs while keeping every pixel
+> Переупаковка GIF с сохранением каждого пикселя
+
+< Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
+> Перекодирует GIF эффективнее, сохраняя каждый показываемый пиксель идентичным.
+
+< PDF → images
+> PDF → изображения
+
+< Every page as a PNG or JPEG
+> Каждая страница как PNG или JPEG
+
+< Renders each page of a PDF to an image exactly as it looks on screen.
+> Рендерит каждую страницу PDF в изображение точно так, как она выглядит на экране.
+
+< Images → PDF
+> Изображения → PDF
+
+< One A4 page per image, in your order
+> Одна страница A4 на изображение, в вашем порядке
+
+< Builds an A4 PDF with one image per page, in the order you choose.
+> Создаёт PDF A4 с одним изображением на страницу в выбранном вами порядке.
+
+< Combine PDFs, keeping text and links
+> Объединение PDF с сохранением текста и ссылок
+
+< Joins PDFs into one document, keeping their original text, vector graphics, links and page sizes.
+> Соединяет PDF в один документ, сохраняя исходный текст, векторную графику, ссылки и размеры страниц.
+
+< Extract PDF pages
+> Извлечение страниц PDF
+
+< Pick pages into a new PDF or separate files
+> Выберите страницы для нового PDF или отдельных файлов
+
+< Choose page numbers or ranges (like 1-3, 7, 10-) and save them as one new PDF or one PDF per page. Pages are copied as they are: text, links and quality are kept.
+> Выберите номера страниц или диапазоны (например, 1-3, 7, 10-) и сохраните их как один новый PDF или по одному PDF на страницу. Страницы копируются как есть: текст, ссылки и качество сохраняются.
+
+< PDF scanner
+> Сканер PDF
+
+< Camera or gallery pages into a PDF
+> Страницы с камеры или из галереи в PDF
+
+< Captures pages with the camera or adds photos from the gallery and saves them as an A4 PDF.
+> Снимает страницы камерой или добавляет фото из галереи и сохраняет их как PDF A4.
+
+< Photos and PDFs on your Wi-Fi printer, no printer app
+> Фото и PDF на принтере в вашей сети Wi-Fi, без приложения принтера
+
+< Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
+> Печатает фото и PDF прямо на принтере в вашей сети Wi-Fi — Epson, HP, Canon, Brother и другие, поддерживающие AirPrint, Mopria или IPP Everywhere, — без приложения производителя принтера. Выберите формат и тип бумаги, печать без полей, несколько фото на листе, цвет или чёрно-белое, качество и копии, с предпросмотром каждого листа. Приложение общается только с принтером в вашей собственной сети.
+
+< Remove metadata
+> Удаление метаданных
+
+< Strip location, camera and date info
+> Убирает сведения о местоположении, камере и дате
+
+< Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
+> Создаёт чистые копии фото и видео без местоположения GPS, сведений о камере, дат, комментариев и скрытых миниатюр. Пиксели фото и видеопотоки копируются без изменений (без потери качества); ориентация и цветовой профиль сохраняются.
+
+< Extract audio
+> Извлечение звука
+
+< Save a video's AAC sound as M4A
+> Сохраняйте звук AAC из видео как M4A
+
+< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
+> Копирует звуковую дорожку AAC каждого видео в аудиофайл M4A без перекодирования.
+
+< Merging {0} video
+< Merging {0} videos
+> Объединение видео: {0}
+> Объединение видео: {0}
+> Объединение видео: {0}
+
+< Reading the clips
+> Чтение клипов
+
+< "{0}" has no video track.
+> В «{0}» нет видеодорожки.
+
+< Joining without re-encoding
+> Соединение без перекодирования
+
+< joined without re-encoding
+> соединено без перекодирования
+
+< The clips couldn't be joined directly ({0}), so they were converted to one size and format first.
+> Клипы не удалось соединить напрямую ({0}), поэтому сначала они были приведены к общему размеру и формату.
+
+< Converting clip {0} of {1}
+> Конвертация клипа {0} из {1}
+
+< The converted clips still can't be joined on this device ({0}).
+> Конвертированные клипы всё равно нельзя соединить на этом устройстве ({0}).
+
+< Joining
+> Соединение
+
+< Finishing
+> Завершение
+
+< Sound was left out, as chosen.
+> Звук пропущен, как вы и выбрали.
+
+< Changing the speed of {0} video to {1}
+< Changing the speed of {0} videos to {1}
+> Изменение скорости видео на {1}: {0}
+> Изменение скорости видео на {1}: {0}
+> Изменение скорости видео на {1}: {0}
+
+< Sound was left out: above {0} it can't be followed.
+> Звук пропущен: выше {0} он не может поспевать.
+
+< Slow motion looks smoothest with high-frame-rate recordings (this one has {0} fps).
+> Замедленная съёмка выглядит плавнее всего на записях с высокой частотой кадров (у этой — {0} кадр/с).
+
+< natural-pitch sound
+> звук с естественной высотой
+
+< No suitable container for these tracks.
+> Нет подходящего контейнера для этих дорожек.
+
+< Splitting {0} video into {1} parts
+< Splitting {0} videos into {1} parts
+> Разделение видео на части ({1}): {0}
+> Разделение видео на части ({1}): {0}
+> Разделение видео на части ({1}): {0}
+
+< {0} long — already within one {1} part, nothing to split.
+> Длительность {0} — уже укладывается в одну часть по {1}, делить нечего.
+
+< The video has no keyframes after the start, so it can't be split without re-encoding.
+> В видео нет ключевых кадров после начала, поэтому его нельзя разделить без перекодирования.
+
+< Part {0} of {1}
+> Часть {0} из {1}
+
+< Some parts are longer than {0} because the video has few keyframes (longest {1}).
+> Некоторые части длиннее {0}, потому что в видео мало ключевых кадров (самая длинная — {1}).
+
+< {0} part
+< {0} parts
+> {0} часть
+> {0} части
+> {0} частей
+
+< cuts at keyframes
+> режет по ключевым кадрам
+
+< Optimizing {0} video (lossless)
+< Optimizing {0} videos (lossless)
+> Оптимизация видео без потерь: {0}
+> Оптимизация видео без потерь: {0}
+> Оптимизация видео без потерь: {0}
+
+< {0} non-audio/video track (subtitles or metadata) was not copied.
+< {0} non-audio/video tracks (subtitles or metadata) were not copied.
+> Не скопировано дорожек, не являющихся аудио или видео (субтитры или метаданные): {0}.
+> Не скопировано дорожек, не являющихся аудио или видео (субтитры или метаданные): {0}.
+> Не скопировано дорожек, не являющихся аудио или видео (субтитры или метаданные): {0}.
+
+< Moving the index to the front
+> Перенос индекса в начало
+
+< Fast start: the video index is at the beginning, so it starts playing and uploading sooner.
+> Быстрый старт: индекс видео находится в начале, поэтому воспроизведение и загрузка начинаются раньше.
+
+< streams copied bit-for-bit
+> потоки скопированы бит в бит
+
+< Compressing {0} video (quality {1})
+< Compressing {0} videos (quality {1})
+> Сжатие видео (качество {1}): {0}
+> Сжатие видео (качество {1}): {0}
+> Сжатие видео (качество {1}): {0}
+
+< The compressed video would be larger than the original ({0} vs {1}), so nothing was saved. Try a lower quality or resolution.
+> Сжатое видео было бы больше оригинала ({0} против {1}), поэтому ничего не сохранено. Попробуйте меньшее качество или разрешение.
+
+< from {0}
+> из {0}
+
+< Removing audio from {0} video
+< Removing audio from {0} videos
+> Удаление звука из видео: {0}
+> Удаление звука из видео: {0}
+> Удаление звука из видео: {0}
+
+< This video already has no audio track.
+> В этом видео уже нет звуковой дорожки.
+
+< video copied as-is
+> видео скопировано как есть
+
+< Extracting audio from {0} video
+< Extracting audio from {0} videos
+> Извлечение звука из видео: {0}
+> Извлечение звука из видео: {0}
+> Извлечение звука из видео: {0}
+
+< This video has no audio track.
+> В этом видео нет звуковой дорожки.
+
+< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
+> Нет совместимой звуковой дорожки AAC (звук этого видео — {0}). Ничего не извлечено.
+
+< {0} non-AAC audio track was not extracted.
+< {0} non-AAC audio tracks were not extracted.
+> Не извлечено дорожек не AAC: {0}.
+> Не извлечено дорожек не AAC: {0}.
+> Не извлечено дорожек не AAC: {0}.
+
+< AAC copied without re-encoding
+> AAC скопирован без перекодирования
+
+< The video encoder stopped taking frames.
+> Видеокодировщик перестал принимать кадры.
+
+< The video encoder produced nothing.
+> Видеокодировщик ничего не выдал.
+
+< This device has no H.264 encoder for {0}×{1}.
+> На этом устройстве нет кодировщика H.264 для {0}×{1}.
+
+< The H.264 encoder rejected {0}×{1}.
+> Кодировщик H.264 отклонил {0}×{1}.
+
+< Landscape 16:9
+> Горизонтальное 16:9
+
+< Portrait 9:16
+> Вертикальное 9:16
+
+< More {1}
+> Ещё: {1}
+
+< Day {0} · {1}
+> День {0} · {1}
+
+< The wedding
+> Свадьба
+
+< At the concert
+> На концерте
+
+< At the beach
+> На пляже
+
+< By the pool
+> У бассейна
+
+< In the snow
+> В снегу
+
+< At the waterfall
+> У водопада
+
+< In the mountains
+> В горах
+
+< By the water
+> У воды
+
+< In the woods
+> В лесу
+
+< Sunset
+> Закат
+
+< At the castle
+> В замке
+
+< The city at night
+> Город ночью
+
+< In the city
+> В городе
+
+< Late bite
+> Поздний перекус
+
+< Breakfast
+> Завтрак
+
+< Lunch
+> Обед
+
+< Afternoon snack
+> Полдник
+
+< Dinner
+> Ужин
+
+< Setting off
+> Отправление
+
+< On the way
+> В пути
+
+< Game time
+> Время игр
+
+< Outdoors
+> На природе
+
+< With the animals
+> С животными
+
+< Night out
+> Вечерняя прогулка
+
+< Together
+> Все вместе
+
+< Late night
+> Поздней ночью
+
+< Morning
+> Утро
+
+< Midday
+> Полдень
+
+< Afternoon
+> День
+
+< Evening
+> Вечер
+
+@ date pattern: a day, with its weekday
+< EEEE, d MMMM yyyy
+> EEEE, d MMMM yyyy
+
+@ dates from one day to another in one month
+< {0}–{1}
+> {0}–{1}
+
+@ date pattern: the first day of a range in one month
+< d
+> d
+
+@ date pattern: the last day of a range in one month
+< d MMMM yyyy
+> d MMMM yyyy
+
+@ dates from one day to another
+< {0} – {1}
+> {0} – {1}
+
+@ date pattern: the first day of a range in one year
+< d MMMM
+> d MMMM
+
+@ date pattern: the last day of a range in one year
+< d MMMM yyyy
+> d MMMM yyyy
+
+@ date pattern: a day
+< d MMMM yyyy
+> d MMMM yyyy
+
+@ time pattern: when a moment starts
+< h:mm a
+> HH:mm
+
+< A clip has no video track.
+> У одного клипа нет видеодорожки.
+
+< No media samples were found in these clips.
+> В этих клипах не найдено медиасэмплов.
+
+< a clip has no video
+> у одного клипа нет видео
+
+< {0} video can't be joined directly
+> Видео {0} нельзя соединить напрямую
+
+< the clips use different video formats
+> клипы используют разные видеоформаты
+
+< the clips have different picture sizes
+> клипы имеют разные размеры кадра
+
+< the clips have different orientations
+> клипы имеют разную ориентацию
+
+< the clips were recorded with different encoder settings
+> клипы записаны с разными настройками кодировщика
+
+< some clips have sound and others don't
+> у одних клипов есть звук, у других нет
+
+< the clips' sound uses different formats
+> звук клипов использует разные форматы
+
+< the clips' sound uses different settings
+> звук клипов использует разные настройки
+
+< The file has no video track.
+> В файле нет видеодорожки.
+
+< This device has no decoder for {0} video.
+> На этом устройстве нет декодера для видео {0}.
+
+< The video decoder stopped delivering frames.
+> Видеодекодер перестал выдавать кадры.
+
+< Video decoding stalled.
+> Декодирование видео зависло.
+
+< {0} video can't be stored in a {1} file on this device.
+> Видео {0} нельзя сохранить в файл {1} на этом устройстве.
+
+< {0} audio can't be stored in a {1} file on this device.
+> Звук {0} нельзя сохранить в файл {1} на этом устройстве.
+
+< No media samples were found in this part of the file.
+> В этой части файла не найдено медиасэмплов.
+
+< This file can't be read as a video. It may be damaged or use an unsupported container.
+> Этот файл нельзя прочитать как видео. Он может быть повреждён или использовать неподдерживаемый контейнер.
+
+< The file contains no audio or video tracks.
+> В файле нет аудио- и видеодорожек.
+
+< HDR video was converted to standard dynamic range (SDR).
+> Видео HDR преобразовано в стандартный динамический диапазон (SDR).
+
+< HDR video: colours may look different after conversion on this Android version.
+> Видео HDR: после преобразования в этой версии Android цвета могут выглядеть иначе.
+
+< {0} audio was converted to AAC.
+> Звук {0} преобразован в AAC.
+
+< The {0} audio couldn't be converted on this device, so the result has no sound.
+> Звук {0} не удалось преобразовать на этом устройстве, поэтому в результате нет звука.
+
+< Video processing stalled (the device codec stopped responding).
+> Обработка видео зависла (кодек устройства перестал отвечать).
+
+< No video frames could be decoded from this file.
+> Не удалось декодировать ни одного видеокадра из этого файла.
+
+< The {0} decoder rejected this video ({1}×{2}).
+> Декодер {0} отклонил это видео ({1}×{2}).
+
+< This device has no H.264 encoder that supports {0}×{1}.
+> На этом устройстве нет кодировщика H.264, поддерживающего {0}×{1}.
+
+< The H.264 encoder rejected the output settings ({0}×{1}).
+> Кодировщик H.264 отклонил параметры вывода ({0}×{1}).
+
+< Printing {0} file on {1}
+< Printing {0} files on {1}
+> Печать файлов: {0} на {1}
+> Печать файлов: {0} на {1}
+> Печать файлов: {0} на {1}
+
+< Connecting to {0}
+> Подключение к {0}
+
+< Preparing
+> Подготовка
+
+< There's nothing to print (no pages chosen)
+> Печатать нечего (страницы не выбраны)
+
+< The printer couldn't be reached
+> Не удалось связаться с принтером
+
+< Not a printer address
+> Это не адрес принтера
+
+< Connect the phone to the same Wi-Fi as the printer to find it.
+> Подключите телефон к той же сети Wi-Fi, что и принтер, чтобы найти его.
+
+< the printer didn't understand the request
+> принтер не понял запрос
+
+< the printer refused the request
+> принтер отклонил запрос
+
+< the printer asks for a password
+> принтер запрашивает пароль
+
+< the printer refused access
+> принтер отказал в доступе
+
+< the printer can't do that
+> принтер этого не умеет
+
+< the printer has no such job
+> у принтера нет такого задания
+
+< the printer doesn't accept this kind of file
+> принтер не принимает файлы такого типа
+
+< the printer doesn't support some of these settings
+> принтер не поддерживает некоторые из этих настроек
+
+< the printer isn't accepting jobs right now
+> принтер сейчас не принимает задания
+
+< the printer is busy
+> принтер занят
+
+< the printer had an internal problem (code {0})
+> у принтера возникла внутренняя проблема (код {0})
+
+< the printer answered {0}
+> принтер ответил {0}
+
+< Not a printer address: {0}
+> Это не адрес принтера: {0}
+
+< Use the printer's IP address (like 192.168.1.20), not a name: "{0}"
+> Используйте IP-адрес принтера (например, 192.168.1.20), а не имя: «{0}»
+
+< The printer sent no certificate
+> Принтер не прислал сертификат
+
+< The printer's identity changed since it was added. If it was reset or replaced, remove it and add it again.
+> Идентичность принтера изменилась с момента добавления. Если его сбросили или заменили, удалите его и добавьте снова.
+
+< Couldn't set up a secure connection to the printer: {0}
+> Не удалось установить защищённое соединение с принтером: {0}
+
+< Couldn't set up a secure connection to the printer
+> Не удалось установить защищённое соединение с принтером
+
+< Can't reach the printer at {0}
+> Не удаётся связаться с принтером по адресу {0}
+
+< The connection to the printer was lost while sending
+> Соединение с принтером потеряно во время отправки
+
+< The printer stopped answering
+> Принтер перестал отвечать
+
+< The connection to the printer was lost
+> Соединение с принтером потеряно
+
+< Can't reach the printer at {0} (is it on, and is the phone on the same Wi-Fi?)
+> Не удаётся связаться с принтером по адресу {0} (включён ли он и в той же ли сети Wi-Fi телефон?)
+
+< The printer closed the connection without answering
+> Принтер закрыл соединение, не ответив
+
+< The printer sent an unexpected answer: {0}
+> Принтер прислал неожиданный ответ: {0}
+
+< The printer asks for a password; this app can't print to protected printers
+> Принтер запрашивает пароль; это приложение не может печатать на защищённых принтерах
+
+< The printer only accepts secure connections
+> Принтер принимает только защищённые соединения
+
+< The printer has no print service at {0}
+> У принтера нет службы печати по адресу {0}
+
+< The printer answered HTTP {0}
+> Принтер ответил HTTP {0}
+
+< The printer sent an answer that couldn't be read
+> Принтер прислал ответ, который не удалось прочитать
+
+< The printer sent an overlong header
+> Принтер прислал слишком длинный заголовок
+
+< {0} isn't on your local network; this app only talks to devices on it
+> {0} не входит в вашу локальную сеть; это приложение общается только с устройствами в ней
+
+< This printer doesn't take any kind of file this app can send (it takes {0})
+> Этот принтер не принимает ни один тип файлов, которые может отправить это приложение (он принимает {0})
+
+< nothing it names
+> ничего из названного
+
+< Checking with the printer
+> Проверка с принтером
+
+< The printer isn't accepting jobs right now
+> Принтер сейчас не принимает задания
+
+< The printer says {0}
+> Принтер сообщает: {0}
+
+< The printer accepted the job but gave it no number
+> Принтер принял задание, но не присвоил ему номер
+
+< Sending to the printer
+> Отправка на принтер
+
+< Sending sheet {0} of {1}
+> Отправка листа {0} из {1}
+
+< Sent to the printer; it is still working on it
+> Отправлено на принтер; он ещё работает над этим
+
+< The job was cancelled at the printer
+> Задание отменено на принтере
+
+< The printer gave up on the job: {0}
+> Принтер отказался от задания: {0}
+
+< The printer gave up on the job
+> Принтер отказался от задания
+
+< {0} — printing continues once it's sorted
+> {0} — печать продолжится, когда это будет устранено
+
+< Waiting for the printer
+> Ожидание принтера
+
+< Printing sheet {0} of {1}
+> Печать листа {0} из {1}
+
+< Printed {0} sheet
+< Printed {0} sheets
+> Напечатано листов: {0}
+> Напечатано листов: {0}
+> Напечатано листов: {0}
+
+< The printer didn't describe itself ({0})
+> Принтер не описал себя ({0})
+
+< Letter
+> Letter
+
+< Legal
+> Legal
+
+< Card (54 × 86 mm)
+> Карточка (54 × 86 мм)
+
+< Envelope DL
+> Конверт DL
+
+< Envelope #10
+> Конверт № 10
+
+< Envelope C6
+> Конверт C6
+
+< Envelope C5
+> Конверт C5
+
+< Executive
+> Executive
+
+< Square 89 × 89 mm
+> Квадрат 89 × 89 мм
+
+< Plain paper
+> Обычная бумага
+
+< Heavy paper
+> Плотная бумага
+
+< Light paper
+> Тонкая бумага
+
+< Letterhead
+> Фирменный бланк
+
+< Inkjet paper
+> Бумага для струйной печати
+
+< Photo paper
+> Фотобумага
+
+< Glossy photo paper
+> Глянцевая фотобумага
+
+< High-gloss photo paper
+> Высокоглянцевая фотобумага
+
+< Semi-gloss photo paper
+> Полуглянцевая фотобумага
+
+< Satin photo paper
+> Сатиновая фотобумага
+
+< Matte photo paper
+> Матовая фотобумага
+
+< Photo film
+> Фотоплёнка
+
+< Envelope
+> Конверт
+
+@ paper type
+< Card
+> Картон
+
+< Labels
+> Этикетки
+
+< Transparency
+> Прозрачная плёнка
+
+< Add paper
+> Добавьте бумагу
+
+< Paper is running low
+> Бумага заканчивается
+
+< Paper jam: open the printer and remove the stuck paper
+> Замятие бумаги: откройте принтер и извлеките застрявшую бумагу
+
+< The paper didn't feed: check the paper tray
+> Бумага не подаётся: проверьте лоток для бумаги
+
+< Out of ink
+> Чернила закончились
+
+< Ink is low
+> Чернила заканчиваются
+
+< The ink pad (maintenance box) is almost full
+> Абсорбер чернил (ёмкость для обслуживания) почти заполнен
+
+< The ink pad (maintenance box) is full: service needed
+> Абсорбер чернил (ёмкость для обслуживания) заполнен: требуется обслуживание
+
+< A cover is open
+> Открыта крышка
+
+< The printer is offline
+> Принтер не в сети
+
+< The printer is paused
+> Принтер приостановлен
+
+< The printer's memory is full
+> Память принтера заполнена
+
+< Not enough free memory (RAM) to process this file. Close other apps, lower the export workload, or choose a smaller output size.
+> Недостаточно свободной памяти (ОЗУ) для обработки этого файла. Закройте другие приложения, снизьте нагрузку экспорта или выберите меньший размер результата.
+
+< Not enough free storage space to save the result.
+> Недостаточно свободного места для сохранения результата.
+
+< Android no longer allows reading this file. Please select it again.
+> Android больше не разрешает читать этот файл. Выберите его снова.
+
+< The file could not be opened. It may have been moved, deleted or is stored in the cloud only.
+> Не удалось открыть файл. Возможно, он был перемещён, удалён или хранится только в облаке.
+
+< This device's video codec failed while processing the file (temporary codec problem — try again).
+> Видеокодек этого устройства дал сбой при обработке файла (временная проблема кодека — повторите попытку).
+
+< This device's video codec failed while processing the file.
+> Видеокодек этого устройства дал сбой при обработке файла.
+
+< The video file is damaged or incomplete: {0}
+> Видеофайл повреждён или неполон: {0}
+
+< This file's video or audio codec can't be stored in the output container on this device.
+> Видео- или аудиокодек этого файла нельзя сохранить в выходной контейнер на этом устройстве.
+
+< Read/write error: {0}
+> Ошибка чтения/записи: {0}
+
+< Audio
+> Аудио
+
+< Unknown
+> Неизвестно
+
+< The file is empty
+> Файл пуст
+
+< Permission to read this file was not granted
+> Разрешение на чтение этого файла не предоставлено
+
+< The file can't be opened ({0})
+> Не удаётся открыть файл ({0})
+
+< {0} B
+> {0} Б
+
+< {0} KB
+> {0} КБ
+
+< {0} MB
+> {0} МБ
+
+< {0} GB
+> {0} ГБ
+
+< {0} min
+> {0} мин
+
+< {0} min {1} s
+> {0} мин {1} с
+
+< Could not open the output file for writing
+> Не удалось открыть выходной файл для записи
+
+< The system media store refused to create "{0}"
+> Системное медиахранилище отказалось создать «{0}»
+
+< Not enough free storage: about {0} is needed but only {1} is free.
+> Недостаточно свободного места: нужно около {0}, а свободно только {1}.
+
+< Efficient
+> Экономный
+
+< Gentle on battery and heat; exports take longer.
+> Бережёт батарею и не греется; экспорт занимает больше времени.
+
+< Balanced
+> Сбалансированный
+
+< Good speed while the phone stays responsive.
+> Хорошая скорость, пока телефон остаётся отзывчивым.
+
+< Fast
+> Быстрый
+
+< Uses the device fully; best when plugged in.
+> Использует устройство на полную; лучше всего при подключённой зарядке.
+
+< Custom · light
+> Своё · низкая
+
+< Custom · moderate
+> Своё · умеренная
+
+< Custom · high
+> Своё · высокая
+
+< {0} file at a time
+< up to {0} files at once
+> {0} файл за раз
+> до {0} файлов одновременно
+> до {0} файлов одновременно
+
+< no pauses
+> без пауз
+
+< short pauses (~{0}% of the time)
+> короткие паузы (~{0}% времени)
+
+< Images: {0} · {1} · {2}
+> Изображения: {0} · {1} · {2}
+
+< background priority
+> фоновый приоритет
+
+< normal priority
+> обычный приоритет
+
+< "{0}" could not be opened.
+> Не удалось открыть «{0}».
+
+< "{0}" is password-protected. Remove the password before merging.
+> «{0}» защищён паролем. Снимите пароль перед объединением.
+
+< "{0}" is not a valid PDF or is damaged ({1}).
+> «{0}» — недопустимый PDF или повреждён ({1}).
+
+< "{0}" has no pages.
+> В «{0}» нет страниц.
+
+< "{0}" had usage restrictions (no password needed to open); they were not carried over.
+> У «{0}» были ограничения использования (для открытия пароль не нужен); они не перенесены.
+
+< "{0}" has a structure that couldn't be merged ({1}).
+> У «{0}» структура, которую не удалось объединить ({1}).
+
+< Merged page count doesn't match the inputs; nothing was saved.
+> Число объединённых страниц не совпадает с исходным; ничего не сохранено.
+
+< The PDF could not be opened.
+> Не удалось открыть PDF.
+
+< This PDF is password-protected and can't be opened.
+> Этот PDF защищён паролем и не может быть открыт.
+
+< This file is not a valid PDF or is damaged.
+> Этот файл — недопустимый PDF или повреждён.
+
+< Not available: this phone is configured as a low-memory device.
+> Недоступно: этот телефон настроен как устройство с малым объёмом памяти.
+
+< Not available: needs at least 4 GB of RAM (this phone has {0} GB).
+> Недоступно: требуется не менее 4 ГБ ОЗУ (у этого телефона {0} ГБ).
+
+< Not available: needs a 64-bit processor.
+> Недоступно: требуется 64-разрядный процессор.
+
+< Not available: needs at least 4 CPU cores.
+> Недоступно: требуется не менее 4 ядер процессора.
+
+< Not available: the on-device model is missing from this build.
+> Недоступно: модель на устройстве отсутствует в этой сборке.
+
+< Available on this device · runs fully offline
+> Доступно на этом устройстве · работает полностью офлайн
+
+< panorama (rectilinear)
+> панорама (прямолинейная)
+
+< panorama (cylindrical)
+> панорама (цилиндрическая)
+
+< panorama (spherical)
+> панорама (сферическая)
+
+< The aligned photos produced an empty result.
+> Выровненные фото дали пустой результат.
+
+< The panorama was reduced to {0}% of full resolution to stay within the size limit.
+> Панорама уменьшена до {0}% полного разрешения, чтобы уложиться в предел размера.
+
+< The panorama was scaled to fit PNG viewers' 65000 px limit.
+> Панорама масштабирована, чтобы уложиться в предел 65000 пикселей программ просмотра PNG.
+
+< Rendering
+> Рендеринг
+
+< {0}↔{1}: ambiguous match (repetitive pattern) rejected
+> {0}↔{1}: неоднозначное совпадение (повторяющийся узор) отклонено
+
+< {0}↔{1}: AI could not separate two alignments; pair skipped
+> {0}↔{1}: ИИ не смог различить два выравнивания; пара пропущена
+
+< {0}↔{1}: AI chose between two candidate alignments
+> {0}↔{1}: ИИ выбрал между двумя вариантами выравнивания
+
+< {0}↔{1}: weak match rejected by AI check
+> {0}↔{1}: слабое совпадение отклонено проверкой ИИ
+
+< {0}↔{1}: weak match confirmed by AI check
+> {0}↔{1}: слабое совпадение подтверждено проверкой ИИ
+
+< {0}↔{1}: aligned by AI dense matching (low texture)
+> {0}↔{1}: выровнено плотным сопоставлением ИИ (мало текстуры)
+
+< Select at least two overlapping photos.
+> Выберите хотя бы два перекрывающихся фото.
+
+< Finding features ({0}/{1})
+> Поиск особенностей ({0}/{1})
+
+< Matching photos ({0}/{1})
+> Сопоставление фото ({0}/{1})
+
+< No overlap could be found between these photos. Make sure neighbouring shots overlap by about a third and show the same detailed content.
+> Между этими фото не найдено перекрытия. Убедитесь, что соседние кадры перекрываются примерно на треть и показывают одно и то же детализированное содержимое.
+
+< Turning on AI Assisted Alignment may help with low-texture scenes.
+> Включение выравнивания с помощью ИИ может помочь со сценами с малой текстурой.
+
+< None of the photos overlap clearly enough to be joined.
+> Ни одно из фото не перекрывается достаточно чётко, чтобы их соединить.
+
+< Not connected to the others, left out: {0}.
+> Не связаны с остальными, исключены: {0}.
+
+< Aligning
+> Выравнивание
+
+< flat (similarity)
+> плоская (подобие)
+
+< flat (affine)
+> плоская (аффинная)
+
+< The photos could not be aligned consistently (the scene may have moved between shots or overlaps are too small).
+> Не удалось согласованно выровнять фото (сцена могла сместиться между кадрами или перекрытия слишком малы).
+
+< perspective
+> перспектива
+
+< Finding clean edges
+> Поиск ровных краёв
+
+@ search words for “People”, separated by commas
+< person,people,human,humans,man,men,woman,women,kid,kids,friends,family
+> человек,люди,человека,людей,мужчина,мужчины,женщина,женщины,ребёнок,дети,детей,друзья,друг,подруга,семья,семью
+
+< Dogs
+> Собаки
+
+< Animals
+> Животные
+
+@ search words for “Dogs”, separated by commas
+< dog,dogs,puppy,puppies,pup,doggy,doggo,canine
+> собака,собаки,собаку,собаке,собакой,пёс,псы,щенок,щенки,щенка,собачка,собачки
+
+< Cats
+> Кошки
+
+@ search words for “Cats”, separated by commas
+< cat,cats,kitten,kittens,kitty,feline
+> кошка,кошки,кошку,кошке,кошкой,кот,коты,кота,котик,котики,котёнок,котята
+
+< Birds
+> Птицы
+
+@ search words for “Birds”, separated by commas
+< bird,birds,parrot,pigeon,seagull,duck,chicken
+> птица,птицы,птицу,птичка,попугай,голубь,голуби,чайка,чайки,утка,утки,курица,куры
+
+< Horses
+> Лошади
+
+@ search words for “Horses”, separated by commas
+< horse,horses,pony,ponies
+> лошадь,лошади,лошадку,конь,кони,коня,пони,жеребёнок
+
+< Fish
+> Рыбы
+
+@ search words for “Fish”, separated by commas
+< fish,fishes,aquarium
+> рыба,рыбы,рыбу,рыбки,рыбка,аквариум
+
+< Insects
+> Насекомые
+
+@ search words for “Insects”, separated by commas
+< insect,insects,bug,bugs,bee,ladybug,beetle,dragonfly
+> насекомое,насекомые,насекомых,жук,жуки,пчела,пчёлы,божья коровка,стрекоза,оса,муха
+
+< Butterflies
+> Бабочки
+
+@ search words for “Butterflies”, separated by commas
+< butterfly,butterflies,moth
+> бабочка,бабочки,бабочку,мотылёк
+
+< Cows
+> Коровы
+
+@ search words for “Cows”, separated by commas
+< cow,cows,cattle,bull,calf,ox
+> корова,коровы,корову,бык,быки,телёнок,телята,скот
+
+< Sheep
+> Овцы
+
+@ search words for “Sheep”, separated by commas
+< sheep,lamb,lambs
+> овца,овцы,овцу,баран,ягнёнок,ягнята
+
+< Goats
+> Козы
+
+@ search words for “Goats”, separated by commas
+< goat,goats
+> коза,козы,козу,козёл,козлёнок
+
+< Pigs
+> Свиньи
+
+@ search words for “Pigs”, separated by commas
+< pig,pigs,piglet,hog
+> свинья,свиньи,свинью,поросёнок,поросята,кабан
+
+< Elephants
+> Слоны
+
+@ search words for “Elephants”, separated by commas
+< elephant,elephants
+> слон,слоны,слона
+
+< Zebras
+> Зебры
+
+@ search words for “Zebras”, separated by commas
+< zebra,zebras
+> зебра,зебры,зебру
+
+< Giraffes
+> Жирафы
+
+@ search words for “Giraffes”, separated by commas
+< giraffe,giraffes
+> жираф,жирафы,жирафа
+
+< Monkeys
+> Обезьяны
+
+@ search words for “Monkeys”, separated by commas
+< monkey,monkeys,ape,apes,gorilla,chimpanzee
+> обезьяна,обезьяны,обезьяну,горилла,шимпанзе,мартышка
+
+< Lions
+> Львы
+
+@ search words for “Lions”, separated by commas
+< lion,lions
+> лев,львы,льва,львица
+
+< Tigers
+> Тигры
+
+@ search words for “Tigers”, separated by commas
+< tiger,tigers
+> тигр,тигры,тигра
+
+< Rabbits
+> Кролики
+
+@ search words for “Rabbits”, separated by commas
+< rabbit,rabbits,bunny,bunnies,hare
+> кролик,кролики,кролика,крольчонок,заяц,зайцы,зайчик
+
+< Reptiles
+> Рептилии
+
+@ search words for “Reptiles”, separated by commas
+< reptile,reptiles,lizard,snake,snakes,turtle,turtles,tortoise,crocodile
+> рептилия,рептилии,ящерица,змея,змеи,черепаха,черепахи,крокодил
+
+@ search words for “Animals”, separated by commas
+< animal,animals,wildlife,pet,pets
+> животное,животные,животных,зверь,звери,питомец,питомцы,домашнее животное,дикая природа
+
+< Cars
+> Автомобили
+
+< Vehicles
+> Транспорт
+
+@ search words for “Cars”, separated by commas
+< car,cars,auto,automobile,vehicle
+> машина,машины,машину,автомобиль,автомобили,автомобиля,авто,легковушка,легковой автомобиль
+
+< Buses
+> Автобусы
+
+@ search words for “Buses”, separated by commas
+< bus,buses,coach
+> автобус,автобусы,автобуса,маршрутка,троллейбус
+
+< Motorcycles
+> Мотоциклы
+
+@ search words for “Motorcycles”, separated by commas
+< motorcycle,motorcycles,motorbike,scooter,moped
+> мотоцикл,мотоциклы,мотоцикла,мотороллер,скутер,мопед,байк
+
+< Bicycles
+> Велосипеды
+
+@ search words for “Bicycles”, separated by commas
+< bicycle,bicycles,bike,bikes,cycling
+> велосипед,велосипеды,велосипеда,велик,велики,велоспорт
+
+< Trains
+> Поезда
+
+@ search words for “Trains”, separated by commas
+< train,trains,railway,locomotive,tram,subway
+> поезд,поезда,паровоз,железная дорога,локомотив,трамвай,метро,электричка
+
+< Airplanes
+> Самолёты
+
+@ search words for “Airplanes”, separated by commas
+< airplane,airplanes,plane,planes,aeroplane,aircraft,jet
+> самолёт,самолёты,самолёта,авиалайнер,лайнер,реактивный самолёт
+
+< Helicopters
+> Вертолёты
+
+@ search words for “Helicopters”, separated by commas
+< helicopter,helicopters
+> вертолёт,вертолёты,вертолёта
+
+< Boats
+> Лодки
+
+@ search words for “Boats”, separated by commas
+< boat,boats,ship,ships,yacht,sailboat,ferry,canoe,kayak
+> лодка,лодки,лодку,корабль,корабли,яхта,яхты,парусник,паром,каноэ,байдарка,катер
+
+@ search words for “Food”, separated by commas
+< food,meal,dish,dinner,lunch,breakfast,eating
+> еда,пища,блюдо,блюда,обед,ужин,завтрак,кушать,угощение,трапеза
+
+< Pizza
+> Пицца
+
+@ search words for “Pizza”, separated by commas
+< pizza,pizzas
+> пицца,пиццу,пиццы
+
+< Cakes
+> Торты
+
+@ search words for “Cakes”, separated by commas
+< cake,cakes,birthday cake,cupcake
+> торт,торты,торта,пирог,пироги,пирожное,капкейк,кекс,торт на день рождения
+
+< Burgers
+> Бургеры
+
+@ search words for “Burgers”, separated by commas
+< burger,burgers,hamburger,cheeseburger
+> бургер,бургеры,гамбургер,гамбургеры,чизбургер
+
+< Sushi
+> Суши
+
+@ search words for “Sushi”, separated by commas
+< sushi
+> суши,роллы,ролл,сашими
+
+< Ice cream
+> Мороженое
+
+@ search words for “Ice cream”, separated by commas
+< ice cream,icecream,gelato,sundae
+> мороженое,мороженого,пломбир,эскимо,рожок,сорбет
+
+< Fruit
+> Фрукты
+
+@ search words for “Fruit”, separated by commas
+< fruit,fruits,banana,apple,orange,strawberry,grapes
+> фрукт,фрукты,фруктов,банан,бананы,яблоко,яблоки,апельсин,апельсины,клубника,виноград
+
+< Salads
+> Салаты
+
+@ search words for “Salads”, separated by commas
+< salad,salads
+> салат,салаты,салата
+
+< Desserts
+> Десерты
+
+@ search words for “Desserts”, separated by commas
+< dessert,desserts,sweets,pastry,cookies,chocolate,donut
+> десерт,десерты,сладкое,сладости,выпечка,печенье,шоколад,пончик,пончики
+
+< Coffee
+> Кофе
+
+@ search words for “Coffee”, separated by commas
+< coffee,espresso,cappuccino,latte
+> кофе,эспрессо,капучино,латте
+
+< Drinks
+> Напитки
+
+@ search words for “Drinks”, separated by commas
+< drink,drinks,beverage,juice,tea,soda
+> напиток,напитки,питьё,сок,чай,газировка,лимонад
+
+< Wine
+> Вино
+
+@ search words for “Wine”, separated by commas
+< wine,red wine,white wine
+> вино,вина,красное вино,белое вино,бокал вина
+
+< Beer
+> Пиво
+
+@ search words for “Beer”, separated by commas
+< beer,beers,lager
+> пиво,пива,лагер,пивко,кружка пива
+
+< Cocktails
+> Коктейли
+
+@ search words for “Cocktails”, separated by commas
+< cocktail,cocktails,mojito,margarita
+> коктейль,коктейли,коктейля,мохито,маргарита
+
+< Beach
+> Пляж
+
+< Nature
+> Природа
+
+@ search words for “Beach”, separated by commas
+< beach,beaches,seaside,shore,coast,sand
+> пляж,пляжи,пляжа,побережье,берег,песок,у моря
+
+< Sea
+> Море
+
+@ search words for “Sea”, separated by commas
+< sea,ocean,waves,seascape
+> море,моря,океан,океаны,волны,волна,морской пейзаж
+
+< Mountains
+> Горы
+
+@ search words for “Mountains”, separated by commas
+< mountain,mountains,peak,alps,hills,volcano
+> гора,горы,горах,вершина,пик,альпы,холмы,холм,вулкан
+
+< Lakes
+> Озёра
+
+@ search words for “Lakes”, separated by commas
+< lake,lakes,pond
+> озеро,озёра,пруд,прудик
+
+< Rivers
+> Реки
+
+@ search words for “Rivers”, separated by commas
+< river,rivers,stream,creek
+> река,реки,реку,ручей,речка,поток
+
+< Waterfalls
+> Водопады
+
+@ search words for “Waterfalls”, separated by commas
+< waterfall,waterfalls,falls
+> водопад,водопады,водопада
+
+< Forest
+> Лес
+
+@ search words for “Forest”, separated by commas
+< forest,woods,jungle
+> лес,леса,лесу,джунгли,роща,чаща
+
+< Flowers
+> Цветы
+
+@ search words for “Flowers”, separated by commas
+< flower,flowers,rose,roses,tulip,sunflower,bouquet,blossom
+> цветок,цветы,цветов,роза,розы,тюльпан,тюльпаны,подсолнух,букет,цветение
+
+< Snow
+> Снег
+
+@ search words for “Snow”, separated by commas
+< snow,snowy,winter,skiing,ski,snowboard
+> снег,снега,снежный,зима,зимой,сугроб
+
+< Sky
+> Небо
+
+@ search words for “Sky”, separated by commas
+< sky,clouds,cloud,blue sky
+> небо,неба,облака,облако,голубое небо
+
+< Sunsets
+> Закаты
+
+@ search words for “Sunsets”, separated by commas
+< sunset,sunsets,sunrise,dusk,dawn,golden hour
+> закат,закаты,заката,рассвет,сумерки,заря,золотой час
+
+@ search words for “Night”, separated by commas
+< night,nighttime,night sky,stars
+> ночь,ночью,ночное,ночной,ночное небо,звёзды
+
+< Desert
+> Пустыня
+
+@ search words for “Desert”, separated by commas
+< desert,dunes,sand dunes
+> пустыня,пустыни,дюны,дюна,песчаные дюны
+
+< Grass & fields
+> Трава и поля
+
+@ search words for “Grass & fields”, separated by commas
+< grass,lawn,field,fields,meadow
+> трава,траву,газон,поле,поля,луг,луга
+
+< Rocks & cliffs
+> Скалы и утёсы
+
+@ search words for “Rocks & cliffs”, separated by commas
+< rock,rocks,cliff,cliffs,canyon,cave
+> скала,скалы,скал,утёс,утесы,каньон,пещера,камни
+
+< City
+> Город
+
+< Places
+> Места
+
+@ search words for “City”, separated by commas
+< city,cities,downtown,skyline,cityscape,urban
+> город,города,городской,центр города,мегаполис,небоскрёб
+
+< Castles
+> Замки
+
+@ search words for “Castles”, separated by commas
+< castle,castles,palace,fortress
+> замок,замки,замка,дворец,дворцы,крепость
+
+< Bridges
+> Мосты
+
+@ search words for “Bridges”, separated by commas
+< bridge,bridges
+> мост,мосты,моста
+
+< Streets
+> Улицы
+
+@ search words for “Streets”, separated by commas
+< street,streets,road,roads,highway
+> улица,улицы,улицу,дорога,дороги,шоссе,автострада,проспект
+
+< Swimming pools
+> Бассейны
+
+@ search words for “Swimming pools”, separated by commas
+< pool,swimming pool,swimming
+> бассейн,бассейны,бассейна,плавание,плавать
+
+< Kitchens
+> Кухни
+
+@ search words for “Kitchens”, separated by commas
+< kitchen,kitchens
+> кухня,кухни,кухню
+
+< Bedrooms
+> Спальни
+
+@ search words for “Bedrooms”, separated by commas
+< bedroom,bedrooms
+> спальня,спальни,спальню,спальная комната
+
+< Bathrooms
+> Ванные
+
+@ search words for “Bathrooms”, separated by commas
+< bathroom,bathrooms,toilet
+> ванная,ванные,ванную,ванная комната,туалет,санузел,душ
+
+< Towers
+> Башни
+
+@ search words for “Towers”, separated by commas
+< tower,towers
+> башня,башни,башню
+
+< Fountains
+> Фонтаны
+
+@ search words for “Fountains”, separated by commas
+< fountain,fountains
+> фонтан,фонтаны,фонтана
+
+< Weddings
+> Свадьбы
+
+< Events
+> События
+
+@ search words for “Weddings”, separated by commas
+< wedding,weddings,bride,groom
+> свадьба,свадьбы,свадьбу,невеста,жених,молодожёны,венчание,бракосочетание
+
+< Concerts
+> Концерты
+
+@ search words for “Concerts”, separated by commas
+< concert,concerts,gig,festival,stage
+> концерт,концерты,концерта,фестиваль,сцена,выступление
+
+< Football
+> Футбол
+
+< Sports
+> Спорт
+
+@ search words for “Football”, separated by commas
+< football,soccer
+> футбол,футбола,мяч,матч,стадион
+
+< Tennis
+> Теннис
+
+@ search words for “Tennis”, separated by commas
+< tennis
+> теннис,тенниса,ракетка,теннисный корт
+
+< Skiing
+> Лыжи
+
+@ search words for “Skiing”, separated by commas
+< skiing,ski,skis,snowboarding
+> лыжи,лыж,лыжник,горные лыжи,горнолыжный,сноуборд
+
+< Surfing
+> Серфинг
+
+@ search words for “Surfing”, separated by commas
+< surfing,surf,surfboard
+> серфинг,серфинга,серфер,доска для серфинга
+
+< Documents
+> Документы
+
+@ search words for “Documents”, separated by commas
+< document,documents,paper,papers,receipt,text,letter,page
+> документ,документы,документа,бумага,бумаги,чек,квитанция,текст,письмо,страница,счёт
+
+< Phones
+> Телефоны
+
+@ search words for “Phones”, separated by commas
+< phone,phones,smartphone,mobile,cellphone,iphone
+> телефон,телефоны,телефона,смартфон,смартфоны,мобильный,мобильник
+
+< Bags
+> Сумки
+
+@ search words for “Bags”, separated by commas
+< bag,bags,handbag,purse,backpack,suitcase,luggage
+> сумка,сумки,сумку,рюкзак,чемодан,багаж,кошелёк,клатч
+
+< Furniture
+> Мебель
+
+@ search words for “Furniture”, separated by commas
+< furniture,chair,chairs,sofa,couch,table,bed
+> мебель,мебели,стул,стулья,стола,стол,столы
+
+< Sofas
+> Диваны
+
+@ search words for “Sofas”, separated by commas
+< sofa,sofas,couch,couches
+> диван,диваны,дивана,софа,кресло
+
+< Beds
+> Кровати
+
+@ search words for “Beds”, separated by commas
+< bed,beds
+> кровать,кровати,постель
+
+< Clocks
+> Часы
+
+@ search words for “Clocks”, separated by commas
+< clock,clocks
+> часы,часов,будильник,настенные часы,наручные часы
+
+< Bottles
+> Бутылки
+
+@ search words for “Bottles”, separated by commas
+< bottle,bottles
+> бутылка,бутылки,бутылку,бутыль
+
+< Umbrellas
+> Зонты
+
+@ search words for “Umbrellas”, separated by commas
+< umbrella,umbrellas
+> зонт,зонты,зонтик,зонтики,зонта
+
+< Guitars
+> Гитары
+
+@ search words for “Guitars”, separated by commas
+< guitar,guitars
+> гитара,гитары,гитару,гитарист
+
+< Pianos
+> Пианино
+
+@ search words for “Pianos”, separated by commas
+< piano,pianos,keyboard
+> пианино,фортепиано,рояль,клавиши,синтезатор,клавишные
+
+@ search words for “Music”, separated by commas
+< music,musical instrument,instruments,drums,violin,guitar,piano
+> музыка,музыкальный инструмент,инструменты,барабаны,скрипка,орган,оркестр
