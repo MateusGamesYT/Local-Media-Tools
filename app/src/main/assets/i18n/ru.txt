@@ -239,6 +239,27 @@
 < GIF is truncated
 > GIF обрезан
 
+< Canon sRAW/mRAW
+> Canon sRAW/mRAW
+
+< {0} RAW files
+> RAW-файлы {0}
+
+< a DNG holding a finished picture instead of sensor data
+> DNG с готовым изображением вместо данных сенсора
+
+< a DNG with a linearization table
+> DNG с таблицей линеаризации
+
+< a DNG with packed {0}-bit data
+> DNG с упакованными {0}-битными данными
+
+< packed NEF data
+> упакованные данные NEF
+
+< lossy compressed NEF
+> NEF со сжатием с потерями
+
 < GPS location
 > местоположение GPS
 
@@ -998,6 +1019,9 @@
 < No photos or PDFs found in that folder.
 > В этой папке нет фото или PDF.
 
+< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
+> Фото RAW сохраняют свой формат, а {0} не может сохранить файл {1}. Сначала конвертируйте копию («Конвертация изображений» или «Сжатие изображений»).
+
 < Not a video file
 > Это не видеофайл
 
@@ -1108,6 +1132,9 @@
 
 < auto fix improve brighten colour color one tap magic ai enhance
 > авто исправить улучшить осветлить цвет в одно касание магия ии улучшение
+
+< noise noisy grain grainy denoise clean night dark low light iso raw dng cr2 nef arw video smooth
+> шум шумы шумный зерно зернистость шумоподавление очистка очистить ночь темно мало света iso raw dng cr2 nef arw видео сгладить
 
 < face faces blur pixelate hide anonymize people video privacy censor ai
 > лицо лица размыть размытие пикселизация скрыть анонимизировать люди видео приватность цензура ии
@@ -2596,6 +2623,36 @@
 < The chosen people don't appear in these files
 > Выбранные люди не встречаются в этих файлах
 
+< Preview at 100 %
+> Предпросмотр в масштабе 100%
+
+< Select photos or videos to see a piece of the first photo before and after.
+> Выберите фото или видео, чтобы увидеть фрагмент первого фото до и после.
+
+< Normal removes as much noise as each file has; Light keeps more texture, Strong smooths further.
+> «Обычно» убирает столько шума, сколько есть в каждом файле; «Слабо» сохраняет больше текстуры, «Сильно» сглаживает сильнее.
+
+< Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
+> Каждый файл сохраняет свой формат: JPEG остаётся JPEG, PNG остаётся PNG, WebP остаётся WebP, а RAW-файлы (DNG, CR2, NEF, ARW) остаются RAW — очищаются их данные сенсора, а всё остальное в файле сохраняется как было. Видео сохраняются как MP4 (H.264) с качеством оригинала. HEIC, AVIF и другие форматы, которые Android не может записать, сохраняются как JPEG.
+
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
+> RAW-файлы, которые нельзя записать обратно в их собственном формате (CR3, RAF, ORF, RW2, Canon sRAW, NEF со сжатием с потерями), остаются как есть.
+
+< No preview for RAW files and videos; they are cleaned when you start.
+> Для RAW-файлов и видео предпросмотра нет; они очищаются после запуска.
+
+< No noise to remove in this photo; it will be saved nearly unchanged.
+> В этом фото нет шума, который нужно убрать; оно будет сохранено почти без изменений.
+
+< Noise measured: {0} in brightness, {1} in colour (of 255). Filter strength: {2}.
+> Измеренный шум: {0} по яркости, {1} по цвету (из 255). Сила фильтра: {2}.
+
+< The finest detail here looks like texture rather than noise, so the filter is gentler.
+> Мельчайшие детали здесь похожи на текстуру, а не на шум, поэтому фильтр действует мягче.
+
+< name_denoised, in the file's own format
+> имя_denoised, в собственном формате файла
+
 < Output width
 > Ширина результата
 
@@ -2798,8 +2855,11 @@
 < Music
 > Музыка
 
-< Written on this phone for your video — always instrumental
-> Сочинена на этом телефоне для вашего видео — всегда инструментальная
+< Written on this phone for your video (instrumental), or a song of yours
+> Сочинена на этом телефоне для вашего видео (инструментальная) или ваша собственная песня
+
+< My song
+> Моя песня
 
 < No music
 > Без музыки
@@ -2888,9 +2948,6 @@
 > {1} из {0} в видео
 > {1} из {0} в видео
 
-< no music
-> без музыки
-
 < {0} moment
 < {0} moments
 > {0} момент
@@ -2909,8 +2966,26 @@
 < Automatic
 > Автоматически
 
+< Another song
+> Другая песня
+
+< ♪ {0} · {1} beats a minute: the cuts follow its beat.
+> ♪ {0} · {1} уд/мин: смена кадров следует ритму.
+
+< ♪ {0} · no steady beat found: the cuts keep their own pace.
+> ♪ {0} · устойчивый ритм не найден: смена кадров идёт в собственном темпе.
+
+< Use only music you may share.
+> Используйте только ту музыку, которой вы вправе делиться.
+
+< Listening to {0} for its beat…
+> Прослушивание {0} для определения ритма…
+
 < Pick a kind of music first.
 > Сначала выберите вид музыки.
+
+< Loading…
+> Загрузка…
 
 < Writing…
 > Сочинение…
@@ -4369,6 +4444,73 @@
 < Add watermark text or a logo first.
 > Сначала добавьте текст водяного знака или логотип.
 
+@ strength
+< Normal
+> Обычно
+
+< Denoising {0} file
+< Denoising {0} files
+> Удаление шума из файлов: {0}
+> Удаление шума из файлов: {0}
+> Удаление шума из файлов: {0}
+
+< little noise
+> слабый шум
+
+< some noise
+> умеренный шум
+
+< strong noise
+> сильный шум
+
+< Measuring the noise
+> Измерение шума
+
+< Removing noise
+> Удаление шума
+
+< Saved as PNG: this WebP is too large to write in one piece with the memory available.
+> Сохранено как PNG: этот WebP слишком велик, чтобы записать его целиком при доступной памяти.
+
+< Saved as {0}: Android can't write {1} files.
+> Сохранено как {0}: Android не может записывать файлы {1}.
+
+< The file can't be opened.
+> Не удаётся открыть файл.
+
+< This {0} file needs about {1} of memory, more than is free right now. Close other apps and try again.
+> Этому файлу {0} нужно около {1} памяти — больше, чем сейчас свободно. Закройте другие приложения и повторите попытку.
+
+< Reading the sensor data
+> Чтение данных сенсора
+
+< The noise in this file couldn't be measured, so it was left as it is.
+> Не удалось измерить шум в этом файле, поэтому он оставлен как есть.
+
+< Writing the {0} file
+> Запись файла {0}
+
+< The written {0} file failed verification, so it was discarded.
+> Записанный файл {0} не прошёл проверку, поэтому был отброшен.
+
+< {0} sensor data cleaned
+> {0}: данные сенсора очищены
+
+< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> Это приложение пока не может записать этот файл {0} обратно как {0} ({1}), поэтому он оставлен как есть. Сначала конвертируйте копию, чтобы убрать шум в формате JPEG или PNG.
+
+< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> Это приложение пока не может записать этот файл {0} обратно как {0}, поэтому он оставлен как есть. Сначала конвертируйте копию, чтобы убрать шум в формате JPEG или PNG.
+
+< This {0} file looks damaged, so it was left as it is.
+> Этот файл {0} выглядит повреждённым, поэтому он оставлен как есть.
+
+< Removing noise frame by frame
+> Удаление шума кадр за кадром
+
+< No video frames could be decoded from this file.
+> Не удалось декодировать ни одного видеокадра из этого файла.
+
 < Saving edited photo
 > Сохранение отредактированного фото
 
@@ -4468,6 +4610,9 @@
 < resized with nearest-neighbour sampling (no new colours)
 > размер изменён выборкой по ближайшему соседу (новых цветов нет)
 
+< no music
+> без музыки
+
 < Making a highlight video from {0} photo or video
 < Making a highlight video from {0} photos and videos
 > Создание видео из лучших моментов, фото и видео: {0}
@@ -4485,6 +4630,9 @@
 
 < Too few of the files could be read to make a video.
 > Удалось прочитать слишком мало файлов, чтобы сделать видео.
+
+< Fitting your song to the video
+> Подгонка песни под видео
 
 < Writing the music
 > Сочинение музыки
@@ -4810,6 +4958,9 @@
 < Step {0} ({1})
 > Шаг {0} ({1})
 
+< {0} left this RAW file as it is: {1}
+> {0} оставил этот RAW-файл как есть: {1}
+
 < {0} doesn't work on {1}, so it was skipped.
 > {0} не работает с: {1}, поэтому пропущен.
 
@@ -4935,6 +5086,15 @@
 
 < On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
 > ИИ на устройстве распознаёт лица и тип сцены (еда, пейзаж, ночь, документы…) и исправляет экспозицию, контраст, цветовые оттенки и резкость соответственно. Работает с целой партией.
+
+< Denoiser
+> Шумоподавление
+
+< Clean the grain from photos, RAW files and videos
+> Очищайте фото, RAW-файлы и видео от зернистости
+
+< Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
+> Убирает зернистость с фото и видео, снятых при слабом освещении, сохраняя детали: шум каждого файла измеряется, и убирается ровно столько, сколько нужно. RAW-файлы (DNG, CR2, NEF, ARW) остаются RAW: очищаются сами данные сенсора, которые сохраняются в том же формате со всеми метаданными, готовые для вашего RAW-редактора. Видео очищаются на графическом чипе телефона, каждый кадр вместе с предыдущими. Работает с целыми партиями.
 
 < Blur faces
 > Размытие лиц
@@ -5320,6 +5480,9 @@
 < AAC copied without re-encoding
 > AAC скопирован без перекодирования
 
+< Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
+> Не удалось прочитать вашу песню. Выберите другой аудиофайл или одну из мелодий приложения.
+
 < The video encoder stopped taking frames.
 > Видеокодировщик перестал принимать кадры.
 
@@ -5544,9 +5707,6 @@
 
 < Video processing stalled (the device codec stopped responding).
 > Обработка видео зависла (кодек устройства перестал отвечать).
-
-< No video frames could be decoded from this file.
-> Не удалось декодировать ни одного видеокадра из этого файла.
 
 < The {0} decoder rejected this video ({1}×{2}).
 > Декодер {0} отклонил это видео ({1}×{2}).

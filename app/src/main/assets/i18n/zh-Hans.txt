@@ -239,6 +239,27 @@
 < GIF is truncated
 > GIF 已被截断
 
+< Canon sRAW/mRAW
+> Canon sRAW/mRAW
+
+< {0} RAW files
+> {0} RAW 文件
+
+< a DNG holding a finished picture instead of sensor data
+> 包含成品图像而非传感器数据的 DNG
+
+< a DNG with a linearization table
+> 带线性化表的 DNG
+
+< a DNG with packed {0}-bit data
+> 含 {0} 位打包数据的 DNG
+
+< packed NEF data
+> 打包的 NEF 数据
+
+< lossy compressed NEF
+> 有损压缩的 NEF
+
 < GPS location
 > GPS 位置
 
@@ -938,6 +959,9 @@
 < No photos or PDFs found in that folder.
 > 在该文件夹中未找到照片或 PDF。
 
+< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
+> RAW 照片会保持原有格式，而 {0} 无法保存 {1} 文件。请先转换一份副本（“转换图片”或“图片压缩”）。
+
 < Not a video file
 > 不是视频文件
 
@@ -1040,6 +1064,9 @@
 
 < auto fix improve brighten colour color one tap magic ai enhance
 > 自动 修复 优化 提亮 颜色 一键 魔法 ai 增强
+
+< noise noisy grain grainy denoise clean night dark low light iso raw dng cr2 nef arw video smooth
+> 降噪 噪点 噪声 颗粒 去噪 清理 夜景 夜晚 暗光 低光 弱光 iso raw dng cr2 nef arw 视频 平滑
 
 < face faces blur pixelate hide anonymize people video privacy censor ai
 > 人脸 脸 模糊 像素化 隐藏 匿名 人物 视频 隐私 打码 ai
@@ -2452,6 +2479,36 @@
 < The chosen people don't appear in these files
 > 所选人物没有出现在这些文件中
 
+< Preview at 100 %
+> 以 100% 比例预览
+
+< Select photos or videos to see a piece of the first photo before and after.
+> 选择照片或视频，即可查看第一张照片局部的处理前后对比。
+
+< Normal removes as much noise as each file has; Light keeps more texture, Strong smooths further.
+> “标准”按每个文件实际的噪点量去除；“轻”保留更多纹理，“强”平滑得更多。
+
+< Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
+> 每个文件都保持原有格式：JPEG 仍为 JPEG，PNG 仍为 PNG，WebP 仍为 WebP，RAW 文件（DNG、CR2、NEF、ARW）仍为 RAW——会清理其传感器数据，文件中的其他内容保持原样。视频以原始画质保存为 MP4（H.264）。HEIC、AVIF 以及 Android 无法写入的其他格式会保存为 JPEG。
+
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
+> 无法以自身格式写回的 RAW 文件（CR3、RAF、ORF、RW2、Canon sRAW、有损 NEF）会保持原样。
+
+< No preview for RAW files and videos; they are cleaned when you start.
+> RAW 文件和视频没有预览；开始后才会进行降噪。
+
+< No noise to remove in this photo; it will be saved nearly unchanged.
+> 这张照片没有可去除的噪点，将几乎原样保存。
+
+< Noise measured: {0} in brightness, {1} in colour (of 255). Filter strength: {2}.
+> 测得噪点：亮度 {0}，色彩 {1}（满值 255）。降噪强度：{2}。
+
+< The finest detail here looks like texture rather than noise, so the filter is gentler.
+> 这里最细微的细节更像纹理而不是噪点，因此滤镜会更温和。
+
+< name_denoised, in the file's own format
+> 文件名_denoised，保持文件自身的格式
+
 < Output width
 > 输出宽度
 
@@ -2650,8 +2707,11 @@
 < Music
 > 音乐
 
-< Written on this phone for your video — always instrumental
-> 在这部手机上为你的视频创作——始终是纯音乐
+< Written on this phone for your video (instrumental), or a song of yours
+> 在这部手机上为你的视频创作（纯音乐），或使用你自己的歌曲
+
+< My song
+> 我的歌曲
 
 < No music
 > 无音乐
@@ -2736,9 +2796,6 @@
 < {1} of {0} in the video
 > {0}个中有{1}个在视频中
 
-< no music
-> 无音乐
-
 < {0} moment
 < {0} moments
 > {0}个瞬间
@@ -2753,8 +2810,26 @@
 < Automatic
 > 自动
 
+< Another song
+> 另选歌曲
+
+< ♪ {0} · {1} beats a minute: the cuts follow its beat.
+> ♪ {0} · 每分钟 {1} 拍：剪辑点跟随节拍。
+
+< ♪ {0} · no steady beat found: the cuts keep their own pace.
+> ♪ {0} · 未找到稳定的节拍：剪辑点保持各自的节奏。
+
+< Use only music you may share.
+> 请只使用你有权分享的音乐。
+
+< Listening to {0} for its beat…
+> 正在聆听 {0} 以找出节拍…
+
 < Pick a kind of music first.
 > 请先选择一种音乐。
+
+< Loading…
+> 正在加载…
 
 < Writing…
 > 正在创作…
@@ -4155,6 +4230,71 @@
 < Add watermark text or a logo first.
 > 请先添加水印文字或徽标。
 
+@ strength
+< Normal
+> 标准
+
+< Denoising {0} file
+< Denoising {0} files
+> 正在为{0}个文件降噪
+
+< little noise
+> 噪点很少
+
+< some noise
+> 有些噪点
+
+< strong noise
+> 噪点很多
+
+< Measuring the noise
+> 正在测量噪点
+
+< Removing noise
+> 正在去除噪点
+
+< Saved as PNG: this WebP is too large to write in one piece with the memory available.
+> 已保存为 PNG：此 WebP 太大，可用内存无法一次性写入。
+
+< Saved as {0}: Android can't write {1} files.
+> 已保存为 {0}：Android 无法写入 {1} 文件。
+
+< The file can't be opened.
+> 无法打开该文件。
+
+< This {0} file needs about {1} of memory, more than is free right now. Close other apps and try again.
+> 这个 {0} 文件大约需要 {1} 内存，超过了当前的可用空闲内存。请关闭其他应用后重试。
+
+< Reading the sensor data
+> 正在读取传感器数据
+
+< The noise in this file couldn't be measured, so it was left as it is.
+> 无法测量此文件中的噪点，因此保持原样。
+
+< Writing the {0} file
+> 正在写入 {0} 文件
+
+< The written {0} file failed verification, so it was discarded.
+> 写入的 {0} 文件未通过验证，已被丢弃。
+
+< {0} sensor data cleaned
+> {0} 传感器数据已清理
+
+< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> 此应用目前还无法将这个 {0} 文件写回为 {0}（{1}），因此保持原样。请先转换一份副本，再以 JPEG 或 PNG 格式降噪。
+
+< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> 此应用目前还无法将这个 {0} 文件写回为 {0}，因此保持原样。请先转换一份副本，再以 JPEG 或 PNG 格式降噪。
+
+< This {0} file looks damaged, so it was left as it is.
+> 这个 {0} 文件似乎已损坏，因此保持原样。
+
+< Removing noise frame by frame
+> 正在逐帧去除噪点
+
+< No video frames could be decoded from this file.
+> 无法从此文件解码出任何视频帧。
+
 < Saving edited photo
 > 正在保存编辑后的照片
 
@@ -4238,6 +4378,9 @@
 < resized with nearest-neighbour sampling (no new colours)
 > 已用最近邻采样调整大小（不产生新颜色）
 
+< no music
+> 无音乐
+
 < Making a highlight video from {0} photo or video
 < Making a highlight video from {0} photos and videos
 > 正在用{0}张照片和视频制作精彩视频
@@ -4253,6 +4396,9 @@
 
 < Too few of the files could be read to make a video.
 > 可读取的文件太少，无法制作视频。
+
+< Fitting your song to the video
+> 正在让你的歌曲适配视频
 
 < Writing the music
 > 正在创作音乐
@@ -4544,6 +4690,9 @@
 < Step {0} ({1})
 > 第{0}步（{1}）
 
+< {0} left this RAW file as it is: {1}
+> {0}让此 RAW 文件保持原样：{1}
+
 < {0} doesn't work on {1}, so it was skipped.
 > {0}不适用于{1}，因此已跳过。
 
@@ -4667,6 +4816,15 @@
 
 < On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
 > 本机 AI 会识别人脸和场景类型（食物、风景、夜景、文档……），并相应修正曝光、对比度、偏色和锐度。可批量处理。
+
+< Denoiser
+> 降噪
+
+< Clean the grain from photos, RAW files and videos
+> 清除照片、RAW 文件和视频中的颗粒噪点
+
+< Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
+> 去除在弱光下拍摄的照片和视频中的颗粒，同时保留细节：会测量每个文件的噪点，只去除相应的量。RAW 文件（DNG、CR2、NEF、ARW）仍为 RAW：传感器数据本身会被清理，并连同全部元数据以相同格式保存，可直接用于你的 RAW 编辑器。视频在手机的图形芯片上处理，每一帧都会结合它之前的帧。支持批量处理。
 
 < Blur faces
 > 人脸模糊
@@ -5032,6 +5190,9 @@
 < AAC copied without re-encoding
 > AAC 未经重新编码直接复制
 
+< Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
+> 无法读取你的歌曲。请选择其他音频文件，或应用自带的曲子。
+
 < The video encoder stopped taking frames.
 > 视频编码器不再接收帧。
 
@@ -5256,9 +5417,6 @@
 
 < Video processing stalled (the device codec stopped responding).
 > 视频处理卡住了（设备的编解码器停止响应）。
-
-< No video frames could be decoded from this file.
-> 无法从此文件解码出任何视频帧。
 
 < The {0} decoder rejected this video ({1}×{2}).
 > {0} 解码器拒绝了此视频（{1}×{2}）。

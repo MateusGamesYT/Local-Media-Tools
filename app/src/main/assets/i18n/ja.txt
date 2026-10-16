@@ -239,6 +239,27 @@
 < GIF is truncated
 > GIFが途中で切れています
 
+< Canon sRAW/mRAW
+> Canon sRAW/mRAW
+
+< {0} RAW files
+> {0}のRAWファイル
+
+< a DNG holding a finished picture instead of sensor data
+> センサーデータではなく完成した画像を含むDNG
+
+< a DNG with a linearization table
+> リニアライゼーションテーブル付きのDNG
+
+< a DNG with packed {0}-bit data
+> {0}ビットのパックデータを持つDNG
+
+< packed NEF data
+> パックされたNEFデータ
+
+< lossy compressed NEF
+> 非可逆圧縮のNEF
+
 < GPS location
 > GPS位置情報
 
@@ -938,6 +959,9 @@
 < No photos or PDFs found in that folder.
 > そのフォルダに写真やPDFが見つかりません。
 
+< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
+> RAW写真は元の形式のまま保存され、{0}では{1}ファイルを保存できません。先にコピーを変換してください（「画像変換」または「画像圧縮」）。
+
 < Not a video file
 > 動画ファイルではありません
 
@@ -1040,6 +1064,9 @@
 
 < auto fix improve brighten colour color one tap magic ai enhance
 > 自動 補正 改善 明るく 色 ワンタップ マジック ai 強調
+
+< noise noisy grain grainy denoise clean night dark low light iso raw dng cr2 nef arw video smooth
+> ノイズ ノイズ除去 ノイズ低減 ざらつき 粒状 デノイズ きれい 夜 夜景 暗い 暗所 低照度 iso raw dng cr2 nef arw 動画 滑らか
 
 < face faces blur pixelate hide anonymize people video privacy censor ai
 > 顔 ぼかし モザイク 隠す 匿名 人物 動画 プライバシー ai
@@ -2452,6 +2479,36 @@
 < The chosen people don't appear in these files
 > 選んだ人物はこれらのファイルに写っていません
 
+< Preview at 100 %
+> 100%でプレビュー
+
+< Select photos or videos to see a piece of the first photo before and after.
+> 写真または動画を選択すると、最初の写真の一部を処理前と処理後で確認できます。
+
+< Normal removes as much noise as each file has; Light keeps more texture, Strong smooths further.
+> 「標準」は各ファイルにあるノイズをそのぶん取り除き、「弱」は質感を多めに残し、「強」はさらに滑らかにします。
+
+< Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
+> 各ファイルは元の形式のまま保存されます。JPEGはJPEG、PNGはPNG、WebPはWebPのままで、RAWファイル（DNG、CR2、NEF、ARW）もRAWのままです。センサーデータのノイズだけを取り除き、ファイル内のそれ以外の情報は元のまま保たれます。動画は元の画質でMP4（H.264）として保存されます。HEIC、AVIF、およびAndroidが書き込めないその他の形式はJPEGで保存されます。
+
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
+> 元の形式で書き戻せないRAWファイル（CR3、RAF、ORF、RW2、Canon sRAW、非可逆圧縮のNEF）は、そのままにします。
+
+< No preview for RAW files and videos; they are cleaned when you start.
+> RAWファイルと動画にはプレビューがありません。開始するとノイズが除去されます。
+
+< No noise to remove in this photo; it will be saved nearly unchanged.
+> この写真には除去するノイズがないため、ほとんど変更せずに保存されます。
+
+< Noise measured: {0} in brightness, {1} in colour (of 255). Filter strength: {2}.
+> 測定したノイズ：明るさ{0}、色{1}（255中）。フィルターの強さ：{2}。
+
+< The finest detail here looks like texture rather than noise, so the filter is gentler.
+> ここでの最も細かいディテールはノイズではなく質感に見えるため、フィルターは控えめに働きます。
+
+< name_denoised, in the file's own format
+> name_denoised（ファイル自身の形式のまま）
+
 < Output width
 > 出力の幅
 
@@ -2650,8 +2707,11 @@
 < Music
 > 音楽
 
-< Written on this phone for your video — always instrumental
-> この端末で動画のために作曲されます。常にインストゥルメンタルです
+< Written on this phone for your video (instrumental), or a song of yours
+> この端末で動画のために作曲されます（インストゥルメンタル）。自分の曲を使うこともできます
+
+< My song
+> 自分の曲
 
 < No music
 > 音楽なし
@@ -2736,9 +2796,6 @@
 < {1} of {0} in the video
 > {0}個中{1}個を動画に使用
 
-< no music
-> 音楽なし
-
 < {0} moment
 < {0} moments
 > {0}場面
@@ -2753,8 +2810,26 @@
 < Automatic
 > 自動
 
+< Another song
+> 別の曲を選ぶ
+
+< ♪ {0} · {1} beats a minute: the cuts follow its beat.
+> ♪ {0} · 毎分{1}拍：カットはビートに合わせます。
+
+< ♪ {0} · no steady beat found: the cuts keep their own pace.
+> ♪ {0} · 一定のビートが見つかりませんでした：カットは独自のペースで進みます。
+
+< Use only music you may share.
+> 共有してよい音楽だけを使ってください。
+
+< Listening to {0} for its beat…
+> {0}のビートを聴き取っています…
+
 < Pick a kind of music first.
 > 先に音楽の種類を選んでください。
+
+< Loading…
+> 読み込み中…
 
 < Writing…
 > 作曲中…
@@ -4155,6 +4230,71 @@
 < Add watermark text or a logo first.
 > 先に透かしのテキストを追加するか、ロゴを選択してください。
 
+@ strength
+< Normal
+> 標準
+
+< Denoising {0} file
+< Denoising {0} files
+> {0}個のファイルのノイズを除去中
+
+< little noise
+> わずかなノイズ
+
+< some noise
+> ある程度のノイズ
+
+< strong noise
+> 強いノイズ
+
+< Measuring the noise
+> ノイズを測定中
+
+< Removing noise
+> ノイズを除去中
+
+< Saved as PNG: this WebP is too large to write in one piece with the memory available.
+> PNGで保存しました：このWebPは大きすぎて、使えるメモリでは一括で書き込めません。
+
+< Saved as {0}: Android can't write {1} files.
+> {0}で保存しました：Androidは{1}ファイルを書き込めません。
+
+< The file can't be opened.
+> ファイルを開けません。
+
+< This {0} file needs about {1} of memory, more than is free right now. Close other apps and try again.
+> この{0}ファイルには約{1}のメモリが必要で、現在の空きを超えています。他のアプリを閉じてから、もう一度お試しください。
+
+< Reading the sensor data
+> センサーデータを読み込み中
+
+< The noise in this file couldn't be measured, so it was left as it is.
+> このファイルのノイズを測定できなかったため、そのままにしました。
+
+< Writing the {0} file
+> {0}ファイルを書き込み中
+
+< The written {0} file failed verification, so it was discarded.
+> 書き込んだ{0}ファイルが検証に失敗したため、破棄されました。
+
+< {0} sensor data cleaned
+> {0}のセンサーデータのノイズを除去済み
+
+< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> この{0}ファイルは、このアプリではまだ{0}として書き戻せないため（{1}）、そのままにしました。先にコピーを変換すると、JPEGまたはPNGとしてノイズを除去できます。
+
+< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> この{0}ファイルは、このアプリではまだ{0}として書き戻せないため、そのままにしました。先にコピーを変換すると、JPEGまたはPNGとしてノイズを除去できます。
+
+< This {0} file looks damaged, so it was left as it is.
+> この{0}ファイルは破損しているようなので、そのままにしました。
+
+< Removing noise frame by frame
+> フレームごとにノイズを除去中
+
+< No video frames could be decoded from this file.
+> このファイルからデコードできる映像フレームがありませんでした。
+
 < Saving edited photo
 > 編集した写真を保存中
 
@@ -4238,6 +4378,9 @@
 < resized with nearest-neighbour sampling (no new colours)
 > 最近傍サンプリングでリサイズ（新しい色は生じません）
 
+< no music
+> 音楽なし
+
 < Making a highlight video from {0} photo or video
 < Making a highlight video from {0} photos and videos
 > {0}件の写真と動画からハイライト動画を作成中
@@ -4253,6 +4396,9 @@
 
 < Too few of the files could be read to make a video.
 > 読み込めたファイルが少なすぎて、動画を作成できません。
+
+< Fitting your song to the video
+> 曲を動画に合わせています
 
 < Writing the music
 > 音楽を作曲中
@@ -4544,6 +4690,9 @@
 < Step {0} ({1})
 > ステップ{0}（{1}）
 
+< {0} left this RAW file as it is: {1}
+> {0}では、このRAWファイルをそのままにしました：{1}
+
 < {0} doesn't work on {1}, so it was skipped.
 > {0}は{1}を処理できないため、スキップしました。
 
@@ -4667,6 +4816,15 @@
 
 < On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
 > 端末内AIが顔とシーンの種類（食べ物、風景、夜景、書類など）を認識し、それに合わせて露出、コントラスト、色かぶり、シャープネスを補正します。まとめて処理することもできます。
+
+< Denoiser
+> ノイズ除去
+
+< Clean the grain from photos, RAW files and videos
+> 写真・RAWファイル・動画のざらつきをきれいに
+
+< Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
+> 暗いところで撮った写真や動画のざらつきを、ディテールを保ったまま取り除きます。ファイルごとにノイズを測定し、その分だけを除去します。RAWファイル（DNG、CR2、NEF、ARW）はRAWのままで、センサーデータそのもののノイズを除去し、すべてのメタデータとともに同じ形式で保存するので、そのままRAW現像ソフトで使えます。動画は端末のグラフィックチップで処理し、各フレームをその前のフレームと合わせて処理します。まとめて処理することもできます。
 
 < Blur faces
 > 顔ぼかし
@@ -5032,6 +5190,9 @@
 < AAC copied without re-encoding
 > AACを再エンコードせずにコピー
 
+< Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
+> 曲を読み込めませんでした。別の音声ファイルか、アプリ内蔵の曲を選んでください。
+
 < The video encoder stopped taking frames.
 > 動画エンコーダーがフレームを受け付けなくなりました。
 
@@ -5256,9 +5417,6 @@
 
 < Video processing stalled (the device codec stopped responding).
 > 動画の処理が停止しました（端末のコーデックが応答しなくなりました）。
-
-< No video frames could be decoded from this file.
-> このファイルからデコードできる映像フレームがありませんでした。
 
 < The {0} decoder rejected this video ({1}×{2}).
 > {0}デコーダーがこの動画（{1}×{2}）を受け付けませんでした。

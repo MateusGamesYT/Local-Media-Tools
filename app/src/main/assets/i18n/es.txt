@@ -239,6 +239,27 @@
 < GIF is truncated
 > El GIF está truncado
 
+< Canon sRAW/mRAW
+> Canon sRAW/mRAW
+
+< {0} RAW files
+> archivos RAW {0}
+
+< a DNG holding a finished picture instead of sensor data
+> un DNG con una imagen ya terminada en lugar de datos del sensor
+
+< a DNG with a linearization table
+> un DNG con tabla de linealización
+
+< a DNG with packed {0}-bit data
+> un DNG con datos empaquetados de {0} bits
+
+< packed NEF data
+> datos NEF empaquetados
+
+< lossy compressed NEF
+> NEF con compresión con pérdida
+
 < GPS location
 > ubicación GPS
 
@@ -968,6 +989,9 @@
 < No photos or PDFs found in that folder.
 > No se encontraron fotos ni PDF en esa carpeta.
 
+< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
+> Las fotos RAW conservan su formato, y {0} no puede guardar un archivo {1}. Convierte primero una copia (Convertir imágenes o Compresor de imágenes).
+
 < Not a video file
 > No es un archivo de vídeo
 
@@ -1074,6 +1098,9 @@
 
 < auto fix improve brighten colour color one tap magic ai enhance
 > automático arreglar mejorar aclarar color un toque magia ia realzar
+
+< noise noisy grain grainy denoise clean night dark low light iso raw dng cr2 nef arw video smooth
+> ruido ruidoso grano granulado reducir limpiar noche oscuro poca luz baja luminosidad iso raw dng cr2 nef arw vídeo suavizar
 
 < face faces blur pixelate hide anonymize people video privacy censor ai
 > cara caras desenfocar difuminar pixelar ocultar anonimizar personas vídeo video privacidad censurar ia
@@ -2524,6 +2551,36 @@
 < The chosen people don't appear in these files
 > Las personas elegidas no aparecen en estos archivos
 
+< Preview at 100 %
+> Vista previa al 100 %
+
+< Select photos or videos to see a piece of the first photo before and after.
+> Selecciona fotos o vídeos para ver un fragmento de la primera foto antes y después.
+
+< Normal removes as much noise as each file has; Light keeps more texture, Strong smooths further.
+> Normal quita tanto ruido como tiene cada archivo; Suave conserva más textura, Fuerte suaviza más.
+
+< Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
+> Cada archivo conserva su formato: JPEG sigue siendo JPEG, PNG sigue siendo PNG, WebP sigue siendo WebP, y los archivos RAW (DNG, CR2, NEF, ARW) siguen siendo RAW: se limpian sus datos del sensor y todo lo demás del archivo se conserva como estaba. Los vídeos se guardan como MP4 (H.264) con la calidad del original. HEIC, AVIF y otros formatos que Android no puede escribir se guardan como JPEG.
+
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
+> Los archivos RAW que no se pueden volver a escribir en su propio formato (CR3, RAF, ORF, RW2, Canon sRAW, NEF con pérdida) se dejan como están.
+
+< No preview for RAW files and videos; they are cleaned when you start.
+> No hay vista previa para archivos RAW ni vídeos; se limpian cuando empiezas.
+
+< No noise to remove in this photo; it will be saved nearly unchanged.
+> No hay ruido que quitar en esta foto; se guardará casi sin cambios.
+
+< Noise measured: {0} in brightness, {1} in colour (of 255). Filter strength: {2}.
+> Ruido medido: {0} en brillo, {1} en color (de 255). Potencia del filtro: {2}.
+
+< The finest detail here looks like texture rather than noise, so the filter is gentler.
+> Los detalles más finos de aquí parecen textura y no ruido, así que el filtro es más suave.
+
+< name_denoised, in the file's own format
+> nombre_denoised, en el formato del propio archivo
+
 < Output width
 > Ancho de salida
 
@@ -2724,8 +2781,11 @@
 < Music
 > Música
 
-< Written on this phone for your video — always instrumental
-> Compuesta en este teléfono para tu vídeo, siempre instrumental
+< Written on this phone for your video (instrumental), or a song of yours
+> Compuesta en este teléfono para tu vídeo (instrumental), o una canción tuya
+
+< My song
+> Mi canción
 
 < No music
 > Sin música
@@ -2812,9 +2872,6 @@
 > {1} de {0} en el vídeo
 > {1} de {0} en el vídeo
 
-< no music
-> sin música
-
 < {0} moment
 < {0} moments
 > {0} momento
@@ -2831,8 +2888,26 @@
 < Automatic
 > Automática
 
+< Another song
+> Otra canción
+
+< ♪ {0} · {1} beats a minute: the cuts follow its beat.
+> ♪ {0} · {1} pulsos por minuto: los cortes siguen su ritmo.
+
+< ♪ {0} · no steady beat found: the cuts keep their own pace.
+> ♪ {0} · no se encontró un pulso constante: los cortes mantienen su propio ritmo.
+
+< Use only music you may share.
+> Usa solo música que puedas compartir.
+
+< Listening to {0} for its beat…
+> Escuchando {0} para encontrar su ritmo…
+
 < Pick a kind of music first.
 > Elige primero un tipo de música.
+
+< Loading…
+> Cargando…
 
 < Writing…
 > Componiendo…
@@ -4262,6 +4337,72 @@
 < Add watermark text or a logo first.
 > Añade primero un texto de marca de agua o un logotipo.
 
+@ strength
+< Normal
+> Normal
+
+< Denoising {0} file
+< Denoising {0} files
+> Quitando el ruido de {0} archivo
+> Quitando el ruido de {0} archivos
+
+< little noise
+> poco ruido
+
+< some noise
+> algo de ruido
+
+< strong noise
+> mucho ruido
+
+< Measuring the noise
+> Midiendo el ruido
+
+< Removing noise
+> Quitando el ruido
+
+< Saved as PNG: this WebP is too large to write in one piece with the memory available.
+> Guardado como PNG: este WebP es demasiado grande para escribirlo de una sola vez con la memoria disponible.
+
+< Saved as {0}: Android can't write {1} files.
+> Guardado como {0}: Android no puede escribir archivos {1}.
+
+< The file can't be opened.
+> No se puede abrir el archivo.
+
+< This {0} file needs about {1} of memory, more than is free right now. Close other apps and try again.
+> Este archivo {0} necesita unos {1} de memoria, más de los que hay libres ahora. Cierra otras apps e inténtalo de nuevo.
+
+< Reading the sensor data
+> Leyendo los datos del sensor
+
+< The noise in this file couldn't be measured, so it was left as it is.
+> No se pudo medir el ruido de este archivo, así que se dejó como está.
+
+< Writing the {0} file
+> Escribiendo el archivo {0}
+
+< The written {0} file failed verification, so it was discarded.
+> El archivo {0} escrito no superó la verificación, así que se descartó.
+
+< {0} sensor data cleaned
+> {0}: datos del sensor limpiados
+
+< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> Esta app todavía no puede volver a escribir este archivo {0} como {0} ({1}), así que se dejó como está. Convierte primero una copia para quitarle el ruido como JPEG o PNG.
+
+< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
+> Esta app todavía no puede volver a escribir este archivo {0} como {0}, así que se dejó como está. Convierte primero una copia para quitarle el ruido como JPEG o PNG.
+
+< This {0} file looks damaged, so it was left as it is.
+> Este archivo {0} parece dañado, así que se dejó como está.
+
+< Removing noise frame by frame
+> Quitando el ruido fotograma a fotograma
+
+< No video frames could be decoded from this file.
+> No se pudo decodificar ningún fotograma de vídeo de este archivo.
+
 < Saving edited photo
 > Guardando la foto editada
 
@@ -4353,6 +4494,9 @@
 < resized with nearest-neighbour sampling (no new colours)
 > redimensionado con muestreo de vecino más próximo (sin colores nuevos)
 
+< no music
+> sin música
+
 < Making a highlight video from {0} photo or video
 < Making a highlight video from {0} photos and videos
 > Creando un vídeo destacado con {0} foto o vídeo
@@ -4369,6 +4513,9 @@
 
 < Too few of the files could be read to make a video.
 > Se pudieron leer muy pocos archivos para hacer un vídeo.
+
+< Fitting your song to the video
+> Ajustando tu canción al vídeo
 
 < Writing the music
 > Componiendo la música
@@ -4677,6 +4824,9 @@
 < Step {0} ({1})
 > Paso {0} ({1})
 
+< {0} left this RAW file as it is: {1}
+> {0} dejó este archivo RAW como estaba: {1}
+
 < {0} doesn't work on {1}, so it was skipped.
 > {0} no funciona con {1}, así que se omitió.
 
@@ -4801,6 +4951,15 @@
 
 < On-device AI recognises faces and the kind of scene (food, landscape, night, documents…) and fixes exposure, contrast, colour casts and sharpness to suit. Works on a whole batch.
 > La IA del dispositivo reconoce las caras y el tipo de escena (comida, paisaje, noche, documentos…) y corrige la exposición, el contraste, las dominantes de color y la nitidez según convenga. Funciona con un lote entero.
+
+< Denoiser
+> Eliminador de ruido
+
+< Clean the grain from photos, RAW files and videos
+> Limpia el grano de fotos, archivos RAW y vídeos
+
+< Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
+> Elimina el grano de las fotos y los vídeos hechos con poca luz sin perder detalle: se mide el ruido de cada archivo y solo se quita esa cantidad. Los archivos RAW (DNG, CR2, NEF, ARW) siguen siendo RAW: se limpian los propios datos del sensor y se guardan en el mismo formato con todos sus metadatos, listos para tu editor RAW. Los vídeos se limpian en el chip gráfico del teléfono, cada fotograma junto con los anteriores. Funciona con lotes enteros.
 
 < Blur faces
 > Desenfocar caras
@@ -5176,6 +5335,9 @@
 < AAC copied without re-encoding
 > AAC copiado sin recodificar
 
+< Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
+> No se pudo leer tu canción. Elige otro archivo de audio o una de las melodías de la app.
+
 < The video encoder stopped taking frames.
 > El codificador de vídeo dejó de aceptar fotogramas.
 
@@ -5400,9 +5562,6 @@
 
 < Video processing stalled (the device codec stopped responding).
 > El procesamiento de vídeo se quedó bloqueado (el códec del dispositivo dejó de responder).
-
-< No video frames could be decoded from this file.
-> No se pudo decodificar ningún fotograma de vídeo de este archivo.
 
 < The {0} decoder rejected this video ({1}×{2}).
 > El decodificador {0} rechazó este vídeo ({1}×{2}).
