@@ -1,0 +1,3 @@
+# file	author	title	source	licence	changes
+sidd_0144_2_noisy.png	A. Abdelhamed, S. Lin, M. S. Brown (SIDD)	scene 0144, Medium sRGB set, noisy photo	https://www.eecs.yorku.ca/~kamel/sidd/	https://opensource.org/license/mit	400 px piece of a 512 px crop (x 56, y 56 within crop 2 of buildtools/denoise/sidd_fetch.py)
+sidd_0144_2_denoised.png	A. Abdelhamed, S. Lin, M. S. Brown (SIDD)	scene 0144, Medium sRGB set, the noisy photo through the app's photo denoiser	https://www.eecs.yorku.ca/~kamel/sidd/	https://opensource.org/license/mit	the same piece, denoised (OpenCV non-local means at the strength the app measures, buildtools/denoise/photo_rule.py)

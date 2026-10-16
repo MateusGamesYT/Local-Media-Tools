@@ -22,6 +22,7 @@ import com.localmediatools.core.MediaKind
 import com.localmediatools.export.ExportJob
 import com.localmediatools.highlight.HighlightAnalyzer
 import com.localmediatools.highlight.HighlightAudio
+import com.localmediatools.highlight.SongChoice
 import com.localmediatools.highlight.ShotInfo
 import com.localmediatools.highlight.core.Aspect
 import com.localmediatools.highlight.core.Plan
@@ -62,6 +63,9 @@ object HighlightPrefs {
     var captions = true
     var clipSound = true
     var seed = 1L
+    /** The user's song (kept when they switch to a generated tune, so switching back needs no new pick). */
+    var song: SongChoice? = null
+    var useSong = false
     val include = HashSet<String>()
     val exclude = HashSet<String>()
     var title: String? = null
@@ -69,10 +73,10 @@ object HighlightPrefs {
     /** The selection the shot choices were made for. */
     var forKeys: List<String> = emptyList()
 
-    fun settings() = HighlightSettings(mood, seconds, aspect, captions, clipSound, include.toSet(), exclude.toSet(), title, names.toMap(), seed)
+    fun settings() = HighlightSettings(mood, seconds, aspect, captions, clipSound, include.toSet(), exclude.toSet(), title, names.toMap(), seed, song.takeIf { useSong })
 
     fun reset() {
-        mood = Mood.UPBEAT; seconds = null; aspect = null; captions = true; clipSound = true; seed = 1L
+        mood = Mood.UPBEAT; seconds = null; aspect = null; captions = true; clipSound = true; seed = 1L; song = null; useSong = false
         include.clear(); exclude.clear(); title = null; names.clear(); forKeys = emptyList()
     }
 }
@@ -91,6 +95,10 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
     private lateinit var shapes: ChoiceGroup<Aspect?>
     private lateinit var titleField: TextField
     private lateinit var playButton: ButtonView
+    private lateinit var otherButton: ButtonView
+    private lateinit var musicChoice: ChoiceGroup<Any?>
+    private lateinit var songNote: TextView
+    private var songJob: Job? = null
     private var analysis: Job? = null
     private var analysedKeys: List<String>? = null
     private var items: List<MediaItem> = emptyList()
@@ -111,20 +119,34 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         head.addView(bar, lp().apply { topMargin = ctx.dp(8) })
         container.addView(head, lp().apply { topMargin = ctx.dp(4) })
 
-        section(container, tr("Music"), tr("Written on this phone for your video — always instrumental"))
-        container.addView(ChoiceGroup(ctx, listOf(Mood.UPBEAT, Mood.CHILL, Mood.CINEMATIC, null), { it?.label ?: tr("No music") }, HighlightPrefs.mood) {
-            HighlightPrefs.mood = it; stopMusic(); refresh()
-        }, lp().apply { topMargin = ctx.dp(8) })
+        section(container, tr("Music"), tr("Written on this phone for your video (instrumental), or a song of yours"))
+        musicChoice = ChoiceGroup(ctx, listOf<Any?>(Mood.UPBEAT, Mood.CHILL, Mood.CINEMATIC, OwnSong, null),
+            { when (it) { is Mood -> it.label; OwnSong -> tr("My song"); else -> tr("No music") } },
+            if (HighlightPrefs.useSong) OwnSong else HighlightPrefs.mood) { choice ->
+            stopMusic()
+            if (choice === OwnSong) {
+                if (HighlightPrefs.song == null) pickSong() else { HighlightPrefs.useSong = true; refresh() }
+            } else {
+                HighlightPrefs.useSong = false; HighlightPrefs.mood = choice as Mood?; refresh()
+            }
+            showSong()
+        }
+        container.addView(musicChoice, lp().apply { topMargin = ctx.dp(8) })
+        songNote = UI.text(ctx, "", TextStyle.CAPTION)
+        container.addView(songNote, lp().apply { topMargin = ctx.dp(6) })
         val musicRow = UI.horizontal(ctx)
         playButton = UI.secondaryButton(ctx, tr("Listen"), R.drawable.ic_play) { toggleMusic() }
         musicRow.addView(playButton, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        musicRow.addView(UI.secondaryButton(ctx, tr("Another tune"), R.drawable.ic_music) {
+        otherButton = UI.secondaryButton(ctx, tr("Another tune"), R.drawable.ic_music) {
+            if (HighlightPrefs.useSong) { stopMusic(); pickSong(); return@secondaryButton }
             HighlightPrefs.seed++
             val wasPlaying = player != null
             stopMusic(); refresh()
             if (wasPlaying) toggleMusic()
-        }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = ctx.dp(10) })
+        }
+        musicRow.addView(otherButton, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = ctx.dp(10) })
         container.addView(musicRow, lp().apply { topMargin = ctx.dp(10) })
+        showSong()
 
         section(container, tr("Length"))
         container.addView(ChoiceGroup(ctx, listOf(null, 15.0, 30.0, 60.0, 90.0), { it?.let { s -> tr("{0} s", s.roundToInt()) } ?: tr("Auto") }, HighlightPrefs.seconds) {
@@ -258,7 +280,7 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             val n = p.clips.count { it.moment == m.index }
             info.text = "${clock(m.startMs)}–${clock(m.endMs)} · " + if (n == 0) tr("not in the video") else trn(m.shots.size, "{1} of {0} in the video", "{1} of {0} in the video", n)
         }
-        val music = HighlightPrefs.mood?.musicLabel ?: tr("no music")
+        val music = HighlightPrefs.settings().musicLabel
         summary.text = trn(p.moments.size, "{0} moment", "{0} moments") + " · " + trn(p.clips.size, "{0} clip", "{0} clips") + " · ${Format.duration(p.durationMs)} · $music · ${shapeLabel(p.aspect)}"
         shapes.relabel()
         titleField.edit.hint = Planner.title(infos.mapIndexed { i, s -> s.shot(i) }, java.util.TimeZone.getDefault())
@@ -290,14 +312,63 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
             .setNegativeButton(tr("Cancel"), null).show()
     }
 
+    // ------------------------------------------------------------------ the user's song
+    private object OwnSong
+
+    /** The song line under the music choice, and the second button's job (another tune / another song). */
+    private fun showSong() {
+        if (!::songNote.isInitialized) return
+        val song = HighlightPrefs.song
+        val on = HighlightPrefs.useSong && song != null
+        otherButton.label = if (on) tr("Another song") else tr("Another tune")
+        songNote.visibility = if (on || songJob?.isActive == true) View.VISIBLE else View.GONE
+        if (on) songNote.text = (song!!.bpm?.let { tr("♪ {0} · {1} beats a minute: the cuts follow its beat.", song.name, it.roundToInt()) }
+            ?: tr("♪ {0} · no steady beat found: the cuts keep their own pace.", song.name)) + " " + tr("Use only music you may share.")
+    }
+
+    /** Asks for an audio file and finds its beat; back to the previous choice if none is picked or it can't be read. */
+    private fun pickSong() {
+        val before: Any? = if (HighlightPrefs.useSong && HighlightPrefs.song != null) OwnSong else HighlightPrefs.mood
+        activity.pickAudio { uri ->
+            if (uri == null) { musicChoice.select(before, notify = false); showSong(); return@pickAudio }
+            val name = try { com.localmediatools.core.MediaProbe.describe(ctx, uri).name } catch (_: Exception) { uri.lastPathSegment ?: tr("My song") }
+            songJob?.cancel()
+            songNote.visibility = View.VISIBLE
+            songNote.text = tr("Listening to {0} for its beat…", name)
+            songJob = scope.launch {
+                val r = withContext(Dispatchers.Default) { runCatching { HighlightAudio.songBeat(ctx, uri) } }
+                if (!isActive) return@launch
+                r.onSuccess { beat ->
+                    HighlightPrefs.song = SongChoice(uri, name.substringBeforeLast('.').ifBlank { name }, beat?.bpm)
+                    HighlightPrefs.useSong = true
+                    musicChoice.select(OwnSong, notify = false)
+                    showSong(); refresh()
+                }
+                r.onFailure { e ->
+                    android.widget.Toast.makeText(ctx, com.localmediatools.core.Errors.describe(e), android.widget.Toast.LENGTH_LONG).show()
+                    musicChoice.select(before, notify = false)
+                    if (before !== OwnSong) HighlightPrefs.useSong = false
+                    showSong()
+                }
+            }
+        }
+    }
+
     // ------------------------------------------------------------------ listening to the music
     private fun toggleMusic() {
         if (player != null || playJob?.isActive == true) { stopMusic(); return }
-        val mood = HighlightPrefs.mood ?: run { android.widget.Toast.makeText(ctx, tr("Pick a kind of music first."), android.widget.Toast.LENGTH_SHORT).show(); return }
-        playButton.label = tr("Writing…")
+        val song = HighlightPrefs.song?.takeIf { HighlightPrefs.useSong }
+        val mood = HighlightPrefs.mood
+        if (song == null && mood == null) { android.widget.Toast.makeText(ctx, tr("Pick a kind of music first."), android.widget.Toast.LENGTH_SHORT).show(); return }
+        playButton.label = if (song != null) tr("Loading…") else tr("Writing…")
         val seconds = (plan?.durationMs?.div(1000.0) ?: 20.0).coerceIn(10.0, 30.0)
         playJob = scope.launch {
-            val pcm = withContext(Dispatchers.Default) { try { HighlightAudio.music(ctx, mood, seconds, HighlightPrefs.seed) } catch (e: Exception) { null } }
+            val pcm = withContext(Dispatchers.Default) {
+                try {
+                    if (song != null) HighlightAudio.songMusic(ctx, song.uri, (seconds * HighlightAudio.RATE).toInt())
+                    else HighlightAudio.music(ctx, mood!!, seconds, HighlightPrefs.seed)
+                } catch (e: Exception) { null }
+            }
             if (pcm == null || !isActive) { playButton.label = tr("Listen"); return@launch }
             // Streamed in small pieces: phones limit how much one static buffer may hold.
             val track = try {

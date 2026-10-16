@@ -2,7 +2,10 @@ package com.localmediatools.gallery
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.MediaExtractor
+import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
+import com.localmediatools.gallery.core.VideoSampling
 import com.localmediatools.image.ImageSource
 import com.localmediatools.vision.VisionModels
 import com.localmediatools.vision.VisionOps
@@ -30,10 +33,11 @@ class GalleryAnalyzer private constructor(
     val faceMode get() = if (faces != null) EngineMode.AI else if (basicFaces != null) EngineMode.BASIC else EngineMode.OFF
     val objectMode get() = if (objects != null) EngineMode.AI else EngineMode.BASIC
 
-    fun analyze(m: GMedia): Analysis = if (m.video) video(m, true) else photo(m, true)
+    /** [keepFrames]: for a video, the moments (ms) where faces were found before (looked at again). */
+    fun analyze(m: GMedia, keepFrames: Collection<Long> = emptyList()): Analysis = if (m.video) video(m, true, keepFrames) else photo(m, true)
 
     /** Only the faces (the tags of an earlier analysis stay); [Analysis.tags] is empty. */
-    fun analyzeFaces(m: GMedia): Analysis = if (m.video) video(m, false) else photo(m, false)
+    fun analyzeFaces(m: GMedia, keepFrames: Collection<Long> = emptyList()): Analysis = if (m.video) video(m, false, keepFrames) else photo(m, false)
 
     private fun photo(m: GMedia, withTags: Boolean): Analysis {
         ImageSource.open(ctx, m.uri, m.name).use { src ->
@@ -46,27 +50,57 @@ class GalleryAnalyzer private constructor(
         }
     }
 
-    private fun video(m: GMedia, withTags: Boolean): Analysis {
+    /**
+     * A video: the moments [VideoSampling] picks (different keyframes spread over it, plus where faces
+     * were found before), each looked at like a photo; tags are the strongest over the frames, the
+     * same person seen in several frames is kept once. Fails (to be tried again later) when no frame
+     * at all can be decoded, rather than recording that the video holds nothing.
+     */
+    private fun video(m: GMedia, withTags: Boolean, keepFrames: Collection<Long>): Analysis {
         val mmr = MediaMetadataRetriever()
         try {
             mmr.setDataSource(ctx, m.uri)
             val dur = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: m.durationMs
-            val times = if (dur > 1500) listOf(0.15, 0.5, 0.85).map { (dur * it).toLong() * 1000 } else listOf(0L)
+            val times = keyframes(m) { sync -> VideoSampling.moments(dur, keepFrames, sync) }
             val tags = HashMap<String, Float>()
             val all = ArrayList<FoundFace>()
+            var decoded = 0
             for (t in times) {
-                val frame = mmr.getScaledFrameAtTime(t, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, GalleryFaces.DETECT_SIDE, GalleryFaces.DETECT_SIDE) ?: continue
+                val frame = try {
+                    mmr.getScaledFrameAtTime(t * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, GalleryFaces.DETECT_SIDE, GalleryFaces.DETECT_SIDE)
+                } catch (e: Exception) { null } ?: continue
+                decoded++
                 try {
                     val f = findFaces(null, frame)
                     // Remember the frame, so the face's picture can be cut from that same frame later.
-                    all.addAll(f.map { it.atFrame(t / 1000) })
+                    all.addAll(f.map { it.atFrame(t) })
                     if (withTags) for ((k, v) in tagsFor(frame, f)) tags[k] = max(tags[k] ?: 0f, v)
                 } finally { frame.recycle() }
             }
+            if (decoded == 0) throw IllegalStateException("no frame of ${m.name} could be decoded")
             return Analysis(tags, dedupe(all))
         } finally {
             try { mmr.release() } catch (_: Exception) { }
         }
+    }
+
+    /** Runs [pick] with a function giving the keyframe (ms) each moment decodes from (null: unknown). */
+    private fun <T> keyframes(m: GMedia, pick: ((Long) -> Long?) -> T): T {
+        val ex = MediaExtractor()
+        try {
+            ex.setDataSource(ctx, m.uri, null)
+            val track = (0 until ex.trackCount).firstOrNull { ex.getTrackFormat(it).getString(MediaFormat.KEY_MIME)?.startsWith("video/") == true }
+                ?: return pick { null }
+            ex.selectTrack(track)
+            return pick { t ->
+                try {
+                    ex.seekTo(t * 1000, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
+                    ex.sampleTime.takeIf { it >= 0 }?.div(1000)
+                } catch (e: Exception) { null }
+            }
+        } catch (e: Exception) {
+            return pick { null }
+        } finally { ex.release() }
     }
 
     /** The same person in several frames of a video is kept once (the best view). */

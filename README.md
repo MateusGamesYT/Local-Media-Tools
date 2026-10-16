@@ -4,9 +4,10 @@
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
 photos and lets you search them in plain words, **highlight videos** cut to music the phone writes
-itself, **printing** to Wi-Fi printers without the printer maker's app, and **32 tools** for photos,
-video, GIF, PDF and audio, including on-device AI for **face blurring in photos and videos**,
-**background removal**, **one-tap enhancement**, a **magic eraser** and a **duplicate finder**. Nothing is uploaded: the app never connects to servers
+itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **33
+tools** for photos, video, GIF, PDF and audio, including on-device AI for **face blurring in photos and
+videos**, **background removal**, **one-tap enhancement**, a **magic eraser**, a **duplicate finder** and
+a **denoiser** that keeps RAW files RAW. Nothing is uploaded: the app never connects to servers
 on the internet (its only network traffic is to your own printer, and the code allows nothing else),
 originals are never modified, and every result is written to a hidden file that is only published
 after it has been completely written and checked.
@@ -445,6 +446,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Blur & pixelate | Privacy brushes, hide all faces | `Pictures/LocalMediaTools/Edited` |
 | | Background remover | AI cut-out, transparent PNG or plain colour | `Pictures/LocalMediaTools/Cutouts` |
 | | Auto enhance | AI-assisted one-tap fixes, batch | `Pictures/LocalMediaTools/Enhanced` |
+| | Denoiser | Grain removed from photos, RAW files (CR2, DNG, NEF, ARW written back as themselves) and videos, as much as each file has | `Pictures/LocalMediaTools/Denoised`, `Movies/…/Denoised` |
 | | Blur faces | Find faces in photos and videos, choose who to hide | `Pictures/…/Blurred faces`, `Movies/…/Blurred faces` |
 | Images | Image compressor | JPEG/WebP, quality, max width (0 = original), never saves a larger file | `Pictures/LocalMediaTools/Compressed` |
 | | Lossless image optimizer | Pixel-identical PNG or lossless WebP | `Pictures/LocalMediaTools/Compressed` |
@@ -459,7 +461,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Video compressor | H.264 re-encode, quality 20–100 | `Movies/LocalMediaTools/Compressed` |
 | | Merge videos | Join clips in your order; lossless when possible | `Movies/LocalMediaTools/Merged` |
 | | Speed & timelapse | 0.25×–60×, natural-pitch sound | `Movies/LocalMediaTools/Speed` |
-| | Highlight video | Photos and videos of an event edited into a short film on the beat of on-device instrumental music; moments, best shots, captions | `Movies/LocalMediaTools/Highlights` |
+| | Highlight video | Photos and videos of an event edited into a short film on the beat of on-device instrumental music or your own song; moments, best shots, captions | `Movies/LocalMediaTools/Highlights` |
 | | Remove video audio | Video stream copied, audio dropped | `Movies/LocalMediaTools/NoAudio` |
 | GIF | Video → GIF | FPS, width, source mode, adaptive colours | `Pictures/LocalMediaTools/Converted/GIF` |
 | | GIF compressor | Width, FPS, 32/64/128/256 colours | `Pictures/LocalMediaTools/GIFs` |
@@ -569,8 +571,9 @@ so updates install over each other; use your own key for a store release.
   above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
-tested against), MediaCodec/MediaExtractor video paths (including the GPU face blur, merging and
-speed changes, and the highlight video's analysis of videos, GPU drawing, H.264 and AAC encoding), PdfRenderer (also used to print PDF pages), BitmapRegionDecoder, the camera intent,
+tested against), MediaCodec/MediaExtractor video paths (including the GPU face blur, the GPU video
+denoiser, merging and speed changes, the highlight video's analysis of videos, decoding your song, GPU
+drawing, H.264 and AAC encoding, and the Gallery's video frames), PdfRenderer (also used to print PDF pages), BitmapRegionDecoder, the camera intent,
 the photo-library scan and trash request, MediaStore and the background indexing service on a real
 phone, and the native OpenCV/TFLite code on a device (the face and cut-out models are tested on the
 JVM with OpenCV's desktop build, the eraser model against PyTorch, and the gallery's TFLite models

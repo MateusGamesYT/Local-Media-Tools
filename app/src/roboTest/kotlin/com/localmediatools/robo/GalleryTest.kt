@@ -293,6 +293,33 @@ class GalleryTest {
         assertEquals(kept, db.faces("1", withEmb = true).associate { it.id to it.emb!!.toList() })
     }
 
+    /** 1.10.0 looks at videos in more frames: after updating, only the videos are looked at again, and what was said about their faces stays. */
+    @Test fun videosAreLookedAtAgainAfterTheUpdatePhotosAreNot() {
+        openGallery()
+        val db = GalleryDb.get(app)
+        val videos = db.mediaById().values.filter { it.video }.map { it.id }.toSet()
+        assertEquals(setOf(7L, 21L), videos)
+        // A face in a video the user hid, and one they named.
+        val videoFaces = db.faces("f.media_id IN (7, 21)")
+        val hidden = videoFaces.firstOrNull()
+        hidden?.let { db.setIgnored(it.id, true) }
+        // As 1.9 left the index: analyser version 4 with the AI engines.
+        val v4 = GalleryIndex.analyzedValue(com.localmediatools.gallery.EngineMode.AI, com.localmediatools.gallery.EngineMode.AI) - 10
+        assertEquals(4, v4 / 10)
+        db.writableDatabase.execSQL("UPDATE media SET analyzed = ?", arrayOf<Any>(v4))
+        val looked = java.util.Collections.synchronizedList(ArrayList<Long>())
+        GalleryIndex.analyzerOverride = { m -> looked.add(m.id); FakeGallery.analysis(m) }
+        GalleryIndex.start(app)
+        waitFor("videos looked at again") { GalleryIndex.state.value.phase == GalleryIndex.Phase.DONE && db.counts(GalleryIndex.target).let { it.first == it.second } }
+        idle(800)
+        assertEquals(videos, looked.toSet())
+        assertEquals(videos.size, looked.size)
+        assertTrue(db.pending(GalleryIndex.target, 100).isEmpty())
+        // The hidden video face is the same face, still hidden.
+        hidden?.let { assertTrue(db.faceById(it.id)!!.ignored) }
+        assertEquals(videoFaces.map { it.id }.toSet(), db.faces("f.media_id IN (7, 21)").map { it.id }.toSet())
+    }
+
     @Test fun pausingStopsIndexingAndRemovedPhotosLeaveTheIndex() {
         val a = openGallery()
         val db = GalleryDb.get(app)

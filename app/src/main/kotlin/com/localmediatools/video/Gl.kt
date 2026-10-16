@@ -140,7 +140,7 @@ class ExternalTextureRenderer {
     }
 
     companion object {
-        private const val VERTEX = """
+        internal const val VERTEX = """
             uniform mat4 uMVPMatrix;
             uniform mat4 uSTMatrix;
             attribute vec4 aPosition;
@@ -229,6 +229,35 @@ class DecoderOutputSurface(textureId: Int) {
     }
 }
 
+/** An offscreen RGBA texture with its framebuffer. */
+internal class GlTarget(val w: Int, val h: Int) {
+    val tex: Int
+    val fbo: Int
+    init {
+        val t = IntArray(1)
+        GLES20.glGenTextures(1, t, 0)
+        tex = t[0]
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex)
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, w, h, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
+        val f = IntArray(1)
+        GLES20.glGenFramebuffers(1, f, 0)
+        fbo = f[0]
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo)
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, tex, 0)
+        val status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+        if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) throw RuntimeException("Offscreen buffer incomplete (0x${Integer.toHexString(status)})")
+    }
+    fun release() {
+        GLES20.glDeleteFramebuffers(1, intArrayOf(fbo), 0)
+        GLES20.glDeleteTextures(1, intArrayOf(tex), 0)
+    }
+}
+
 /** A region to hide: centre and radii as fractions of the output frame, y measured downwards. */
 data class ObscureRegion(val cx: Float, val cy: Float, val rx: Float, val ry: Float)
 
@@ -239,38 +268,10 @@ data class ObscureRegion(val cx: Float, val cy: Float, val rx: Float, val ry: Fl
  * either blurred with a soft 9-tap filter or pixelated, with a feathered elliptical edge.
  */
 class RegionObscurer(private val w: Int, private val h: Int) {
-    private class Target(val w: Int, val h: Int) {
-        val tex: Int
-        val fbo: Int
-        init {
-            val t = IntArray(1)
-            GLES20.glGenTextures(1, t, 0)
-            tex = t[0]
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex)
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, w, h, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
-            val f = IntArray(1)
-            GLES20.glGenFramebuffers(1, f, 0)
-            fbo = f[0]
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo)
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, tex, 0)
-            val status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
-            if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) throw RuntimeException("Offscreen buffer incomplete (0x${Integer.toHexString(status)})")
-        }
-        fun release() {
-            GLES20.glDeleteFramebuffers(1, intArrayOf(fbo), 0)
-            GLES20.glDeleteTextures(1, intArrayOf(tex), 0)
-        }
-    }
-
-    private val full = Target(w, h)
-    private val levels = ArrayList<Target>().apply {
+    private val full = GlTarget(w, h)
+    private val levels = ArrayList<GlTarget>().apply {
         var lw = w; var lh = h
-        while (size < 8 && maxOf(lw, lh) > 8) { lw = maxOf(1, lw / 2); lh = maxOf(1, lh / 2); add(Target(lw, lh)) }
+        while (size < 8 && maxOf(lw, lh) > 8) { lw = maxOf(1, lw / 2); lh = maxOf(1, lh / 2); add(GlTarget(lw, lh)) }
     }
     private val copyProgram = ExternalTextureRenderer.link(VERTEX, COPY)
     private val regionProgram = ExternalTextureRenderer.link(VERTEX, REGION)
@@ -354,7 +355,7 @@ class RegionObscurer(private val w: Int, private val h: Int) {
     }
 
     companion object {
-        private const val VERTEX = """
+        internal const val VERTEX = """
             attribute vec2 aPos;
             uniform vec4 uRect;
             varying vec2 vUv;
@@ -364,7 +365,7 @@ class RegionObscurer(private val w: Int, private val h: Int) {
                 gl_Position = vec4(uv * 2.0 - 1.0, 0.0, 1.0);
             }
         """
-        private const val COPY = """
+        internal const val COPY = """
             #ifdef GL_FRAGMENT_PRECISION_HIGH
             precision highp float;
             #else

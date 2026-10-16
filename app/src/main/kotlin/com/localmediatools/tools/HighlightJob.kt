@@ -14,6 +14,7 @@ import com.localmediatools.highlight.HighlightAnalyzer
 import com.localmediatools.highlight.HighlightAudio
 import com.localmediatools.highlight.HighlightRenderer
 import com.localmediatools.highlight.ShotInfo
+import com.localmediatools.highlight.SongChoice
 import com.localmediatools.highlight.core.Aspect
 import com.localmediatools.highlight.core.Plan
 import com.localmediatools.highlight.core.PlanOptions
@@ -46,12 +47,17 @@ data class HighlightSettings(
     val names: Map<Int, String> = emptyMap(),
     /** Which tune: a new seed writes a different piece. */
     val seed: Long = 1,
+    /** The user's own song as the music (instead of [mood]). */
+    val song: SongChoice? = null,
 ) {
+    /** What the music is, for summaries. */
+    val musicLabel: String get() = song?.name ?: mood?.musicLabel ?: tr("no music")
+
     /** The plan for [items], all looked at already ([infos] in the same order). */
     fun plan(items: List<MediaItem>, infos: List<ShotInfo>): Plan {
         val shots: List<Shot> = infos.mapIndexed { i, s -> s.shot(i) }
         val ids = items.withIndex().associate { (i, it) -> it.key to i }
-        val beat = mood?.let { 60.0 / it.bpm } ?: 0.5
+        val beat = song?.beatSeconds ?: mood?.let { 60.0 / it.bpm } ?: 0.5
         return Planner.plan(shots, PlanOptions(seconds = seconds, beatSeconds = beat, captions = captions, clipSound = clipSound,
             aspect = aspect ?: Planner.aspectFor(shots), zone = TimeZone.getDefault(),
             include = include.mapNotNull { ids[it] }.toSet(), exclude = exclude.mapNotNull { ids[it] }.toSet(), title = title, names = names))
@@ -102,8 +108,8 @@ class HighlightJob(inputs: List<MediaItem>, private val settings: HighlightSetti
         // 2. The plan.
         val plan = settings.plan(items, infos)
         // 3. The sound.
-        ctx.status(if (settings.mood != null) tr("Writing the music") else tr("Preparing the sound"))
-        val audio = HighlightAudio.build(ctx.app, plan, settings.mood, settings.seed, { items[it].uri }, { f -> ctx.unitProgress(0, 0.15 + 0.1 * f) }) { ctx.cancelled }
+        ctx.status(when { settings.song != null -> tr("Fitting your song to the video"); settings.mood != null -> tr("Writing the music"); else -> tr("Preparing the sound") })
+        val audio = HighlightAudio.build(ctx.app, plan, settings.mood, settings.seed, settings.song, { items[it].uri }, { f -> ctx.unitProgress(0, 0.15 + 0.1 * f) }) { ctx.cancelled }
         ctx.checkCancelled()
         // 4. The picture.
         val (w, h) = VideoTranscoder.outputSize(plan.aspect.width, plan.aspect.height, 0, 30.0)
@@ -123,7 +129,7 @@ class HighlightJob(inputs: List<MediaItem>, private val settings: HighlightSetti
                 Outputs.verifyMedia(ctx.app, pending.uri, true, audio != null)
             }.first
             if (inputs.size > usable.size) notes.add(trn(inputs.size - usable.size, "{0} of the files couldn't be read.", "{0} of the files couldn't be read."))
-            val music = settings.mood?.musicLabel ?: tr("no music")
+            val music = settings.musicLabel
             return ItemResult(label, ItemOutcome.SUCCESS, notes.joinToString(" ").ifBlank { null }, listOf(out),
                 "${Format.duration(plan.durationMs)} · " + trn(plan.clips.size, "{0} clip", "{0} clips") + " · " + trn(plan.moments.count { m -> plan.clips.any { it.moment == m.index } }, "{0} moment", "{0} moments") + " · $music · ${w}×$h · ${Format.bytes(out.size)}")
         } finally {

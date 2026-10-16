@@ -37,12 +37,15 @@ import kotlinx.coroutines.yield
 object GalleryIndex {
     /**
      * Bump when what the analyzer stores changes, so older results are redone. 3 (1.8.0): faces
-     * described with MobileFaceNet; 4 (1.9.0): with ResNet-50. Items analysed by versions from
+     * described with MobileFaceNet; 4 (1.9.0): with ResNet-50; 5 (1.10.0): videos looked at in more
+     * frames ([com.localmediatools.gallery.core.VideoSampling]). Photos analysed by versions from
      * [FACES_ONLY_FROM] on only have their faces looked at again (their tags stay, and what the user
-     * said about each face stays with it).
+     * said about each face stays with it); photos from [PHOTOS_SAME_FROM] on need nothing new.
+     * Videos are looked at again in full (more frames: more faces and more things).
      */
-    const val ANALYZER_VERSION = 4
+    const val ANALYZER_VERSION = 5
     const val FACES_ONLY_FROM = 2
+    const val PHOTOS_SAME_FROM = 4
 
     /**
      * How hot the phone may get (PowerManager's thermal status): from [EASE_AT] indexing goes on at
@@ -195,7 +198,9 @@ object GalleryIndex {
         target = if (a == null) analyzedValue(EngineMode.AI, EngineMode.AI) else analyzedValue(a.faceMode, a.objectMode)
         // Items without faces need nothing new from a face-model update; where the face AI doesn't work,
         // faces described before stay as they are (still grouped) instead of becoming basic ones.
-        for (v in FACES_ONLY_FROM until ANALYZER_VERSION) db.promoteUnchanged(v, target, keepFaces = a != null && a.faceMode != EngineMode.AI)
+        // (Photos only: every video analysed before 5 is looked at again in more frames.)
+        for (v in FACES_ONLY_FROM until ANALYZER_VERSION) db.promoteUnchanged(v, target, keepFaces = a != null && a.faceMode != EngineMode.AI, photosOnly = true)
+        for (v in PHOTOS_SAME_FROM until ANALYZER_VERSION) db.promotePhotos(v, target)
         var (done, total) = db.counts(target)
         if (done >= total) {
             // Nothing new to look at, but people found under older grouping rules are regrouped once.
@@ -223,10 +228,12 @@ object GalleryIndex {
                 val t0 = System.nanoTime()
                 // Analysed before with engines at least as capable for tags: only the faces are new.
                 val prev = db.analyzedValue(m.id)
-                val facesOnly = prev / 10 in FACES_ONLY_FROM until ANALYZER_VERSION && prev % 2 >= target % 2
+                val facesOnly = !m.video && prev / 10 in FACES_ONLY_FROM until ANALYZER_VERSION && prev % 2 >= target % 2
                 if (facesOnly != _state.value.updatingFaces) _state.update { it.copy(updatingFaces = facesOnly) }
                 val result = try {
-                    analyzerOverride?.invoke(m) ?: if (facesOnly) a!!.analyzeFaces(m) else a!!.analyze(m)
+                    // A video's earlier faces are looked at again in their own frames (what was said about them stays).
+                    val keep = if (m.video) db.faceFrames(m.id) else emptyList()
+                    analyzerOverride?.invoke(m) ?: if (facesOnly) a!!.analyzeFaces(m, keep) else a!!.analyze(m, keep)
                 } catch (e: OutOfMemoryError) { null } catch (e: Exception) { null }
                 if (result != null) {
                     val faces = result.faces.map { f ->

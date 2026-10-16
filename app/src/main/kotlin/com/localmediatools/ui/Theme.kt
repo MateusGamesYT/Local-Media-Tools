@@ -80,6 +80,7 @@ object Icons {
         ToolId.BLUR_REDACT -> R.drawable.ic_tool_redact
         ToolId.BACKGROUND_REMOVER -> R.drawable.ic_tool_cutout
         ToolId.AUTO_ENHANCE -> R.drawable.ic_tool_enhance
+        ToolId.DENOISE -> R.drawable.ic_tool_denoise
         ToolId.FACE_BLUR -> R.drawable.ic_tool_faceblur
         ToolId.DUPLICATES -> R.drawable.ic_tool_duplicates
         ToolId.MERGE_VIDEOS -> R.drawable.ic_tool_video_merge

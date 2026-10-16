@@ -52,7 +52,12 @@ class VideoTranscoder(
         val silenceIfNoAudio: Boolean = false,
         /** Frame rate announced to the encoder (merged clips need the same); 0 = from the source. */
         val headerFps: Double = 0.0,
+        /** Removes noise from every frame (GPU, temporal; see [GlDenoiser]). */
+        val denoise: Denoise? = null,
     )
+
+    /** [sigma]: the source's noise as a share of full brightness; [params]: the denoiser's settings. */
+    class Denoise(val sigma: Float, val params: com.localmediatools.denoise.core.VideoDenoise.Params)
 
     /**
      * Regions to hide in each frame: [regions] gets the source timestamp and returns ellipses in
@@ -77,6 +82,7 @@ class VideoTranscoder(
         var egl: EglEnv? = null
         var renderer: ExternalTextureRenderer? = null
         var obscurer: RegionObscurer? = null
+        var denoiser: GlDenoiser? = null
         var outSurface: DecoderOutputSurface? = null
         var audio: AudioPath? = null
         val muxer = MediaMuxer(out, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
@@ -90,6 +96,7 @@ class VideoTranscoder(
             egl = EglEnv(inputSurface)
             renderer = ExternalTextureRenderer()
             if (p.effect != null) obscurer = RegionObscurer(p.outWidth, p.outHeight)
+            p.denoise?.let { d -> denoiser = GlDenoiser(p.outWidth, p.outHeight, d.sigma, d.params) }
             outSurface = DecoderOutputSurface(renderer.textureId)
             enc.start()
 
@@ -189,7 +196,10 @@ class VideoTranscoder(
                                 if (!outSurface.awaitFrame()) throw UserFacingException(tr("The video decoder stopped delivering frames."))
                                 val draw = { renderer.draw(outSurface.stMatrix, p.outWidth, p.outHeight, rot, false, sx, sy) }
                                 val fx = p.effect
-                                if (fx != null && obscurer != null) {
+                                val dn = denoiser
+                                if (dn != null) {
+                                    dn.render(draw)
+                                } else if (fx != null && obscurer != null) {
                                     val regions = fx.regions(srcPts).map { placeRegion(it, if (p.rotateToDisplay) 0 else info.rotation, sx, sy) }
                                     obscurer.render(draw, regions, fx.pixelate, fx.strength)
                                 } else draw()
@@ -260,6 +270,7 @@ class VideoTranscoder(
             try { encoder?.release() } catch (_: Exception) { }
             try { outSurface?.release() } catch (_: Exception) { }
             try { obscurer?.release() } catch (_: Exception) { }
+            try { denoiser?.release() } catch (_: Exception) { }
             try { renderer?.release() } catch (_: Exception) { }
             try { egl?.release() } catch (_: Exception) { }
             videoEx.release()

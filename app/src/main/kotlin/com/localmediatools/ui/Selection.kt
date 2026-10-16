@@ -106,11 +106,15 @@ object ToolRules {
         ToolId.MERGE_VIDEOS, ToolId.VIDEO_SPEED -> PickKind.VIDEOS
         ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> PickKind.GIFS
         ToolId.PDF_TO_IMAGES, ToolId.MERGE_PDFS, ToolId.EXTRACT_PDF_PAGES -> PickKind.PDFS
-        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.HIGHLIGHT_VIDEO -> PickKind.MEDIA
+        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.HIGHLIGHT_VIDEO, ToolId.DENOISE -> PickKind.MEDIA
         ToolId.TOOL_STACK -> PickKind.ANY
         ToolId.PRINT -> PickKind.PRINTABLE
         else -> PickKind.IMAGES
     }
+
+    /** "CR2", "NEF", "DNG"… from the file name (else "RAW"). */
+    fun rawLabel(item: MediaItem): String =
+        item.name.substringAfterLast('.', "").uppercase(java.util.Locale.ROOT).takeIf { it.length in 2..4 && it.all { c -> c.isLetterOrDigit() } } ?: "RAW"
 
     /** Tools that work on one file at a time. */
     fun single(t: ToolId) = t == ToolId.TRIM_VIDEO
@@ -119,14 +123,28 @@ object ToolRules {
 
     fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS)
 
+    /**
+     * Tools that may take a camera RAW file (DNG, CR2, NEF, ARW…). The denoiser writes RAW back in
+     * its own format; the others exist to make something else from a photo: a JPEG, PNG or WebP
+     * (convert, compress), a cut-out, a combined picture, a PDF, a print, a film. Every other photo
+     * tool would have to save a RAW file as another format, so it leaves RAW files alone.
+     */
+    private val takesRaw = setOf(
+        ToolId.DENOISE, ToolId.CONVERT_IMAGES, ToolId.COMPRESS_IMAGES, ToolId.BACKGROUND_REMOVER, ToolId.MERGE_IMAGES,
+        ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.PRINT, ToolId.HIGHLIGHT_VIDEO, ToolId.TOOL_STACK,
+    )
+
     /** Null when the item can be processed by [t], otherwise a short reason. */
     fun issue(t: ToolId, item: MediaItem): String? {
         item.readError?.let { return it }
+        if (item.format.isRaw && t !in takesRaw) {
+            return tr("RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).", t.title, rawLabel(item))
+        }
         return when (pickKind(t)) {
             PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else tr("Not a video file")
             PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else tr("Not a GIF file")
             PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else tr("Not a PDF file")
-            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO)) null else tr("Not a photo or video")
+            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO && t != ToolId.DENOISE)) null else tr("Not a photo or video")
             PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else tr("Not a photo, video, GIF or PDF")
             PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF) null else tr("Not a photo or PDF")
             PickKind.IMAGES -> when {

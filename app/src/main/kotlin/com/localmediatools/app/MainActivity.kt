@@ -227,6 +227,19 @@ class MainActivity : Activity() {
         launch(intent) { code, data -> if (code == RESULT_OK) cb(urisFrom(data)) }
     }
 
+    /** One audio file (a song for the highlight video) from any provider; null when cancelled. */
+    fun pickAudio(cb: (Uri?) -> Unit) {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "audio/*"
+        }
+        launch(intent) { code, data ->
+            val uri = if (code == RESULT_OK) data?.data else null
+            if (uri != null) try { contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) } catch (_: Exception) { }
+            cb(uri)
+        }
+    }
+
     /** Adds every matching file of a chosen folder (not recursive), sorted by name. */
     fun pickFolder(kind: PickKind, cb: (List<Uri>) -> Unit) {
         launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)) { code, data ->

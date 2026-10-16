@@ -154,6 +154,44 @@ class HighlightUiTest {
         assertTrue("${s.previewFrames}", s.previewFrames in 10 * 48_000..30 * 48_000)
     }
 
+    /** A song of the user's as the music: picked with the system's file picker, its beat shown and used, kept while trying the app's tunes. */
+    @Test fun yourOwnSongAsTheMusic() {
+        // Decoding the song needs the phone's audio decoders; the beat it would find is given.
+        com.localmediatools.highlight.HighlightAudio.songBeatOverride = { com.localmediatools.highlight.core.Song.Beat(124.0, 0.0, 0.5) }
+        try {
+            val (a, s) = open(photos())
+            waitFor("moments") { texts(s.view).any { it.startsWith("3 moments") } }
+            val song = File(app.cacheDir, "highlight/Summer Nights.mp3").apply { parentFile!!.mkdirs(); writeBytes(ByteArray(2048)) }
+            fun buttons() = all(s.view).filterIsInstance<ButtonView>().map { it.label }
+            click(s.view, "My song"); idle()
+            val pick = shadowOf(a).nextStartedActivityForResult
+            assertEquals(android.content.Intent.ACTION_OPEN_DOCUMENT, pick.intent.action)
+            assertEquals("audio/*", pick.intent.type)
+            shadowOf(a).receiveResult(pick.intent, android.app.Activity.RESULT_OK, android.content.Intent().setData(android.net.Uri.fromFile(song)))
+            waitFor("the song's beat") { texts(s.view).any { it.startsWith("♪ Summer Nights · 124 beats a minute") } }
+            assertEquals("Summer Nights", HighlightPrefs.settings().song?.name)
+            assertEquals(60.0 / 124, HighlightPrefs.settings().song!!.beatSeconds, 1e-9)
+            assertTrue(texts(s.view).toString(), texts(s.view).any { it.startsWith("3 moments") && it.contains("Summer Nights") })
+            assertTrue(buttons().toString(), "Another song" in buttons())
+            // One of the app's tunes instead: the song is kept for later, its line goes.
+            click(s.view, "Upbeat"); idle()
+            assertEquals(null, HighlightPrefs.settings().song)
+            assertTrue("Another tune" in buttons())
+            assertTrue(all(s.view).filterIsInstance<TextView>().filter { it.text.startsWith("♪") }.all { it.visibility != View.VISIBLE })
+            // Back to the song: no new pick needed.
+            click(s.view, "My song"); idle()
+            assertEquals(null, shadowOf(a).nextStartedActivityForResult)
+            assertEquals("Summer Nights", HighlightPrefs.settings().song?.name)
+            // Choosing another song but cancelling keeps this one.
+            all(s.view).filterIsInstance<ButtonView>().first { it.label == "Another song" }.performClick(); idle()
+            val again = shadowOf(a).nextStartedActivityForResult
+            shadowOf(a).receiveResult(again.intent, android.app.Activity.RESULT_CANCELED, null); idle()
+            assertEquals("Summer Nights", HighlightPrefs.settings().song?.name)
+        } finally {
+            com.localmediatools.highlight.HighlightAudio.songBeatOverride = null
+        }
+    }
+
     @Test fun newPicturesStartAFreshTimeline() {
         val items = photos()
         val (_, s) = open(items)

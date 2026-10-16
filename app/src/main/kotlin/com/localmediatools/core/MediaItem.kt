@@ -28,7 +28,31 @@ enum class SniffedFormat(val kind: MediaKind, private val code: String) {
     /** The format's name as shown ("JPEG", "MKV/WebM"; "Audio" and "Unknown" in the app's language). */
     val label: String get() = when (this) { AUDIO -> tr("Audio"); UNKNOWN -> tr("Unknown"); else -> code }
 
+    /** A camera RAW file (DNG included): only the denoiser and the format tools (convert, compress) take these. */
+    val isRaw: Boolean get() = this == DNG || this == RAW_CAMERA
+
     companion object {
+        /** TIFF-based camera RAW extensions (Nikon, Sony, Pentax, Samsung, Hasselblad, Phase One, Leica, Kodak…). */
+        private val RAW_TIFF_EXT = setOf("cr2", "nef", "nrw", "arw", "srf", "sr2", "pef", "srw", "3fr", "fff", "iiq", "erf", "kdc", "dcr", "mef", "mos", "rwl", "raw", "orf", "rw2", "raf", "gpr")
+
+        /** Whether a TIFF's first directory, as far as [n] bytes of [h] hold it, has DNG's DNGVersion tag. */
+        private fun hasDngVersion(h: ByteArray, n: Int): Boolean {
+            val le = h[0] == 'I'.code.toByte()
+            fun b(o: Int) = h[o].toInt() and 0xFF
+            fun u16(o: Int) = if (le) b(o) or (b(o + 1) shl 8) else (b(o) shl 8) or b(o + 1)
+            fun u32(o: Int) = if (le) u16(o).toLong() or (u16(o + 2).toLong() shl 16) else (u16(o).toLong() shl 16) or u16(o + 2).toLong()
+            if (n < 8) return false
+            val ifd = u32(4)
+            if (ifd < 8 || ifd + 2 > n) return false
+            val count = u16(ifd.toInt())
+            for (i in 0 until count) {
+                val e = ifd.toInt() + 2 + 12 * i
+                if (e + 2 > n) return false
+                if (u16(e) == 0xC612) return true
+            }
+            return false
+        }
+
         fun sniff(h: ByteArray, n: Int, name: String, mime: String?): SniffedFormat {
             fun at(o: Int, s: String) = n >= o + s.length && (s.indices).all { h[o + it] == s[it].code.toByte() }
             fun b(o: Int) = if (o < n) h[o].toInt() and 0xFF else -1
@@ -44,11 +68,17 @@ enum class SniffedFormat(val kind: MediaKind, private val code: String) {
                 at(0, "8BPS") -> PSD
                 at(0, "qoif") -> QOI
                 (at(0, "II") && b(2) == 42 && b(3) == 0) || (at(0, "MM") && b(2) == 0 && b(3) == 42) ->
-                    when (ext) {
-                        "dng" -> DNG
-                        "cr2", "nef", "arw", "orf", "rw2", "pef", "srw", "nrw", "raf" -> RAW_CAMERA
+                    when {
+                        ext == "dng" || hasDngVersion(h, n) -> DNG
+                        at(8, "CR") && b(10) == 2 -> RAW_CAMERA   // Canon CR2, whatever its name
+                        ext in RAW_TIFF_EXT -> RAW_CAMERA
                         else -> TIFF
                     }
+                // Camera RAW formats with headers of their own: Olympus (IIRO, IIRS, MMOR), Panasonic
+                // (IIU), Fujifilm, Canon CRW, Sigma X3F, Minolta MRW.
+                at(0, "IIRO") || at(0, "IIRS") || at(0, "MMOR") || (at(0, "IIU") && b(3) == 0) ||
+                    at(0, "FUJIFILMCCD-RAW") || at(6, "HEAPCCDR") || at(0, "FOVb") || (b(0) == 0 && at(1, "MRM")) -> RAW_CAMERA
+                at(4, "ftyp") && at(8, "crx ") -> RAW_CAMERA   // Canon CR3 (an ISO media file, not a video)
                 at(4, "ftyp") -> {
                     val brand = if (n >= 12) String(h, 8, 4, Charsets.ISO_8859_1) else ""
                     // Look at major and compatible brands.
@@ -121,7 +151,8 @@ object MediaProbe {
             } catch (e: Exception) { -1L }
         }
         val mime = try { resolver.getType(uri) } catch (e: Exception) { null }
-        val head = ByteArray(512)
+        // Enough for the first directory of a TIFF-based RAW file (a DNG's version tag comes late in it).
+        val head = ByteArray(4096)
         var n = 0
         var error: String? = null
         try {

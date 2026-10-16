@@ -199,6 +199,24 @@ class ImageSource private constructor(
     companion object {
         private const val HEAD = 256 * 1024
 
+        /** True for a WebP whose picture is stored losslessly (a VP8L image, also inside an extended file). */
+        fun isLosslessWebp(ctx: Context, uri: Uri): Boolean {
+            val h = ByteArray(4096)
+            var n = 0
+            MediaProbe.openInput(ctx.contentResolver, uri).use { s -> while (n < h.size) { val k = s.read(h, n, h.size - n); if (k < 0) break; n += k } }
+            fun at(o: Int, t: String) = o + t.length <= n && t.indices.all { h[o + it] == t[it].code.toByte() }
+            if (!at(0, "RIFF") || !at(8, "WEBP")) return false
+            var o = 12
+            while (o + 8 <= n) {
+                if (at(o, "VP8L")) return true
+                if (at(o, "VP8 ")) return false
+                val len = (h[o + 4].toInt() and 255) or ((h[o + 5].toInt() and 255) shl 8) or ((h[o + 6].toInt() and 255) shl 16) or ((h[o + 7].toInt() and 255) shl 24)
+                if (len < 0) return false
+                o += 8 + len + (len and 1)
+            }
+            return false
+        }
+
         fun open(ctx: Context, item: MediaItem): ImageSource = open(ctx, item.uri, item.name, item.format)
 
         fun open(ctx: Context, uri: Uri, name: String, knownFormat: SniffedFormat? = null): ImageSource {

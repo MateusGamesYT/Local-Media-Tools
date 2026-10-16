@@ -252,6 +252,18 @@ class ScreenshotTest {
 
         // The duplicate finder is rendered by DuplicatesUiTest, from real photos.
 
+        // Denoiser: a real noisy phone photo (SIDD, MIT) and what the app's photo denoiser made of it
+        // (computed with OpenCV on the desktop, test resources denoise/CREDITS.tsv); a RAW file beside it.
+        fun res(n: String) = android.graphics.BitmapFactory.decodeStream(ScreenshotTest::class.java.getResourceAsStream("/denoise/$n"))
+        com.localmediatools.ui.tools.DenoiseScreen.previewOverride = { _ ->
+            Triple(res("sidd_0144_2_noisy.png"), res("sidd_0144_2_denoised.png"), com.localmediatools.denoise.core.PhotoDenoiser.Noise(6.3, 2.6, 1.34))
+        }
+        val noisy = Robo.item(app, Robo.write(inDir, "night_street.jpg", Robo.encode(res("sidd_0144_2_noisy.png"), Bitmap.CompressFormat.JPEG, 95)))
+        val raw = Robo.item(app, Robo.write(inDir, "IMG_2041.dng", ScreenshotTest::class.java.getResourceAsStream("/raw/sm-g960f_crop.dng")!!.readBytes()))
+        Selection.of(ToolId.DENOISE).add(listOf(noisy, raw))
+        open(a, ToolId.DENOISE, dir, "33_denoiser") { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Noise measured") } }
+        com.localmediatools.ui.tools.DenoiseScreen.previewOverride = null
+
 
         val clips = (1..3).map { Robo.item(app, Robo.write(inDir, "clip_$it.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))) }
         Selection.of(ToolId.MERGE_VIDEOS).add(clips)

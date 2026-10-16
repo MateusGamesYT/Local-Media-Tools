@@ -288,6 +288,7 @@ object ToolScreens {
         ToolId.DUPLICATES, ToolId.TOOL_STACK -> throw IllegalArgumentException("${t.title} has its own screen (see ToolLauncher)")
         ToolId.BACKGROUND_REMOVER -> BackgroundRemoverScreen(a)
         ToolId.AUTO_ENHANCE -> AutoEnhanceScreen(a)
+        ToolId.DENOISE -> DenoiseScreen(a)
         ToolId.FACE_BLUR -> FaceBlurScreen(a)
         ToolId.MERGE_VIDEOS -> MergeVideosScreen(a)
         ToolId.HIGHLIGHT_VIDEO -> HighlightScreen(a)

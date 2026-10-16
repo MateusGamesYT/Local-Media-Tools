@@ -69,7 +69,7 @@ object StackRules {
         PickKind.VIDEOS -> setOf(FlowKind.VIDEO)
         PickKind.GIFS -> setOf(FlowKind.GIF)
         PickKind.PDFS -> setOf(FlowKind.PDF)
-        PickKind.MEDIA -> if (t == ToolId.FACE_BLUR) setOf(FlowKind.IMAGE, FlowKind.VIDEO) else setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.VIDEO)
+        PickKind.MEDIA -> if (t == ToolId.FACE_BLUR || t == ToolId.DENOISE) setOf(FlowKind.IMAGE, FlowKind.VIDEO) else setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.VIDEO)
         PickKind.ANY -> FlowKind.entries.toSet() - FlowKind.AUDIO
         PickKind.PRINTABLE -> setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.PDF)
     }
@@ -80,7 +80,7 @@ object StackRules {
         ToolId.EXTRACT_AUDIO -> FlowKind.AUDIO
         ToolId.IMAGES_TO_PDF -> FlowKind.PDF
         ToolId.PDF_TO_IMAGES -> FlowKind.IMAGE
-        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> k
+        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.DENOISE, ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> k
         // Photo tools turn a GIF into a still picture.
         else -> if (k == FlowKind.GIF) FlowKind.IMAGE else k
     }
@@ -156,7 +156,13 @@ class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val 
         val last = k == steps.lastIndex
         val label = tr("Step {0} ({1})", k + 1, step.tool.title)
         val accepted = flow.filter { ToolRules.issue(step.tool, it.item) == null }
-        val passing = flow.filter { f -> accepted.none { it === f } }.map { it.note(FlowKind.of(it.item)?.let { k -> tr("{0} doesn't work on {1}, so it was skipped.", label, k.noun) } ?: tr("{0} doesn't work on this kind of file, so it was skipped.", label)) }
+        val passing = flow.filter { f -> accepted.none { it === f } }.map { f ->
+            f.note(when {
+                f.item.format.isRaw && FlowKind.of(f.item) == FlowKind.IMAGE && step.tool.section != ToolSection.VIDEO ->
+                    tr("{0} left this RAW file as it is: {1}", label, ToolRules.issue(step.tool, f.item) ?: "")
+                else -> FlowKind.of(f.item)?.let { k -> tr("{0} doesn't work on {1}, so it was skipped.", label, k.noun) } ?: tr("{0} doesn't work on this kind of file, so it was skipped.", label)
+            })
+        }
         val min = ToolRules.minItems(step.tool)
         if (accepted.isEmpty()) return passing
         if (accepted.size < min) return passing + accepted.map { it.note(trn(min, "{1} needs at least {0} file, so it was skipped.", "{1} needs at least {0} files, so it was skipped.", label)) }

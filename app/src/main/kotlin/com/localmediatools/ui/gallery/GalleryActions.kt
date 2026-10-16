@@ -120,7 +120,7 @@ object GalleryActions {
                 PickKind.IMAGES -> !anyVideo && (anyPhoto || anyGif)
                 PickKind.VIDEOS -> anyVideo && !anyPhoto && !anyGif
                 PickKind.GIFS -> anyGif && !anyPhoto && !anyVideo
-                PickKind.MEDIA -> !(t == ToolId.FACE_BLUR && anyGif)
+                PickKind.MEDIA -> !((t == ToolId.FACE_BLUR || t == ToolId.DENOISE) && anyGif)
                 PickKind.ANY -> true
                 PickKind.PDFS -> false
                 PickKind.PRINTABLE -> !anyVideo

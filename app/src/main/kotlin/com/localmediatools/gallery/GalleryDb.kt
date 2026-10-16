@@ -244,13 +244,26 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
      * or with [keepFaces] every item (the face AI doesn't work on this phone: faces described before
      * stay described as they were, rather than with the basic fallback).
      */
-    fun promoteUnchanged(fromVersion: Int, target: Int, keepFaces: Boolean) {
-        if (keepFaces) writableDatabase.execSQL("UPDATE media SET analyzed=? WHERE analyzed / 10 = ? AND analyzed % 2 >= ?",
+    fun promoteUnchanged(fromVersion: Int, target: Int, keepFaces: Boolean, photosOnly: Boolean = false) {
+        val kind = if (photosOnly) " AND video = 0" else ""
+        if (keepFaces) writableDatabase.execSQL("UPDATE media SET analyzed=? WHERE analyzed / 10 = ? AND analyzed % 2 >= ?$kind",
             arrayOf<Any>(target, fromVersion, target % 2))
         else writableDatabase.execSQL(
             "UPDATE media SET analyzed=? WHERE analyzed / 10 = ? AND (analyzed % 10) / 2 = ? AND analyzed % 2 >= ? AND " +
-                "id NOT IN (SELECT media_id FROM faces)", arrayOf<Any>(target, fromVersion, (target % 10) / 2, target % 2))
+                "id NOT IN (SELECT media_id FROM faces)$kind", arrayOf<Any>(target, fromVersion, (target % 10) / 2, target % 2))
     }
+
+    /** Photos analysed by [fromVersion] with engines at least as capable as [target]'s are as [target] would make them. */
+    fun promotePhotos(fromVersion: Int, target: Int) {
+        writableDatabase.execSQL("UPDATE media SET analyzed=? WHERE analyzed / 10 = ? AND video = 0 AND (analyzed % 10) / 2 >= ? AND analyzed % 2 >= ?",
+            arrayOf<Any>(target, fromVersion, (target % 10) / 2, target % 2))
+    }
+
+    /** The moments (ms) of a video where faces were found. */
+    fun faceFrames(mediaId: Long): List<Long> =
+        readableDatabase.rawQuery("SELECT DISTINCT frame_ms FROM faces WHERE media_id=?", arrayOf(mediaId.toString())).use { c ->
+            val out = ArrayList<Long>(); while (c.moveToNext()) out.add(c.getLong(0)); out
+        }
 
     /**
      * Writes an item's newly found faces over the ones found before, keeping what the user said about

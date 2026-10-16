@@ -69,6 +69,7 @@ object ToolLauncher {
         ToolId.TOOL_STACK to N_("stack chain pipeline workflow combine multiple steps several tools in a row automate batch then"),
         ToolId.BACKGROUND_REMOVER to N_("cut out cutout remove background transparent png sticker subject product ai"),
         ToolId.AUTO_ENHANCE to N_("auto fix improve brighten colour color one tap magic ai enhance"),
+        ToolId.DENOISE to N_("noise noisy grain grainy denoise clean night dark low light iso raw dng cr2 nef arw video smooth"),
         ToolId.FACE_BLUR to N_("face faces blur pixelate hide anonymize people video privacy censor ai"),
         ToolId.DUPLICATES to N_("duplicate similar same copies clean storage space free gallery burst"),
         ToolId.MERGE_VIDEOS to N_("join combine concatenate clips append video"),
@@ -235,6 +236,7 @@ class HomeTab(private val shell: MainShell) {
         block.addView(cards(Triple(ToolId.FACE_BLUR, Palette.TEAL, Badges.newTool), Triple(ToolId.AUTO_ENHANCE, Palette.SUNSET, Badges.newTool)), lp().apply { topMargin = ctx.dp(12) })
         block.addView(wideTile(ToolId.PHOTO_EDITOR), lp().apply { topMargin = ctx.dp(12) })
         block.addView(wideTile(ToolId.BLUR_REDACT), lp().apply { topMargin = ctx.dp(12) })
+        block.addView(wideTile(ToolId.DENOISE), lp().apply { topMargin = ctx.dp(12) })
         featured = block
         col.addView(block, lp().apply { topMargin = ctx.dp(26) })
 

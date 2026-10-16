@@ -9,6 +9,9 @@ import android.net.Uri
 import com.localmediatools.codec.audio.PcmProcessor
 import com.localmediatools.highlight.core.Mixer
 import com.localmediatools.highlight.core.Plan
+import com.localmediatools.highlight.core.Song
+import com.localmediatools.core.UserFacingException
+import com.localmediatools.i18n.tr
 import com.localmediatools.music.core.Composer
 import com.localmediatools.music.core.Mood
 import com.localmediatools.music.core.Score
@@ -17,6 +20,14 @@ import com.localmediatools.music.core.TrioModel
 import java.lang.ref.SoftReference
 import java.nio.ByteOrder
 
+/**
+ * The user's own song as the music: the picked file, its name, and its beat as found when it was
+ * picked ([Song]; null: no steady beat, the cuts keep the video's own rhythm).
+ */
+data class SongChoice(val uri: Uri, val name: String, val bpm: Double?) {
+    val beatSeconds: Double get() = bpm?.let { 60.0 / it } ?: 0.5
+}
+
 /** AAC audio, encoded and waiting to be written next to the video. */
 class EncodedAudio(val format: MediaFormat, val packets: List<Packet>) {
     class Packet(val data: ByteArray, val ptsUs: Long, val flags: Int)
@@ -24,8 +35,9 @@ class EncodedAudio(val format: MediaFormat, val packets: List<Packet>) {
 
 /**
  * The highlight video's sound, made on the phone: background music written for this video by the
- * music model ([Composer], [Synth]: instrumental only), the clips' own sound, and the mix with the
- * music stepped back while a clip speaks ([Mixer]), encoded to AAC.
+ * music model ([Composer], [Synth]: instrumental only) or the user's own song fitted to the video
+ * ([Song]), the clips' own sound, and the mix with the music stepped back while a clip speaks
+ * ([Mixer]), encoded to AAC.
  */
 object HighlightAudio {
     const val RATE = 48_000
@@ -40,15 +52,43 @@ object HighlightAudio {
     fun music(ctx: Context, mood: Mood, seconds: Double, seed: Long): FloatArray = Synth(RATE).render(score(ctx, mood, seconds, seed), seconds)
 
     /**
-     * Everything for [plan]: music in [mood] (null = none) and, for clips that keep their sound, that
-     * sound. Null when the video has no sound at all.
+     * The decoded song (48 kHz stereo floats): as much as a video of [frames] frames can use, its
+     * beat looked for in the first half minute. Null when the file holds no sound that can be decoded.
      */
-    fun build(ctx: Context, plan: Plan, mood: Mood?, seed: Long, uris: (Int) -> Uri, progress: (Double) -> Unit, cancelled: () -> Boolean): EncodedAudio? {
+    fun songPcm(ctx: Context, uri: Uri, frames: Int): FloatArray? =
+        clipSound(ctx, uri, 0, maxOf(frames * 1000L / RATE, 30_000L) + 12_000L)?.takeIf { it.size >= RATE * 2 / 2 }
+
+    /** [song] fitted to a video of [frames] frames ([Song]): from its first beat, repeated if too short, at the app's music level. */
+    fun songMusic(ctx: Context, song: Uri, frames: Int): FloatArray {
+        val pcm = songPcm(ctx, song, frames) ?: throw UserFacingException(tr("Your song couldn't be read. Pick another audio file, or one of the app's own tunes."))
+        return Song.render(pcm, Song.fit(pcm, RATE, frames), frames)
+    }
+
+    /** Stands in for decoding and listening to a picked song where MediaCodec can't run (UI tests). */
+    @Volatile var songBeatOverride: ((Uri) -> Song.Beat?)? = null
+
+    /** What the song choice needs when a file is picked: its beat (null: none steady). */
+    fun songBeat(ctx: Context, uri: Uri): Song.Beat? {
+        songBeatOverride?.let { return it(uri) }
+        val frames = 20 * RATE
+        val pcm = songPcm(ctx, uri, frames) ?: throw UserFacingException(tr("Your song couldn't be read. Pick another audio file, or one of the app's own tunes."))
+        return Song.fit(pcm, RATE, frames).beat
+    }
+
+    /**
+     * Everything for [plan]: the music — [song] when there is one, else music in [mood] (null = none) —
+     * and, for clips that keep their sound, that sound. Null when the video has no sound at all.
+     */
+    fun build(ctx: Context, plan: Plan, mood: Mood?, seed: Long, song: SongChoice?, uris: (Int) -> Uri, progress: (Double) -> Unit, cancelled: () -> Boolean): EncodedAudio? {
         val sounded = plan.clips.filter { it.withSound }
-        if (mood == null && sounded.isEmpty()) return null
+        if (mood == null && song == null && sounded.isEmpty()) return null
         val seconds = plan.durationMs / 1000.0
         val frames = (plan.durationMs * RATE / 1000).toInt().coerceAtLeast(1)
-        val music = mood?.let { music(ctx, it, seconds, seed) }
+        val music = when {
+            song != null -> songMusic(ctx, song.uri, frames)
+            mood != null -> music(ctx, mood, seconds, seed)
+            else -> null
+        }
         progress(0.4)
         val parts = ArrayList<Mixer.Part>()
         for ((k, c) in plan.clips.withIndex()) {
