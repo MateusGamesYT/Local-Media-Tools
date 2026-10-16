@@ -256,3 +256,43 @@ Earlier (1.4.0–1.4.1) the thresholds came from `face_embed.py` / `face_analyze
 on the BIWI Kinect Head Pose database (not redistributable; only the measured results were used):
 the same YuNet + SFace pipeline, clustering several hundred faces of 16 people. `lbp_eval.py`
 measured the classical fallback descriptor.
+
+## Videos: which frames to look at (measured for 1.10.0)
+
+Until 1.9, the Gallery looked at a video in three moments (15, 50 and 85 %), each decoded from the
+nearest keyframe. On many videos those were few or even the same picture. `gallery/core/VideoSampling.kt`
+now spreads moments over the whole video, one every 3 seconds (3 to 16 per video). Each moment is
+mapped to its keyframe, and only one moment per keyframe is kept. Moments where faces were found
+before are looked at again, so what the user said about those faces stays with them.
+
+`video_eval.py` measured this on 18 real 30-second videos of people: Global Lives Project recordings,
+CC BY 3.0, official uploads, re-encoded with a keyframe a second as phones record (sources in
+`meta/video_clips.tsv`). The clips themselves are not in the repository.
+
+The reference is the app's face pipeline for video frames (YuNet at up to 1600 px, ResNet-50) and its
+tagger (`scripts/app_parity.py`'s replica) on every frame at 2 per second:
+
+- **People:** good faces grouped with the gallery's own rule for one video (sameVideoFace 0.54), and
+  seen in at least two frames: 28 people.
+- **Things:** tags seen in at least two frames: 61 tags.
+
+A way of picking frames finds a person when one of its frames holds a good face of theirs.
+
+| Frames looked at | People found | Things found | Tags the reference doesn't have | Frames per clip |
+|---|---|---|---|---|
+| 1.9: three moments | 12 of 28 (43 %) | 45 of 61 (74 %) | 0 | 3 |
+| one every 5 s | 16 (57 %) | 46 (75 %) | 2 | 6 |
+| **one every 3 s (shipped)** | **24 (86 %)** | **50 (82 %)** | **1** | **10** |
+| one every 2 s | 24 (86 %) | 55 (90 %) | 6 | 15 |
+| one every 1 s | 27 (96 %) | 58 (95 %) | 9 | 27 |
+
+Every 3 seconds finds twice as many of the people for about three times the work, with almost no
+doubtful tags. Denser sampling found no more people at 2 seconds and costs proportionally more time
+on the phone.
+
+These are small numbers (28 people, mostly the recording's main person and their family), so the
+percentages are rough. Settings were not tuned beyond choosing among these five ways.
+
+```
+python3 buildtools/gallery/video_eval.py <clips dir with credits.tsv> <out.json>
+```
