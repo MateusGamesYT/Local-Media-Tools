@@ -15,7 +15,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.9.1.apk`](release/LocalMediaTools-1.9.1.apk)
+**Install:** [`release/LocalMediaTools-1.10.0.apk`](release/LocalMediaTools-1.10.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -39,9 +39,11 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|
 | ![](docs/screenshots/tool-stack.png) | ![](docs/screenshots/stack-step.png) | ![](docs/screenshots/stack-picker.png) |
 
-| Home | Blur faces | Background remover | Auto enhance | Speed & timelapse |
-|---|---|---|---|---|
-| ![](docs/screenshots/home.png) | ![](docs/screenshots/face-blur.png) | ![](docs/screenshots/background-remover.png) | ![](docs/screenshots/auto-enhance.png) | ![](docs/screenshots/speed.png) |
+| Home | Denoiser | Blur faces | Background remover | Auto enhance | Speed & timelapse |
+|---|---|---|---|---|---|
+| ![](docs/screenshots/home.png) | ![](docs/screenshots/denoiser.png) | ![](docs/screenshots/face-blur.png) | ![](docs/screenshots/background-remover.png) | ![](docs/screenshots/auto-enhance.png) | ![](docs/screenshots/speed.png) |
+
+The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`CREDITS.tsv`](app/src/test/resources/denoise/CREDITS.tsv)) and what the app's photo denoiser made of it.
 
 | Português (Brasil) | 简体中文 | 日本語 | Русский |
 |---|---|---|---|
@@ -51,7 +53,66 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.9.1: duplicate finder fixes
+## What's new in 1.10.0: a denoiser that keeps RAW files RAW, your own song, people and things in videos
+
+- **New tool: Denoiser** (Edit & AI). It cleans the grain from photos, camera RAW files and videos,
+  a whole batch at a time.
+  - **Strength from the file itself:** each file's own noise is measured and only that much is
+    removed. Light, Normal and Strong adjust it.
+  - **Preview:** a piece of the first photo is shown before and after, at 100 %.
+  - **Photos** keep their format (JPEG stays JPEG, PNG PNG, WebP WebP). HEIC and others Android
+    can't write become JPEG.
+  - **Videos** are cleaned on the phone's graphics chip, frame by frame together with the frames
+    before them, and saved as MP4 at their original quality.
+  - **Measured, not guessed:** on real phone noise (SIDD) the photo setting takes scenes it was
+    not tuned on from 27.7 to 33.8 dB. RAW files at real high-ISO noise levels go from 42.1 to
+    49.5 dB, videos from 28.3 to 34.3 dB. Details in `buildtools/denoise/README.md`.
+- **Detailed photos are left alone.** Measuring showed that a photo full of fine detail (grass,
+  branches, bark) can look like a noisy one to a noise meter. A straightforward denoiser would have
+  smeared those photos. The Denoiser recognises fine detail by how unevenly it is spread and holds
+  back. On clean photos full of detail the change stays invisible (33 dB or more), while noisy photos
+  are still cleaned.
+- **RAW files stay RAW** — in the Denoiser, a `.cr2` comes out as a `.cr2`:
+  - **Kept as they were:** previews, maker notes and all metadata are kept byte for byte, and only the
+    sensor data is cleaned and written back in the camera's own compression. That covers Canon CR2,
+    DNG (phones and cameras), Nikon NEF and Sony ARW, checked against LibRaw and ExifTool on 18
+    cameras' files.
+  - **Left out, with a reason:** RAW variants the app can't write back exactly (CR3, RAF, ORF, RW2,
+    Canon sRAW, lossy NEF) are left untouched, and the message says why.
+  - **Other tools:** tools that would turn a RAW photo into another format (auto enhance, watermark,
+    blur…) now leave RAW files out and say so. In a tool stack, the RAW file passes those steps
+    unchanged. Only the format tools change a RAW file's format: Convert images and the Image
+    compressor. Tools that make something new from photos (PDF, merges, prints, highlight videos)
+    still take them.
+  - **Recognised by content:** a DNG is now recognised as RAW even when its name doesn't end in
+    `.dng`, and Canon CR3 files no longer pass for videos.
+- **Your own song in the highlight video.**
+  - **Choosing it:** under Music, pick "My song" and choose any audio file on the phone.
+  - **Fitting:** the app finds the song's beat, so the cuts fall on it. It starts on the first beat
+    after any silence, repeats a short song on whole bars without repeating its ending, and plays it
+    at the level of the app's own music, quieter while your clips speak.
+  - **Accuracy:** on 200 real songs from the Free Music Archive not used to tune it, it found the same
+    tempo as two independent references (librosa and Essentia) in 80 % of the songs where those
+    agree, and double or half in 10 %. Songs without a steady beat keep the video's own rhythm.
+    "Listen" plays your song as the video will.
+- **The Gallery finds people and things in videos far better.**
+  - **More frames:** a video used to be looked at in only three frames, which on many videos were all
+    the same keyframe. Now its frames are spread over the whole video, one every 3 seconds (3 to 16),
+    each a different picture.
+  - **Measured on real videos of people** (Global Lives Project, CC BY): the people seen clearly in each video are now found in 86 % of the cases (24 of 28; before: 43 %), and things such as dogs, cars or beaches in 82 % (before: 74 %), with hardly any wrong tags.
+  - **Retried, not emptied:** a video that can't be decoded is tried again later instead of being
+    recorded as empty.
+  - **What you said stays:** existing videos are looked at again once after updating, and what you
+    said about the faces in them (names, "not this person", hidden faces) is kept.
+- **Translated**: every new text is in all ten languages, including the RAW messages and the
+  Denoiser's results.
+- **Not tried on a phone** (there is none here): the video denoiser on the graphics chip, decoding
+  your song, and the Gallery reading video frames. The arithmetic of all three is the same code the
+  measurements and tests above ran; what only a phone does (its video decoders and graphics chip) is
+  untested. On a phone the Denoiser takes from several seconds to a minute per photo, depending on its
+  size; RAW files and videos take longer.
+
+## What was new in 1.9.1: duplicate finder fixes
 
 - **Copies of turned photos are found again.** The finder compared each photo's shape using the size
   and orientation the phone's photo library reports, which some phones get the wrong way round for
@@ -513,7 +574,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 123 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 142 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -544,8 +605,16 @@ so updates install over each other; use your own key for a store release.
   1.9: every language's catalog against the code (every text translated, placeholders and plural forms
   intact, date patterns valid and complete, search words that don't clash), each language's plural
   rules and number and date formats, search in Portuguese, Chinese, Japanese and Korean, shortening
-  names by whole characters (emoji included), and auto enhance's model on real portraits.
-* `app/src/roboTest` — 66 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  names by whole characters (emoji included), and auto enhance's model on real portraits. New in
+  1.10: the RAW reader and writer on pieces of real camera files (a Pixel 4a DNG with the phone's own
+  compressed tiles, a Samsung DNG): sensor data identical to LibRaw's, unchanged data giving the
+  same file, changed data coming back exactly, lossless JPEG on the camera's own data and on extreme
+  values, and 480 damaged copies failing cleanly; the denoisers: known noise found, fine detail not
+  taken for noise, strips giving the whole picture's result, a real RAW file's noise removed without
+  moving its levels or its clipped highlights, video averaging still parts and leaving no trail
+  behind moving ones; the song code on music of known tempo (beat, start on a beat, silence skipped,
+  repeating on whole bars, level, no beat in a held chord); and the Gallery's choice of video frames.
+* `app/src/roboTest` — 73 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -567,8 +636,13 @@ so updates install over each other; use your own key for a store release.
   model writes); a pass that opens every tool from the home screen; and, new in 1.9, the home screen,
   every tool's screen and every tab opened, laid out and drawn in each of the nine other languages,
   with no English titles and no unfilled placeholders; new in 1.9.1, the duplicate finder's real scan
-  end to end on real photos (see above), and a scan that can read no photo saying so. `LMT_SHOTS=<dir>` also renders the screenshots
-  above.
+  end to end on real photos (see above), and a scan that can read no photo saying so; new in 1.10,
+  RAW files recognised by their contents, kept out of tools that would change their format (and
+  passing through tool stacks unchanged), RAW files the Denoiser can't write back or that are
+  damaged reported with the reason, picking your own song for the highlight video (its beat shown
+  and used, kept while trying the app's tunes, a cancelled pick changing nothing), and the Gallery
+  looking at only the videos again after updating, with what was said about their faces kept.
+  `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
 tested against), MediaCodec/MediaExtractor video paths (including the GPU face blur, the GPU video
