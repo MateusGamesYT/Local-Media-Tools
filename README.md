@@ -15,7 +15,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.10.0.apk`](release/LocalMediaTools-1.10.0.apk)
+**Install:** [`release/LocalMediaTools-1.10.1.apk`](release/LocalMediaTools-1.10.1.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -53,7 +53,37 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.10.0: a denoiser that keeps RAW files RAW, your own song, people and things in videos
+## What's new in 1.10.1: RAW files in every tool, and a duplicate finder that shows how far it is
+
+- **RAW files work in every tool again.** 1.10.0 left RAW photos (DNG, CR2, NEF, ARW…) out of tools
+  that would save them in another format. Now every tool takes them.
+  - **A warning first:** the four tools that save an edited copy of each photo (Auto enhance, Blur
+    faces, Lossless image optimizer, Bulk watermark) say so before starting, for example "1 RAW file
+    (CR2) will become another file type with Auto enhance: it can't be saved as CR2", with Continue
+    or Cancel. A tool stack says it for the first step that would change them, and the photo editor's
+    save sheet says it for a RAW photo. Originals are never changed.
+  - **No warning where changing the type is the point:** Convert images, the Image compressor and the
+    tools that make something new (PDFs, merges, cut-outs, prints, highlight videos). The Denoiser
+    still keeps RAW files RAW. Remove metadata still leaves them out and says why: it can't clean them
+    without re-encoding.
+- **The duplicate finder shows how far it is.**
+  - **The bar was there, but black:** since the first version, a mistake in the progress bar drew its
+    filled part black on a dark grey track. That is most likely why the finder looked stuck. Every
+    progress bar in the app had it (exports, the Gallery, highlight videos); they now fill in the
+    app's violet. A test now checks the bar's colour.
+  - **One bar for the whole scan:** looking at the photos fills the first 80 %, comparing them the
+    rest. It no longer starts over between steps, and it moves smoothly: it used to be rebuilt in
+    steps of 32 photos.
+  - **Numbers:** "1500 of 6000 photos · 20 % · about 4 minutes left". The time left counts only the
+    photos not measured in an earlier scan (those take no time), and settles instead of jumping.
+  - It says you can use the rest of the app meanwhile; the scan keeps going.
+- **Translated** into all ten languages.
+- **Not tried on a phone** (there is none here). The tests cover the warning dialog, the stack and
+  tool rules, the progress screen and its colour, and the real scan's progress on real photos (only
+  ever moving forward). How long the time left takes to appear, and how close it is, depends on the
+  phone and the library.
+
+## What was new in 1.10.0: a denoiser that keeps RAW files RAW, your own song, people and things in videos
 
 - **New tool: Denoiser** (Edit & AI). It cleans the grain from photos, camera RAW files and videos,
   a whole batch at a time.
@@ -613,7 +643,8 @@ so updates install over each other; use your own key for a store release.
   taken for noise, strips giving the whole picture's result, a real RAW file's noise removed without
   moving its levels or its clipped highlights, video averaging still parts and leaving no trail
   behind moving ones; the song code on music of known tempo (beat, start on a beat, silence skipped,
-  repeating on whole bars, level, no beat in a held chord); and the Gallery's choice of video frames.
+  repeating on whole bars, level, no beat in a held chord); the Gallery's choice of video frames;
+  and the duplicate finder's progress (the grouping's share done only moving forward, the time left).
 * `app/src/roboTest` — 73 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
@@ -637,11 +668,15 @@ so updates install over each other; use your own key for a store release.
   every tool's screen and every tab opened, laid out and drawn in each of the nine other languages,
   with no English titles and no unfilled placeholders; new in 1.9.1, the duplicate finder's real scan
   end to end on real photos (see above), and a scan that can read no photo saying so; new in 1.10,
-  RAW files recognised by their contents, kept out of tools that would change their format (and
-  passing through tool stacks unchanged), RAW files the Denoiser can't write back or that are
+  RAW files recognised by their contents, taken by every tool with a warning before the ones that
+  would save them as another type (in tool screens and stacks; Cancel starts nothing, Continue the
+  export), RAW files the Denoiser can't write back or that are
   damaged reported with the reason, picking your own song for the highlight video (its beat shown
   and used, kept while trying the app's tunes, a cancelled pick changing nothing), and the Gallery
-  looking at only the videos again after updating, with what was said about their faces kept.
+  looking at only the videos again after updating, with what was said about their faces kept; new
+  in 1.10.1, the duplicate finder's progress (one bar that moves on instead of being rebuilt, the
+  photo count, share done and time left, filled in the accent colour) and the real scan's progress
+  only ever moving forward.
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
