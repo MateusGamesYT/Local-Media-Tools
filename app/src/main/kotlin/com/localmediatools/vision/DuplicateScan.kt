@@ -87,7 +87,12 @@ class DupResultGroup(
 
 sealed class DupScanState {
     object Idle : DupScanState()
-    class Running(val done: Int, val total: Int, val phase: String) : DupScanState()
+    /**
+     * [fraction]: share of the whole scan done (looking at the photos is the first 80 %, comparing them
+     * the rest), null while it can't be told; [done] of [total] photos looked at; [leftMs]: about how
+     * long looking at the rest takes, when it can be told.
+     */
+    class Running(val phase: String, val fraction: Float?, val done: Int = 0, val total: Int = 0, val leftMs: Long? = null) : DupScanState()
     /** [unreadable]: photos whose picture couldn't be read (still checked for identical copies). */
     class Done(val groups: List<DupResultGroup>, val scanned: Int, val aiUsed: Boolean, val unreadable: Int = 0) : DupScanState()
     class Failed(val message: String) : DupScanState()
@@ -121,7 +126,7 @@ object DuplicateScanner {
     fun start(ctx: Context) {
         if (job?.isActive == true) return
         val app = ctx.applicationContext
-        _state.value = DupScanState.Running(0, 0, tr("Reading your photo library"))
+        _state.value = DupScanState.Running(tr("Reading your photo library"), null)
         job = scope.launch {
             try {
                 _state.value = scan(app)
@@ -246,31 +251,54 @@ object DuplicateScanner {
         val failures = java.util.concurrent.atomic.AtomicInteger()
         val firstError = java.util.concurrent.atomic.AtomicReference<Throwable?>(null)
         val fresh = HashMap<Long, Entry>()
+        // Photos measured before (and unchanged) take no time: the time left counts the others.
+        val known = BooleanArray(photos.size) { i -> cache[photos[i].id]?.let { it.modified == photos[i].modified && it.size == photos[i].size && (it.emb != null || !ai) } == true }
+        val toRead = known.count { !it }.coerceAtLeast(1)
+        val looked = java.util.concurrent.atomic.AtomicInteger()
+        val read = java.util.concurrent.atomic.AtomicInteger()
+        val lastReport = java.util.concurrent.atomic.AtomicLong(0)
+        val left = com.localmediatools.vision.core.TimeLeft()
+        val looking = tr("Looking at your photos")
+        // A few times a second at most; one at a time, so the count never steps back.
+        fun report(force: Boolean = false) {
+            if (!force && System.currentTimeMillis() - lastReport.get() < 200) return
+            synchronized(lastReport) {
+                val now = System.currentTimeMillis()
+                if (!force && now - lastReport.get() < 200) return
+                lastReport.set(now)
+                val d = looked.get()
+                _state.value = DupScanState.Running(looking, (0.8 * d / photos.size).toFloat(), d, photos.size, left.at(read.get().toDouble() / toRead))
+            }
+        }
+        report(force = true)
         try {
             // Thumbnails are read and measured a few at a time; the model itself is used by one at a time.
             val parallel = (cores - 1).coerceIn(1, 4)
-            var done = 0
             for (start in photos.indices step 32) {
                 if (!coroutineContext.isActive) throw kotlinx.coroutines.CancellationException()
-                _state.value = DupScanState.Running(done, photos.size, tr("Looking at your photos"))
                 val batch = (start until minOf(photos.size, start + 32)).toList()
                 coroutineScope {
                     batch.chunked((batch.size + parallel - 1) / parallel).map { part ->
                         async(Dispatchers.Default) {
                             for (i in part) {
                                 val p = photos[i]
-                                var e = cache[p.id]?.takeIf { it.modified == p.modified && it.size == p.size && (it.emb != null || !ai) }
-                                if (e == null) e = try { analyse(ctx, p, embedder) } catch (t: Throwable) {
-                                    if (failures.incrementAndGet() == 1) { firstError.set(t); android.util.Log.w("LMT", "duplicate finder: can't read ${p.name}", t) }
-                                    null
+                                var e = if (known[i]) cache[p.id] else null
+                                if (e == null) {
+                                    e = try { analyse(ctx, p, embedder) } catch (t: Throwable) {
+                                        if (failures.incrementAndGet() == 1) { firstError.set(t); android.util.Log.w("LMT", "duplicate finder: can't read ${p.name}", t) }
+                                        null
+                                    }
+                                    read.incrementAndGet()
                                 }
                                 entries[i] = e
+                                looked.incrementAndGet()
+                                report()
                             }
                         }
                     }.awaitAll()
                 }
-                done += batch.size
             }
+            report(force = true)
         } finally {
             embedder?.close()
         }
@@ -296,15 +324,28 @@ object DuplicateScanner {
         }
         saveCache(ctx, fresh)
         // Identical files: only photos with the same size are read and compared.
-        _state.value = DupScanState.Running(photos.size, photos.size, tr("Comparing"))
+        val comparing = tr("Comparing")
+        var lastCompare = 0L
+        fun compared(f: Float) {
+            val now = System.currentTimeMillis()
+            if (now - lastCompare < 200 && f < 1f) return
+            lastCompare = now
+            _state.value = DupScanState.Running(comparing, (0.8 + 0.2 * f.coerceIn(0f, 1f)).toFloat(), photos.size, photos.size)
+        }
+        compared(0f)
         val bySize = infos.groupBy { it.bytes }.filter { it.value.size > 1 }
         val digests = HashMap<Int, String>()
-        for (g in bySize.values) for (inf in g) digest(ctx, photos[inf.index].uri)?.let { digests[inf.index] = it }
+        val sameSize = bySize.values.sumOf { it.size }.coerceAtLeast(1)
+        var hashed = 0
+        for (g in bySize.values) for (inf in g) {
+            digest(ctx, photos[inf.index].uri)?.let { digests[inf.index] = it }
+            compared(0.1f * ++hashed / sameSize)
+        }
         val withDigest = infos.map { if (digests.containsKey(it.index)) PhotoInfo(it.index, it.bytes, it.width, it.height, it.dhash, it.embedding, it.grid, it.contrast, it.sharpness, it.takenMs, digests[it.index]) else it }
         val job = coroutineContext[Job]
         val features = if (embedder != null) FeatureMatcher(ctx, photos, withDigest) else null
         val groups = try {
-            Duplicates.group(withDigest, verify = features?.let { f -> { a: Int, b: Int -> f.check(a, b) } }) { job?.isActive == false }
+            Duplicates.group(withDigest, verify = features?.let { f -> { a: Int, b: Int -> f.check(a, b) } }, progress = { compared(0.1f + 0.9f * it) }) { job?.isActive == false }
         } finally { features?.release() }
         if (job?.isActive == false) throw kotlinx.coroutines.CancellationException()
         val sharp = withDigest.associate { photos[it.index].uri to it.sharpness }

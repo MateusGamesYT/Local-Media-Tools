@@ -418,7 +418,8 @@ class TextField(ctx: Context, val title: String, hint: String, initial: String, 
 /** Animated rounded progress bar. */
 class ProgressBarView(ctx: Context, private val color: Int = Palette.ACCENT) : View(ctx) {
     private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = Palette.SURFACE_3 }
-    private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+    // (Qualified: a bare `color` here would be the Paint's own, and the bar would be drawn black.)
+    private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = this@ProgressBarView.color }
     private var gradientFor = -1
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

@@ -245,6 +245,17 @@ class StackScreen(activity: MainActivity) : Screen(activity) {
 
     private fun run() {
         if (validate() != null) return
+        // RAW files a step will save as another type: said before the stack starts.
+        val warning = ToolRules.rawWarning(state.steps.map { it.tool }, selection.usable) ?: return enqueueStack()
+        android.app.AlertDialog.Builder(activity)
+            .setTitle(tr("RAW files will change type"))
+            .setMessage(warning)
+            .setPositiveButton(tr("Continue")) { _, _ -> enqueueStack() }
+            .setNegativeButton(tr("Cancel"), null)
+            .show()
+    }
+
+    private fun enqueueStack() {
         val job = StackJob(selection.usable, state.steps.toList(), state.keepInBetween)
         activity.ensureNotificationPermission {
             val wasBusy = ExportManager.state.value.busy

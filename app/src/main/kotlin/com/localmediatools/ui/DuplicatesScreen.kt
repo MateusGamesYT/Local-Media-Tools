@@ -94,7 +94,40 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
         return root
     }
 
+    /** The scan's progress views, kept while it runs so the bar moves smoothly instead of starting over. */
+    private class Progress(val root: LinearLayout, val phase: TextView, val detail: TextView, val bar: ProgressBarView)
+    private var progress: Progress? = null
+
+    private fun showProgress(s: DupScanState.Running) {
+        val p = progress?.takeIf { it.root.parent === statusCard } ?: run {
+            statusCard.removeAllViews()
+            val root = UI.vertical(ctx)
+            val phase = UI.text(ctx, "", TextStyle.SUBTITLE)
+            val detail = UI.text(ctx, "", TextStyle.BODY_2)
+            val bar = ProgressBarView(ctx)
+            root.addView(phase)
+            root.addView(detail, lp().apply { topMargin = ctx.dp(6) })
+            root.addView(bar, LinearLayout.LayoutParams(MATCH, ctx.dp(8)).apply { topMargin = ctx.dp(12) })
+            root.addView(UI.text(ctx, tr("You can use the rest of the app meanwhile; the scan keeps going."), TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(10) })
+            root.addView(UI.ghostButton(ctx, tr("Stop")) { DuplicateScanner.cancel() }, lp().apply { topMargin = ctx.dp(8) })
+            statusCard.addView(root)
+            Progress(root, phase, detail, bar).also { progress = it }
+        }
+        p.phase.text = s.phase
+        val parts = ArrayList<String>()
+        if (s.total > 0 && s.done < s.total) parts.add(trn(s.total, "{1} of {0} photo", "{1} of {0} photos", s.done))
+        if (s.fraction != null) parts.add(java.text.NumberFormat.getPercentInstance(I18n.locale).format(s.fraction.toDouble()))
+        s.leftMs?.let { ms ->
+            val min = ((ms + 30_000) / 60_000).toInt()
+            parts.add(if (min < 1) tr("less than a minute left") else trn(min, "about {0} minute left", "about {0} minutes left"))
+        }
+        p.detail.text = parts.joinToString(" · ").ifEmpty { tr("Starting…") }
+        if (s.fraction == null) p.bar.indeterminate = true else { p.bar.indeterminate = false; p.bar.setProgress(s.fraction) }
+    }
+
     private fun render(s: DupScanState) {
+        if (s is DupScanState.Running) { showProgress(s); show(null); return }
+        progress = null
         statusCard.removeAllViews()
         when (s) {
             is DupScanState.Idle -> {
@@ -105,13 +138,7 @@ class DuplicatesScreen(activity: MainActivity) : Screen(activity) {
                 partialAccessNote()
                 show(null)
             }
-            is DupScanState.Running -> {
-                statusCard.addView(UI.text(ctx, s.phase, TextStyle.SUBTITLE))
-                statusCard.addView(UI.text(ctx, if (s.total > 0) trn(s.total, "{1} of {0} photo", "{1} of {0} photos", s.done) else tr("Starting…"), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(6) })
-                statusCard.addView(ProgressBarView(ctx).apply { if (s.total > 0) setProgress(s.done.toFloat() / s.total) else indeterminate = true }, LinearLayout.LayoutParams(MATCH, ctx.dp(8)).apply { topMargin = ctx.dp(12) })
-                statusCard.addView(UI.ghostButton(ctx, tr("Stop")) { DuplicateScanner.cancel() }, lp().apply { topMargin = ctx.dp(8) })
-                show(null)
-            }
+            is DupScanState.Running -> Unit
             is DupScanState.Failed -> {
                 statusCard.addView(UI.note(ctx, tr("The scan stopped: {0}", s.message), UI.NoteKind.WARN))
                 statusCard.addView(UI.secondaryButton(ctx, tr("Try again")) { start() }, lp().apply { topMargin = ctx.dp(12) })

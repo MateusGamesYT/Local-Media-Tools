@@ -110,7 +110,10 @@ class DuplicatesTest {
         val check = FeatureCheck()
         val feats = names.map { n -> greyMat(pics.getValue(n)).let { m -> check.features(m).also { m.release() } } }
         val asked = ArrayList<String>()
-        val groups = Duplicates.group(items, verify = { a, b -> asked.add("${names[a]}~${names[b]}"); check.compare(feats[a], feats[b]) })
+        val shares = ArrayList<Float>()
+        val groups = Duplicates.group(items, verify = { a, b -> asked.add("${names[a]}~${names[b]}"); check.compare(feats[a], feats[b]) }, progress = { shares.add(it) })
+        // The progress told along the way only moves forward, and ends at all done.
+        assertTrue(shares.toString(), shares.isNotEmpty() && shares.zipWithNext().all { (a, b) -> b >= a } && shares.all { it in 0f..1f } && shares.last() == 1f)
         val named = groups.map { g -> g.members.map { names[it] }.toSet() }
         fun groupOf(n: String) = named.firstOrNull { n in it } ?: emptySet()
         // Same moments.

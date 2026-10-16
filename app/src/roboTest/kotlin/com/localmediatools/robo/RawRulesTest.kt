@@ -1,35 +1,43 @@
 package com.localmediatools.robo
 
+import android.app.AlertDialog
 import android.app.Application
+import android.os.Looper
+import android.view.View
+import android.view.ViewGroup
+import com.localmediatools.app.MainActivity
 import com.localmediatools.core.MediaKind
 import com.localmediatools.core.SniffedFormat
+import com.localmediatools.export.ExportManager
 import com.localmediatools.export.ItemOutcome
-import com.localmediatools.image.ImageOutFormat
-import com.localmediatools.tools.AutoEnhanceJob
 import com.localmediatools.tools.DenoiseJob
 import com.localmediatools.tools.DenoiseStrength
-import com.localmediatools.tools.EnhanceStrength
-import com.localmediatools.tools.OptimizeImagesJob
-import com.localmediatools.tools.StackJob
-import com.localmediatools.tools.StackStep
 import com.localmediatools.tools.ToolId
+import com.localmediatools.ui.ButtonView
+import com.localmediatools.ui.Selection
 import com.localmediatools.ui.ToolRules
+import com.localmediatools.ui.tools.ToolScreens
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowAlertDialog
 import java.io.File
+import java.time.Duration
 
 /**
- * RAW photos keep their format: only the tools made to change it (converter, compressor) or that make
- * something new from photos (PDF, merges, prints…) take them; the Denoiser writes RAW files back as
- * RAW, and leaves alone the ones it can't. (The RAW reading and writing itself is tested on real
- * camera data in RawCodecTest; OpenCV's denoising doesn't run under Robolectric.)
+ * RAW photos: every tool takes them; the ones that save an edited copy of each photo in another type
+ * say so before they start. The Denoiser writes RAW files back as RAW and leaves alone the ones it
+ * can't. (The RAW reading and writing itself is tested on real camera data in RawCodecTest; OpenCV's
+ * denoising doesn't run under Robolectric.)
  */
 @RunWith(RobolectricTestRunner::class)
 class RawRulesTest {
@@ -48,6 +56,8 @@ class RawRulesTest {
     private fun res(name: String) = RawRulesTest::class.java.getResourceAsStream("/raw/$name")!!.readBytes()
     private fun file(name: String, bytes: ByteArray) = Robo.item(app, Robo.write(inDir, name, bytes))
     private fun ascii(s: String) = s.toByteArray(Charsets.ISO_8859_1)
+    private fun idle(ms: Long = 300) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))
+    private fun all(v: View): List<View> = if (v is ViewGroup) listOf(v) + (0 until v.childCount).flatMap { all(v.getChildAt(it)) } else listOf(v)
 
     /** A Canon CR2's first bytes: a little-endian TIFF header, then "CR", version 2. */
     private val cr2Head = byteArrayOf(0x49, 0x49, 0x2A, 0, 0x10, 0, 0, 0, 0x43, 0x52, 2, 0) + ByteArray(500)
@@ -71,27 +81,74 @@ class RawRulesTest {
         }
     }
 
-    @Test fun rawPhotosKeepTheirFormatInToolsNotMadeToChangeIt() {
+    @Test fun everyPhotoToolTakesRawFiles() {
         val cr2 = file("shot.cr2", cr2Head)
-        for (t in listOf(ToolId.AUTO_ENHANCE, ToolId.WATERMARK, ToolId.OPTIMIZE_IMAGES, ToolId.MAGIC_ERASER, ToolId.FACE_BLUR, ToolId.REMOVE_METADATA)) {
-            val issue = ToolRules.issue(t, cr2)
-            assertTrue("$t: $issue", issue != null && issue.contains("keep their format") && issue.contains("CR2"))
-        }
-        for (t in listOf(ToolId.DENOISE, ToolId.CONVERT_IMAGES, ToolId.COMPRESS_IMAGES, ToolId.IMAGES_TO_PDF, ToolId.MERGE_IMAGES)) {
+        val dng = file("leaf.dng", res("sm-g960f_crop.dng"))
+        for (t in listOf(ToolId.AUTO_ENHANCE, ToolId.WATERMARK, ToolId.OPTIMIZE_IMAGES, ToolId.FACE_BLUR, ToolId.REMOVE_METADATA, ToolId.DENOISE,
+                ToolId.CONVERT_IMAGES, ToolId.COMPRESS_IMAGES, ToolId.BACKGROUND_REMOVER, ToolId.IMAGES_TO_PDF, ToolId.MERGE_IMAGES, ToolId.PRINT)) {
             assertNull(t.name, ToolRules.issue(t, cr2))
+            assertNull(t.name, ToolRules.issue(t, dng))
         }
     }
 
-    @Test fun aStackPassesRawFilesThroughStepsThatWouldChangeTheirFormat() {
+    @Test fun toolsThatSaveRawFilesAsAnotherTypeSaySoBeforeStarting() {
+        val cr2 = file("shot.cr2", cr2Head)
         val dng = file("leaf.dng", res("sm-g960f_crop.dng"))
-        val results = Robo.runJob(app, StackJob(listOf(dng), listOf(
-            StackStep(ToolId.AUTO_ENHANCE, "test", AutoEnhanceJob(emptyList(), EnhanceStrength.NATURAL)),
-            StackStep(ToolId.OPTIMIZE_IMAGES, "test", OptimizeImagesJob(emptyList(), ImageOutFormat.PNG, false)),
-        ), keepInBetween = false))
-        val r = results.single()
-        assertTrue(r.toString(), r.message != null && r.message!!.contains("left this RAW file as it is"))
-        // Nothing was written in another format.
-        assertTrue(outputs.committed.map { it.name }.toString(), outputs.committed.none { it.name.endsWith(".png") || it.name.endsWith(".jpg") })
+        val jpg = file("beach.jpg", Robo.encode(android.graphics.Bitmap.createBitmap(64, 48, android.graphics.Bitmap.Config.ARGB_8888), android.graphics.Bitmap.CompressFormat.JPEG))
+        for (t in listOf(ToolId.AUTO_ENHANCE, ToolId.WATERMARK, ToolId.OPTIMIZE_IMAGES, ToolId.FACE_BLUR)) {
+            val one = ToolRules.rawWarning(t, listOf(cr2, jpg))
+            assertTrue("$t: $one", one != null && one.startsWith("1 RAW file (CR2) will become another file type with ${t.title}"))
+            val two = ToolRules.rawWarning(t, listOf(dng, jpg, cr2))
+            assertTrue("$t: $two", two != null && two.startsWith("2 RAW files (CR2, DNG)") && two.contains("only the Denoiser keeps RAW files as RAW"))
+            assertNull("$t without RAW files", ToolRules.rawWarning(t, listOf(jpg)))
+        }
+        // The Denoiser keeps them RAW, Remove metadata leaves them out with its reason, the format tools
+        // are there to change the format, and the others make something new from photos.
+        for (t in listOf(ToolId.DENOISE, ToolId.REMOVE_METADATA, ToolId.CONVERT_IMAGES, ToolId.COMPRESS_IMAGES, ToolId.BACKGROUND_REMOVER,
+                ToolId.IMAGES_TO_PDF, ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.PRINT, ToolId.HIGHLIGHT_VIDEO)) {
+            assertNull(t.name, ToolRules.rawWarning(t, listOf(cr2, jpg)))
+        }
+        // A stack: said for the first step that changes the RAW files, if it is one of those tools.
+        val stack = ToolRules.rawWarning(listOf(ToolId.DENOISE, ToolId.COMPRESS_VIDEO, ToolId.AUTO_ENHANCE, ToolId.WATERMARK), listOf(cr2))
+        assertTrue(stack, stack != null && stack.contains("with ${ToolId.AUTO_ENHANCE.title}"))
+        assertNull(ToolRules.rawWarning(listOf(ToolId.CONVERT_IMAGES, ToolId.AUTO_ENHANCE), listOf(cr2)))
+        assertNull(ToolRules.rawWarning(listOf(ToolId.IMAGES_TO_PDF, ToolId.WATERMARK), listOf(cr2)))
+        assertNull(ToolRules.rawWarning(listOf(ToolId.DENOISE), listOf(cr2)))
+        assertNull(ToolRules.rawWarning(listOf(ToolId.AUTO_ENHANCE), listOf(jpg)))
+    }
+
+    /** The warning on the tool screen: Cancel starts nothing, Continue starts the export. */
+    @Test fun theWarningComesBeforeTheExportStarts() {
+        Robo.resetUiState()
+        shadowOf(app).grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
+        idle()
+        val t = ToolId.AUTO_ENHANCE
+        val dng = file("leaf.dng", res("sm-g960f_crop.dng"))
+        val jpg = file("beach.jpg", Robo.encode(android.graphics.Bitmap.createBitmap(64, 48, android.graphics.Bitmap.Config.ARGB_8888).apply { eraseColor(0xFF3366AA.toInt()) }, android.graphics.Bitmap.CompressFormat.JPEG))
+        val selection = Selection.of(t)
+        selection.clear(); selection.add(listOf(dng, jpg))
+        a.navigator.push(ToolScreens.create(a, t)); idle()
+        val before = ExportManager.state.value.let { it.history.size + it.queued.size + (if (it.active != null) 1 else 0) }
+        fun start() = all(a.navigator.top!!.view).filterIsInstance<ButtonView>().first { it.label == "Start export" }.performClick()
+        start(); idle()
+        val dialog = ShadowAlertDialog.getLatestAlertDialog()
+        assertNotNull("a warning", dialog)
+        assertEquals("RAW files will change type", shadowOf(dialog).title.toString())
+        val message = shadowOf(dialog).message.toString()
+        assertTrue(message, message.startsWith("1 RAW file (DNG) will become another file type with ${t.title}"))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).performClick(); idle()
+        assertEquals("Cancel starts nothing", before, ExportManager.state.value.let { it.history.size + it.queued.size + (if (it.active != null) 1 else 0) })
+        start(); idle()
+        ShadowAlertDialog.getLatestAlertDialog().getButton(AlertDialog.BUTTON_POSITIVE).performClick(); idle()
+        assertNotNull("Continue starts the export", ExportManager.state.value.latestFor(t))
+        val deadline = System.currentTimeMillis() + 60_000
+        while (ExportManager.state.value.latestFor(t)?.status?.finished != true && System.currentTimeMillis() < deadline) { idle(100); Thread.sleep(50) }
+        val snap = ExportManager.state.value.latestFor(t)!!
+        assertTrue(snap.status.toString(), snap.status.finished)
+        // Whatever became of the RAW file, nothing is saved as a DNG.
+        assertTrue(outputs.committed.map { it.name }.toString(), outputs.committed.none { it.name.endsWith(".dng") })
+        selection.clear()
     }
 
     @Test fun theDenoiserLeavesRawFilesItCantWriteBackAndSaysWhy() {

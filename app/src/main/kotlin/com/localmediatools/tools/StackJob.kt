@@ -156,13 +156,7 @@ class StackJob(inputs: List<MediaItem>, val steps: List<StackStep>, private val 
         val last = k == steps.lastIndex
         val label = tr("Step {0} ({1})", k + 1, step.tool.title)
         val accepted = flow.filter { ToolRules.issue(step.tool, it.item) == null }
-        val passing = flow.filter { f -> accepted.none { it === f } }.map { f ->
-            f.note(when {
-                f.item.format.isRaw && FlowKind.of(f.item) == FlowKind.IMAGE && step.tool.section != ToolSection.VIDEO ->
-                    tr("{0} left this RAW file as it is: {1}", label, ToolRules.issue(step.tool, f.item) ?: "")
-                else -> FlowKind.of(f.item)?.let { k -> tr("{0} doesn't work on {1}, so it was skipped.", label, k.noun) } ?: tr("{0} doesn't work on this kind of file, so it was skipped.", label)
-            })
-        }
+        val passing = flow.filter { f -> accepted.none { it === f } }.map { it.note(FlowKind.of(it.item)?.let { k -> tr("{0} doesn't work on {1}, so it was skipped.", label, k.noun) } ?: tr("{0} doesn't work on this kind of file, so it was skipped.", label)) }
         val min = ToolRules.minItems(step.tool)
         if (accepted.isEmpty()) return passing
         if (accepted.size < min) return passing + accepted.map { it.note(trn(min, "{1} needs at least {0} file, so it was skipped.", "{1} needs at least {0} files, so it was skipped.", label)) }

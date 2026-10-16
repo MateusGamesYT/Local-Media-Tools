@@ -560,6 +560,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         }, lp().apply { topMargin = ctx.dp(12) })
         q.visibility = if (format.lossless) View.GONE else View.VISIBLE
         body.addView(q, lp().apply { topMargin = ctx.dp(12) })
+        if (item.format.isRaw) body.addView(UI.note(ctx, tr("This is a {0} RAW photo: the copy is saved in the format chosen above, not as {0}. The original stays as it is.", com.localmediatools.ui.ToolRules.rawLabel(item)), UI.NoteKind.WARN), lp().apply { topMargin = ctx.dp(10) })
         if (session.hasAlpha) body.addView(UI.note(ctx, tr("This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
         body.addView(UI.note(ctx, tr("A new copy is saved to {0}. The original is not changed. Location and camera details are not copied.", tool.outputPath), UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(10) })
         AlertDialog.Builder(activity)

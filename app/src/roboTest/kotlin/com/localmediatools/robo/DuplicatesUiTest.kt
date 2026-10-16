@@ -17,6 +17,7 @@ import com.localmediatools.ui.DuplicateReviewScreen
 import com.localmediatools.ui.DuplicatesScreen
 import com.localmediatools.ui.MainShell
 import com.localmediatools.ui.PhotoCell
+import com.localmediatools.ui.ProgressBarView
 import com.localmediatools.ui.ToggleRow
 import com.localmediatools.ui.gallery.FaceSheet
 import com.localmediatools.vision.DupResultGroup
@@ -28,6 +29,7 @@ import com.localmediatools.vision.core.DupKind
 import com.localmediatools.vision.core.Duplicates
 import com.localmediatools.vision.core.KeepRules
 import com.localmediatools.vision.core.PhotoInfo
+import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -310,8 +312,17 @@ class DuplicatesUiTest {
             if (s < 1f) Bitmap.createScaledBitmap(b, Math.round(b.width * s), Math.round(b.height * s), true) else b
         }
         DuplicateScanner.embeddings = { p -> emb[p.name.removeSuffix(".jpg").removeSuffix(" (1)")] }
+        val seen = java.util.Collections.synchronizedList(ArrayList<DupScanState>())
+        val watcher = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Unconfined).launch { DuplicateScanner.state.collect { seen.add(it) } }
         DuplicateScanner.start(app)
         waitFor("the scan", { DuplicateScanner.state.value.toString() }) { DuplicateScanner.state.value.let { it is DupScanState.Done || it is DupScanState.Failed } }
+        watcher.cancel()
+        // The progress on the way: the photos looked at, then the comparing, only ever moving forward.
+        val running = synchronized(seen) { seen.filterIsInstance<DupScanState.Running>() }
+        val shares = running.mapNotNull { it.fraction }
+        assertTrue(shares.toString(), shares.zipWithNext().all { (a, b) -> b >= a } && shares.last() >= 0.8f)
+        assertTrue(running.map { it.phase }.toString(), running.any { it.phase == "Looking at your photos" } && running.any { it.phase == "Comparing" })
+        assertTrue(running.map { it.done }.toString(), running.filter { it.phase == "Looking at your photos" }.map { it.done }.zipWithNext().all { (a, b) -> b >= a })
         val s = DuplicateScanner.state.value as? DupScanState.Done ?: throw AssertionError((DuplicateScanner.state.value as DupScanState.Failed).message)
         assertEquals(photos.size, s.scanned)
         assertTrue(s.aiUsed)
@@ -355,6 +366,44 @@ class DuplicatesUiTest {
         DuplicateScanner.start(app)
         waitFor("the second scan") { DuplicateScanner.state.value is DupScanState.Done }
         assertEquals(named.toSet(), (DuplicateScanner.state.value as DupScanState.Done).groups.map { g -> g.photos.map { it.name.removeSuffix(".jpg") }.toSet() }.toSet())
+    }
+
+    /**
+     * While the scan runs: one bar for the whole scan that moves on (the same view, not built anew at
+     * every step), how many photos have been looked at, the share done and about how long is left.
+     */
+    @Test fun theScanShowsHowFarItHasCome() {
+        val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
+        idle()
+        DuplicateScanner.show(DupScanState.Running("Reading your photo library", null))
+        a.navigator.push(DuplicatesScreen(a)); idle(800)
+        fun bars() = all(a.navigator.top!!.view).filterIsInstance<ProgressBarView>()
+        val bar = bars().single()
+        assertTrue(bar.indeterminate)
+        assertTrue(texts(a).toString(), "Reading your photo library" in texts(a))
+        DuplicateScanner.show(DupScanState.Running("Looking at your photos", 0.2f, 1500, 6000, 4 * 60_000L)); idle()
+        var t = texts(a)
+        assertTrue(t.toString(), "Looking at your photos" in t && "1500 of 6000 photos · 20% · about 4 minutes left" in t)
+        assertTrue(t.toString(), "You can use the rest of the app meanwhile; the scan keeps going." in t)
+        assertSame("the same bar moves on", bar, bars().single())
+        assertFalse(bar.indeterminate)
+        assertEquals("20 percent", bar.contentDescription)
+        // Filled in the app's accent gradient (it used to come out black, hardly visible on the dark track).
+        assertTrue("laid out", bar.width > 0 && bar.height > 0)
+        val drawn = Bitmap.createBitmap(bar.width, bar.height, Bitmap.Config.ARGB_8888).also { bar.draw(Canvas(it)) }
+        val px = drawn.getPixel(bar.width / 20, bar.height / 2)
+        assertTrue(Integer.toHexString(px), android.graphics.Color.blue(px) > 200 && android.graphics.Color.red(px) in 90..160)
+        shotIfAsked(a, "duplicates_progress")
+        DuplicateScanner.show(DupScanState.Running("Looking at your photos", 0.7f, 5200, 6000, 20_000L)); idle()
+        t = texts(a)
+        assertTrue(t.toString(), "5200 of 6000 photos · 70% · less than a minute left" in t)
+        DuplicateScanner.show(DupScanState.Running("Comparing", 0.9f, 6000, 6000)); idle()
+        t = texts(a)
+        assertTrue(t.toString(), "Comparing" in t && "90%" in t)
+        assertSame(bar, bars().single())
+        assertEquals("90 percent", bar.contentDescription)
+        // Stop is there all along.
+        assertTrue(all(a.navigator.top!!.view).filterIsInstance<ButtonView>().any { it.label == "Stop" })
     }
 
     /** When no photo can be read the scan says so, instead of "no duplicates". */

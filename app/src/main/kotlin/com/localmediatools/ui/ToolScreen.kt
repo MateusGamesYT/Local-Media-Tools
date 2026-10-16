@@ -271,6 +271,17 @@ abstract class ToolScreen(activity: MainActivity, val tool: ToolId) : Screen(act
 
     private fun start() {
         if (validate() != null) return
+        // RAW files this tool will save as another type: said before anything starts.
+        val warning = ToolRules.rawWarning(tool, itemsForJob()) ?: return enqueueJob()
+        android.app.AlertDialog.Builder(activity)
+            .setTitle(tr("RAW files will change type"))
+            .setMessage(warning)
+            .setPositiveButton(tr("Continue")) { _, _ -> enqueueJob() }
+            .setNegativeButton(tr("Cancel"), null)
+            .show()
+    }
+
+    private fun enqueueJob() {
         val job = try { createJob(itemsForJob()) } catch (e: IllegalArgumentException) {
             Toast.makeText(ctx, e.message ?: tr("Check the options"), Toast.LENGTH_LONG).show(); return
         }

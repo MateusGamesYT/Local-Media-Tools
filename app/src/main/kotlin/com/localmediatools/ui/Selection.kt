@@ -124,22 +124,51 @@ object ToolRules {
     fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS)
 
     /**
-     * Tools that may take a camera RAW file (DNG, CR2, NEF, ARW…). The denoiser writes RAW back in
-     * its own format; the others exist to make something else from a photo: a JPEG, PNG or WebP
-     * (convert, compress), a cut-out, a combined picture, a PDF, a print, a film. Every other photo
-     * tool would have to save a RAW file as another format, so it leaves RAW files alone.
+     * Tools that save an edited copy of each photo, in a format Android can write: a RAW photo's copy
+     * can't be RAW, which [rawWarning] says before they start. The others keep RAW files RAW (the
+     * Denoiser), leave them out with a reason (Remove metadata), exist to change the format (Convert
+     * images, Image compressor) or make something new from photos (a cut-out, a merge, a PDF, a print,
+     * a film).
      */
-    private val takesRaw = setOf(
-        ToolId.DENOISE, ToolId.CONVERT_IMAGES, ToolId.COMPRESS_IMAGES, ToolId.BACKGROUND_REMOVER, ToolId.MERGE_IMAGES,
-        ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.PRINT, ToolId.HIGHLIGHT_VIDEO, ToolId.TOOL_STACK,
-    )
+    private val rawBecomesAnotherType = setOf(ToolId.AUTO_ENHANCE, ToolId.FACE_BLUR, ToolId.OPTIMIZE_IMAGES, ToolId.WATERMARK)
+
+    /** The RAW files among [items], and their formats ("CR2, DNG"). */
+    private fun rawOf(items: List<MediaItem>): Pair<Int, String>? {
+        val raw = items.filter { it.format.isRaw }
+        if (raw.isEmpty()) return null
+        return raw.size to raw.map { rawLabel(it) }.distinct().sorted().joinToString(", ")
+    }
+
+    /** What to tell the user before [t] runs on [items] when RAW files among them will become another type; null when none will. */
+    fun rawWarning(t: ToolId, items: List<MediaItem>): String? {
+        if (t !in rawBecomesAnotherType) return null
+        val (n, labels) = rawOf(items) ?: return null
+        return rawMessage(n, labels, t.title)
+    }
+
+    /**
+     * Like [rawWarning] for a stack: said when the first step that changes the RAW files is one of
+     * those tools. Steps that keep them RAW (Denoiser), leave them out (Remove metadata) or don't take
+     * photos are passed over; after a format tool or a tool that makes something new, the files are no
+     * longer RAW photos.
+     */
+    fun rawWarning(steps: List<ToolId>, items: List<MediaItem>): String? {
+        val (n, labels) = rawOf(items) ?: return null
+        for (t in steps) {
+            if (t in rawBecomesAnotherType) return rawMessage(n, labels, t.title)
+            if (t == ToolId.DENOISE || t == ToolId.REMOVE_METADATA || pickKind(t) in setOf(PickKind.VIDEOS, PickKind.GIFS, PickKind.PDFS)) continue
+            return null
+        }
+        return null
+    }
+
+    private fun rawMessage(n: Int, labels: String, tool: String) =
+        trn(n, "{0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.",
+            "{0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.", labels, tool)
 
     /** Null when the item can be processed by [t], otherwise a short reason. */
     fun issue(t: ToolId, item: MediaItem): String? {
         item.readError?.let { return it }
-        if (item.format.isRaw && t !in takesRaw) {
-            return tr("RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).", t.title, rawLabel(item))
-        }
         return when (pickKind(t)) {
             PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else tr("Not a video file")
             PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else tr("Not a GIF file")

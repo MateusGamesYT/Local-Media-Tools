@@ -160,6 +160,8 @@ object Duplicates {
         items: List<PhotoInfo>,
         verify: ((Int, Int) -> Check?)? = null,
         threads: Int = Runtime.getRuntime().availableProcessors().coerceIn(1, 8),
+        /** Share of the work done (0..1), now and then: pairs found (first tenth), then pairs checked. */
+        progress: (Float) -> Unit = {},
         cancelled: () -> Boolean = { false },
     ): List<DupGroup> {
         val n = items.size
@@ -171,15 +173,18 @@ object Duplicates {
             .filter { it.size > 1 }.forEach { g -> for (a in g.indices) for (b in a + 1 until g.size) links[key(g[a], g[b])] = DupKind.IDENTICAL to 3f }
         // 2. Candidate pairs, then the rules.
         val candidates = candidates(items, threads, cancelled) ?: return emptyList()
+        progress(0.1f)
         val checks = HashMap<Long, Check?>()
         fun check(i: Int, j: Int): Check? = if (verify == null) null else checks.getOrPut(key(i, j)) { verify(i, j) }
         var done = 0
         for (pair in candidates) {
             if (++done % 512 == 0 && cancelled()) return emptyList()
+            if (done % 64 == 0) progress(0.1f + 0.9f * done / candidates.size)
             val i = (pair / n).toInt(); val j = (pair % n).toInt()
             if (links.containsKey(pair)) continue
             relation(items[i], items[j]) { inl, cover -> check(i, j)?.let { it.inliers >= inl && it.cover >= cover } ?: false }?.let { links[pair] = it }
         }
+        progress(1f)
         // 3. Average linkage, strongest links first.
         val parent = IntArray(n) { it }
         val members = HashMap<Int, MutableList<Int>>()
