@@ -15,7 +15,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.10.1.apk`](release/LocalMediaTools-1.10.1.apk)
+**Install:** [`release/LocalMediaTools-1.10.2.apk`](release/LocalMediaTools-1.10.2.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -53,7 +53,31 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.10.1: RAW files in every tool, and a duplicate finder that shows how far it is
+## What's new in 1.10.2: RAW photos become lossless PNGs, and Remove metadata cleans them
+
+- **Lossless PNG for RAW photos.** A tool that isn't made for converting can't save its result of a
+  RAW photo (DNG, CR2, NEF, ARW…) as RAW. It now saves it as a lossless PNG instead of a JPEG, so
+  nothing of the picture is lost to compression. This covers Auto enhance, Blur faces, Bulk watermark,
+  Remove metadata, the Lossless image optimizer (even when set to WebP) and the Background remover
+  (also on a plain colour). The photo editor offers PNG first for a RAW photo; you can still pick
+  another format. Convert images and the Image compressor keep the format you choose, since
+  converting is what they are for.
+- **Remove metadata now takes RAW files.** It can't clean a RAW file in its own format, so it makes a
+  clean PNG of the picture alone, upright, with none of the file's metadata (location, camera, dates
+  and the rest). Before, it left RAW files out.
+- **The warning says what happens:** "1 RAW file (CR2) will be saved as a lossless PNG by Auto
+  enhance: it can't be saved as CR2", with Continue or Cancel, now for Remove metadata too, and in
+  tool stacks. Originals are never changed.
+- **Mind the size:** on the app's 24 real test photos a PNG took 0.5–2 bytes per pixel (median 1.1).
+  For a 24 MP photo that is about 13–49 MB, often as much as the RAW file or more.
+- **Tested on a real phone RAW file** (a piece of a Samsung Galaxy S9 DNG, under the Android test
+  runtime):
+  Remove metadata's PNG has exactly the pixels Android decodes from the DNG, turned upright as the
+  file says, with no metadata in it. Auto enhance, Bulk watermark and the optimizer set to WebP all
+  save PNGs. Not tried on a phone.
+- **Translated** into all ten languages.
+
+## What was new in 1.10.1: RAW files in every tool, and a duplicate finder that shows how far it is
 
 - **RAW files work in every tool again.** 1.10.0 left RAW photos (DNG, CR2, NEF, ARW…) out of tools
   that would save them in another format. Now every tool takes them.
@@ -563,7 +587,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Extract PDF pages | `1-3, 5, 8-` into one PDF or one per page | `Documents/LocalMediaTools/PDF` |
 | | PDF scanner | Camera and gallery pages, A4 | `Documents/LocalMediaTools/PDF` |
 | Print | Print | Photos and PDFs on AirPrint / Mopria / IPP Everywhere printers on the Wi-Fi: paper size and type, borderless, 1–9 per sheet, colour, quality, copies, preview | — (prints) |
-| Privacy & audio | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos | `Pictures/…/Clean`, `Movies/…/Clean` |
+| Privacy & audio | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos; RAW photos as clean lossless PNGs | `Pictures/…/Clean`, `Movies/…/Clean` |
 | | Extract audio | AAC track to M4A without re-encoding | `Music/LocalMediaTools/Extracted Audio` |
 
 Exports run in a foreground service with progress notifications and one queue for the whole app.
@@ -676,7 +700,8 @@ so updates install over each other; use your own key for a store release.
   looking at only the videos again after updating, with what was said about their faces kept; new
   in 1.10.1, the duplicate finder's progress (one bar that moves on instead of being rebuilt, the
   photo count, share done and time left, filled in the accent colour) and the real scan's progress
-  only ever moving forward.
+  only ever moving forward; new in 1.10.2, a real phone DNG through Remove metadata (a lossless,
+  upright PNG with the decoded pixels and no metadata), Bulk watermark and the optimizer (PNGs).
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
