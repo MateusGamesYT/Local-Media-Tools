@@ -150,7 +150,21 @@ object ImagePipeline {
     fun encodeBitmap(bmp0: Bitmap, spec: EncodeSpec, out: OutputStream) {
         var bmp = bmp0
         when (spec.format) {
-            ImageOutFormat.JPEG -> {
+            // Full quality goes through the app's own writer: Android's encoder halves the colour resolution.
+            ImageOutFormat.JPEG -> if (spec.quality >= 100) {
+                val w = bmp.width; val h = bmp.height
+                val jw = JpegWriter(out, w, h, 100, background = spec.background)
+                val rows = maxOf(1, minOf(h, (1 shl 20) / maxOf(1, w)))
+                val px = IntArray(w * rows)
+                var y = 0
+                while (y < h) {
+                    val n = minOf(rows, h - y)
+                    bmp.getPixels(px, 0, w, 0, y, w, n)
+                    jw.writeRows(px, 0, w, n)
+                    y += n
+                }
+                jw.finish()
+            } else {
                 val flat = BitmapOps.flatten(bmp, spec.background, recycleSource = false)
                 try {
                     if (!flat.compress(Bitmap.CompressFormat.JPEG, spec.quality.coerceIn(1, 100), out)) throw UserFacingException(tr("The JPEG encoder failed."))

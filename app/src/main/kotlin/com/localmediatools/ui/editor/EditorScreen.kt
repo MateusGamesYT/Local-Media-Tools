@@ -540,8 +540,7 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
 
     // ------------------------------------------------------------------ saving & leaving
     private fun defaultFormat(): ImageOutFormat = when {
-        // A RAW photo can't be saved as RAW: lossless PNG unless you choose otherwise.
-        item.format.isRaw || session.hasAlpha || item.format == SniffedFormat.PNG -> ImageOutFormat.PNG
+        session.hasAlpha || item.format == SniffedFormat.PNG -> ImageOutFormat.PNG
         item.format == SniffedFormat.WEBP -> ImageOutFormat.WEBP
         else -> ImageOutFormat.JPEG
     }
@@ -550,7 +549,8 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
         if (!loaded) return
         session.live?.let { s -> scope.launch { withContext(session.worker) { session.commit(s) } } }
         var format = defaultFormat()
-        var quality = 92
+        // A RAW photo's copy starts at full quality; the slider is yours to move.
+        var quality = if (item.format.isRaw) com.localmediatools.tools.RawFallback.JPEG_QUALITY else 92
         val body = UI.vertical(ctx, 20, 8)
         val plan = session.plan(session.current)
         body.addView(UI.text(ctx, "${plan.outW} × ${plan.outH} px · " + tr("full resolution"), TextStyle.BODY_2))

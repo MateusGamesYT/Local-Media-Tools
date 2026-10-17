@@ -73,7 +73,7 @@ class DenoiseScreen(a: MainActivity) : ToolScreen(a, ToolId.DENOISE) {
         container.addView(ChoiceGroup(ctx, DenoiseStrength.entries, { it.label }, DenoisePrefs.strength) { DenoisePrefs.strength = it; key = null; onSelectionChanged() }, lp().apply { topMargin = ctx.dp(10) })
         container.addView(UI.text(ctx, tr("Normal removes as much noise as each file has; Light keeps more texture, Strong smooths further."), TextStyle.CAPTION, Palette.TEXT_3), lp().apply { topMargin = ctx.dp(6) })
         container.addView(UI.note(ctx, tr("Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
-        container.addView(UI.note(ctx, tr("RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are."), UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(10) })
+        container.addView(UI.note(ctx, tr("RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are cleaned as pictures and saved like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts."), UI.NoteKind.TIP), lp().apply { topMargin = ctx.dp(10) })
         onSelectionChanged()
     }
 

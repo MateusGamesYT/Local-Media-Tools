@@ -57,15 +57,18 @@ enum class DenoiseStrength(val value: Float) {
  * PNG PNG, WebP WebP; RAW files stay RAW (the sensor data is cleaned and written back into the same
  * file structure, everything else byte for byte); videos become H.264 MP4 at the original's
  * quality. Formats Android can't write (HEIC, AVIF, TIFF…) are saved as JPEG (PNG with transparency).
+ * RAW files this app can't write back are cleaned as pictures and take the other files' kind at
+ * full quality ([RawFallback]).
  */
 class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength) : ExportJob(ToolId.DENOISE, inputs) {
     override val title = trn(inputs.size, "Denoising {0} file", "Denoising {0} files")
 
     override suspend fun run(ctx: JobContext) {
+        val rawFormat = RawFallback.format(tool, inputs)
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             when {
                 item.kind == MediaKind.VIDEO -> video(ctx, index, item)
-                item.format.isRaw -> raw(ctx, index, item)
+                item.format.isRaw -> raw(ctx, index, item, rawFormat)
                 else -> photo(ctx, index, item)
             }
         }
@@ -79,9 +82,10 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
         else -> tr("strong noise")
     }
 
-    private fun photo(ctx: JobContext, index: Int, item: MediaItem): ItemResult {
-        OpenCvLoader.ensure()
+    /** [raw]: for a RAW file that can't be written back, the format it takes and the note saying so ([RawFallback]). */
+    private fun photo(ctx: JobContext, index: Int, item: MediaItem, raw: Pair<ImageOutFormat, String>? = null): ItemResult {
         ImageSource.open(ctx.app, item).use { src ->
+            OpenCvLoader.ensure()
             val w = src.width; val h = src.height
             // Read in bands of rows (or cut from one full decode, for formats that can't be read in pieces).
             if (!src.canServeRegions(ctx.memoryBudget())) throw UserFacingException(tr("This {0} image is too large to process in pieces with the memory available.", src.format.label))
@@ -89,12 +93,12 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
             val noise = measure(src)
             val s = PhotoDenoiser.strengthFor(noise, strength.value)
             val alpha = src.preview(256).let { b -> try { com.localmediatools.image.BitmapOps.hasTransparency(b) } finally { b.recycle() } }
-            val (format, note) = outputFormat(ctx, item, src, alpha)
+            val (format, note) = raw ?: outputFormat(ctx, item, src, alpha)
             ctx.unitProgress(index, 0.05)
             ctx.status(tr("Removing noise"), item.name)
             val (out, _) = Outputs.produce(ctx, ToolId.DENOISE.area, "${item.baseName}_denoised.${format.ext}", format.mime) { pending ->
                 CountingStream(pending.openStream().buffered(1 shl 16)).use { os ->
-                    render(ctx, src, w, h, s, format, alpha, os) { f -> ctx.unitProgress(index, 0.05 + 0.95 * f) }
+                    render(ctx, src, w, h, s, format, alpha, if (raw != null) RawFallback.JPEG_QUALITY else 95, os) { f -> ctx.unitProgress(index, 0.05 + 0.95 * f) }
                 }
                 ImagePipeline.verify(ctx.app, pending, w, h)
             }
@@ -139,11 +143,11 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
         }
     }
 
-    private fun render(ctx: JobContext, src: ImageSource, w: Int, h: Int, s: PhotoDenoiser.Strength, format: ImageOutFormat, alpha: Boolean, os: java.io.OutputStream, progress: (Double) -> Unit) {
+    private fun render(ctx: JobContext, src: ImageSource, w: Int, h: Int, s: PhotoDenoiser.Strength, format: ImageOutFormat, alpha: Boolean, quality: Int, os: java.io.OutputStream, progress: (Double) -> Unit) {
         val m = PhotoDenoiser.MARGIN
         val rows = max(16, min(256, (ctx.memoryBudget() / 4 / max(1, w * 16)).toInt()))
         val hasAlpha = format.supportsAlpha && alpha
-        val enc = if (format.streamable) ImagePipeline.stripEncoder(EncodeSpec(format, 95), w, h, hasAlpha, os) else null
+        val enc = if (format.streamable) ImagePipeline.stripEncoder(EncodeSpec(format, quality), w, h, hasAlpha, os) else null
         val target = if (enc == null) Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888) else null
         try {
             val out = IntArray(w * rows)
@@ -159,12 +163,13 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
                 progress(y1.toDouble() / h)
                 y0 = y1
             }
-            if (enc != null) enc.finish() else ImagePipeline.encodeBitmap(target!!, EncodeSpec(format, 95), os)
+            if (enc != null) enc.finish() else ImagePipeline.encodeBitmap(target!!, EncodeSpec(format, quality), os)
         } finally { target?.recycle() }
     }
 
     // ------------------------------------------------------------------ RAW
-    private fun raw(ctx: JobContext, index: Int, item: MediaItem): ItemResult {
+    /** A RAW file cleaned in its own format; one this app can't write back is cleaned as a picture and saved as [rawFormat]. */
+    private fun raw(ctx: JobContext, index: Int, item: MediaItem, rawFormat: ImageOutFormat): ItemResult {
         val ext = item.name.substringAfterLast('.', "").ifBlank { item.format.label.lowercase() }
         val label = ToolRules.rawLabel(item)
         val pfd = ctx.app.contentResolver.openFileDescriptor(item.uri, "r") ?: throw UserFacingException(tr("The file can't be opened."))
@@ -172,7 +177,7 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
             FileInputStream(pfd.fileDescriptor).channel.use { ch ->
                 val src: ByteSource = ChannelSource(ch)
                 val codec = try { RawFiles.open(src) } catch (e: RawUnsupportedException) {
-                    throw SkipItemException(unsupported(label, e))
+                    return photo(ctx, index, item, rawFormat to RawFallback.note(rawFormat, item, e.shown))
                 } catch (e: RawFormatException) {
                     throw UserFacingException(damaged(label))
                 }
@@ -184,7 +189,7 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
                 if (need > free) throw SkipItemException(tr("This {0} file needs about {1} of memory, more than is free right now. Close other apps and try again.", label, Format.bytes(need)))
                 ctx.status(tr("Reading the sensor data"), item.name)
                 val m = try { codec.decode() } catch (e: RawUnsupportedException) {
-                    throw SkipItemException(unsupported(label, e))
+                    return photo(ctx, index, item, rawFormat to RawFallback.note(rawFormat, item, e.shown))
                 } catch (e: RawFormatException) {
                     throw UserFacingException(damaged(label))
                 }
@@ -195,7 +200,7 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
                 if (!r.changed) throw SkipItemException(tr("The noise in this file couldn't be measured, so it was left as it is."))
                 ctx.status(tr("Writing the {0} file", label), item.name)
                 val patches = try { codec.encode(m) } catch (e: RawUnsupportedException) {
-                    throw SkipItemException(unsupported(label, e))
+                    return photo(ctx, index, item, rawFormat to RawFallback.note(rawFormat, item, e.shown))
                 }
                 // Written to a private file first and read back: the cleaned sensor data must come out as written.
                 val tmp = File(Outputs.tempDir(ctx), "raw-$index.$ext")
@@ -218,10 +223,6 @@ class DenoiseJob(inputs: List<MediaItem>, private val strength: DenoiseStrength)
             }
         }
     }
-
-    private fun unsupported(label: String, e: RawUnsupportedException) = e.shown?.let {
-        tr("This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.", label, it)
-    } ?: tr("This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.", label)
 
     private fun damaged(label: String) = tr("This {0} file looks damaged, so it was left as it is.", label)
 

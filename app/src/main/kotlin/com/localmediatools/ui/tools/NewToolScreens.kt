@@ -50,10 +50,10 @@ class RemoveMetadataScreen(a: MainActivity) : ToolScreen(a, ToolId.REMOVE_METADA
         container.addView(UI.text(ctx, tr("GPS location · camera make, model and serial number · dates · software · author · comments · XMP/IPTC · hidden thumbnails and extra images (depth, motion, HDR data)"), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
         container.addView(UI.text(ctx, tr("Kept"), TextStyle.SUBTITLE), lp().apply { topMargin = ctx.dp(14) })
         container.addView(UI.text(ctx, tr("The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(4) })
-        container.addView(UI.note(ctx, tr("Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata)."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
+        container.addView(UI.note(ctx, tr("Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, upright copy like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata)."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(14) })
     }
 
-    override fun outputNaming() = tr("name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies")
+    override fun outputNaming() = tr("name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png or .jpg) — photos in Pictures, videos in Movies")
     override fun createJob(items: List<MediaItem>): ExportJob = RemoveMetadataJob(items)
 }
 

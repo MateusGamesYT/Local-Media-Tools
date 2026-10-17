@@ -261,23 +261,21 @@ class WatermarkJob(inputs: List<MediaItem>, private val spec: WatermarkJobSpec) 
         val style = WatermarkStyle(spec.text, logo, spec.sizePercent, spec.opacityPercent, spec.textColor)
         if (!style.hasContent) throw UserFacingException(tr("Add watermark text or a logo first."))
         val renderer = WatermarkRenderer(style)
+        val rawFormat = RawFallback.format(tool, inputs)
         try {
             ctx.forEachItem(inputs, parallel = true) { index, item ->
                 ImageSource.open(ctx.app, item).use { src ->
                     val w = src.width; val h = src.height
                     val group = AspectGroups.key(w, h).first
                     val pos = spec.placements[group] ?: spec.defaultPosition
-                    val format = when (item.format) {
-                        SniffedFormat.JPEG, SniffedFormat.HEIF, SniffedFormat.AVIF -> ImageOutFormat.JPEG
-                        SniffedFormat.WEBP -> ImageOutFormat.WEBP
-                        // PNG and others, and RAW photos, which can't be written back as RAW: lossless PNG.
-                        else -> ImageOutFormat.PNG
-                    }
+                    // A RAW photo takes the other files' kind, at full quality.
+                    val raw = item.format.isRaw
+                    val format = if (raw) rawFormat else RawFallback.keptFormat(tool, item) ?: ImageOutFormat.PNG
                     val (out, _) = Outputs.produce(ctx, ToolId.WATERMARK.area, "${item.baseName}_wm.${format.ext}", format.mime) { pending ->
-                        ImagePipeline.render(ctx, src, w, h, EncodeSpec(format, 95), pending, renderer.overlay(pos)) { f -> ctx.unitProgress(index, f) }
+                        ImagePipeline.render(ctx, src, w, h, if (raw) RawFallback.spec(format) else EncodeSpec(format, 95), pending, renderer.overlay(pos)) { f -> ctx.unitProgress(index, f) }
                         ImagePipeline.verify(ctx.app, pending, w, h)
                     }
-                    ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out), "$group · ${pos.label} · ${w}×$h · ${format.label}")
+                    ItemResult(item.name, ItemOutcome.SUCCESS, if (raw) RawFallback.note(format, item) else null, listOf(out), "$group · ${pos.label} · ${w}×$h · ${format.label}")
                 }
             }
         } finally {

@@ -22,6 +22,8 @@ import com.localmediatools.core.SniffedFormat
 import com.localmediatools.i18n.tr
 import com.localmediatools.i18n.trc
 import com.localmediatools.i18n.trn
+import com.localmediatools.image.ImageOutFormat
+import com.localmediatools.tools.RawFallback
 import com.localmediatools.tools.ToolId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -124,45 +126,41 @@ object ToolRules {
     fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS)
 
     /**
-     * Tools that save an edited or cleaned copy of each photo: a RAW photo's copy can't be RAW, so they
-     * save it as a lossless PNG, which [rawWarning] says before they start. The others keep RAW files
-     * RAW (the Denoiser), exist to change the format (Convert images, Image compressor) or make
-     * something new from photos (a cut-out, a merge, a PDF, a print, a film).
+     * What to tell the user before [t] runs on [items] when RAW photos among them can't stay RAW: in
+     * the tools that keep each file's format, which then save them like the other files
+     * ([RawFallback]). Null otherwise: where you choose the format, RAW photos follow your choice like
+     * any other file.
      */
-    private val rawBecomesAnotherType = setOf(ToolId.AUTO_ENHANCE, ToolId.FACE_BLUR, ToolId.OPTIMIZE_IMAGES, ToolId.WATERMARK, ToolId.REMOVE_METADATA)
-
-    /** The RAW files among [items], and their formats ("CR2, DNG"). */
-    private fun rawOf(items: List<MediaItem>): Pair<Int, String>? {
-        val raw = items.filter { it.format.isRaw }
-        if (raw.isEmpty()) return null
-        return raw.size to raw.map { rawLabel(it) }.distinct().sorted().joinToString(", ")
-    }
-
-    /** What to tell the user before [t] runs on [items] when RAW files among them will become another type; null when none will. */
     fun rawWarning(t: ToolId, items: List<MediaItem>): String? {
-        if (t !in rawBecomesAnotherType) return null
-        val (n, labels) = rawOf(items) ?: return null
-        return rawMessage(n, labels, t.title)
+        val raw = RawFallback.converted(t, items)
+        if (raw.isEmpty()) return null
+        return rawMessage(raw, RawFallback.format(t, items), t.title)
     }
 
     /**
-     * Like [rawWarning] for a stack: said when the first step that changes the RAW files is one of
-     * those tools. Steps that keep them RAW (Denoiser) or don't take photos are passed over; after a
-     * format tool or a tool that makes something new, the files are no longer RAW photos.
+     * Like [rawWarning] for a stack: said for the first step that changes the RAW photos. Steps that
+     * keep them RAW or don't take photos are passed over; after a step where you choose the format, or
+     * one that makes something new from photos, they are no longer RAW photos.
      */
     fun rawWarning(steps: List<ToolId>, items: List<MediaItem>): String? {
-        val (n, labels) = rawOf(items) ?: return null
+        if (items.none { it.format.isRaw }) return null
         for (t in steps) {
-            if (t in rawBecomesAnotherType) return rawMessage(n, labels, t.title)
-            if (t == ToolId.DENOISE || pickKind(t) in setOf(PickKind.VIDEOS, PickKind.GIFS, PickKind.PDFS)) continue
-            return null
+            if (pickKind(t) in setOf(PickKind.VIDEOS, PickKind.GIFS, PickKind.PDFS)) continue
+            if (t !in RawFallback.keepsFormat) return null
+            rawWarning(t, items)?.let { return it }
         }
         return null
     }
 
-    private fun rawMessage(n: Int, labels: String, tool: String) =
-        trn(n, "{0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.",
-            "{0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.", labels, tool)
+    private fun rawMessage(raw: List<MediaItem>, format: ImageOutFormat, tool: String): String {
+        val labels = raw.map { rawLabel(it) }.distinct().sorted().joinToString(", ")
+        return if (format == ImageOutFormat.PNG) trn(raw.size,
+            "{0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.",
+            "{0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.", labels, tool)
+        else trn(raw.size,
+            "{0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a JPEG at full quality. The original stays as it is.",
+            "{0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as JPEGs at full quality. The originals stay as they are.", labels, tool)
+    }
 
     /** Null when the item can be processed by [t], otherwise a short reason. */
     fun issue(t: ToolId, item: MediaItem): String? {

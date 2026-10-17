@@ -48,11 +48,12 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
- * Photos with transparency stay PNG, and RAW photos become a lossless PNG (they can't be written back
- * as RAW, and nothing of the picture should be lost to compression); everything else is saved as a
- * high-quality JPEG.
+ * How a tool that keeps formats saves [item]: photos with transparency stay PNG, everything else is a
+ * high-quality JPEG; a RAW photo takes [rawFormat], the other files' kind, at full quality ([RawFallback]).
  */
-private fun photoFormat(item: MediaItem) = if (item.format.isRaw || item.format == SniffedFormat.PNG || item.format == SniffedFormat.WEBP) ImageOutFormat.PNG else ImageOutFormat.JPEG
+private fun photoOutput(tool: ToolId, item: MediaItem, rawFormat: ImageOutFormat): Pair<ImageOutFormat, EncodeSpec> =
+    if (item.format.isRaw) rawFormat to RawFallback.spec(rawFormat)
+    else (RawFallback.keptFormat(tool, item) ?: ImageOutFormat.JPEG).let { it to EncodeSpec(it, 95) }
 
 // =========================================================================== Background remover
 enum class CutoutBackground(private val labelEn: String, val color: Int?) {
@@ -121,9 +122,11 @@ class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: Cutou
                             out.setPixels(row, 0, ow, 0, y, ow, 1)
                             if (y % 256 == 0) { ctx.throttle(); ctx.unitProgress(index, 0.5 + 0.3 * y / oh) }
                         }
-                        val format = if (bg == null || item.format.isRaw) ImageOutFormat.PNG else ImageOutFormat.JPEG
+                        val format = if (bg == null) ImageOutFormat.PNG else ImageOutFormat.JPEG
+                        // A cut-out of a RAW photo on a plain colour: a JPEG like the others, at full quality.
+                        val spec = if (item.format.isRaw) RawFallback.spec(format) else EncodeSpec(format, 95)
                         val (file, _) = Outputs.produce(ctx, tool.area, "${item.baseName}_cutout.${format.ext}", format.mime) { pending ->
-                            CountingStream(pending.openStream().buffered(1 shl 16)).use { os -> ImagePipeline.encodeBitmap(out, EncodeSpec(format, 95), os) }
+                            CountingStream(pending.openStream().buffered(1 shl 16)).use { os -> ImagePipeline.encodeBitmap(out, spec, os) }
                             ImagePipeline.verify(ctx.app, pending, ow, oh)
                         }
                         ItemResult(item.name, ItemOutcome.SUCCESS, if (sample > 1) tr("Very large photo: saved at {0}×{1}.", w, h) else null, listOf(file),
@@ -145,6 +148,7 @@ class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStren
     override val title = trn(inputs.size, "Enhancing {0} photo", "Enhancing {0} photos")
 
     override suspend fun run(ctx: JobContext) {
+        val rawFormat = RawFallback.format(tool, inputs)
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             ImageSource.open(ctx.app, item).use { src ->
                 ctx.status(tr("Looking at the photo"), item.name)
@@ -153,15 +157,15 @@ class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStren
                 if (r.adjust.isIdentity) throw SkipItemException(tr("This photo already looks balanced; nothing to improve."))
                 ctx.unitProgress(index, 0.15)
                 val state = EditState(adjust = r.adjust)
-                val format = photoFormat(item)
+                val (format, spec) = photoOutput(tool, item, rawFormat)
                 var size = 0 to 0
                 val (out, _) = Outputs.produce(ctx, tool.area, "${item.baseName}_enhanced.${format.ext}", format.mime) { pending ->
                     CountingStream(pending.openStream().buffered(1 shl 16)).use { os ->
-                        size = EditRenderer.exportFull(ctx, RetouchedSource(src, null, emptyList()), state, EncodeSpec(format, 95), true, os) { f -> ctx.unitProgress(index, 0.15 + 0.85 * f) }
+                        size = EditRenderer.exportFull(ctx, RetouchedSource(src, null, emptyList()), state, spec, true, os) { f -> ctx.unitProgress(index, 0.15 + 0.85 * f) }
                     }
                     ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                 }
-                ItemResult(item.name, ItemOutcome.SUCCESS, null, listOf(out),
+                ItemResult(item.name, ItemOutcome.SUCCESS, if (item.format.isRaw) RawFallback.note(format, item) else null, listOf(out),
                     tr("{0}: {1}", r.scene.label, r.shownNotes.ifBlank { tr("fine-tuned") }) + " · ${size.first}×${size.second}")
             }
         }
@@ -188,10 +192,11 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
     override val title = if (plan.pixelate) trn(inputs.size, "Pixelating faces in {0} file", "Pixelating faces in {0} files") else trn(inputs.size, "Blurring faces in {0} file", "Blurring faces in {0} files")
 
     override suspend fun run(ctx: JobContext) {
+        val rawFormat = RawFallback.format(tool, inputs)
         ctx.forEachItem(inputs, parallel = false) { index, item ->
             val tracks = plan.tracks[item.key] ?: (if (plan.scanOthers) findNow(ctx, index, item) else null).orEmpty()
             if (tracks.isEmpty()) throw SkipItemException(if (plan.scanOthers && plan.tracks[item.key] == null) tr("No faces to hide were found in this file.") else tr("None of the chosen people appear in this file, so it was left as it is."))
-            if (item.kind == MediaKind.VIDEO) video(ctx, index, item, tracks) else photo(ctx, index, item, tracks)
+            if (item.kind == MediaKind.VIDEO) video(ctx, index, item, tracks) else photo(ctx, index, item, tracks, rawFormat)
         }
         Outputs.cleanTemp(ctx)
     }
@@ -215,7 +220,7 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
         }
     }
 
-    private fun photo(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>): ItemResult {
+    private fun photo(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>, rawFormat: ImageOutFormat): ItemResult {
         val store = PatchStore.newSession(ctx.app)
         try {
             ImageSource.open(ctx.app, item).use { src ->
@@ -232,15 +237,15 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
                     patches.add(Retouch.obscure(rs, listOf(stroke), if (plan.pixelate) PatchKind.PIXELATE else PatchKind.BLUR, plan.strength, store, budget, 2 * min(rx, ry) / 1.45f))
                     ctx.unitProgress(index, 0.4 * (k + 1) / regions.size)
                 }
-                val format = photoFormat(item)
+                val (format, spec) = photoOutput(tool, item, rawFormat)
                 var size = 0 to 0
                 val (out, _) = Outputs.produce(ctx, tool.area, "${item.baseName}_blurred.${format.ext}", format.mime) { pending ->
                     CountingStream(pending.openStream().buffered(1 shl 16)).use { os ->
-                        size = EditRenderer.exportFull(ctx, RetouchedSource(src, store, patches), EditState(patches = patches), EncodeSpec(format, 95), true, os) { f -> ctx.unitProgress(index, 0.4 + 0.6 * f) }
+                        size = EditRenderer.exportFull(ctx, RetouchedSource(src, store, patches), EditState(patches = patches), spec, true, os) { f -> ctx.unitProgress(index, 0.4 + 0.6 * f) }
                     }
                     ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                 }
-                return ItemResult(item.name, ItemOutcome.SUCCESS, tr("Photo metadata (location, camera, dates) is not copied."), listOf(out),
+                return ItemResult(item.name, ItemOutcome.SUCCESS, listOfNotNull(if (item.format.isRaw) RawFallback.note(format, item) else null, tr("Photo metadata (location, camera, dates) is not copied.")).joinToString(" "), listOf(out),
                     (if (plan.pixelate) trn(regions.size, "{0} face pixelated", "{0} faces pixelated") else trn(regions.size, "{0} face blurred", "{0} faces blurred")) + " · ${size.first}×${size.second} · ${Format.bytes(out.size)}")
             }
         } finally {
