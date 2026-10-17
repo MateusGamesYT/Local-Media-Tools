@@ -969,9 +969,13 @@
 < No photos or PDFs found in that folder.
 > 在该文件夹中未找到照片或 PDF。
 
-< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0} 个 RAW 文件（{1}）经“{2}”处理后将保存为无损 PNG：无法保存为 {1}。原件保持不变；只有“降噪”会将 RAW 文件保留为 RAW。
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
+> {0} 个 RAW 文件（{1}）经“{2}”处理时无法以其原格式保存，因此会像其他文件一样保存为无损 PNG。原件保持不变。
+
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a JPEG at full quality. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as JPEGs at full quality. The originals stay as they are.
+> {0} 个 RAW 文件（{1}）经“{2}”处理时无法以其原格式保存，因此会保存为最佳画质的 JPEG。原件保持不变。
 
 < Not a video file
 > 不是视频文件
@@ -2511,8 +2515,8 @@
 < Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
 > 每个文件都保持原有格式：JPEG 仍为 JPEG，PNG 仍为 PNG，WebP 仍为 WebP，RAW 文件（DNG、CR2、NEF、ARW）仍为 RAW——会清理其传感器数据，文件中的其他内容保持原样。视频以原始画质保存为 MP4（H.264）。HEIC、AVIF 以及 Android 无法写入的其他格式会保存为 JPEG。
 
-< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
-> 无法以自身格式写回的 RAW 文件（CR3、RAF、ORF、RW2、Canon sRAW、有损 NEF）会保持原样。
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are cleaned as pictures and saved like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts.
+> 无法以自身格式写回的 RAW 文件（CR3、RAF、ORF、RW2、Canon sRAW、有损 NEF）会按照照片进行降噪，并与其他文件一样保存：其他文件为 PNG 时保存为无损 PNG，否则保存为最佳画质的 JPEG。开始前会告知你。
 
 < No preview for RAW files and videos; they are cleaned when you start.
 > RAW 文件和视频没有预览；开始后才会进行降噪。
@@ -3066,11 +3070,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > 逐字节保留的图像数据、方向（使照片保持正立）、颜色配置文件和 GIF 动画。视频：视频流和音频流（逐位保留）及其旋转信息。
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> 适用于 JPEG、PNG、WebP、GIF 和 MP4/MOV/WebM 视频。RAW 照片（DNG、CR2、NEF、ARW…）无法以其原格式清理，因此会得到一份干净、无损、方向已校正的 PNG 副本；开始前会告知你。HEIC 和 AVIF 不重新编码就无法清理；请改用“转换图片”（转换后的副本不含元数据）。
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, upright copy like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> 适用于 JPEG、PNG、WebP、GIF 和 MP4/MOV/WebM 视频。RAW 照片（DNG、CR2、NEF、ARW…）无法以其原格式清理，因此会得到一份与其他文件一样干净、方向已校正的副本：其他文件为 PNG 时为无损 PNG，否则为最佳画质的 JPEG；开始前会告知你。HEIC 和 AVIF 不重新编码就无法清理；请改用“转换图片”（转换后的副本不含元数据）。
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
-> 文件名_clean.jpg / .png / .webp / .gif / .mp4（RAW 照片：文件名_clean.png）——照片在 Pictures，视频在 Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png or .jpg) — photos in Pictures, videos in Movies
+> 文件名_clean.jpg / .png / .webp / .gif / .mp4（RAW 照片：文件名_clean.png 或 .jpg）——照片在 Pictures，视频在 Movies
 
 < e.g. 1-3, 5, 8-
 > 例如 1-3, 5, 8-
@@ -4300,12 +4304,6 @@
 < {0} sensor data cleaned
 > {0} 传感器数据已清理
 
-< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> 此应用目前还无法将这个 {0} 文件写回为 {0}（{1}），因此保持原样。请先转换一份副本，再以 JPEG 或 PNG 格式降噪。
-
-< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> 此应用目前还无法将这个 {0} 文件写回为 {0}，因此保持原样。请先转换一份副本，再以 JPEG 或 PNG 格式降噪。
-
 < This {0} file looks damaged, so it was left as it is.
 > 这个 {0} 文件似乎已损坏，因此保持原样。
 
@@ -4500,8 +4498,8 @@
 < Removing metadata from {0} files
 > 正在从{0}个文件中移除元数据
 
-< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
-> 已保存为无损 PNG，因为 {0} 文件无法以其原格式清理。未复制任何元数据（位置、相机、日期等），照片方向也已校正。
+< None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> 未复制任何元数据（位置、相机、日期等），照片方向也已校正。
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > {0} 文件不重新编码就无法清理。请使用“转换图片”生成干净的 JPEG 或 PNG 副本（转换后的文件不含元数据）。
@@ -4670,6 +4668,18 @@
 
 < text, links and page sizes kept
 > 文字、链接和页面尺寸均保留
+
+< Saved as a lossless PNG, because this tool can't write this kind of {0} file ({1}).
+> 已保存为无损 PNG，因为此工具无法写入这种 {0} 文件（{1}）。
+
+< Saved as a JPEG at full quality, because this tool can't write this kind of {0} file ({1}).
+> 已保存为最佳画质的 JPEG，因为此工具无法写入这种 {0} 文件（{1}）。
+
+< Saved as a lossless PNG, because this tool can't write {0} files.
+> 已保存为无损 PNG，因为此工具无法写入 {0} 文件。
+
+< Saved as a JPEG at full quality, because this tool can't write {0} files.
+> 已保存为最佳画质的 JPEG，因为此工具无法写入 {0} 文件。
 
 < videos
 > 视频

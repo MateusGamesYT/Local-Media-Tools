@@ -969,9 +969,13 @@
 < No photos or PDFs found in that folder.
 > 해당 폴더에 사진이나 PDF가 없어요.
 
-< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> '{2}'에서 처리하면 RAW 파일({1}) {0}개가 무손실 PNG로 저장돼요. {1} 형식으로는 저장할 수 없어요. 원본은 그대로 있어요. RAW 파일을 RAW로 유지하는 도구는 '노이즈 제거'뿐이에요.
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
+> '{2}'에서 처리하면 RAW 파일({1}) {0}개는 원래 형식으로 저장할 수 없어서, 다른 파일과 같이 무손실 PNG로 저장돼요. 원본은 그대로 있어요.
+
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a JPEG at full quality. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as JPEGs at full quality. The originals stay as they are.
+> '{2}'에서 처리하면 RAW 파일({1}) {0}개는 원래 형식으로 저장할 수 없어서, 최고 화질 JPEG로 저장돼요. 원본은 그대로 있어요.
 
 < Not a video file
 > 동영상 파일이 아니에요
@@ -2511,8 +2515,8 @@
 < Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
 > 각 파일은 형식을 그대로 유지해요. JPEG는 JPEG, PNG는 PNG, WebP는 WebP로 남고, RAW 파일(DNG, CR2, NEF, ARW)도 RAW로 유지돼요. 센서 데이터만 정리되고 파일의 나머지 내용은 그대로 보존돼요. 동영상은 원본 화질의 MP4(H.264)로 저장해요. HEIC, AVIF 등 Android에서 쓸 수 없는 형식은 JPEG로 저장해요.
 
-< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
-> 원래 형식으로 다시 저장할 수 없는 RAW 파일(CR3, RAF, ORF, RW2, Canon sRAW, 손실 압축 NEF)은 그대로 둬요.
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are cleaned as pictures and saved like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts.
+> 원래 형식으로 다시 저장할 수 없는 RAW 파일(CR3, RAF, ORF, RW2, Canon sRAW, 손실 압축 NEF)은 사진처럼 노이즈를 제거한 뒤 다른 파일과 같은 방식으로 저장돼요. 다른 파일이 PNG면 무손실 PNG로, 아니면 최고 화질 JPEG로 저장돼요. 시작 전에 알려 드려요.
 
 < No preview for RAW files and videos; they are cleaned when you start.
 > RAW 파일과 동영상은 미리보기가 없어요. 시작하면 노이즈가 제거돼요.
@@ -3066,11 +3070,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > 이미지 데이터는 바이트 그대로, 방향(사진이 바르게 유지되도록), 색상 프로필, GIF 애니메이션. 동영상은 영상과 오디오 스트림이 비트 그대로 유지되며 회전 정보도 유지돼요.
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> JPEG, PNG, WebP, GIF, MP4/MOV/WebM 동영상에서 사용할 수 있어요. RAW 사진(DNG, CR2, NEF, ARW…)은 원래 형식으로는 정리할 수 없어서, 방향이 바로잡힌 정리된 무손실 PNG 사본을 만들어 드리고, 시작 전에 알려 드려요. HEIC와 AVIF는 다시 인코딩하지 않으면 정리할 수 없으니, 대신 '이미지 변환'으로 변환해 주세요(변환된 사본에는 메타데이터가 없어요).
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, upright copy like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> JPEG, PNG, WebP, GIF, MP4/MOV/WebM 동영상에서 사용할 수 있어요. RAW 사진(DNG, CR2, NEF, ARW…)은 원래 형식으로 정리할 수 없어서, 다른 파일과 같이 방향을 바로잡은 사본을 만들어 드려요. 다른 파일이 PNG면 무손실 PNG로, 아니면 최고 화질 JPEG로 저장돼요. 시작 전에 알려 드려요. HEIC와 AVIF는 다시 인코딩하지 않으면 정리할 수 없으니, 대신 '이미지 변환'으로 변환해 주세요(변환된 사본에는 메타데이터가 없어요).
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
-> name_clean.jpg / .png / .webp / .gif / .mp4 (RAW 사진: name_clean.png) — 사진은 Pictures, 동영상은 Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png or .jpg) — photos in Pictures, videos in Movies
+> name_clean.jpg / .png / .webp / .gif / .mp4 (RAW 사진: name_clean.png 또는 .jpg) — 사진은 Pictures, 동영상은 Movies
 
 < e.g. 1-3, 5, 8-
 > 예: 1-3, 5, 8-
@@ -4300,12 +4304,6 @@
 < {0} sensor data cleaned
 > {0} 센서 데이터 노이즈 제거됨
 
-< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> 이 앱은 아직 이 {0} 파일을 {0} 형식으로 다시 저장할 수 없어서({1}) 그대로 두었어요. 먼저 사본을 변환하면 JPEG나 PNG로 노이즈를 제거할 수 있어요.
-
-< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> 이 앱은 아직 이 {0} 파일을 {0} 형식으로 다시 저장할 수 없어서 그대로 두었어요. 먼저 사본을 변환하면 JPEG나 PNG로 노이즈를 제거할 수 있어요.
-
 < This {0} file looks damaged, so it was left as it is.
 > 이 {0} 파일이 손상된 것 같아서 그대로 두었어요.
 
@@ -4500,8 +4498,8 @@
 < Removing metadata from {0} files
 > 파일 {0}개에서 메타데이터 제거 중
 
-< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
-> {0} 파일은 원래 형식으로는 정리할 수 없어서 무손실 PNG로 저장했어요. 위치, 카메라, 날짜 등의 메타데이터는 하나도 복사되지 않았고, 사진은 올바른 방향으로 맞춰져 있어요.
+< None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> 위치, 카메라, 날짜 등의 메타데이터는 하나도 복사되지 않았고, 사진은 올바른 방향으로 맞춰져 있어요.
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > {0} 파일은 다시 인코딩하지 않으면 정리할 수 없어요. '이미지 변환'으로 깨끗한 JPEG나 PNG 사본을 만들어 주세요(변환된 파일에는 메타데이터가 없어요).
@@ -4670,6 +4668,18 @@
 
 < text, links and page sizes kept
 > 텍스트, 링크, 페이지 크기 유지
+
+< Saved as a lossless PNG, because this tool can't write this kind of {0} file ({1}).
+> 이 도구로는 이런 종류의 {0} 파일({1})을 쓸 수 없어서, 무손실 PNG로 저장했어요.
+
+< Saved as a JPEG at full quality, because this tool can't write this kind of {0} file ({1}).
+> 이 도구로는 이런 종류의 {0} 파일({1})을 쓸 수 없어서, 최고 화질 JPEG로 저장했어요.
+
+< Saved as a lossless PNG, because this tool can't write {0} files.
+> 이 도구로는 {0} 파일을 쓸 수 없어서, 무손실 PNG로 저장했어요.
+
+< Saved as a JPEG at full quality, because this tool can't write {0} files.
+> 이 도구로는 {0} 파일을 쓸 수 없어서, 최고 화질 JPEG로 저장했어요.
 
 < videos
 > 동영상

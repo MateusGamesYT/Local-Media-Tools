@@ -969,9 +969,13 @@
 < No photos or PDFs found in that folder.
 > そのフォルダに写真やPDFが見つかりません。
 
-< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0}個のRAWファイル（{1}）は、「{2}」を使うと可逆のPNGとして保存されます：{1}としては保存できません。元のファイルは変更されません。RAWのまま保存できるのは「ノイズ除去」だけです。
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
+> {0}個のRAWファイル（{1}）は、「{2}」を使うと元の形式では保存できないため、他のファイルと同様に可逆のPNGとして保存されます。元のファイルは変更されません。
+
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a JPEG at full quality. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as JPEGs at full quality. The originals stay as they are.
+> {0}個のRAWファイル（{1}）は、「{2}」を使うと元の形式では保存できないため、最高画質のJPEGとして保存されます。元のファイルは変更されません。
 
 < Not a video file
 > 動画ファイルではありません
@@ -2511,8 +2515,8 @@
 < Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
 > 各ファイルは元の形式のまま保存されます。JPEGはJPEG、PNGはPNG、WebPはWebPのままで、RAWファイル（DNG、CR2、NEF、ARW）もRAWのままです。センサーデータのノイズだけを取り除き、ファイル内のそれ以外の情報は元のまま保たれます。動画は元の画質でMP4（H.264）として保存されます。HEIC、AVIF、およびAndroidが書き込めないその他の形式はJPEGで保存されます。
 
-< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
-> 元の形式で書き戻せないRAWファイル（CR3、RAF、ORF、RW2、Canon sRAW、非可逆圧縮のNEF）は、そのままにします。
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are cleaned as pictures and saved like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts.
+> 元の形式で書き戻せないRAWファイル（CR3、RAF、ORF、RW2、Canon sRAW、非可逆圧縮のNEF）は、写真として扱ってノイズを除去し、他のファイルと同様に保存されます。他のファイルがPNGなら可逆のPNG、それ以外は最高画質のJPEGになります。処理の前にお知らせします。
 
 < No preview for RAW files and videos; they are cleaned when you start.
 > RAWファイルと動画にはプレビューがありません。開始するとノイズが除去されます。
@@ -3066,11 +3070,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > 画像データはバイト単位でそのまま、向き（写真が正しい向きのまま保たれます）、カラープロファイル、GIFアニメーション。動画：映像と音声のストリームはビット単位でそのまま、および回転情報。
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> JPEG、PNG、WebP、GIF、MP4/MOV/WebM動画に対応しています。RAW写真（DNG、CR2、NEF、ARW…）は元の形式ではクリーンアップできないため、クリーンで向きの正しい可逆のPNGコピーが作られ、処理の前にお知らせします。HEIC、AVIFは再エンコードしないとクリーンアップできません。代わりに「画像変換」で変換してください（変換後のコピーにはメタデータが含まれません）。
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, upright copy like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> JPEG、PNG、WebP、GIF、MP4/MOV/WebM動画に対応しています。RAW写真（DNG、CR2、NEF、ARW…）は元の形式ではクリーンアップできないため、他のファイルと同様に、クリーンで向きの正しいコピーが作られます。他のファイルがPNGなら可逆のPNG、それ以外は最高画質のJPEGになります。処理の前にお知らせします。HEIC、AVIFは再エンコードしないとクリーンアップできません。代わりに「画像変換」で変換してください（変換後のコピーにはメタデータが含まれません）。
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
-> name_clean.jpg / .png / .webp / .gif / .mp4（RAW写真：name_clean.png） — 写真はPictures、動画はMovies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png or .jpg) — photos in Pictures, videos in Movies
+> name_clean.jpg / .png / .webp / .gif / .mp4（RAW写真：name_clean.png または .jpg） — 写真はPictures、動画はMovies
 
 < e.g. 1-3, 5, 8-
 > 例：1-3, 5, 8-
@@ -4300,12 +4304,6 @@
 < {0} sensor data cleaned
 > {0}のセンサーデータのノイズを除去済み
 
-< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> この{0}ファイルは、このアプリではまだ{0}として書き戻せないため（{1}）、そのままにしました。先にコピーを変換すると、JPEGまたはPNGとしてノイズを除去できます。
-
-< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> この{0}ファイルは、このアプリではまだ{0}として書き戻せないため、そのままにしました。先にコピーを変換すると、JPEGまたはPNGとしてノイズを除去できます。
-
 < This {0} file looks damaged, so it was left as it is.
 > この{0}ファイルは破損しているようなので、そのままにしました。
 
@@ -4500,8 +4498,8 @@
 < Removing metadata from {0} files
 > {0}個のファイルからメタデータを削除中
 
-< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
-> {0}ファイルは元の形式ではクリーンアップできないため、可逆のPNGとして保存しました。位置情報、カメラ、日付などのメタデータは一切コピーされておらず、写真は正しい向きになっています。
+< None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> 位置情報、カメラ、日付などのメタデータは一切コピーされておらず、写真は正しい向きになっています。
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > {0}ファイルは、再エンコードしないとクリーンアップできません。「画像変換」でクリーンなJPEGまたはPNGのコピーを作成してください（変換後のファイルにはメタデータが含まれません）。
@@ -4670,6 +4668,18 @@
 
 < text, links and page sizes kept
 > テキスト、リンク、ページサイズを保持
+
+< Saved as a lossless PNG, because this tool can't write this kind of {0} file ({1}).
+> このツールでは{0}のこの種類のファイル（{1}）を書き込めないため、可逆のPNGとして保存しました。
+
+< Saved as a JPEG at full quality, because this tool can't write this kind of {0} file ({1}).
+> このツールでは{0}のこの種類のファイル（{1}）を書き込めないため、最高画質のJPEGとして保存しました。
+
+< Saved as a lossless PNG, because this tool can't write {0} files.
+> このツールでは{0}ファイルを書き込めないため、可逆のPNGとして保存しました。
+
+< Saved as a JPEG at full quality, because this tool can't write {0} files.
+> このツールでは{0}ファイルを書き込めないため、最高画質のJPEGとして保存しました。
 
 < videos
 > 動画

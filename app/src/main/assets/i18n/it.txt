@@ -1000,10 +1000,15 @@
 < No photos or PDFs found in that folder.
 > Nessuna foto o PDF trovato in quella cartella.
 
-< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0} file RAW ({1}) verrà salvato come PNG senza perdita con {2}: non può essere salvato come {1}. L’originale resta com’è; solo la Rimozione rumore mantiene i file RAW come RAW.
-> {0} file RAW ({1}) verranno salvati come PNG senza perdita con {2}: non possono essere salvati come {1}. Gli originali restano come sono; solo la Rimozione rumore mantiene i file RAW come RAW.
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
+> {0} file RAW ({1}) non può essere salvato nel proprio formato usando {2}, quindi verrà salvato come PNG senza perdita, come gli altri file. L’originale resta com’è.
+> {0} file RAW ({1}) non possono essere salvati nel proprio formato usando {2}, quindi verranno salvati come PNG senza perdita, come gli altri file. Gli originali restano come sono.
+
+< {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a JPEG at full quality. The original stays as it is.
+< {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as JPEGs at full quality. The originals stay as they are.
+> {0} file RAW ({1}) non può essere salvato nel proprio formato usando {2}, quindi verrà salvato come JPEG alla massima qualità. L’originale resta com’è.
+> {0} file RAW ({1}) non possono essere salvati nel proprio formato usando {2}, quindi verranno salvati come JPEG alla massima qualità. Gli originali restano come sono.
 
 < Not a video file
 > Non è un file video
@@ -2585,8 +2590,8 @@
 < Each file keeps its format: JPEG stays JPEG, PNG stays PNG, WebP stays WebP, and RAW files (DNG, CR2, NEF, ARW) stay RAW — their sensor data is cleaned and everything else in the file is kept as it was. Videos are saved as MP4 (H.264) at the original's quality. HEIC, AVIF and other formats Android can't write are saved as JPEG.
 > Ogni file mantiene il proprio formato: JPEG resta JPEG, PNG resta PNG, WebP resta WebP, e i file RAW (DNG, CR2, NEF, ARW) restano RAW — i loro dati del sensore vengono puliti e tutto il resto del file rimane com’era. I video vengono salvati come MP4 (H.264) con la qualità dell’originale. HEIC, AVIF e gli altri formati che Android non può scrivere vengono salvati come JPEG.
 
-< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are left as they are.
-> I file RAW che non si possono riscrivere nel loro formato (CR3, RAF, ORF, RW2, Canon sRAW, NEF con perdita) restano come sono.
+< RAW files that can't be written back in their own format (CR3, RAF, ORF, RW2, Canon sRAW, lossy NEF) are cleaned as pictures and saved like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts.
+> I file RAW che non si possono riscrivere nel proprio formato (CR3, RAF, ORF, RW2, Canon sRAW, NEF con perdita) vengono puliti come foto e salvati come gli altri file: come PNG senza perdita se gli altri sono PNG, altrimenti come JPEG alla massima qualità. Ti viene segnalato prima dell’avvio.
 
 < No preview for RAW files and videos; they are cleaned when you start.
 > Nessuna anteprima per i file RAW e i video; vengono puliti quando avvii.
@@ -3146,11 +3151,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > I dati dell’immagine byte per byte, l’orientamento (così le foto restano dritte), il profilo colore e l’animazione dei GIF. Video: i flussi video e audio, bit per bit, e la loro rotazione.
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> Funziona con JPEG, PNG, WebP, GIF e video MP4/MOV/WebM. Le foto RAW (DNG, CR2, NEF, ARW…) non si possono pulire nel loro formato, quindi ricevono una copia PNG pulita e senza perdita, nel verso giusto; ti viene segnalato prima dell’avvio. HEIC e AVIF non si possono pulire senza ricodifica; convertili invece con Converti immagini (le copie convertite non contengono metadati).
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, upright copy like the other files: a lossless PNG among PNGs, otherwise a JPEG at full quality. You're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> Funziona con JPEG, PNG, WebP, GIF e video MP4/MOV/WebM. Le foto RAW (DNG, CR2, NEF, ARW…) non si possono pulire nel loro formato, quindi ricevono una copia pulita e nel verso giusto, come gli altri file: come PNG senza perdita se gli altri sono PNG, altrimenti come JPEG alla massima qualità. Ti viene segnalato prima dell’avvio. HEIC e AVIF non si possono pulire senza ricodifica; convertili invece con Converti immagini (le copie convertite non contengono metadati).
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
-> nome_clean.jpg / .png / .webp / .gif / .mp4 (foto RAW: nome_clean.png) — foto in Pictures, video in Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png or .jpg) — photos in Pictures, videos in Movies
+> nome_clean.jpg / .png / .webp / .gif / .mp4 (foto RAW: nome_clean.png o .jpg) — foto in Pictures, video in Movies
 
 < e.g. 1-3, 5, 8-
 > es. 1-3, 5, 8-
@@ -4410,12 +4415,6 @@
 < {0} sensor data cleaned
 > {0}: dati del sensore puliti
 
-< This {0} file can't be written back as {0} by this app yet ({1}), so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> Questo file {0} non può ancora essere riscritto come {0} da questa app ({1}), quindi è rimasto com’è. Converti prima una copia per eliminarne il rumore come JPEG o PNG.
-
-< This {0} file can't be written back as {0} by this app yet, so it was left as it is. Convert a copy first to denoise it as JPEG or PNG.
-> Questo file {0} non può ancora essere riscritto come {0} da questa app, quindi è rimasto com’è. Converti prima una copia per eliminarne il rumore come JPEG o PNG.
-
 < This {0} file looks damaged, so it was left as it is.
 > Questo file {0} sembra danneggiato, quindi è rimasto com’è.
 
@@ -4624,8 +4623,8 @@
 > Rimozione dei metadati da {0} file
 > Rimozione dei metadati da {0} file
 
-< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
-> Salvato come PNG senza perdita, perché un file {0} non può essere pulito nel suo formato originale. Non è stato copiato alcun metadato (posizione, fotocamera, date e il resto) e la foto è nel verso giusto.
+< None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> Non è stato copiato alcun metadato (posizione, fotocamera, date e il resto) e la foto è nel verso giusto.
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > I file {0} non possono essere puliti senza ricodifica. Usa Converti immagini per creare una copia JPEG o PNG pulita (i file convertiti non contengono metadati).
@@ -4806,6 +4805,18 @@
 
 < text, links and page sizes kept
 > testo, link e dimensioni delle pagine mantenuti
+
+< Saved as a lossless PNG, because this tool can't write this kind of {0} file ({1}).
+> Salvato come PNG senza perdita, perché questo strumento non può scrivere questo tipo di file {0} ({1}).
+
+< Saved as a JPEG at full quality, because this tool can't write this kind of {0} file ({1}).
+> Salvato come JPEG alla massima qualità, perché questo strumento non può scrivere questo tipo di file {0} ({1}).
+
+< Saved as a lossless PNG, because this tool can't write {0} files.
+> Salvato come PNG senza perdita, perché questo strumento non può scrivere file {0}.
+
+< Saved as a JPEG at full quality, because this tool can't write {0} files.
+> Salvato come JPEG alla massima qualità, perché questo strumento non può scrivere file {0}.
 
 < videos
 > video
