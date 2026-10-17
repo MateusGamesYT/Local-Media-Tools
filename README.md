@@ -669,7 +669,7 @@ so updates install over each other; use your own key for a store release.
   behind moving ones; the song code on music of known tempo (beat, start on a beat, silence skipped,
   repeating on whole bars, level, no beat in a held chord); the Gallery's choice of video frames;
   and the duplicate finder's progress (the grouping's share done only moving forward, the time left).
-* `app/src/roboTest` — 75 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+* `app/src/roboTest` — 77 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
