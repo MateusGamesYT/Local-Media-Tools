@@ -969,9 +969,9 @@
 < No photos or PDFs found in that folder.
 > 해당 폴더에 사진이나 PDF가 없어요.
 
-< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> '{2}'에서 처리하면 RAW 파일({1}) {0}개가 다른 파일 형식으로 바뀌어요. {1} 형식으로는 저장할 수 없어요. 원본은 그대로 있어요. RAW 파일을 RAW로 유지하는 도구는 '노이즈 제거'뿐이에요.
+< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> '{2}'에서 처리하면 RAW 파일({1}) {0}개가 무손실 PNG로 저장돼요. {1} 형식으로는 저장할 수 없어요. 원본은 그대로 있어요. RAW 파일을 RAW로 유지하는 도구는 '노이즈 제거'뿐이에요.
 
 < Not a video file
 > 동영상 파일이 아니에요
@@ -3066,11 +3066,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > 이미지 데이터는 바이트 그대로, 방향(사진이 바르게 유지되도록), 색상 프로필, GIF 애니메이션. 동영상은 영상과 오디오 스트림이 비트 그대로 유지되며 회전 정보도 유지돼요.
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> JPEG, PNG, WebP, GIF, MP4/MOV/WebM 동영상에서 사용할 수 있어요. HEIC, AVIF, RAW는 다시 인코딩하지 않으면 정리할 수 없으니, 대신 '이미지 변환'으로 변환해 주세요(변환된 사본에는 메타데이터가 없어요).
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> JPEG, PNG, WebP, GIF, MP4/MOV/WebM 동영상에서 사용할 수 있어요. RAW 사진(DNG, CR2, NEF, ARW…)은 원래 형식으로는 정리할 수 없어서, 방향이 바로잡힌 정리된 무손실 PNG 사본을 만들어 드리고, 시작 전에 알려 드려요. HEIC와 AVIF는 다시 인코딩하지 않으면 정리할 수 없으니, 대신 '이미지 변환'으로 변환해 주세요(변환된 사본에는 메타데이터가 없어요).
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
-> name_clean.jpg / .png / .webp / .gif / .mp4 — 사진은 Pictures, 동영상은 Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
+> name_clean.jpg / .png / .webp / .gif / .mp4 (RAW 사진: name_clean.png) — 사진은 Pictures, 동영상은 Movies
 
 < e.g. 1-3, 5, 8-
 > 예: 1-3, 5, 8-
@@ -4499,6 +4499,9 @@
 < Removing metadata from {0} file
 < Removing metadata from {0} files
 > 파일 {0}개에서 메타데이터 제거 중
+
+< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> {0} 파일은 원래 형식으로는 정리할 수 없어서 무손실 PNG로 저장했어요. 위치, 카메라, 날짜 등의 메타데이터는 하나도 복사되지 않았고, 사진은 올바른 방향으로 맞춰져 있어요.
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > {0} 파일은 다시 인코딩하지 않으면 정리할 수 없어요. '이미지 변환'으로 깨끗한 JPEG나 PNG 사본을 만들어 주세요(변환된 파일에는 메타데이터가 없어요).

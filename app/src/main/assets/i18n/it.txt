@@ -1000,10 +1000,10 @@
 < No photos or PDFs found in that folder.
 > Nessuna foto o PDF trovato in quella cartella.
 
-< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0} file RAW ({1}) diventerà un file di un altro tipo con {2}: non può essere salvato come {1}. L’originale resta com’è; solo la Rimozione rumore mantiene i file RAW come RAW.
-> {0} file RAW ({1}) diventeranno file di un altro tipo con {2}: non possono essere salvati come {1}. Gli originali restano come sono; solo la Rimozione rumore mantiene i file RAW come RAW.
+< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0} file RAW ({1}) verrà salvato come PNG senza perdita con {2}: non può essere salvato come {1}. L’originale resta com’è; solo la Rimozione rumore mantiene i file RAW come RAW.
+> {0} file RAW ({1}) verranno salvati come PNG senza perdita con {2}: non possono essere salvati come {1}. Gli originali restano come sono; solo la Rimozione rumore mantiene i file RAW come RAW.
 
 < Not a video file
 > Non è un file video
@@ -3146,11 +3146,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > I dati dell’immagine byte per byte, l’orientamento (così le foto restano dritte), il profilo colore e l’animazione dei GIF. Video: i flussi video e audio, bit per bit, e la loro rotazione.
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> Funziona con JPEG, PNG, WebP, GIF e video MP4/MOV/WebM. HEIC, AVIF e RAW non si possono pulire senza ricodifica; convertili invece con Converti immagini (le copie convertite non contengono metadati).
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> Funziona con JPEG, PNG, WebP, GIF e video MP4/MOV/WebM. Le foto RAW (DNG, CR2, NEF, ARW…) non si possono pulire nel loro formato, quindi ricevono una copia PNG pulita e senza perdita, nel verso giusto; ti viene segnalato prima dell’avvio. HEIC e AVIF non si possono pulire senza ricodifica; convertili invece con Converti immagini (le copie convertite non contengono metadati).
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
-> nome_clean.jpg / .png / .webp / .gif / .mp4 — foto in Pictures, video in Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
+> nome_clean.jpg / .png / .webp / .gif / .mp4 (foto RAW: nome_clean.png) — foto in Pictures, video in Movies
 
 < e.g. 1-3, 5, 8-
 > es. 1-3, 5, 8-
@@ -4623,6 +4623,9 @@
 < Removing metadata from {0} files
 > Rimozione dei metadati da {0} file
 > Rimozione dei metadati da {0} file
+
+< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> Salvato come PNG senza perdita, perché un file {0} non può essere pulito nel suo formato originale. Non è stato copiato alcun metadato (posizione, fotocamera, date e il resto) e la foto è nel verso giusto.
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > I file {0} non possono essere puliti senza ricodifica. Usa Converti immagini per creare una copia JPEG o PNG pulita (i file convertiti non contengono metadati).

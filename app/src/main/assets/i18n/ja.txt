@@ -969,9 +969,9 @@
 < No photos or PDFs found in that folder.
 > そのフォルダに写真やPDFが見つかりません。
 
-< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0}個のRAWファイル（{1}）は、「{2}」を使うと別のファイル形式に変わります：{1}としては保存できません。元のファイルは変更されません。RAWのまま保存できるのは「ノイズ除去」だけです。
+< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0}個のRAWファイル（{1}）は、「{2}」を使うと可逆のPNGとして保存されます：{1}としては保存できません。元のファイルは変更されません。RAWのまま保存できるのは「ノイズ除去」だけです。
 
 < Not a video file
 > 動画ファイルではありません
@@ -3066,11 +3066,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > 画像データはバイト単位でそのまま、向き（写真が正しい向きのまま保たれます）、カラープロファイル、GIFアニメーション。動画：映像と音声のストリームはビット単位でそのまま、および回転情報。
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> JPEG、PNG、WebP、GIF、MP4/MOV/WebM動画に対応しています。HEIC、AVIF、RAWは再エンコードしないとクリーンアップできません。代わりに「画像変換」で変換してください（変換後のコピーにはメタデータが含まれません）。
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> JPEG、PNG、WebP、GIF、MP4/MOV/WebM動画に対応しています。RAW写真（DNG、CR2、NEF、ARW…）は元の形式ではクリーンアップできないため、クリーンで向きの正しい可逆のPNGコピーが作られ、処理の前にお知らせします。HEIC、AVIFは再エンコードしないとクリーンアップできません。代わりに「画像変換」で変換してください（変換後のコピーにはメタデータが含まれません）。
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
-> name_clean.jpg / .png / .webp / .gif / .mp4 — 写真はPictures、動画はMovies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
+> name_clean.jpg / .png / .webp / .gif / .mp4（RAW写真：name_clean.png） — 写真はPictures、動画はMovies
 
 < e.g. 1-3, 5, 8-
 > 例：1-3, 5, 8-
@@ -4499,6 +4499,9 @@
 < Removing metadata from {0} file
 < Removing metadata from {0} files
 > {0}個のファイルからメタデータを削除中
+
+< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> {0}ファイルは元の形式ではクリーンアップできないため、可逆のPNGとして保存しました。位置情報、カメラ、日付などのメタデータは一切コピーされておらず、写真は正しい向きになっています。
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > {0}ファイルは、再エンコードしないとクリーンアップできません。「画像変換」でクリーンなJPEGまたはPNGのコピーを作成してください（変換後のファイルにはメタデータが含まれません）。

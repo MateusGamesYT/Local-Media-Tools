@@ -969,9 +969,9 @@
 < No photos or PDFs found in that folder.
 > 在该文件夹中未找到照片或 PDF。
 
-< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0} 个 RAW 文件（{1}）经“{2}”处理后将变为其他文件类型：无法保存为 {1}。原件保持不变；只有“降噪”会将 RAW 文件保留为 RAW。
+< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0} 个 RAW 文件（{1}）经“{2}”处理后将保存为无损 PNG：无法保存为 {1}。原件保持不变；只有“降噪”会将 RAW 文件保留为 RAW。
 
 < Not a video file
 > 不是视频文件
@@ -3066,11 +3066,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > 逐字节保留的图像数据、方向（使照片保持正立）、颜色配置文件和 GIF 动画。视频：视频流和音频流（逐位保留）及其旋转信息。
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> 适用于 JPEG、PNG、WebP、GIF 和 MP4/MOV/WebM 视频。HEIC、AVIF 和 RAW 不重新编码就无法清理；请改用“转换图片”（转换后的副本不含元数据）。
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> 适用于 JPEG、PNG、WebP、GIF 和 MP4/MOV/WebM 视频。RAW 照片（DNG、CR2、NEF、ARW…）无法以其原格式清理，因此会得到一份干净、无损、方向已校正的 PNG 副本；开始前会告知你。HEIC 和 AVIF 不重新编码就无法清理；请改用“转换图片”（转换后的副本不含元数据）。
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
-> 文件名_clean.jpg / .png / .webp / .gif / .mp4——照片在 Pictures，视频在 Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
+> 文件名_clean.jpg / .png / .webp / .gif / .mp4（RAW 照片：文件名_clean.png）——照片在 Pictures，视频在 Movies
 
 < e.g. 1-3, 5, 8-
 > 例如 1-3, 5, 8-
@@ -4499,6 +4499,9 @@
 < Removing metadata from {0} file
 < Removing metadata from {0} files
 > 正在从{0}个文件中移除元数据
+
+< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> 已保存为无损 PNG，因为 {0} 文件无法以其原格式清理。未复制任何元数据（位置、相机、日期等），照片方向也已校正。
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > {0} 文件不重新编码就无法清理。请使用“转换图片”生成干净的 JPEG 或 PNG 副本（转换后的文件不含元数据）。

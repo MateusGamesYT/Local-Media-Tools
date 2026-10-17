@@ -1031,11 +1031,11 @@
 < No photos or PDFs found in that folder.
 > В этой папке нет фото или PDF.
 
-< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
-< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
-> {0} RAW-файл ({1}) станет файлом другого типа при обработке инструментом «{2}»: его нельзя сохранить как {1}. Оригинал останется как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
-> {0} RAW-файла ({1}) станут файлами другого типа при обработке инструментом «{2}»: их нельзя сохранить как {1}. Оригиналы останутся как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
-> {0} RAW-файлов ({1}) станут файлами другого типа при обработке инструментом «{2}»: их нельзя сохранить как {1}. Оригиналы останутся как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
+< {0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0} RAW-файл ({1}) будет сохранён как PNG без потерь при обработке инструментом «{2}»: его нельзя сохранить как {1}. Оригинал останется как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
+> {0} RAW-файла ({1}) будут сохранены как PNG без потерь при обработке инструментом «{2}»: их нельзя сохранить как {1}. Оригиналы останутся как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
+> {0} RAW-файлов ({1}) будут сохранены как PNG без потерь при обработке инструментом «{2}»: их нельзя сохранить как {1}. Оригиналы останутся как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
 
 < Not a video file
 > Это не видеофайл
@@ -3226,11 +3226,11 @@
 < The image data byte for byte, orientation (so photos stay upright), colour profile and GIF animation. Videos: the video and audio streams, bit-for-bit, and their rotation.
 > Данные изображения байт в байт, ориентация (чтобы фото оставались прямыми), цветовой профиль и анимация GIF. Видео: видео- и аудиопотоки бит в бит и их поворот.
 
-< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. HEIC, AVIF and RAW can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
-> Работает с JPEG, PNG, WebP, GIF и видео MP4/MOV/WebM. HEIC, AVIF и RAW нельзя очистить без перекодирования; вместо этого конвертируйте их инструментом «Конвертация изображений» (у конвертированных копий нет метаданных).
+< Works with JPEG, PNG, WebP, GIF and MP4/MOV/WebM videos. RAW photos (DNG, CR2, NEF, ARW…) can't be cleaned in their own format, so they get a clean, lossless PNG copy, upright; you're told before it starts. HEIC and AVIF can't be cleaned without re-encoding; convert them with Convert images instead (converted copies carry no metadata).
+> Работает с JPEG, PNG, WebP, GIF и видео MP4/MOV/WebM. RAW-фото (DNG, CR2, NEF, ARW…) нельзя очистить в собственном формате, поэтому для них создаётся очищенная копия PNG без потерь в правильной ориентации; вас предупредят до начала. HEIC и AVIF нельзя очистить без перекодирования; вместо этого конвертируйте их инструментом «Конвертация изображений» (у конвертированных копий нет метаданных).
 
-< name_clean.jpg / .png / .webp / .gif / .mp4 — photos in Pictures, videos in Movies
-> имя_clean.jpg / .png / .webp / .gif / .mp4 — фото в Pictures, видео в Movies
+< name_clean.jpg / .png / .webp / .gif / .mp4 (RAW photos: name_clean.png) — photos in Pictures, videos in Movies
+> имя_clean.jpg / .png / .webp / .gif / .mp4 (RAW-фото: имя_clean.png) — фото в Pictures, видео в Movies
 
 < e.g. 1-3, 5, 8-
 > напр. 1-3, 5, 8-
@@ -4747,6 +4747,9 @@
 > Удаление метаданных из файлов: {0}
 > Удаление метаданных из файлов: {0}
 > Удаление метаданных из файлов: {0}
+
+< Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.
+> Сохранено как PNG без потерь, так как файл {0} нельзя очистить в собственном формате. Никакие метаданные не скопированы (местоположение, камера, даты и остальное), а фото ориентировано правильно.
 
 < {0} files can't be cleaned without re-encoding. Use Convert images to make a clean JPEG or PNG copy (converted files carry no metadata).
 > Файлы {0} нельзя очистить без перекодирования. Используйте «Конвертацию изображений», чтобы получить чистую копию JPEG или PNG (у конвертированных файлов нет метаданных).
