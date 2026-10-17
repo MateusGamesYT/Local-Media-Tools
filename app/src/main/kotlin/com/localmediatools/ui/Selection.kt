@@ -124,13 +124,12 @@ object ToolRules {
     fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS)
 
     /**
-     * Tools that save an edited copy of each photo, in a format Android can write: a RAW photo's copy
-     * can't be RAW, which [rawWarning] says before they start. The others keep RAW files RAW (the
-     * Denoiser), leave them out with a reason (Remove metadata), exist to change the format (Convert
-     * images, Image compressor) or make something new from photos (a cut-out, a merge, a PDF, a print,
-     * a film).
+     * Tools that save an edited or cleaned copy of each photo: a RAW photo's copy can't be RAW, so they
+     * save it as a lossless PNG, which [rawWarning] says before they start. The others keep RAW files
+     * RAW (the Denoiser), exist to change the format (Convert images, Image compressor) or make
+     * something new from photos (a cut-out, a merge, a PDF, a print, a film).
      */
-    private val rawBecomesAnotherType = setOf(ToolId.AUTO_ENHANCE, ToolId.FACE_BLUR, ToolId.OPTIMIZE_IMAGES, ToolId.WATERMARK)
+    private val rawBecomesAnotherType = setOf(ToolId.AUTO_ENHANCE, ToolId.FACE_BLUR, ToolId.OPTIMIZE_IMAGES, ToolId.WATERMARK, ToolId.REMOVE_METADATA)
 
     /** The RAW files among [items], and their formats ("CR2, DNG"). */
     private fun rawOf(items: List<MediaItem>): Pair<Int, String>? {
@@ -148,23 +147,22 @@ object ToolRules {
 
     /**
      * Like [rawWarning] for a stack: said when the first step that changes the RAW files is one of
-     * those tools. Steps that keep them RAW (Denoiser), leave them out (Remove metadata) or don't take
-     * photos are passed over; after a format tool or a tool that makes something new, the files are no
-     * longer RAW photos.
+     * those tools. Steps that keep them RAW (Denoiser) or don't take photos are passed over; after a
+     * format tool or a tool that makes something new, the files are no longer RAW photos.
      */
     fun rawWarning(steps: List<ToolId>, items: List<MediaItem>): String? {
         val (n, labels) = rawOf(items) ?: return null
         for (t in steps) {
             if (t in rawBecomesAnotherType) return rawMessage(n, labels, t.title)
-            if (t == ToolId.DENOISE || t == ToolId.REMOVE_METADATA || pickKind(t) in setOf(PickKind.VIDEOS, PickKind.GIFS, PickKind.PDFS)) continue
+            if (t == ToolId.DENOISE || pickKind(t) in setOf(PickKind.VIDEOS, PickKind.GIFS, PickKind.PDFS)) continue
             return null
         }
         return null
     }
 
     private fun rawMessage(n: Int, labels: String, tool: String) =
-        trn(n, "{0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.",
-            "{0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.", labels, tool)
+        trn(n, "{0} RAW file ({1}) will be saved as a lossless PNG by {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.",
+            "{0} RAW files ({1}) will be saved as lossless PNGs by {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.", labels, tool)
 
     /** Null when the item can be processed by [t], otherwise a short reason. */
     fun issue(t: ToolId, item: MediaItem): String? {

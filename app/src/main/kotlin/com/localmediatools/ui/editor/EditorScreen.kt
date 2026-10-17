@@ -540,7 +540,8 @@ class EditorScreen(activity: MainActivity, private val item: MediaItem, private 
 
     // ------------------------------------------------------------------ saving & leaving
     private fun defaultFormat(): ImageOutFormat = when {
-        session.hasAlpha || item.format == SniffedFormat.PNG -> ImageOutFormat.PNG
+        // A RAW photo can't be saved as RAW: lossless PNG unless you choose otherwise.
+        item.format.isRaw || session.hasAlpha || item.format == SniffedFormat.PNG -> ImageOutFormat.PNG
         item.format == SniffedFormat.WEBP -> ImageOutFormat.WEBP
         else -> ImageOutFormat.JPEG
     }

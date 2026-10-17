@@ -19,6 +19,11 @@ import com.localmediatools.i18n.N_
 import com.localmediatools.i18n.tr
 import com.localmediatools.i18n.trc
 import com.localmediatools.i18n.trn
+import com.localmediatools.image.EncodeSpec
+import com.localmediatools.image.ImageOutFormat
+import com.localmediatools.image.ImagePipeline
+import com.localmediatools.image.ImageSource
+import com.localmediatools.ui.ToolRules
 import com.localmediatools.video.Remuxer
 import com.localmediatools.video.VideoProbe
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
@@ -33,8 +38,30 @@ class RemoveMetadataJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_METAD
 
     override suspend fun run(ctx: JobContext) {
         ctx.forEachItem(inputs, parallel = true) { index, item ->
-            if (item.kind == MediaKind.VIDEO) video(ctx, index, item) else image(ctx, index, item)
+            when {
+                item.kind == MediaKind.VIDEO -> video(ctx, index, item)
+                item.format.isRaw -> raw(ctx, index, item)
+                else -> image(ctx, index, item)
+            }
         }
+    }
+
+    /**
+     * A RAW file can't be cleaned in its own format, so a lossless PNG copy is made from its picture
+     * alone: encoded pixels carry no metadata, and the orientation is turned into the pixels so it
+     * stays upright.
+     */
+    private fun raw(ctx: JobContext, index: Int, item: MediaItem): ItemResult = ImageSource.open(ctx.app, item).use { src ->
+        val w = src.width; val h = src.height
+        val png = ImageOutFormat.PNG
+        val (out, _) = Outputs.produce(ctx, OutputArea.CLEAN_IMAGES, "${item.baseName}_clean.${png.ext}", png.mime) { pending ->
+            ImagePipeline.render(ctx, src, w, h, EncodeSpec(png, 100), pending, exactPixels = true) { f -> ctx.unitProgress(index, f) }
+            ImagePipeline.verify(ctx.app, pending, w, h)
+        }
+        val label = ToolRules.rawLabel(item)
+        ItemResult(item.name, ItemOutcome.SUCCESS,
+            tr("Saved as a lossless PNG, because a {0} file can't be cleaned in its own format. None of its metadata was copied (location, camera, dates and the rest), and the picture is upright.", label),
+            listOf(out), "$label → PNG (" + tr("lossless") + ") · ${w}×$h · ${Format.bytes(out.size)}")
     }
 
     private fun image(ctx: JobContext, index: Int, item: MediaItem): ItemResult {

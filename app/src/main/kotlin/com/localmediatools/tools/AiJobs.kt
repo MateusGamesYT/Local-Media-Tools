@@ -47,8 +47,12 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-/** Photos with transparency stay PNG; everything else is saved as a high-quality JPEG. */
-private fun photoFormat(item: MediaItem) = if (item.format == SniffedFormat.PNG || item.format == SniffedFormat.WEBP) ImageOutFormat.PNG else ImageOutFormat.JPEG
+/**
+ * Photos with transparency stay PNG, and RAW photos become a lossless PNG (they can't be written back
+ * as RAW, and nothing of the picture should be lost to compression); everything else is saved as a
+ * high-quality JPEG.
+ */
+private fun photoFormat(item: MediaItem) = if (item.format.isRaw || item.format == SniffedFormat.PNG || item.format == SniffedFormat.WEBP) ImageOutFormat.PNG else ImageOutFormat.JPEG
 
 // =========================================================================== Background remover
 enum class CutoutBackground(private val labelEn: String, val color: Int?) {
@@ -117,7 +121,7 @@ class RemoveBackgroundJob(inputs: List<MediaItem>, private val background: Cutou
                             out.setPixels(row, 0, ow, 0, y, ow, 1)
                             if (y % 256 == 0) { ctx.throttle(); ctx.unitProgress(index, 0.5 + 0.3 * y / oh) }
                         }
-                        val format = if (bg == null) ImageOutFormat.PNG else ImageOutFormat.JPEG
+                        val format = if (bg == null || item.format.isRaw) ImageOutFormat.PNG else ImageOutFormat.JPEG
                         val (file, _) = Outputs.produce(ctx, tool.area, "${item.baseName}_cutout.${format.ext}", format.mime) { pending ->
                             CountingStream(pending.openStream().buffered(1 shl 16)).use { os -> ImagePipeline.encodeBitmap(out, EncodeSpec(format, 95), os) }
                             ImagePipeline.verify(ctx.app, pending, ow, oh)

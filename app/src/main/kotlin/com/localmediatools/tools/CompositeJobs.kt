@@ -268,8 +268,9 @@ class WatermarkJob(inputs: List<MediaItem>, private val spec: WatermarkJobSpec) 
                     val group = AspectGroups.key(w, h).first
                     val pos = spec.placements[group] ?: spec.defaultPosition
                     val format = when (item.format) {
-                        SniffedFormat.JPEG, SniffedFormat.HEIF, SniffedFormat.AVIF, SniffedFormat.DNG, SniffedFormat.RAW_CAMERA -> ImageOutFormat.JPEG
+                        SniffedFormat.JPEG, SniffedFormat.HEIF, SniffedFormat.AVIF -> ImageOutFormat.JPEG
                         SniffedFormat.WEBP -> ImageOutFormat.WEBP
+                        // PNG and others, and RAW photos, which can't be written back as RAW: lossless PNG.
                         else -> ImageOutFormat.PNG
                     }
                     val (out, _) = Outputs.produce(ctx, ToolId.WATERMARK.area, "${item.baseName}_wm.${format.ext}", format.mime) { pending ->

@@ -95,6 +95,8 @@ class OptimizeImagesJob(
                 SniffedFormat.TIFF, SniffedFormat.PSD -> Unit
                 else -> Unit
             }
+            // RAW photos, which can't be written back as RAW, always become PNG.
+            val format = if (item.format.isRaw) ImageOutFormat.PNG else format
             ImageSource.open(ctx.app, item).use { src ->
                 val w = src.width; val h = src.height
                 val (out, _) = Outputs.produce(ctx, ToolId.OPTIMIZE_IMAGES.area, "${item.baseName}_lossless.${format.ext}", format.mime) { pending ->
