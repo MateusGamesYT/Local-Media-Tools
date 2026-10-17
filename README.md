@@ -15,7 +15,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.10.2.apk`](release/LocalMediaTools-1.10.2.apk)
+**Install:** [`release/LocalMediaTools-1.10.3.apk`](release/LocalMediaTools-1.10.3.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -53,7 +53,43 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.10.2: RAW photos become lossless PNGs, and Remove metadata cleans them
+## What's new in 1.10.3: RAW photos are files like any other
+
+This replaces the RAW rules of 1.10.1 and 1.10.2.
+
+- **Your choice on screen comes first.** Where you choose the format, a RAW photo (DNG, CR2, NEF,
+  ARW…) gets that choice like every other file, with no exception and no warning. That covers Convert
+  images, the Image compressor, the Lossless image optimizer (PNG or WebP), the photo editor's save
+  sheet, a PDF's pages and the background remover's background. The compressor's and converter's
+  quality settings apply to RAW photos too.
+- **Tools that keep each file's format keep RAW files RAW where they can.** The Denoiser writes DNG,
+  CR2, NEF and ARW back as themselves.
+- **Where a tool can't keep a RAW photo RAW, you're told first, and it follows the other files.** This
+  applies to Auto enhance, Blur faces, Bulk watermark, Remove metadata, and RAW types the Denoiser
+  can't write back. Before, the Denoiser left those out; now it cleans them as pictures.
+  - Among PNGs, the RAW photo becomes a lossless PNG. Otherwise it becomes a JPEG at full quality,
+    which includes when there are no other files to follow or as many of each.
+  - The warning says which, for example "1 RAW file (CR2) can't be saved in its own format by Auto
+    enhance, so it will be saved as a JPEG at full quality", with Continue or Cancel. It also appears
+    in tool stacks. Originals are never changed.
+- **Full quality, measured.** PNG is lossless. A JPEG can't be bit-exact, because colour conversion and
+  the image transform round, so a RAW photo's JPEG uses the highest setting the format has: every
+  quantisation step 1 and full colour resolution, written by the app's own encoder. On 87 real photos
+  that came to 55.3 dB from the original. The largest difference was 3 levels of 255, and 96 % of
+  pixels were within 1 level. Android's own encoder at the same quality halves the colour resolution
+  (51.1 dB, differences up to 28), so every quality-100 JPEG the app makes now goes through its own
+  encoder. Tools whose job is compression keep the quality you set.
+- **Tested on a piece of a real Samsung Galaxy S9 DNG** under the Android test runtime:
+  - Auto enhance next to a JPEG gives a full-quality JPEG, while the other photo keeps the tool's
+    usual quality.
+  - Remove metadata next to PNGs gives a PNG with exactly the decoded pixels, upright. On its own it
+    gives a full-quality JPEG with no metadata segment, at most 4 levels from the picture.
+  - Convert images, the compressor and the optimizer give the formats chosen.
+  - The watermark follows the other files.
+  - Not tried on a phone.
+- **Translated** into all ten languages.
+
+## What was new in 1.10.2: RAW photos become lossless PNGs, and Remove metadata cleans them
 
 - **Lossless PNG for RAW photos.** A tool that isn't made for converting can't save its result of a
   RAW photo (DNG, CR2, NEF, ARW…) as RAW. It now saves it as a lossless PNG instead of a JPEG, so
@@ -587,7 +623,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Extract PDF pages | `1-3, 5, 8-` into one PDF or one per page | `Documents/LocalMediaTools/PDF` |
 | | PDF scanner | Camera and gallery pages, A4 | `Documents/LocalMediaTools/PDF` |
 | Print | Print | Photos and PDFs on AirPrint / Mopria / IPP Everywhere printers on the Wi-Fi: paper size and type, borderless, 1–9 per sheet, colour, quality, copies, preview | — (prints) |
-| Privacy & audio | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos; RAW photos as clean lossless PNGs | `Pictures/…/Clean`, `Movies/…/Clean` |
+| Privacy & audio | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos; RAW photos as clean full-quality copies like the other files | `Pictures/…/Clean`, `Movies/…/Clean` |
 | | Extract audio | AAC track to M4A without re-encoding | `Music/LocalMediaTools/Extracted Audio` |
 
 Exports run in a foreground service with progress notifications and one queue for the whole app.
@@ -668,7 +704,8 @@ so updates install over each other; use your own key for a store release.
   moving its levels or its clipped highlights, video averaging still parts and leaving no trail
   behind moving ones; the song code on music of known tempo (beat, start on a beat, silence skipped,
   repeating on whole bars, level, no beat in a held chord); the Gallery's choice of video frames;
-  and the duplicate finder's progress (the grouping's share done only moving forward, the time left).
+  the duplicate finder's progress (the grouping's share done only moving forward, the time left);
+  and how close a full-quality JPEG stays to the picture on 87 real photos.
 * `app/src/roboTest` — 77 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
@@ -700,8 +737,10 @@ so updates install over each other; use your own key for a store release.
   looking at only the videos again after updating, with what was said about their faces kept; new
   in 1.10.1, the duplicate finder's progress (one bar that moves on instead of being rebuilt, the
   photo count, share done and time left, filled in the accent colour) and the real scan's progress
-  only ever moving forward; new in 1.10.2, a real phone DNG through Remove metadata (a lossless,
-  upright PNG with the decoded pixels and no metadata), Bulk watermark and the optimizer (PNGs).
+  only ever moving forward; new in 1.10.3, RAW photos following your format choice (converter,
+  compressor, optimizer), and a real phone DNG through Auto enhance, Bulk watermark and Remove
+  metadata like the files around it (a pixel-identical PNG among PNGs, otherwise a full-quality JPEG:
+  every quantisation step 1, full colour resolution, no metadata).
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is

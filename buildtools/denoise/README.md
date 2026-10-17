@@ -53,8 +53,10 @@ Supported variants:
 - NEF (lossless Huffman, 14-bit packed, uncompressed);
 - ARW (Sony's ARW2 compression, uncompressed).
 
-These are recognised and left as they are, with a message saying why: Canon sRAW/mRAW, lossy NEF,
-linear (demosaiced) DNG, packed DNG, DNG with a linearization table, CR3, RAF, ORF and RW2.
+These are recognised but can't be written back: Canon sRAW/mRAW, lossy NEF, linear (demosaiced) DNG,
+packed DNG, DNG with a linearization table, CR3, RAF, ORF and RW2. Since 1.10.3 the Denoiser cleans
+them as pictures (where Android can decode them) and saves them like the other files, a lossless PNG
+among PNGs, otherwise a JPEG at full quality (`tools/RawFallback.kt`), and says so before starting.
 
 ## RAW denoising
 
