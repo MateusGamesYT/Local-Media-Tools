@@ -478,6 +478,28 @@
 < Move to trash
 > Mettre à la corbeille
 
+< You can use the rest of the app meanwhile; the scan keeps going.
+> Vous pouvez utiliser le reste de l’appli en attendant ; l’analyse continue.
+
+< Stop
+> Arrêter
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {1} sur {0} photo
+> {1} sur {0} photos
+
+< less than a minute left
+> moins d’une minute restante
+
+< about {0} minute left
+< about {0} minutes left
+> environ {0} minute restante
+> environ {0} minutes restantes
+
+< Starting…
+> Démarrage…
+
 < Find duplicates in your photos
 > Rechercher les doublons dans vos photos
 
@@ -489,17 +511,6 @@
 
 < Scan my photos
 > Analyser mes photos
-
-< {1} of {0} photo
-< {1} of {0} photos
-> {1} sur {0} photo
-> {1} sur {0} photos
-
-< Starting…
-> Démarrage…
-
-< Stop
-> Arrêter
 
 < The scan stopped: {0}
 > L’analyse s’est arrêtée : {0}
@@ -989,8 +1000,10 @@
 < No photos or PDFs found in that folder.
 > Aucune photo ni aucun PDF trouvé dans ce dossier.
 
-< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
-> Les photos RAW gardent leur format, et {0} ne peut pas enregistrer un fichier {1}. Convertissez d’abord une copie (Convertir des images ou Compresseur d’images).
+< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0} fichier RAW ({1}) deviendra un fichier d’un autre type avec {2} : il ne peut pas être enregistré en {1}. L’original reste tel quel ; seule la Réduction du bruit garde les fichiers RAW en RAW.
+> {0} fichiers RAW ({1}) deviendront des fichiers d’un autre type avec {2} : ils ne peuvent pas être enregistrés en {1}. Les originaux restent tels quels ; seule la Réduction du bruit garde les fichiers RAW en RAW.
 
 < Not a video file
 > Ce n’est pas un fichier vidéo
@@ -1468,6 +1481,12 @@
 < Add to queue
 > Ajouter à la file d’attente
 
+< RAW files will change type
+> Les fichiers RAW vont changer de type
+
+< Continue
+> Continuer
+
 < Queued — it starts when the current export finishes.
 > En file d’attente : démarre à la fin de l’export en cours.
 
@@ -1698,6 +1717,9 @@
 
 < Quality
 > Qualité
+
+< This is a {0} RAW photo: the copy is saved in the format chosen above, not as {0}. The original stays as it is.
+> Ceci est une photo RAW {0} : la copie est enregistrée au format choisi ci-dessus, et non en {0}. L’original reste tel quel.
 
 < This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
 > Cette photo comporte des zones transparentes : PNG ou WebP les conservent ; JPEG les remplit de blanc.
@@ -4823,9 +4845,6 @@
 
 < Step {0} ({1})
 > Étape {0} ({1})
-
-< {0} left this RAW file as it is: {1}
-> {0} a laissé ce fichier RAW tel quel : {1}
 
 < {0} doesn't work on {1}, so it was skipped.
 > {0} ne fonctionne pas avec {1}, il a donc été ignoré.

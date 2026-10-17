@@ -481,6 +481,30 @@
 < Move to trash
 > Переместить в корзину
 
+< You can use the rest of the app meanwhile; the scan keeps going.
+> Тем временем можно пользоваться остальными функциями приложения; сканирование продолжается.
+
+< Stop
+> Остановить
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {1} из {0} фото
+> {1} из {0} фото
+> {1} из {0} фото
+
+< less than a minute left
+> осталось меньше минуты
+
+< about {0} minute left
+< about {0} minutes left
+> осталось около {0} минуты
+> осталось около {0} минут
+> осталось около {0} минут
+
+< Starting…
+> Запуск…
+
 < Find duplicates in your photos
 > Найти дубликаты среди фото
 
@@ -492,18 +516,6 @@
 
 < Scan my photos
 > Сканировать мои фото
-
-< {1} of {0} photo
-< {1} of {0} photos
-> {1} из {0} фото
-> {1} из {0} фото
-> {1} из {0} фото
-
-< Starting…
-> Запуск…
-
-< Stop
-> Остановить
 
 < The scan stopped: {0}
 > Сканирование остановлено: {0}
@@ -1019,8 +1031,11 @@
 < No photos or PDFs found in that folder.
 > В этой папке нет фото или PDF.
 
-< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
-> Фото RAW сохраняют свой формат, а {0} не может сохранить файл {1}. Сначала конвертируйте копию («Конвертация изображений» или «Сжатие изображений»).
+< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0} RAW-файл ({1}) станет файлом другого типа при обработке инструментом «{2}»: его нельзя сохранить как {1}. Оригинал останется как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
+> {0} RAW-файла ({1}) станут файлами другого типа при обработке инструментом «{2}»: их нельзя сохранить как {1}. Оригиналы останутся как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
+> {0} RAW-файлов ({1}) станут файлами другого типа при обработке инструментом «{2}»: их нельзя сохранить как {1}. Оригиналы останутся как есть; только «Шумоподавление» оставляет RAW-файлы в формате RAW.
 
 < Not a video file
 > Это не видеофайл
@@ -1509,6 +1524,12 @@
 < Add to queue
 > Добавить в очередь
 
+< RAW files will change type
+> RAW-файлы изменят тип
+
+< Continue
+> Продолжить
+
 < Queued — it starts when the current export finishes.
 > В очереди — начнётся, когда завершится текущий экспорт.
 
@@ -1742,6 +1763,9 @@
 
 < Quality
 > Качество
+
+< This is a {0} RAW photo: the copy is saved in the format chosen above, not as {0}. The original stays as it is.
+> Это RAW-фото {0}: копия сохраняется в формате, выбранном выше, а не как {0}. Оригинал остаётся как есть.
 
 < This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
 > На этом фото есть прозрачные области: PNG и WebP их сохраняют; JPEG заполняет их белым.
@@ -4957,9 +4981,6 @@
 
 < Step {0} ({1})
 > Шаг {0} ({1})
-
-< {0} left this RAW file as it is: {1}
-> {0} оставил этот RAW-файл как есть: {1}
 
 < {0} doesn't work on {1}, so it was skipped.
 > {0} не работает с: {1}, поэтому пропущен.

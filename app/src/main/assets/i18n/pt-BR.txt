@@ -478,6 +478,28 @@
 < Move to trash
 > Mover para a lixeira
 
+< You can use the rest of the app meanwhile; the scan keeps going.
+> Enquanto isso, você pode usar o resto do app; a análise continua.
+
+< Stop
+> Parar
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {1} de {0} foto
+> {1} de {0} fotos
+
+< less than a minute left
+> falta menos de um minuto
+
+< about {0} minute left
+< about {0} minutes left
+> falta cerca de {0} minuto
+> faltam cerca de {0} minutos
+
+< Starting…
+> Começando…
+
 < Find duplicates in your photos
 > Encontre duplicatas nas suas fotos
 
@@ -489,17 +511,6 @@
 
 < Scan my photos
 > Analisar minhas fotos
-
-< {1} of {0} photo
-< {1} of {0} photos
-> {1} de {0} foto
-> {1} de {0} fotos
-
-< Starting…
-> Começando…
-
-< Stop
-> Parar
 
 < The scan stopped: {0}
 > A análise parou: {0}
@@ -989,8 +1000,10 @@
 < No photos or PDFs found in that folder.
 > Nenhuma foto ou PDF encontrado nessa pasta.
 
-< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
-> As fotos RAW mantêm o formato, e {0} não consegue salvar um arquivo {1}. Converta uma cópia primeiro (Converter imagens ou Compressor de imagens).
+< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0} arquivo RAW ({1}) vai virar outro tipo de arquivo com {2}: ele não pode ser salvo como {1}. O original continua como está; só o Removedor de ruído mantém arquivos RAW como RAW.
+> {0} arquivos RAW ({1}) vão virar outro tipo de arquivo com {2}: eles não podem ser salvos como {1}. Os originais continuam como estão; só o Removedor de ruído mantém arquivos RAW como RAW.
 
 < Not a video file
 > Não é um arquivo de vídeo
@@ -1468,6 +1481,12 @@
 < Add to queue
 > Adicionar à fila
 
+< RAW files will change type
+> Arquivos RAW vão mudar de tipo
+
+< Continue
+> Continuar
+
 < Queued — it starts when the current export finishes.
 > Na fila — começa quando a exportação atual terminar.
 
@@ -1698,6 +1717,9 @@
 
 < Quality
 > Qualidade
+
+< This is a {0} RAW photo: the copy is saved in the format chosen above, not as {0}. The original stays as it is.
+> Esta é uma foto RAW {0}: a cópia é salva no formato escolhido acima, e não como {0}. O original continua como está.
 
 < This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
 > Esta foto tem áreas transparentes: PNG ou WebP as mantêm; o JPEG as preenche de branco.
@@ -4823,9 +4845,6 @@
 
 < Step {0} ({1})
 > Etapa {0} ({1})
-
-< {0} left this RAW file as it is: {1}
-> {0} deixou este arquivo RAW como está: {1}
 
 < {0} doesn't work on {1}, so it was skipped.
 > {0} não funciona com {1}, então foi pulada.

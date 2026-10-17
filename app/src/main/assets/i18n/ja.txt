@@ -475,6 +475,26 @@
 < Move to trash
 > ゴミ箱に移動
 
+< You can use the rest of the app meanwhile; the scan keeps going.
+> その間もアプリのほかの機能を使えます。スキャンは続行されます。
+
+< Stop
+> 停止
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {0}枚中{1}枚
+
+< less than a minute left
+> 残り1分未満
+
+< about {0} minute left
+< about {0} minutes left
+> 残り約{0}分
+
+< Starting…
+> 開始中…
+
 < Find duplicates in your photos
 > 写真の重複を探す
 
@@ -486,16 +506,6 @@
 
 < Scan my photos
 > 写真をスキャン
-
-< {1} of {0} photo
-< {1} of {0} photos
-> {0}枚中{1}枚
-
-< Starting…
-> 開始中…
-
-< Stop
-> 停止
 
 < The scan stopped: {0}
 > スキャンが停止しました：{0}
@@ -959,8 +969,9 @@
 < No photos or PDFs found in that folder.
 > そのフォルダに写真やPDFが見つかりません。
 
-< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
-> RAW写真は元の形式のまま保存され、{0}では{1}ファイルを保存できません。先にコピーを変換してください（「画像変換」または「画像圧縮」）。
+< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> {0}個のRAWファイル（{1}）は、「{2}」を使うと別のファイル形式に変わります：{1}としては保存できません。元のファイルは変更されません。RAWのまま保存できるのは「ノイズ除去」だけです。
 
 < Not a video file
 > 動画ファイルではありません
@@ -1427,6 +1438,12 @@
 < Add to queue
 > キューに追加
 
+< RAW files will change type
+> RAWファイルの形式が変わります
+
+< Continue
+> 続ける
+
 < Queued — it starts when the current export finishes.
 > キューに追加しました。現在のエクスポートが終わると開始します。
 
@@ -1654,6 +1671,9 @@
 
 < Quality
 > 画質
+
+< This is a {0} RAW photo: the copy is saved in the format chosen above, not as {0}. The original stays as it is.
+> これは{0}形式のRAW写真です。コピーは上で選んだ形式で保存され、{0}では保存されません。元の写真は変更されません。
 
 < This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
 > この写真には透明な部分があります。PNGまたはWebPなら保持され、JPEGでは白で塗りつぶされます。
@@ -4689,9 +4709,6 @@
 
 < Step {0} ({1})
 > ステップ{0}（{1}）
-
-< {0} left this RAW file as it is: {1}
-> {0}では、このRAWファイルをそのままにしました：{1}
 
 < {0} doesn't work on {1}, so it was skipped.
 > {0}は{1}を処理できないため、スキップしました。

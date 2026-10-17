@@ -475,6 +475,26 @@
 < Move to trash
 > 휴지통으로 이동
 
+< You can use the rest of the app meanwhile; the scan keeps going.
+> 그동안 앱의 다른 기능을 사용할 수 있어요. 검사는 계속 진행돼요.
+
+< Stop
+> 중지
+
+< {1} of {0} photo
+< {1} of {0} photos
+> {0}장 중 {1}장
+
+< less than a minute left
+> 1분 미만 남음
+
+< about {0} minute left
+< about {0} minutes left
+> 약 {0}분 남음
+
+< Starting…
+> 시작하는 중…
+
 < Find duplicates in your photos
 > 사진에서 중복 찾기
 
@@ -486,16 +506,6 @@
 
 < Scan my photos
 > 내 사진 검사
-
-< {1} of {0} photo
-< {1} of {0} photos
-> {0}장 중 {1}장
-
-< Starting…
-> 시작하는 중…
-
-< Stop
-> 중지
 
 < The scan stopped: {0}
 > 검사가 중지되었어요: {0}
@@ -959,8 +969,9 @@
 < No photos or PDFs found in that folder.
 > 해당 폴더에 사진이나 PDF가 없어요.
 
-< RAW photos keep their format, and {0} can't save a {1} file. Convert a copy first (Convert images or Image compressor).
-> RAW 사진은 형식이 그대로 유지되며, {0}에서는 {1} 파일을 저장할 수 없어요. 먼저 사본을 변환해 주세요('이미지 변환' 또는 '이미지 압축').
+< {0} RAW file ({1}) will become another file type with {2}: it can't be saved as {1}. The original stays as it is; only the Denoiser keeps RAW files as RAW.
+< {0} RAW files ({1}) will become another file type with {2}: they can't be saved as {1}. The originals stay as they are; only the Denoiser keeps RAW files as RAW.
+> '{2}'에서 처리하면 RAW 파일({1}) {0}개가 다른 파일 형식으로 바뀌어요. {1} 형식으로는 저장할 수 없어요. 원본은 그대로 있어요. RAW 파일을 RAW로 유지하는 도구는 '노이즈 제거'뿐이에요.
 
 < Not a video file
 > 동영상 파일이 아니에요
@@ -1427,6 +1438,12 @@
 < Add to queue
 > 대기열에 추가
 
+< RAW files will change type
+> RAW 파일 형식이 바뀌어요
+
+< Continue
+> 계속하기
+
 < Queued — it starts when the current export finishes.
 > 대기열에 추가했어요. 현재 내보내기가 끝나면 시작해요.
 
@@ -1654,6 +1671,9 @@
 
 < Quality
 > 품질
+
+< This is a {0} RAW photo: the copy is saved in the format chosen above, not as {0}. The original stays as it is.
+> 이 사진은 {0} RAW 사진이에요. 사본은 {0} 형식이 아니라 위에서 선택한 형식으로 저장돼요. 원본은 그대로 있어요.
 
 < This photo has transparent areas: PNG or WebP keep them; JPEG fills them with white.
 > 이 사진에는 투명한 영역이 있어요. PNG나 WebP는 그대로 유지하고, JPEG는 흰색으로 채워요.
@@ -4689,9 +4709,6 @@
 
 < Step {0} ({1})
 > {0}단계({1})
-
-< {0} left this RAW file as it is: {1}
-> {0}: 이 RAW 파일은 그대로 두었어요. {1}
 
 < {0} doesn't work on {1}, so it was skipped.
 > {0}: {1}에는 사용할 수 없어서 건너뛰었어요.
