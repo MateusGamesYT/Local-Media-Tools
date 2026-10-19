@@ -104,6 +104,7 @@ class MainActivity : Activity() {
 
     private fun handleIntent(i: Intent?) {
         if (i?.action == Intent.ACTION_SEND || i?.action == Intent.ACTION_SEND_MULTIPLE) { receivePrint(i); return }
+        if (i?.action == Intent.ACTION_VIEW && i.data != null) { openDocument(i); return }
         val id = i?.getLongExtra(EXTRA_SHOW_JOB, -1L) ?: -1L
         if (id > 0) {
             i?.removeExtra(EXTRA_SHOW_JOB)
@@ -144,6 +145,19 @@ class MainActivity : Activity() {
             sel.clear(); sel.addUris(this@MainActivity, copies)
             while (navigator.depth > 1) navigator.pop()
             navigator.push(com.localmediatools.ui.print.PrintScreen(this@MainActivity))
+        }
+    }
+
+    /** A document another app asked to show ("Open with"): opens in the file reader on top of what was open. */
+    private fun openDocument(i: Intent) {
+        val uri = i.data ?: return
+        i.action = null
+        lifecycleScope.launch {
+            val persistent = com.localmediatools.ui.reader.RecentFiles.persist(this@MainActivity, uri)
+            val name = withContext(Dispatchers.IO) {
+                try { com.localmediatools.ui.reader.ReaderFiles.describe(this@MainActivity, uri).first } catch (_: Exception) { uri.lastPathSegment?.substringAfterLast('/') ?: "document" }
+            }
+            navigator.push(com.localmediatools.ui.reader.ReaderScreen(this@MainActivity, com.localmediatools.ui.reader.ReaderSource(uri, name), persistent))
         }
     }
 
@@ -225,6 +239,15 @@ class MainActivity : Activity() {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple)
         }
         launch(intent) { code, data -> if (code == RESULT_OK) cb(urisFrom(data)) }
+    }
+
+    /** Any one file from any provider, for the file reader (it works out what the file is); null when cancelled. */
+    fun pickAnyFile(cb: (Uri?) -> Unit) {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+        }
+        launch(intent) { code, data -> cb(if (code == RESULT_OK) data?.data else null) }
     }
 
     /** One audio file (a song for the highlight video) from any provider; null when cancelled. */

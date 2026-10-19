@@ -10,7 +10,7 @@ enum class ToolSection(private val titleEn: String, private val subtitleEn: Stri
     IMAGES(N_("Images"), N_("Compress, convert, combine and brand photos")),
     VIDEO(N_("Video"), N_("Trim, cut, repackage and shrink videos")),
     GIF(N_("GIF"), N_("Create and slim down animations")),
-    DOCUMENTS(N_("PDF"), N_("Pages, scans and merges")),
+    DOCUMENTS(N_("Documents & PDF"), N_("Read documents; convert, merge and scan PDFs")),
     PRINT(N_("Print"), N_("Photos and documents on your Wi-Fi printer")),
     PRIVACY(N_("Privacy & audio"), N_("Clean metadata and extract sound"));
 
@@ -110,6 +110,9 @@ enum class ToolId(
         N_("Re-encodes GIFs more efficiently while keeping every displayed pixel identical."),
         OutputArea.GIFS),
 
+    READER(ToolSection.DOCUMENTS, N_("File reader"), N_("Open PDF, Word, Excel, PowerPoint and more"),
+        N_("Reads the documents Android can't open by itself — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, EPUB e-books, CSV and text files — right on this phone. Zoom, search the text, and jump between chapters, sheets and slides. Files are only read: nothing is changed or uploaded."),
+        OutputArea.PDF),
     PDF_TO_IMAGES(ToolSection.DOCUMENTS, N_("PDF → images"), N_("Every page as a PNG or JPEG"),
         N_("Renders each page of a PDF to an image exactly as it looks on screen."),
         OutputArea.PDF_IMAGES),

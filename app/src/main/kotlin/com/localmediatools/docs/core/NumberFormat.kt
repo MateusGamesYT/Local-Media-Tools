@@ -51,13 +51,16 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
         return Shown(sb.toString(), sec.color)
     }
 
+    /** Like Excel, a number is taken to 15 significant digits before it's rounded for display (30.395 shows as 30.40). */
+    private fun dec15(v: Double): BigDecimal = if (v == 0.0 || v.isNaN() || v.isInfinite()) BigDecimal.ZERO else BigDecimal(v).round(MathContext(15, RoundingMode.HALF_UP))
+
     // ------------------------------------------------------------------ General
     /** Excel's General: up to 11 characters, switching to scientific notation for very large or small numbers. */
     fun general(v: Double): String {
         if (v == 0.0) return "0"
         val a = abs(v)
         if (a >= 1e11 || a < 1e-9) {
-            val bd = BigDecimal(v).round(MathContext(6, RoundingMode.HALF_UP))
+            val bd = dec15(v).round(MathContext(6, RoundingMode.HALF_UP))
             var exp = bd.precision() - bd.scale() - 1
             var mant = bd.movePointLeft(exp).stripTrailingZeros()
             if (mant.abs() >= BigDecimal.TEN) { mant = mant.movePointLeft(1); exp++ }
@@ -67,7 +70,7 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
         // As many significant digits as fit in 11 characters.
         var digits = 10
         while (digits > 0) {
-            val bd = BigDecimal(v).round(MathContext(digits, RoundingMode.HALF_UP)).stripTrailingZeros()
+            val bd = dec15(v).round(MathContext(digits, RoundingMode.HALF_UP)).stripTrailingZeros()
             val s = (if (bd.scale() < 0) bd.setScale(0) else bd).toPlainString()
             if (s.length <= 11 || digits == 1) return s.replace('.', dec)
             digits--
@@ -253,11 +256,11 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
                 val step = if ((0 until intEnd).any { (t[it] as? Tok.Digit)?.ch == '#' }) intDigits else 1
                 exponent = if (step > 1) Math.floorDiv(exponent, step) * step else exponent - (intDigits - 1)
                 a /= Math.pow(10.0, exponent.toDouble())
-                val r = BigDecimal(a).setScale(fracDigits, RoundingMode.HALF_UP)
+                val r = dec15(a).setScale(fracDigits, RoundingMode.HALF_UP)
                 if (r >= BigDecimal.TEN.pow(if (step > 1) step else intDigits)) { a /= 10; exponent += 1 }
             }
         }
-        val rounded = BigDecimal(a).setScale(fracDigits, RoundingMode.HALF_UP)
+        val rounded = dec15(a).setScale(fracDigits, RoundingMode.HALF_UP)
         val plain = rounded.toPlainString()
         var intStr = plain.substringBefore('.')
         val fracStr = plain.substringAfter('.', "")

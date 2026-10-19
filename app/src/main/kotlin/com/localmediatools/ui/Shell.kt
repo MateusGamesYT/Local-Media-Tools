@@ -48,6 +48,7 @@ object ToolLauncher {
         }
         if (t == ToolId.DUPLICATES) { activity.navigator.push(DuplicatesScreen(activity)); return }
         if (t == ToolId.TOOL_STACK) { activity.navigator.push(StackScreen(activity)); return }
+        if (t == ToolId.READER) { activity.navigator.push(com.localmediatools.ui.reader.ReaderHomeScreen(activity)); return }
         if (mode == null) { activity.navigator.push(ToolScreens.create(activity, t)); return }
         activity.pickMedia(PickKind.IMAGES, multiple = false) { uris -> uris.firstOrNull()?.let { openEditor(activity, it, t, mode) } }
     }
@@ -87,6 +88,7 @@ object ToolLauncher {
         ToolId.EXTRACT_AUDIO to N_("mp3 m4a sound music"),
         ToolId.REMOVE_AUDIO to N_("mute silent sound"),
         ToolId.PDF_SCANNER to N_("scan document camera paper"),
+        ToolId.READER to N_("open view read viewer document pdf word docx doc excel xlsx xls spreadsheet powerpoint pptx ppt slides odt ods odp rtf epub ebook book csv txt text markdown"),
         ToolId.EXTRACT_PDF_PAGES to N_("split pdf pages select"),
         ToolId.VIDEO_TO_GIF to N_("animation meme"),
     )

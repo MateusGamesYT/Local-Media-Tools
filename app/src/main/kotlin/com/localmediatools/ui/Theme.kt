@@ -99,6 +99,7 @@ object Icons {
         ToolId.VIDEO_TO_GIF -> R.drawable.ic_tool_video_gif
         ToolId.COMPRESS_GIF -> R.drawable.ic_tool_gif_compress
         ToolId.OPTIMIZE_GIF -> R.drawable.ic_tool_gif_optimize
+        ToolId.READER -> R.drawable.ic_tool_reader
         ToolId.PDF_TO_IMAGES -> R.drawable.ic_tool_pdf_images
         ToolId.IMAGES_TO_PDF -> R.drawable.ic_tool_images_pdf
         ToolId.MERGE_PDFS -> R.drawable.ic_tool_merge_pdf

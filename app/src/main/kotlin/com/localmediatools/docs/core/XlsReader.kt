@@ -263,8 +263,10 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
             val r = record(at) ?: break
             at = r.offset + r.len
             val o = r.offset
+            // A chart on the sheet is a stream of its own inside the sheet's; its cached values aren't cells.
+            if (depth > 1 && r.type != 0x0809 && r.type != 0x000A) continue
             when (r.type) {
-                0x0809 -> depth++
+                0x0809 -> { depth++; if (depth > 1) drawings++ }
                 0x000A -> { depth--; if (depth <= 0) break }
                 0x00FD -> put(le16(data, o), le16(data, o + 2), le16(data, o + 4)) { st, code -> sst.getOrNull(le32(data, o + 6))?.let { s -> fmt.formatText(s, code).let { Cell(it.text, CellKind.TEXT, st, null, it.color) } } }
                 0x0204, 0x00D6 -> put(le16(data, o), le16(data, o + 2), le16(data, o + 4)) { st, _ -> Cell(string(o + 6, 2).first, CellKind.TEXT, st) }
