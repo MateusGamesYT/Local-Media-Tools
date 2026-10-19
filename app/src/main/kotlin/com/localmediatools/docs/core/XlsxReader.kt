@@ -75,10 +75,18 @@ object XlsxReader {
                         else -> Unit
                     }
                 }
-                out.add(sb.toString())
+                out.add(unescape(sb.toString()))
             }
         }
         return out
+    }
+
+    private val ESCAPE = Regex("_x([0-9A-Fa-f]{4})_")
+
+    /** Characters XML can't hold are written as _xHHHH_ ("_x000D_" for a carriage return). */
+    fun unescape(s: String): String {
+        if (!s.contains("_x")) return s
+        return ESCAPE.replace(s) { m -> m.groupValues[1].toInt(16).toChar().toString() }.replace("\r\n", "\n").replace('\r', '\n')
     }
 
     /** "AB12" → (row 11, column 27); null when it isn't a cell reference. */
@@ -333,7 +341,7 @@ object XlsxReader {
                             else -> text.ifEmpty { null }
                         }
                     }
-                    "is" -> { val sb = StringBuilder(); k.children { t -> if (t.event == Event.START) { if (t.local == "t") sb.append(t.readText()) else if (t.local == "rPh") t.skip() } }; inline = sb.toString() }
+                    "is" -> { val sb = StringBuilder(); k.children { t -> if (t.event == Event.START) { if (t.local == "t") sb.append(t.readText()) else if (t.local == "rPh") t.skip() } }; inline = unescape(sb.toString()) }
                     else -> k.skip()
                 }
             }

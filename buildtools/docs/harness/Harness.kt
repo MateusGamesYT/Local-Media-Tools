@@ -38,13 +38,13 @@ private fun work(f: File, n: Int, out: File, setFormat: (String) -> Unit): Strin
                 File(out, "$n.txt").writeText(doc.plainText())
                 if (doc is Workbook) File(out, "$n.cells").bufferedWriter().use { w ->
                     for ((si, sh) in doc.sheets.withIndex()) for (r in sh.cells.rowIndices()) for ((c, cell) in sh.cells.row(r)!!) {
-                        if (cell.text.isNotEmpty()) w.write("$si\t${sh.name}\t$r\t$c\t${cell.text.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ')}\n")
+                        if (cell.text.isNotEmpty()) w.write("$si\t${sh.name}\t$r\t$c\t${if (cell.formula != null) "f" else "v"}\t${cell.text.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ')}\n")
                     }
                 }
                 val detail = when (doc) {
-                    is FlowDocument -> "blocks=${doc.blocks.size}"
+                    is FlowDocument -> "blocks=${doc.blocks.size} ${pictures(doc.blocks.filterIsInstance<com.localmediatools.docs.core.Picture>().map { it.ref }, doc.media)}"
                     is Workbook -> "sheets=${doc.sheets.size} cells=${doc.sheets.sumOf { it.cells.count }}"
-                    is Deck -> "slides=${doc.slides.size}"
+                    is Deck -> "slides=${doc.slides.size} ${pictures(doc.slides.flatMap { s -> s.shapes.mapNotNull { it.image } + listOfNotNull(s.backgroundImage) }, doc.media)}"
                 }
                 doc.close()
                 "ok\t$detail ${doc.notes.joinToString(" | ")}"
@@ -52,4 +52,20 @@ private fun work(f: File, n: Int, out: File, setFormat: (String) -> Unit): Strin
         } catch (e: Throwable) {
             "error\t${e.javaClass.simpleName}: ${e.message?.replace('\n', ' ')?.take(200)} @ ${e.stackTrace.firstOrNull { it.className.contains("docs") }}"
         }
+}
+
+/** "pics=decodable/total": pictures whose bytes are a format phones draw (PNG, JPEG, GIF, BMP, WebP). */
+private fun pictures(refs: List<String>, media: com.localmediatools.docs.core.Media): String {
+    if (refs.isEmpty()) return ""
+    var ok = 0
+    for (r in refs.distinct()) {
+        val b = try { media.bytes(r) } catch (_: Throwable) { null } ?: continue
+        val png = b.size > 8 && b[0] == 0x89.toByte() && b[1] == 'P'.code.toByte()
+        val jpg = b.size > 3 && b[0] == 0xFF.toByte() && b[1] == 0xD8.toByte()
+        val gif = b.size > 3 && b[0] == 'G'.code.toByte() && b[1] == 'I'.code.toByte()
+        val bmp = b.size > 3 && b[0] == 'B'.code.toByte() && b[1] == 'M'.code.toByte()
+        val webp = b.size > 12 && b[8] == 'W'.code.toByte() && b[9] == 'E'.code.toByte()
+        if (png || jpg || gif || bmp || webp) ok++
+    }
+    return "pics=$ok/${refs.distinct().size}"
 }

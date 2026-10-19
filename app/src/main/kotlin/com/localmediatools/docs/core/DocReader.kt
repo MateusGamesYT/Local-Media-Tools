@@ -6,7 +6,8 @@ import com.localmediatools.i18n.tr
  * Word 97–2003 documents (.doc): the text in reading order, rebuilt from the file's piece table
  * (fields show their result), with paragraphs, tables, page breaks and footnotes; headings come from
  * the paragraph styles, and bold, italic, underline, size and colour from the character formatting.
- * Pictures and drawings in these files aren't shown. Word 6 and 95 files and encrypted ones say so.
+ * Pictures placed in the text (PNG, JPEG, bitmaps) are shown; text in text boxes and shapes follows
+ * the main text. Floating drawings aren't drawn. Word 6 and 95 files and encrypted ones say so.
  */
 class DocReader private constructor(private val ole: Ole2) {
     companion object {
@@ -26,6 +27,10 @@ class DocReader private constructor(private val ole: Ole2) {
     private val papx = ArrayList<Triple<Int, Int, Int>>()
     private val styleNames = HashMap<Int, String>()
     private var notes = ArrayList<String>()
+    /** Inline pictures: (fcStart, fcEnd, offset of the picture in the Data stream). */
+    private val pictureRuns = ArrayList<Triple<Int, Int, Int>>()
+    private val dataStream: ByteArray? by lazy { try { ole.stream("Data") } catch (_: Exception) { null } }
+    private var missedPictures = 0
 
     private fun read(): FlowDocument {
         if (le16(wd, 0) == 0xA5DC) throw UnreadableException(tr("This file was made by Word 6 or Word 95, which this app can't read yet."))
@@ -39,6 +44,8 @@ class DocReader private constructor(private val ole: Ole2) {
         val lwBase = 32 + 2 + csw * 2 + 2
         val ccpText = le32(wd, lwBase + 3 * 4)
         val ccpFtn = le32(wd, lwBase + 4 * 4)
+        val ccpHdd = le32(wd, lwBase + 5 * 4); val ccpMcr = le32(wd, lwBase + 6 * 4)
+        val ccpAtn = le32(wd, lwBase + 7 * 4); val ccpEdn = le32(wd, lwBase + 8 * 4); val ccpTxbx = le32(wd, lwBase + 9 * 4)
         val cslw = le16(wd, 32 + 2 + csw * 2)
         val pairs = 32 + 2 + csw * 2 + 2 + cslw * 4 + 2
         fun fc(i: Int) = le32(wd, pairs + i * 8)
@@ -49,20 +56,85 @@ class DocReader private constructor(private val ole: Ole2) {
         try { readChpx(fc(12), lcb(12)) } catch (_: Exception) { chpx.clear() }
         try { readPapx(fc(13), lcb(13)) } catch (_: Exception) { papx.clear() }
         val blocks = build(0, ccpText)
-        if (ccpFtn > 0) {
-            val foot = build(ccpText, ccpText + ccpFtn).filter { it !is Paragraph || !it.isEmpty() }
-            if (foot.isNotEmpty()) {
-                blocks.add(PageBreak)
-                blocks.add(Paragraph(listOf(Span(tr("Notes"), RunStyle(bold = true))), heading = 2))
-                blocks.addAll(foot)
+        fun valid(n: Int) = n in 1..(Int.MAX_VALUE / 8)
+        // The other stories follow the main text in this order: footnotes, headers, (macros), comments, endnotes, text boxes.
+        val ednStart = ccpText + maxOf(0, ccpFtn) + maxOf(0, ccpHdd) + maxOf(0, ccpMcr) + maxOf(0, ccpAtn)
+        val boxStart = ednStart + maxOf(0, ccpEdn)
+        if (valid(ccpTxbx)) {
+            val boxes = build(boxStart, boxStart + ccpTxbx).filter { it !is Paragraph || !it.isEmpty() }
+            if (boxes.isNotEmpty()) {
+                blocks.add(Rule)
+                blocks.add(Paragraph(listOf(Span(tr("Text in boxes and shapes"), RunStyle(bold = true))), heading = 2))
+                blocks.addAll(boxes)
             }
         }
-        notes.add(tr("Pictures in Word 97–2003 files aren't shown."))
+        val foot = ArrayList<Block>()
+        if (valid(ccpFtn)) foot.addAll(build(ccpText, ccpText + ccpFtn).filter { it !is Paragraph || !it.isEmpty() })
+        if (valid(ccpEdn)) foot.addAll(build(ednStart, ednStart + ccpEdn).filter { it !is Paragraph || !it.isEmpty() })
+        if (foot.isNotEmpty()) {
+            blocks.add(PageBreak)
+            blocks.add(Paragraph(listOf(Span(tr("Notes"), RunStyle(bold = true))), heading = 2))
+            blocks.addAll(foot)
+        }
+        if (missedPictures > 0 || hasDrawings) notes.add(tr("Some pictures and drawings in this document aren't shown."))
         val title = (blocks.firstOrNull { it is Paragraph && it.heading == 1 && it.text.isNotBlank() } as? Paragraph)?.text?.trim()
-        return FlowDocument(title, blocks, notes = if (hasPictures) notes else emptyList(), outline = HtmlReader.outlineOf(blocks), baseSizePt = 12f)
+        return FlowDocument(title, blocks, Media { ref -> picture(ref.removePrefix("pic:").toIntOrNull() ?: -1) }, notes, outline = HtmlReader.outlineOf(blocks), baseSizePt = 12f)
     }
 
-    private var hasPictures = false
+    private var hasDrawings = false
+
+    private fun pictureAt(fc: Int): Int {
+        var lo = 0; var hi = pictureRuns.size - 1
+        while (lo <= hi) {
+            val mid = (lo + hi) ushr 1
+            val (s, e, loc) = pictureRuns[mid]
+            if (fc < s) hi = mid - 1 else if (fc >= e) lo = mid + 1 else return loc
+        }
+        return -1
+    }
+
+    /**
+     * The picture stored at [off] in the Data stream (a PICF header, then Office drawing records
+     * holding the image): its PNG or JPEG bytes, or a bitmap made into a BMP file; null for metafiles.
+     */
+    private fun picture(off: Int): ByteArray? {
+        val d = dataStream ?: return null
+        if (off < 0 || off + 8 > d.size) return null
+        val lcb = le32(d, off)
+        val end = if (lcb in 8..(d.size - off)) off + lcb else d.size
+        var i = off + (le16(d, off + 4).coerceIn(0, 2048))
+        while (i + 8 <= end) {
+            val verInst = le16(d, i); val type = le16(d, i + 2); val len = le32(d, i + 4)
+            if (verInst and 0xF == 0 && type in 0xF01A..0xF02A && len > 17 && i + 8 + len <= d.size) {
+                val inst = verInst ushr 4
+                val start = i + 8
+                fun body(uids: Int) = d.copyOfRange(start + 16 * uids + 1, start + len)
+                when (type) {
+                    0xF01E -> return body(if (inst == 0x6E1) 2 else 1)
+                    0xF01D, 0xF02A -> return body(if (inst == 0x46B || inst == 0x6E3) 2 else 1)
+                    0xF01F -> return bmp(body(if (inst == 0x7A9) 2 else 1))
+                    else -> return null
+                }
+            }
+            i++
+        }
+        return null
+    }
+
+    /** A device-independent bitmap with the 14-byte file header BitmapFactory needs. */
+    private fun bmp(dib: ByteArray): ByteArray {
+        if (dib.size < 40) return dib
+        val headerSize = le32(dib, 0)
+        val bits = le16(dib, 14)
+        val colors = le32(dib, 32).let { if (it == 0 && bits <= 8) 1 shl bits else it }
+        val offset = 14 + headerSize + colors * 4
+        val out = ByteArray(14 + dib.size)
+        out[0] = 'B'.code.toByte(); out[1] = 'M'.code.toByte()
+        fun put32(at: Int, v: Int) { for (k in 0..3) out[at + k] = (v ushr (8 * k)).toByte() }
+        put32(2, out.size); put32(10, offset)
+        System.arraycopy(dib, 0, out, 14, dib.size)
+        return out
+    }
 
     private fun readPieces(fcClx: Int, lcbClx: Int) {
         if (fcClx < 0 || lcbClx <= 0 || fcClx + lcbClx > table.size) return
@@ -159,6 +231,7 @@ class DocReader private constructor(private val ole: Ole2) {
             val last = spans.lastOrNull()
             if (last != null && last.style == st) spans[spans.size - 1] = Span(last.text + s, st) else spans.add(Span(s, st))
         }
+        val pics = ArrayList<Block>()
         fun paragraph(fc: Int): Paragraph = Paragraph(spans.toList(), headingOf(istdAt(fc))).also { spans.clear() }
         fun flushTable() { if (rows.isNotEmpty()) { out.add(Table(rows.toList())); rows.clear() }; cells.clear() }
         for (i in text.indices) {
@@ -167,6 +240,8 @@ class DocReader private constructor(private val ole: Ole2) {
                 '\r' -> {
                     val p = paragraph(fc)
                     if (cells.isNotEmpty()) cellParas.add(p) else { if (rows.isNotEmpty()) flushTable(); cellParas.add(p) }
+                    // Pictures in the paragraph come right after its text.
+                    if (pics.isNotEmpty()) { if (p.isEmpty()) cellParas.removeAt(cellParas.size - 1); cellParas.addAll(pics); pics.clear() }
                     lastWasCellEnd = false
                     // Paragraphs not followed by a cell end are ordinary text: keep only the last one waiting.
                     if (cells.isEmpty() && cellParas.size > 1) { out.addAll(cellParas.subList(0, cellParas.size - 1)); val keep = cellParas.last(); cellParas.clear(); cellParas.add(keep) }
@@ -190,7 +265,11 @@ class DocReader private constructor(private val ole: Ole2) {
                 '\u0013' -> { if (field < 32) { inResult[field] = false; field++ } }
                 '\u0014' -> { if (field > 0) inResult[field - 1] = true }
                 '\u0015' -> { if (field > 0) field-- }
-                '\u0001', '\u0008' -> hasPictures = true
+                '\u0001' -> if (field == 0 || inResult[field - 1]) {
+                    val loc = pictureAt(fc)
+                    if (loc >= 0 && picture(loc) != null) pics.add(Picture("pic:$loc")) else missedPictures++
+                }
+                '\u0008' -> hasDrawings = true
                 '\u0002' -> { footnote++; if (field == 0 || inResult[field - 1]) spans.add(Span(footnote.toString(), styleAt(fc).copy(vertical = 1))) }
                 '\u0003', '\u0004', '\u0005' -> Unit
                 '\u001E' -> add("-", fc)
@@ -200,6 +279,7 @@ class DocReader private constructor(private val ole: Ole2) {
             }
         }
         if (spans.isNotEmpty()) cellParas.add(paragraph(fcs.let { if (it.n > 0) it[it.n - 1] else 0 }))
+        cellParas.addAll(pics)
         if (cells.isNotEmpty()) rows.add(TableRow(cells.toList()))
         flushTable()
         out.addAll(cellParas)
@@ -243,11 +323,13 @@ class DocReader private constructor(private val ole: Ole2) {
                 if (off > 0) {
                     val cb = wd[page + off].toInt() and 0xFF
                     style = sprmsRun(wd, page + off + 1, cb, style)
+                    pictureLocation(wd, page + off + 1, cb).let { if (it >= 0) pictureRuns.add(Triple(s, e, it)) }
                 }
                 chpx.add(Triple(s, e, style))
             }
         }
         chpx.sortBy { it.first }
+        pictureRuns.sortBy { it.first }
     }
 
     private fun readPapx(fc: Int, lcb: Int) {
@@ -273,6 +355,19 @@ class DocReader private constructor(private val ole: Ole2) {
             }
         }
         papx.sortBy { it.first }
+    }
+
+    /** Where a run's picture is in the Data stream (sprmCPicLocation), or -1. */
+    private fun pictureLocation(b: ByteArray, start: Int, len: Int): Int {
+        var i = start
+        val end = (start + len).coerceAtMost(b.size)
+        while (i + 2 <= end) {
+            val sprm = le16(b, i); i += 2
+            val size = when (sprm ushr 13) { 0, 1 -> 1; 2, 4, 5 -> 2; 7 -> 3; 3 -> 4; 6 -> (b.getOrNull(i)?.toInt()?.and(0xFF) ?: 0) + 1; else -> 1 }
+            if (sprm == 0x6A03) return le32(b, i)
+            i += size
+        }
+        return -1
     }
 
     private fun sprmsRun(b: ByteArray, start: Int, len: Int, base: RunStyle): RunStyle {

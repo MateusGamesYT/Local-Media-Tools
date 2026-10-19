@@ -41,6 +41,32 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
     private class SheetRef(val name: String, val pos: Int, val hidden: Boolean, val type: Int)
     private val sheetRefs = ArrayList<SheetRef>()
     private val pendingXf = ArrayList<ByteArray>()
+    /** For formulas: which SUPBOOKs are this workbook, EXTERNSHEET entries (book, first and last sheet), defined names. */
+    private val supBooks = ArrayList<Boolean>()
+    private val xti = ArrayList<Triple<Int, Int, Int>>()
+    private val names = ArrayList<String?>()
+    private val formulas by lazy { XlsFormulas(data, ::sheetRefName, { i -> names.getOrNull(i - 1) }) }
+
+    private fun quoted(n: String) = if (Regex("^[A-Za-z_][A-Za-z0-9_.]*$").matches(n) && !Regex("^[A-Za-z]{1,3}[0-9]+$").matches(n)) n else "'" + n.replace("'", "''") + "'"
+
+    private fun sheetRefName(i: Int): String? {
+        val (book, first, last) = xti.getOrNull(i) ?: return null
+        if (supBooks.getOrNull(book) != true) return null
+        val a = sheetRefs.getOrNull(first)?.name ?: return null
+        val b = sheetRefs.getOrNull(last)?.name ?: a
+        return if (first == last) quoted(a) else quoted("$a:$b").let { if (it.startsWith("'")) "'$a:$b'" else "$a:$b" }
+    }
+
+    private fun definedName(r: Rec): String? {
+        val o = r.offset
+        val builtin = le16(data, o) and 0x0020 != 0
+        val cch = data[o + 3].toInt() and 0xFF
+        if (r.len < 15) return null
+        val wide = data[o + 14].toInt() and 1 != 0
+        val p = o + 15
+        if (builtin) return listOf("Consolidate_Area", "Auto_Open", "Auto_Close", "Extract", "Database", "Criteria", "Print_Area", "Print_Titles", "Recorder", "Data_Form", "Auto_Activate", "Auto_Deactivate", "Sheet_Title", "_FilterDatabase").getOrNull(data[p].toInt() and 0xFF)
+        return if (wide) String(data, p, (cch * 2).coerceAtMost(o + r.len - p), Charsets.UTF_16LE) else String(data, p, cch.coerceAtMost(o + r.len - p), Charsets.ISO_8859_1)
+    }
 
     private fun record(at: Int): Rec? {
         if (at + 4 > data.size) return null
@@ -67,6 +93,9 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
                 0x0092 -> { val n = le16(data, r.offset); for (k in 0 until n.coerceAtMost(56)) { val o = r.offset + 2 + k * 4; palette[k] = (0xFF shl 24) or ((data[o].toInt() and 0xFF) shl 16) or ((data[o + 1].toInt() and 0xFF) shl 8) or (data[o + 2].toInt() and 0xFF) } }
                 0x0085 -> boundSheet(r)
                 0x00FC -> sst(r, at)
+                0x01AE -> supBooks.add(le16(data, r.offset + 2) == 0x0401)
+                0x0017 -> if (biff8) { val n = le16(data, r.offset); for (k in 0 until n) { val p = r.offset + 2 + k * 6; if (p + 6 <= r.offset + r.len) xti.add(Triple(le16(data, p), le16(data, p + 2), le16(data, p + 4))) } }
+                0x0018 -> if (biff8) names.add(definedName(r))
                 0x000A -> break
             }
         }
@@ -98,7 +127,8 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
                 0x0042 -> { val cp = le16(data, o); charset = try { Charset.forName("windows-$cp") } catch (_: Exception) { charset } }
                 0x0022 -> date1904 = le16(data, o) == 1
                 0x001E -> { val cch = data[o].toInt() and 0xFF; formats[formatCount++] = String(data, o + 1, cch.coerceAtMost(r.len - 1), charset) }
-                0x041E -> format(r)
+                // BIFF4 formats are numbered in the order they come (the first two bytes aren't an index).
+                0x041E -> if (version == 4) { val cch = data[o + 2].toInt() and 0xFF; formats[formatCount++] = String(data, o + 3, cch.coerceAtMost(r.len - 3), charset) } else format(r)
                 0x0031, 0x0231 -> {
                     val g = le16(data, o + 2)
                     fonts.add(Font(g and 1 != 0, g and 2 != 0, g and 4 != 0, g and 8 != 0, le16(data, o) / 20f, if (r.type == 0x0231) color(le16(data, o + 4)) else 0))
@@ -252,13 +282,28 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
         var at = ref.pos
         var depth = 0
         var pendingFormula: Triple<Int, Int, Int>? = null
+        var pendingText: String? = null
+        // Formulas shared by a range of cells (or array formulas) are stored once, after their first cell.
+        val shared = HashMap<Long, Triple<Int, Int, Boolean>>()
+        val waiting = ArrayList<Triple<Int, Int, Long>>()
+        fun formulaOf(o: Int, len: Int, row: Int, col: Int): String? {
+            if (!biff8 || len < 22) return null
+            val cce = le16(data, o + 20)
+            if (cce >= 5 && data[o + 22].toInt() == 0x01) {
+                val key = (le16(data, o + 23).toLong() shl 16) or le16(data, o + 25).toLong()
+                val sh = shared[key]
+                if (sh == null) { waiting.add(Triple(row, col, key)); return null }
+                return formulas.decode(sh.first, sh.second, row, col, shared = !sh.third)?.let { if (sh.third) "{=$it}" else it }
+            }
+            return formulas.decode(o + 22, cce.coerceAtMost(len - 22), row, col)
+        }
         fun put(r: Int, c: Int, xf: Int, cell: (Int, String?) -> Cell?) {
             if (grid.count >= 3_000_000) return
             val style = xfStyle.getOrElse(xf) { 0 }
             val code = xfFormat.getOrNull(xf)?.let { formats[it] ?: fmt.builtin(it) }
             cell(style, code)?.let { grid.put(r, c, it) }
         }
-        fun number(v: Double, style: Int, code: String?): Cell = fmt.format(v, code).let { Cell(it.text, CellKind.NUMBER, style, null, it.color) }
+        fun number(v: Double, style: Int, code: String?, formula: String? = null): Cell = fmt.format(v, code).let { Cell(it.text, CellKind.NUMBER, style, formula, it.color) }
         while (true) {
             val r = record(at) ?: break
             at = r.offset + r.len
@@ -294,16 +339,19 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
                     put(le16(data, o), le16(data, o + 2), data[o + 4].toInt() and 0x3F) { st, code -> number(le64d(data, o + 7), st, code) }
                 } else {
                     val row = le16(data, o); val col = le16(data, o + 2); val xf = le16(data, o + 4)
+                    val f = if (r.type == 0x0006) formulaOf(o, r.len, row, col) else null
                     if (le16(data, o + 12) == 0xFFFF) {
                         when (data[o + 6].toInt()) {
-                            0 -> pendingFormula = Triple(row, col, xf)
-                            1 -> put(row, col, xf) { st, _ -> Cell(if (data[o + 8].toInt() != 0) trc("spreadsheet value", "TRUE") else trc("spreadsheet value", "FALSE"), CellKind.BOOLEAN, st) }
-                            2 -> put(row, col, xf) { st, _ -> Cell(ERRORS[data[o + 8].toInt() and 0xFF] ?: "#ERR", CellKind.ERROR, st) }
-                            3 -> Unit
+                            0 -> { pendingFormula = Triple(row, col, xf); pendingText = f }
+                            1 -> put(row, col, xf) { st, _ -> Cell(if (data[o + 8].toInt() != 0) trc("spreadsheet value", "TRUE") else trc("spreadsheet value", "FALSE"), CellKind.BOOLEAN, st, f) }
+                            2 -> put(row, col, xf) { st, _ -> Cell(ERRORS[data[o + 8].toInt() and 0xFF] ?: "#ERR", CellKind.ERROR, st, f) }
+                            3 -> if (f != null) put(row, col, xf) { st, _ -> Cell("", CellKind.TEXT, st, f) }
                         }
-                    } else put(row, col, xf) { st, code -> number(le64d(data, o + 6), st, code) }
+                    } else put(row, col, xf) { st, code -> number(le64d(data, o + 6), st, code, f) }
                 }
-                0x0207 -> pendingFormula?.let { (row, col, xf) -> put(row, col, xf) { st, code -> fmt.formatText(string(o, 2).first, code).let { Cell(it.text, CellKind.TEXT, st, null, it.color) } }; pendingFormula = null }
+                0x0207 -> pendingFormula?.let { (row, col, xf) -> put(row, col, xf) { st, code -> fmt.formatText(string(o, 2).first, code).let { Cell(it.text, CellKind.TEXT, st, pendingText, it.color) } }; pendingFormula = null }
+                0x04BC -> if (r.len >= 10) shared[(le16(data, o).toLong() shl 16) or (data[o + 4].toLong() and 0xFF)] = Triple(o + 10, le16(data, o + 8).coerceAtMost(r.len - 10), false)
+                0x0221 -> if (r.len >= 14) shared[(le16(data, o).toLong() shl 16) or (data[o + 4].toLong() and 0xFF)] = Triple(o + 14, le16(data, o + 12).coerceAtMost(r.len - 14), true)
                 0x0208 -> {
                     val row = le16(data, o)
                     val h = le16(data, o + 6)
@@ -329,6 +377,13 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
             }
         }
         if (frozenR < 0) { frozenR = 0; frozenC = 0 }
+        // Cells whose shared formula came after them.
+        for ((row, col, key) in waiting) {
+            val sh = shared[key] ?: continue
+            val c = grid[row, col] ?: continue
+            val f = formulas.decode(sh.first, sh.second, row, col, shared = !sh.third)?.let { if (sh.third) "{=$it}" else it } ?: continue
+            grid.put(row, col, Cell(c.text, c.kind, c.style, f, c.color))
+        }
         return Sheet(ref.name, grid, widths, heights, defaultW, defaultH, hiddenCols, hiddenRows, merges, frozenR, frozenC, ref.hidden, gridLines, if (drawings > 0) 1 else 0)
     }
 

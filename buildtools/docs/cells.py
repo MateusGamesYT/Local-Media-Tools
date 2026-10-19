@@ -1,6 +1,6 @@
 """Cell-by-cell check of the spreadsheet readers against LibreOffice (cells as shown, US English).
 
-  python3 cells.py <work dir> [--show N] [--file SUBSTRING]
+  python3 cells.py <work dir> [--show N] [--file SUBSTRING] [--run run2.tsv --out out2 --list all.lst]
 
 Reads csvref.index (from lo_refs.sh csv), the harness results run2.tsv and the harness's
 <n>.cells files in out2, and compares every non-empty cell LibreOffice shows with the text the app
@@ -29,16 +29,30 @@ def kind(lo, ours):
     return "text"
 
 
+def general_rounding(lo, ours):
+    """LibreOffice shows General numbers with up to 15 digits; Excel (and the app) with at most 11 characters."""
+    try:
+        a = float(lo.replace(",", "")); b = float(ours.replace(",", ""))
+    except ValueError:
+        return False
+    if a == b:
+        return False
+    digits = len(ours.replace("-", "").replace(".", "").lstrip("0")) or 1
+    return float(f"{a:.{max(1, digits)}g}") == b or abs(a - b) <= abs(a) * 10 ** (1 - digits)
+
+
 def main():
     w = sys.argv[1]
     show = int(sys.argv[sys.argv.index("--show") + 1]) if "--show" in sys.argv else 8
     only = sys.argv[sys.argv.index("--file") + 1] if "--file" in sys.argv else None
+    opt = lambda k, d: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else d
+    run, out, lst_name = opt("--run", "run2.tsv"), opt("--out", "out2"), opt("--list", "all.lst")
     results = {}
-    for line in open(os.path.join(w, "run2.tsv"), encoding="utf-8", errors="replace"):
+    for line in open(os.path.join(w, run), encoding="utf-8", errors="replace"):
         p = line.rstrip("\n").split("\t")
         if len(p) >= 3:
             results[p[0]] = p[1]
-    lst = [l.rstrip("\n") for l in open(os.path.join(w, "all.lst"))]
+    lst = [l.rstrip("\n") for l in open(os.path.join(w, lst_name))]
     index = {f: i for i, f in enumerate(lst)}
     total = collections.Counter(); same = collections.Counter(); loose = collections.Counter()
     diffs = collections.defaultdict(list); kinds = collections.Counter(); per_file = []
@@ -50,26 +64,34 @@ def main():
         d = os.path.join(w, "csvref", n)
         if not os.path.isdir(d) or path not in index:
             continue
-        cells = os.path.join(w, "out2", f"{index[path]}.cells")
+        cells = os.path.join(w, out, f"{index[path]}.cells")
         ours = collections.defaultdict(dict)
+        formulas = collections.defaultdict(set)
         names = []
         if os.path.exists(cells):
             for l in open(cells, encoding="utf-8", errors="replace"):
-                p = l.rstrip("\n").split("\t", 4)
-                if len(p) == 5:
+                p = l.rstrip("\n").split("\t", 5)
+                if len(p) == 6:
                     if p[1] not in names:
                         names.append(p[1])
-                    ours[p[1]][(int(p[2]), int(p[3]))] = p[4]
+                    ours[p[1]][(int(p[2]), int(p[3]))] = p[5]
+                    if p[4] == "f":
+                        formulas[p[1]].add((int(p[2]), int(p[3])))
         base = os.path.splitext(os.path.basename(path))[0]
         csvs = sorted(os.listdir(d))
         ft = fs = 0
         for c in csvs:
             sheet = c[len(base) + 1:-4] if c.startswith(base + "-") else c[:-4]
             mine = ours.get(sheet)
+            key = sheet
             if mine is None:
                 # File names can't hold every character a sheet name can.
                 cand = [s for s in ours if re.sub(r"[^\w]", "", s) == re.sub(r"[^\w]", "", sheet)]
-                mine = ours.get(cand[0]) if cand else {}
+                if not cand and len(ours) == 1 and len(csvs) == 1:
+                    cand = list(ours)
+                key = cand[0] if cand else sheet
+                mine = ours.get(key, {})
+            fcells = formulas.get(key, set())
             with open(os.path.join(d, c), encoding="utf-8", errors="replace", newline="") as fh:
                 for r, row in enumerate(csv.reader(fh)):
                     for col, lo in enumerate(row):
@@ -83,15 +105,21 @@ def main():
                         if o is not None and norm(o) == norm(lo):
                             loose[fmt] += 1
                             continue
-                        k = kind(lo, o)
+                        k = "formula" if (r, col) in fcells else kind(lo, o)
+                        if k == "number" and o is not None and general_rounding(lo, o):
+                            k = "general"
                         kinds[(fmt, k)] += 1
                         if len(diffs[(fmt, k)]) < 400:
                             diffs[(fmt, k)].append((path, sheet, r, col, lo, o))
         if ft:
             per_file.append((fs / ft, ft, path))
-    print(f"{'format':6} {'cells':>9} {'identical':>10} {'loosely':>9}")
+    print(f"{'format':6} {'cells':>9} {'identical':>10} {'loosely':>9} {'values only':>12} {'+ General':>10}")
     for f in sorted(total):
-        print(f"{f:6} {total[f]:9} {same[f] / total[f]:10.4f} {loose[f] / total[f]:9.4f}")
+        fdiff = kinds[(f, "formula")]
+        gdiff = kinds[(f, "general")]
+        print(f"{f:6} {total[f]:9} {same[f] / total[f]:10.4f} {loose[f] / total[f]:9.4f} {(loose[f] + fdiff) / total[f]:12.4f} {(loose[f] + fdiff + gdiff) / total[f]:10.4f}")
+    print("values only: differences in formula cells (LibreOffice recalculates them, e.g. TODAY()) not counted;")
+    print("+ General: nor General numbers LibreOffice shows with more digits than Excel's 11 characters.")
     print("\nDifferences by kind:")
     for (f, k), v in sorted(kinds.items(), key=lambda x: -x[1]):
         print(f"  {f:5} {k:10} {v:7}")

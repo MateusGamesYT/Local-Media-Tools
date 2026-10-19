@@ -33,7 +33,10 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
         if (c.equals("General", true)) return Shown(general(value))
         val sections = parsed.getOrPut(c) { parse(c) }
         val (sec, v) = pick(sections, value) ?: return Shown(general(value))
-        val text = try { render(sec, v, value) } catch (_: Exception) { general(value) }
+        val text = try {
+            if (sec.tokens.any { it is Tok.General }) sec.tokens.joinToString("") { t -> when (t) { is Tok.Lit -> t.s; Tok.General -> general(if (sections.size > 1) v else value); else -> "" } }
+            else render(sec, v, value)
+        } catch (_: Exception) { general(value) }
         return Shown(text, sec.color)
     }
 
@@ -68,7 +71,7 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
             return m + "E" + (if (exp < 0) "-" else "+") + abs(exp).toString().padStart(2, '0')
         }
         // As many significant digits as fit in 11 characters.
-        var digits = 10
+        var digits = 11
         while (digits > 0) {
             val bd = dec15(v).round(MathContext(digits, RoundingMode.HALF_UP)).stripTrailingZeros()
             val s = (if (bd.scale() < 0) bd.setScale(0) else bd).toPlainString()
@@ -90,6 +93,8 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
         object Slash : Tok()
         class Date(val s: String) : Tok() // y…, m…, d…, h…, s…, AM/PM, A/P, .0 (sub-second)
         class Elapsed(val unit: Char, val width: Int) : Tok()
+        /** "General" inside a code ("[Blue]General", "General\" kg\""). */
+        object General : Tok()
     }
 
     private class Section(val tokens: List<Tok>, val color: Int, val cond: Pair<String, Double>?) {
@@ -141,8 +146,9 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
                             val sym = inner.substring(1).substringBefore('-')
                             val lcid = inner.substringAfter('-', "").uppercase(Locale.ROOT)
                             if (sym.isNotEmpty()) lit(sym)
-                            if (lcid.endsWith("F800")) toks.addAll(parseSection(longDatePattern()).tokens)
-                            if (lcid.endsWith("F400")) toks.addAll(parseSection("h:mm:ss AM/PM").tokens)
+                            // The system's long date or time: what follows is only a fallback for other programs.
+                            if (lcid.endsWith("F800")) { toks.addAll(parseSection(longDatePattern()).tokens); return Section(toks, color, cond) }
+                            if (lcid.endsWith("F400")) { toks.addAll(parseSection("h:mm:ss AM/PM").tokens); return Section(toks, color, cond) }
                         }
                         li.startsWith("color") -> color = PALETTE.getOrElse((li.removePrefix("color").toIntOrNull() ?: 1) - 1) { 0 }.let { (0xFF000000L or it.toLong()).toInt() }
                         li in COLORS -> color = COLORS.getValue(li)
@@ -167,6 +173,7 @@ class NumberFormatter(private val locale: Locale = Locale.US, private val date19
                 (c == 'E' || c == 'e') && i + 1 < s.length && (s[i + 1] == '+' || s[i + 1] == '-') -> { toks.add(Tok.Exp(s[i + 1] == '+')); i += 2 }
                 c == '/' -> { if (toks.any { it is Tok.Digit }) toks.add(Tok.Slash) else lit("/"); i++ }
                 c == '@' -> { toks.add(Tok.At); i++ }
+                lower.startsWith("general", i) -> { toks.add(Tok.General); i += 7 }
                 lower.startsWith("am/pm", i) -> { toks.add(Tok.Date("AM/PM")); i += 5 }
                 lower.startsWith("a/p", i) -> { toks.add(Tok.Date(if (c == 'a') "a/p" else "A/P")); i += 3 }
                 c.lowercaseChar() in "ymdhse" || (c.lowercaseChar() == 'g' && i + 1 < s.length && s[i + 1].lowercaseChar() == 'g') -> {
