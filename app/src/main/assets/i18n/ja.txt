@@ -6974,3 +6974,14 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > 音楽,ミュージック,楽器,がっき,楽器類,ドラム,ドラムス,太鼓,バイオリン,ヴァイオリン,ギター,ピアノ
+
+< Just now
+> たった今
+
+< {0} minute ago
+< {0} minutes ago
+> {0}分前
+
+< {0} hour ago
+< {0} hours ago
+> {0}時間前

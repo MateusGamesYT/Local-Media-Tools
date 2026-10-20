@@ -7140,3 +7140,16 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > música,músicas,instrumento musical,instrumentos,bateria,violino,violão,piano
+
+< Just now
+> Agora mesmo
+
+< {0} minute ago
+< {0} minutes ago
+> Há {0} minuto
+> Há {0} minutos
+
+< {0} hour ago
+< {0} hours ago
+> Há {0} hora
+> Há {0} horas

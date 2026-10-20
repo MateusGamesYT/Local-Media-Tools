@@ -106,8 +106,10 @@ class ReaderUiTest {
         waitFor("the reader") { (a.navigator.top as? ReaderScreen)?.state == "shown" }
         a.onBackPressed(); idle()
         assertTrue(a.navigator.top is ReaderHomeScreen)
-        a.navigator.top!!.onShow(); idle(300)
-        assertTrue("recent file listed", texts(a).any { it == "boreas.docx" })
+        a.navigator.top!!.onShow()
+        // The list is read off the main thread.
+        waitFor("recent file listed") { texts(a).any { it == "boreas.docx" } }
+        assertTrue(texts(a).joinToString("|"), texts(a).any { it.endsWith(" · Just now") })
         render(a, "0_home_recent")
     }
 
@@ -179,6 +181,10 @@ class ReaderUiTest {
         s.searchNow("pesticides")
         waitFor("search") { s.searchStatus.toString().matches(Regex("\\d+ of \\d+")) }
         assertTrue(s.searchStatus.toString(), s.searchStatus.toString().startsWith("1 of"))
+        // On to page 2 (page 1 starts with the author's address and phone, not for the README picture).
+        repeat(8) { s.content!!.searchStep(true); idle() }
+        assertTrue(s.searchStatus.toString(), s.searchStatus.toString().startsWith("9 of"))
+        waitFor("pages 2 and 3 drawn") { pages.isDrawn(1) && pages.isDrawn(2) }
         render(a, "4_pdf_search")
     }
 

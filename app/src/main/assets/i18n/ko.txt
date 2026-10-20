@@ -6974,3 +6974,14 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > 음악,뮤직,악기,악기들,드럼,북,바이올린,기타,피아노,연주,관악기,타악기,현악기
+
+< Just now
+> 방금
+
+< {0} minute ago
+< {0} minutes ago
+> {0}분 전
+
+< {0} hour ago
+< {0} hours ago
+> {0}시간 전

@@ -7306,3 +7306,18 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > музыка,музыкальный инструмент,инструменты,барабаны,скрипка,орган,оркестр
+
+< Just now
+> Только что
+
+< {0} minute ago
+< {0} minutes ago
+> {0} минуту назад
+> {0} минуты назад
+> {0} минут назад
+
+< {0} hour ago
+< {0} hours ago
+> {0} час назад
+> {0} часа назад
+> {0} часов назад

@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -12,7 +11,10 @@ import android.widget.ScrollView
 import com.localmediatools.app.MainActivity
 import com.localmediatools.app.R
 import com.localmediatools.core.Format
+import com.localmediatools.i18n.I18n
 import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
+import com.localmediatools.i18n.trn
 import com.localmediatools.tools.ToolId
 import com.localmediatools.ui.Palette
 import com.localmediatools.ui.Screen
@@ -82,6 +84,21 @@ class ReaderHomeScreen(activity: MainActivity) : Screen(activity) {
         }
     }
 
+    /** When a file was opened, in the app's language (not the phone's): "Just now", "5 minutes ago", "Yesterday", a date. */
+    private fun openedWhen(ms: Long): String {
+        val ago = System.currentTimeMillis() - ms
+        if (ago in 0 until 60_000L) return tr("Just now")
+        if (ago in 0 until 3_600_000L) return trn(ago / 60_000, "{0} minute ago", "{0} minutes ago")
+        val now = java.util.Calendar.getInstance(); val then = java.util.Calendar.getInstance().apply { timeInMillis = ms }
+        val sameYear = now.get(java.util.Calendar.YEAR) == then.get(java.util.Calendar.YEAR)
+        if (sameYear && now.get(java.util.Calendar.DAY_OF_YEAR) == then.get(java.util.Calendar.DAY_OF_YEAR) && ago >= 0)
+            return trn(ago / 3_600_000, "{0} hour ago", "{0} hours ago")
+        now.add(java.util.Calendar.DAY_OF_YEAR, -1)
+        if (now.get(java.util.Calendar.YEAR) == then.get(java.util.Calendar.YEAR) && now.get(java.util.Calendar.DAY_OF_YEAR) == then.get(java.util.Calendar.DAY_OF_YEAR)) return tr("Yesterday")
+        return if (sameYear) I18n.capitalize(I18n.date(ms, then.timeZone, trc("date pattern: a day this year, with its weekday", "EEE, d MMM")))
+        else I18n.date(ms, then.timeZone, trc("date pattern: a day in another year", "d MMM yyyy"))
+    }
+
     private fun row(r: RecentFile): View {
         val fmt = FormatLook.parse(r.format)
         val line = UI.horizontal(ctx).apply {
@@ -90,7 +107,7 @@ class ReaderHomeScreen(activity: MainActivity) : Screen(activity) {
             isClickable = true; isFocusable = true
         }
         line.addView(FileBadge(ctx, FormatLook.tag(fmt, r.name), FormatLook.color(fmt)), lp(ctx.dp(40), ctx.dp(46)))
-        val when_ = DateUtils.getRelativeTimeSpanString(r.openedAt, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS).toString()
+        val when_ = openedWhen(r.openedAt)
         line.addView(UI.titled(ctx, r.name, "${FormatLook.label(fmt)} · ${Format.bytes(r.size)} · $when_").apply {
             setPadding(ctx.dp(12), 0, ctx.dp(4), 0)
         }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))

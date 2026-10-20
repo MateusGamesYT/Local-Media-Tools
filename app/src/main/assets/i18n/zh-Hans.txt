@@ -6974,3 +6974,14 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > 音乐,乐器,鼓,架子鼓,小提琴,大提琴,萨克斯,长笛,乐队
+
+< Just now
+> 刚刚
+
+< {0} minute ago
+< {0} minutes ago
+> {0}分钟前
+
+< {0} hour ago
+< {0} hours ago
+> {0}小时前

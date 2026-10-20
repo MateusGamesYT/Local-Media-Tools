@@ -819,7 +819,7 @@ so updates install over each other; use your own key for a store release.
   locked files saying so — and Excel's number formats as Excel shows them (rounding, General,
   sections and colours, dates and times, fractions, each language's separators and month names),
   each case standing for a difference found against LibreOffice on 2.9 million real cells.
-* `app/src/roboTest` — 78 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+* `app/src/roboTest` — 86 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
