@@ -111,7 +111,7 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
         refView.text = if (m != null) XlsxReader.columnName(m.c1) + (m.r1 + 1) else XlsxReader.columnName(c) + (r + 1)
         valueView.text = when {
             cell == null -> ""
-            cell.formula != null -> if (cell.formula.startsWith("{")) cell.formula else "=" + cell.formula
+            cell.formula != null -> cell.formula
             else -> cell.text
         }
         valueView.contentDescription = "${refView.text}: ${valueView.text}"

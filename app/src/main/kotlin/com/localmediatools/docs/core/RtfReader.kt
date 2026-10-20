@@ -68,7 +68,12 @@ class RtfReader private constructor(private val b: ByteArray) {
                 '}'.code -> { flushBytes(); pos++; endGroup() }
                 '\\'.code -> control()
                 '\r'.code, '\n'.code -> pos++
-                else -> { pos++; if (skipChars > 0) skipChars-- else if (!state.skip || state.dest in TABLES) { flushBytes(); text(c.toChar().toString()) } }
+                else -> {
+                    pos++
+                    if (skipChars > 0) skipChars--
+                    else if (state.dest == "pict") pictBytes.write(c)
+                    else if (!state.skip || state.dest in TABLES) { flushBytes(); text(c.toChar().toString()) }
+                }
             }
         }
         flushBytes()
@@ -190,7 +195,8 @@ class RtfReader private constructor(private val b: ByteArray) {
             "title" -> if (state.dest == "info") { state.dest = "title" }
             "fldinst" -> { state.skip = true; state.dest = "fldinst"; fldInst.setLength(0) }
             "fldrslt" -> {
-                state.skip = false; state.dest = "fldrslt"
+                // Shown only where the field itself is (not in a header, footer or other skipped part).
+                state.skip = stack.lastOrNull()?.skip ?: false; state.dest = "fldrslt"
                 fieldLink = Regex("""HYPERLINK\s+"([^"]+)"""").find(fldInst)?.groupValues?.get(1)
             }
             "pict" -> { state.skip = true; state.dest = "pict"; pictBytes.reset(); pictType = null; pictW = 0f; pictH = 0f }
@@ -199,8 +205,8 @@ class RtfReader private constructor(private val b: ByteArray) {
             "picwgoal" -> pictW = (p ?: 0) / 20f
             "pichgoal" -> pictH = (p ?: 0) / 20f
             "listtext", "pntext" -> { state.skip = true; state.dest = w; listText.setLength(0) }
-            "shppict" -> { state.skip = false; state.dest = "shppict" }
-            "result" -> { state.skip = false; state.dest = "result" }
+            "shppict" -> { state.skip = stack.lastOrNull()?.skip ?: false; state.dest = "shppict" }
+            "result" -> { state.skip = stack.lastOrNull()?.skip ?: false; state.dest = "result" }
             "footnote" -> { state.skip = true; state.dest = "footnote" }
             "field" -> Unit
             else -> if (w in SKIP) { state.skip = true; state.dest = w }

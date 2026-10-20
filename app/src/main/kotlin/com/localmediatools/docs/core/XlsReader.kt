@@ -293,9 +293,9 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
                 val key = (le16(data, o + 23).toLong() shl 16) or le16(data, o + 25).toLong()
                 val sh = shared[key]
                 if (sh == null) { waiting.add(Triple(row, col, key)); return null }
-                return formulas.decode(sh.first, sh.second, row, col, shared = !sh.third)?.let { if (sh.third) "{=$it}" else it }
+                return formulas.decode(sh.first, sh.second, row, col, shared = !sh.third)?.let { if (sh.third) "{=$it}" else "=$it" }
             }
-            return formulas.decode(o + 22, cce.coerceAtMost(len - 22), row, col)
+            return formulas.decode(o + 22, cce.coerceAtMost(len - 22), row, col)?.let { "=$it" }
         }
         fun put(r: Int, c: Int, xf: Int, cell: (Int, String?) -> Cell?) {
             if (grid.count >= 3_000_000) return
@@ -381,7 +381,7 @@ class XlsReader private constructor(private val data: ByteArray, private val loc
         for ((row, col, key) in waiting) {
             val sh = shared[key] ?: continue
             val c = grid[row, col] ?: continue
-            val f = formulas.decode(sh.first, sh.second, row, col, shared = !sh.third)?.let { if (sh.third) "{=$it}" else it } ?: continue
+            val f = formulas.decode(sh.first, sh.second, row, col, shared = !sh.third)?.let { if (sh.third) "{=$it}" else "=$it" } ?: continue
             grid.put(row, col, Cell(c.text, c.kind, c.style, f, c.color))
         }
         return Sheet(ref.name, grid, widths, heights, defaultW, defaultH, hiddenCols, hiddenRows, merges, frozenR, frozenC, ref.hidden, gridLines, if (drawings > 0) 1 else 0)

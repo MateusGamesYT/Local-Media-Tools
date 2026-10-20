@@ -187,6 +187,9 @@ object OdfReader {
     }
 
     private class TextBuilder(val styles: Styles, val parts: Parts) {
+        /** In a presentation, the number of the slide being read (page-number fields show it). */
+        var pageNumber = 0
+
         val blocks = ArrayList<Block>()
         val notes = ArrayList<Pair<String, List<Block>>>()
         var charts = 0; var objects = 0
@@ -294,6 +297,12 @@ object OdfReader {
                         c.ns == Ns.DRAW && (c.local == "frame" || c.local == "a" || c.local == "custom-shape" || c.local == "g") -> frame(c, trailing)
                         c.ns == Ns.OFFICE && c.local == "annotation" -> c.skip()
                         c.ns == Ns.TEXT && (c.local == "tracked-changes" || c.local == "deletion" || c.local == "bookmark" || c.local == "bookmark-start" || c.local == "bookmark-end" || c.local == "soft-page-break" || c.local == "change" || c.local == "change-start" || c.local == "change-end" || c.local == "reference-mark") -> c.skip()
+                        c.ns == Ns.TEXT && c.local == "page-number" && pageNumber > 0 -> { spans.add(Span(pageNumber.toString(), style, link)); c.skip() }
+                        // Stand-ins like "<date/time>" or "<number>" that some programs save in place of a field's value.
+                        (c.ns == Ns.TEXT || c.ns == Ns.PRESENTATION) && c.local in setOf("page-number", "date", "time", "date-time", "header", "footer") -> {
+                            val t = c.readText()
+                            if (!(t.startsWith("<") && t.endsWith(">"))) spans.add(Span(t, style, link))
+                        }
                         else -> inline(c, style, link, spans, trailing) // fields, sequences, ruby…: their text
                     }
                     else -> Unit
@@ -369,6 +378,7 @@ object OdfReader {
                 if (cs == CellStyle.DEFAULT) 0 else { cellStyles.add(cs); cellStyles.size - 1 }
             }
         }
+        fun visible(st: Int) = cellStyles.getOrNull(st)?.let { it.fill != 0 || it.borderTop != 0 || it.borderBottom != 0 || it.borderLeft != 0 || it.borderRight != 0 } ?: false
         val sheets = ArrayList<Sheet>()
         var cells = 0
         val max = 3_000_000
@@ -418,17 +428,19 @@ object OdfReader {
                     }
                     val text = sb.toString()
                     val kind = when (type) { "float", "percentage", "currency", "date", "time" -> CellKind.NUMBER; "boolean" -> CellKind.BOOLEAN; else -> CellKind.TEXT }
-                    if (text.isNotEmpty() || st != 0 || formula != null) {
+                    // Empty cells matter only when they show something (a fill or a border); LibreOffice
+                    // writes styled empty cells down to row 1,048,576.
+                    if (text.isNotEmpty() || formula != null || visible(st)) {
                         val cell = Cell(text, kind, st, formula)
                         for (k in 0 until rep.coerceAtMost(if (text.isEmpty()) 64 else 1024)) rowCells.add(Triple(c0 + k, cell, 0))
                     }
                     if (cs > 1 || rs > 1) merges.add(Merge(start, c0, start + rs - 1, c0 + cs - 1))
                     c0 += rep
                 }
-                val reps = if (rowCells.isEmpty()) repeat else repeat.coerceAtMost(256)
+                val reps = if (rowCells.isEmpty()) repeat else repeat.coerceAtMost(if (rowCells.all { it.second.text.isEmpty() }) 64 else 256)
                 for (k in 0 until reps) {
                     val rr = start + k
-                    if (rowCells.isNotEmpty() && cells < max) { for ((cc, cell) in rowCells) { if (cell.text.isNotEmpty() || cell.style != 0) { grid.put(rr, cc, cell); cells++ } } }
+                    if (rowCells.isNotEmpty() && cells < max) { for ((cc, cell) in rowCells) { grid.put(rr, cc, cell); cells++ } }
                     if (rh != null) heights[rr] = rh
                     if (hidden) hiddenRows.add(rr)
                     if (rowCells.isEmpty() && k > 4096) break
@@ -471,6 +483,7 @@ object OdfReader {
         var w = 0f; var h = 0f
         while (x.next() != Event.EOF) {
             if (!x.isStart(Ns.DRAW, "page")) continue
+            tb.pageNumber = slides.size + 1
             val master = x.attr(Ns.DRAW, "master-page-name")
             if (w == 0f) master?.let { styles.masters[it] }?.let { styles.pageLayouts[it] }?.let { (pw, ph) -> w = pw; h = ph }
             val pageStyle = x.attr(Ns.DRAW, "style-name")

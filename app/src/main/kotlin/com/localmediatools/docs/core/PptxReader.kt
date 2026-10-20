@@ -71,7 +71,7 @@ class PptxReader private constructor(private val parts: Parts) {
                 "defaultTextStyle" -> defaultText = levels(x, Ctx(main, DEFAULT_MAP, Theme.DEFAULT, null, null))
             }
         }
-        val slides = slideParts.mapNotNull { p -> try { slide(p) } catch (e: UnreadableException) { throw e } catch (e: Exception) { null } }
+        val slides = slideParts.mapIndexedNotNull { i, p -> slideNumber = i + 1; try { slide(p) } catch (e: UnreadableException) { throw e } catch (e: Exception) { null } }
         if (slides.isEmpty() && slideParts.isNotEmpty()) throw UnreadableException(tr("The slides of this presentation can't be read."))
         val notes = ArrayList<String>()
         if (charts > 0) notes.add(trn(charts, "{0} chart is shown as a box.", "{0} charts are shown as boxes."))
@@ -152,6 +152,9 @@ class PptxReader private constructor(private val parts: Parts) {
     private fun normType(t: String?) = when (t) { null, "obj" -> "body"; "ctrTitle" -> "title"; else -> t }
 
     // ------------------------------------------------------------------ slides
+    /** The number of the slide being read, for slide-number fields. */
+    private var slideNumber = 0
+
     private fun slide(part: String): Slide? {
         val rels = parts.rels(part)
         val layout = rels.values.firstOrNull { it.type.endsWith("/slideLayout") }?.target?.let { layout(it) }
@@ -674,6 +677,7 @@ class PptxReader private constructor(private val parts: Parts) {
                 "pPr" -> { lvlIdx = (c.attr("lvl")?.toIntOrNull() ?: 0).coerceIn(0, 8); direct = pPr(c, ctx) }
                 "r", "fld" -> {
                     val eff = (levels[lvlIdx] ?: Lvl()).over(direct?.let { d -> Lvl(sz = d.sz, bold = d.bold, italic = d.italic, underline = d.underline, color = d.color, font = d.font) })
+                    val field = if (c.local == "fld") c.attr("type") else null
                     val run = Lvl().let { r -> var rl = eff; var text = ""
                         c.children { k ->
                             if (k.event != Event.START) return@children
@@ -685,7 +689,14 @@ class PptxReader private constructor(private val parts: Parts) {
                         }
                         rl to text
                     }
-                    val (rl, text) = run
+                    val (rl, saved) = run
+                    // Fields: the slide number is this slide's; a date field keeps the date saved with it,
+                    // but not the "<date/time>" stand-in some programs write.
+                    val text = when {
+                        field == "slidenum" -> if (slideNumber > 0) slideNumber.toString() else saved
+                        field != null && saved.startsWith("<") && saved.endsWith(">") -> ""
+                        else -> saved
+                    }
                     if (firstRunSize == null && text.isNotBlank()) firstRunSize = rl.sz
                     if (text.isNotEmpty()) spans.add(Span(text, RunStyle(bold = rl.bold == true, italic = rl.italic == true, underline = rl.underline == true, sizePt = rl.sz ?: fallbackSize, color = rl.color ?: fallbackColor, font = rl.font, monospace = Units.isMonospace(rl.font))))
                 }

@@ -129,7 +129,7 @@ data class CellStyle(
 
 enum class CellKind { TEXT, NUMBER, BOOLEAN, ERROR }
 
-/** A cell as shown: [text] already formatted (dates, currency…); [formula] when it has one. */
+/** A cell as shown: [text] already formatted (dates, currency…); [formula] as Excel shows it ("=SUM(B2:B6)", "{=…}" for array formulas). */
 class Cell(val text: String, val kind: CellKind = CellKind.TEXT, val style: Int = 0, val formula: String? = null, val color: Int = 0)
 
 /** Cells by row and column (both from 0), stored per row for fast lookup of a visible range. */
