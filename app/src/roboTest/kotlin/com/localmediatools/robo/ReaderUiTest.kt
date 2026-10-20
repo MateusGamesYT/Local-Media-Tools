@@ -184,7 +184,8 @@ class ReaderUiTest {
         // On to page 2 (page 1 starts with the author's address and phone, not for the README picture).
         repeat(8) { s.content!!.searchStep(true); idle() }
         assertTrue(s.searchStatus.toString(), s.searchStatus.toString().startsWith("9 of"))
-        waitFor("pages 2 and 3 drawn") { pages.isDrawn(1) && pages.isDrawn(2) }
+        // Pages are asked for as they are drawn on screen.
+        waitFor("pages 2 and 3 drawn") { render(a, "4_pdf_search"); pages.isDrawn(1) && pages.isDrawn(2) }
         render(a, "4_pdf_search")
     }
 
