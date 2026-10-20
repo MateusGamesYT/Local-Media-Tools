@@ -294,7 +294,7 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
             // Text: rows on screen, plus text running in from cells just left of it.
             for ((r, row) in visibleRows) {
                 if (r in sheet.hiddenRows) continue
-                val from = row.headMap(cs).let { hm -> if (hm.isEmpty()) cs else max(c0, hm.lastKey()) }
+                val from = lastFilled(row, cs)?.let { max(c0, it) } ?: cs
                 for ((c, cell) in row.subMap(from, ce + 1)) {
                     if (cell.text.isEmpty() || c in sheet.hiddenCols) continue
                     val mg = mergeAt(r, c)
@@ -337,13 +337,14 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
             if (tw + 2 * pad + indent > cw && roomy) {
                 // Text runs into empty cells beside it, as in Excel.
                 if (align == HAlign.LEFT || align == HAlign.CENTER) {
-                    val next = row!!.tailMap(c + 1).let { tm -> if (tm.isEmpty()) cols else tm.firstKey() }
+                    // Only a cell with content stops it (one with just a border or fill doesn't).
+                    val next = row!!.tailMap(c + 1).entries.firstOrNull { it.value.text.isNotEmpty() }?.key ?: cols
                     var e = c + 1
                     while (e < min(next, cols) && xOf(e) - l < tw + 2 * pad + indent && mergeAt(r, e) == null) e++
                     right = ox + colX[e] * ppp
                 }
                 if (align == HAlign.RIGHT || align == HAlign.CENTER) {
-                    val prev = row!!.headMap(c).let { hm -> if (hm.isEmpty()) -1 else hm.lastKey() }
+                    val prev = lastFilled(row!!, c) ?: -1
                     var s0 = c
                     while (s0 - 1 > prev && rr - (ox + colX[s0] * ppp) < tw + 2 * pad && mergeAt(r, s0 - 1) == null) s0--
                     left = ox + colX[s0] * ppp
@@ -371,6 +372,14 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
             canvas.drawText(s, tx, baseline, p)
             canvas.restore()
             p.textSize = size
+        }
+
+        /** The nearest column left of [c] whose cell has content (a few dozen columns back at most). */
+        private fun lastFilled(row: java.util.SortedMap<Int, Cell>, c: Int): Int? {
+            val left = (row as? java.util.NavigableMap<Int, Cell>)?.headMap(c, false)?.descendingMap() ?: return row.headMap(c).entries.lastOrNull { it.value.text.isNotEmpty() }?.key
+            var n = 0
+            for ((k, v) in left) { if (v.text.isNotEmpty()) return k; if (++n > 64) break }
+            return null
         }
 
         private fun headers(canvas: Canvas, w: Float, h: Float) {

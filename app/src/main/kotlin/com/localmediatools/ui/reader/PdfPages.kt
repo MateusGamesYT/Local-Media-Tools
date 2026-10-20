@@ -119,9 +119,16 @@ private class BoxPdfPages(private val doc: PDDocument, private val temp: File?) 
     override fun heightPt(i: Int) = sizes[2 * i + 1]
 
     override fun render(i: Int, bitmap: Bitmap, scale: Float, dx: Float, dy: Float) {
+        // The whole page as PDFBox draws it (on white), at most about 24 million pixels; sharper parts of
+        // very large zooms are scaled up from that.
+        val pixels = widthPt(i) * heightPt(i) * scale * scale
+        val s = if (pixels > 24e6f) scale * Math.sqrt(24e6 / pixels).toFloat() else scale
+        val page = renderer.renderImage(i, s, com.tom_roush.pdfbox.rendering.ImageType.RGB)
         val c = Canvas(bitmap)
         c.translate(-dx, -dy)
-        renderer.renderPageToGraphics(i, Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG), c, scale)
+        c.scale(scale / s, scale / s)
+        c.drawBitmap(page, 0f, 0f, Paint(Paint.FILTER_BITMAP_FLAG))
+        page.recycle()
     }
 
     override fun close() {

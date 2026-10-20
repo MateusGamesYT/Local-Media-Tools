@@ -146,6 +146,14 @@ class UiSmokeTest {
                 assertTrue("back to home after $t", visibleTop(a) is MainShell)
                 continue
             }
+            if (t == ToolId.READER) {
+                assertTrue(visibleTop(a) is com.localmediatools.ui.reader.ReaderHomeScreen)
+                render(a)
+                assertTrue(texts(a).any { it == "Open a file" })
+                @Suppress("DEPRECATION") a.onBackPressed(); idle()
+                assertTrue("back to home after $t", visibleTop(a) is MainShell)
+                continue
+            }
             if (t == ToolId.DUPLICATES) {
                 assertTrue(visibleTop(a) is com.localmediatools.ui.DuplicatesScreen)
                 render(a)

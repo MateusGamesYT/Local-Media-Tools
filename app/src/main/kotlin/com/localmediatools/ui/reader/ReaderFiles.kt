@@ -94,7 +94,7 @@ object RecentFiles {
     fun clear(ctx: Context) = save(ctx, emptyList())
 
     /** Asks to keep reading [uri] after this screen (granted for files picked with the system's file picker). */
-    fun persist(ctx: Context, uri: Uri): Boolean = try {
+    fun persist(ctx: Context, uri: Uri): Boolean = uri.scheme == "content" && try {
         ctx.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); true
     } catch (_: Exception) { false }
 }

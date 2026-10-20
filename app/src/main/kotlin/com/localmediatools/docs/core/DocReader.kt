@@ -104,36 +104,10 @@ class DocReader private constructor(private val ole: Ole2) {
         val end = if (lcb in 8..(d.size - off)) off + lcb else d.size
         var i = off + (le16(d, off + 4).coerceIn(0, 2048))
         while (i + 8 <= end) {
-            val verInst = le16(d, i); val type = le16(d, i + 2); val len = le32(d, i + 4)
-            if (verInst and 0xF == 0 && type in 0xF01A..0xF02A && len > 17 && i + 8 + len <= d.size) {
-                val inst = verInst ushr 4
-                val start = i + 8
-                fun body(uids: Int) = d.copyOfRange(start + 16 * uids + 1, start + len)
-                when (type) {
-                    0xF01E -> return body(if (inst == 0x6E1) 2 else 1)
-                    0xF01D, 0xF02A -> return body(if (inst == 0x46B || inst == 0x6E3) 2 else 1)
-                    0xF01F -> return bmp(body(if (inst == 0x7A9) 2 else 1))
-                    else -> return null
-                }
-            }
+            if (OfficeArt.isBlip(d, i)) return OfficeArt.blip(d, i)
             i++
         }
         return null
-    }
-
-    /** A device-independent bitmap with the 14-byte file header BitmapFactory needs. */
-    private fun bmp(dib: ByteArray): ByteArray {
-        if (dib.size < 40) return dib
-        val headerSize = le32(dib, 0)
-        val bits = le16(dib, 14)
-        val colors = le32(dib, 32).let { if (it == 0 && bits <= 8) 1 shl bits else it }
-        val offset = 14 + headerSize + colors * 4
-        val out = ByteArray(14 + dib.size)
-        out[0] = 'B'.code.toByte(); out[1] = 'M'.code.toByte()
-        fun put32(at: Int, v: Int) { for (k in 0..3) out[at + k] = (v ushr (8 * k)).toByte() }
-        put32(2, out.size); put32(10, offset)
-        System.arraycopy(dib, 0, out, 14, dib.size)
-        return out
     }
 
     private fun readPieces(fcClx: Int, lcbClx: Int) {
