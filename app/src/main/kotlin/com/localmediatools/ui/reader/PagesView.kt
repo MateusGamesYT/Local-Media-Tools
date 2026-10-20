@@ -207,9 +207,9 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
             val gen = generation.get()
             val w = (source.widthPt(i) * fit).toInt().coerceAtLeast(1)
             val h = (source.heightPt(i) * fit).toInt().coerceAtLeast(1)
-            run {
+            queue {
                 // Pages scrolled past before their turn are skipped.
-                if (gen != generation.get() || !visible(i)) { main.post { pendingBase.remove(i) }; return@execute }
+                if (gen != generation.get() || !visible(i)) { main.post { pendingBase.remove(i) }; return@queue }
                 val bmp = try { Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).also { it.eraseColor(Color.WHITE); source.render(i, it, fit, 0f, 0f) } } catch (_: Throwable) { null }
                 main.post {
                     pendingBase.remove(i)
@@ -234,10 +234,10 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
                 jobs.add(Triple(i, r, vis))
             }
             val ox0 = ox; val oy0 = oy
-            run {
+            queue {
                 val out = ArrayList<Detail>()
                 for ((i, r, vis) in jobs) {
-                    if (gen != generation.get()) return@execute
+                    if (gen != generation.get()) return@queue
                     try {
                         val bmp = Bitmap.createBitmap(vis.width().toInt().coerceAtLeast(1), vis.height().toInt().coerceAtLeast(1), Bitmap.Config.ARGB_8888)
                         bmp.eraseColor(Color.WHITE)
@@ -312,18 +312,18 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
          */
         fun shutdown(last: () -> Unit) {
             generation.incrementAndGet()
-            run(last)
+            queue(last)
             renderer.shutdown()
             base.evictAll(); details = emptyList()
         }
 
         /** Queues [block] on the render thread; ignored once the view is closed. */
-        private fun run(block: () -> Unit) { try { renderer.execute(block) } catch (_: java.util.concurrent.RejectedExecutionException) { } }
+        private fun queue(block: () -> Unit) { try { renderer.execute(block) } catch (_: java.util.concurrent.RejectedExecutionException) { } }
 
         fun drawn(i: Int) = base.get(i) != null
 
         /** Runs [block] after pages already queued are drawn (on the render thread, for the source's own state). */
-        fun onRenderThread(block: () -> Unit) = run(block)
+        fun onRenderThread(block: () -> Unit) = queue(block)
     }
 
     // ------------------------------------------------------------------ ReaderContent
