@@ -1,3 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The share-sheet label, which follows the phone's language (the app's own text is in assets/i18n). -->
-<resources><string name="print_label">印刷（Local Media Tools）</string></resources>
+<resources><string name="print_label">印刷（Local Media Tools）</string><string name="reader_label">ファイルリーダー（Local Media Tools）</string></resources>

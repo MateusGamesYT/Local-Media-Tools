@@ -426,7 +426,7 @@ object OdfReader {
                             }
                         } else if (p.ns == Ns.DRAW) { drawings++; p.skip() } else if (p.ns == Ns.OFFICE && p.local == "annotation") p.skip() else p.skip()
                     }
-                    val text = sb.toString()
+                    val text = if (sb.length > 32767) sb.substring(0, 32767) else sb.toString()
                     val kind = when (type) { "float", "percentage", "currency", "date", "time" -> CellKind.NUMBER; "boolean" -> CellKind.BOOLEAN; else -> CellKind.TEXT }
                     // Empty cells matter only when they show something (a fill or a border); LibreOffice
                     // writes styled empty cells down to row 1,048,576.

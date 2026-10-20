@@ -91,7 +91,12 @@ def strip_comments(src):
         if src[i] == '"':
             j = i + 1
             if src.startswith('"""', i):
-                j = src.find('"""', i + 3) + 3
+                # A raw string ends at the last quote of its closing run ("…x""""" ends after all of them).
+                j = src.find('"""', i + 3)
+                if j < 0: j = len(src)
+                else:
+                    j += 3
+                    while j < len(src) and src[j] == '"': j += 1
             else:
                 while j < len(src) and src[j] != '"':
                     j += 2 if src[j] == '\\' else 1

@@ -226,7 +226,7 @@ object CsvReader {
         var quoted = false; var i = 0; var fieldWasQuoted = false
         var cells = 0
         fun endField() {
-            val v = field.toString()
+            val v = if (field.length > 32767) field.substring(0, 32767) else field.toString()
             if (v.isNotEmpty()) {
                 val num = !fieldWasQuoted && Regex("""^[-+]?(\d{1,3}(,\d{3})+|\d+)?(\.\d+)?([eE][-+]?\d+)?%?$""").matches(v.trim()) && v.trim().any { it.isDigit() }
                 grid.put(r, c, Cell(v, if (num) CellKind.NUMBER else CellKind.TEXT))

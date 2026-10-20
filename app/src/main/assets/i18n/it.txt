@@ -1171,6 +1171,9 @@
 < scan document camera paper
 > scansiona scanner documento fotocamera carta
 
+< open view read viewer document pdf word docx doc excel xlsx xls spreadsheet powerpoint pptx ppt slides odt ods odp rtf epub ebook book csv txt text markdown
+> apri visualizza leggi visualizzatore documento pdf word docx doc excel xlsx xls foglio calcolo powerpoint pptx ppt diapositive odt ods odp rtf epub ebook libro csv txt testo markdown
+
 < split pdf pages select
 > dividi separa pdf pagine seleziona estrai
 
@@ -1750,6 +1753,268 @@
 < Keep editing
 > Continua a modificare
 
+< This document has no text to show.
+> Questo documento non ha testo da mostrare.
+
+< [Picture]
+> [Immagine]
+
+< Picture: {0} (in a format this app can't draw)
+> Immagine: {0} (in un formato che l’app non sa disegnare)
+
+< A picture in a format this app can't draw
+> Un’immagine in un formato che l’app non sa disegnare
+
+< About {0} word
+< About {0} words
+> Circa {0} parola
+> Circa {0} parole
+
+< {0} table
+< {0} tables
+> {0} tabella
+> {0} tabelle
+
+< {0} picture
+< {0} pictures
+> {0} immagine
+> {0} immagini
+
+< Page {0} of {1}
+> Pagina {0} di {1}
+
+< Slide {0} of {1}
+> Diapositiva {0} di {1}
+
+< This file has no text to search.
+> Questo file non ha testo da cercare.
+
+< Searching page {0} of {1}…
+> Ricerca nella pagina {0} di {1}…
+
+< Slide {0}
+> Diapositiva {0}
+
+< Page {0}
+> Pagina {0}
+
+< Slides
+> Diapositive
+
+< Contents
+> Indice
+
+< The file is damaged: its pages can't be read.
+> Il file è danneggiato: le sue pagine non possono essere lette.
+
+< This file is built too deeply to be shown.
+> Questo file è strutturato troppo in profondità per essere mostrato.
+
+< This file is too large to show with the memory this phone has free.
+> Questo file è troppo grande per essere mostrato con la memoria libera di questo telefono.
+
+< Document
+> Documento
+
+< Word 97–2003
+> Word 97–2003
+
+< Excel 97–2003
+> Excel 97–2003
+
+< PowerPoint 97–2003
+> PowerPoint 97–2003
+
+< OpenDocument text
+> Testo OpenDocument
+
+< OpenDocument spreadsheet
+> Foglio di calcolo OpenDocument
+
+< OpenDocument presentation
+> Presentazione OpenDocument
+
+@ kind of file
+< Text
+> Testo
+
+< Open a file
+> Apri un file
+
+< Also in other apps: choose “Open with” and then Local Media Tools.
+> Anche da altre app: scegli “Apri con” e poi Local Media Tools.
+
+< Recent files
+> File recenti
+
+< Documents are read on this phone and never uploaded. The reader only shows files: it doesn't change them.
+> I documenti vengono letti su questo telefono e non vengono mai caricati. Il lettore mostra soltanto i file: non li modifica.
+
+< Files you open show up here.
+> I file che apri compaiono qui.
+
+< Clear the list
+> Svuota l’elenco
+
+< Remove {0} from the list
+> Rimuovi {0} dall’elenco
+
+< Search
+> Cerca
+
+< More
+> Altro
+
+< Close search
+> Chiudi ricerca
+
+< Find in document
+> Trova nel documento
+
+< Previous match
+> Risultato precedente
+
+< Next match
+> Risultato successivo
+
+< Opening…
+> Apertura…
+
+< This file can't be shown
+> Questo file non può essere mostrato
+
+< Open in another app
+> Apri con un’altra app
+
+< Copying the file… {0}
+> Copia del file… {0}
+
+< This kind of file isn't one the reader opens. It reads PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV and text files.
+> Questo tipo di file non è tra quelli che il lettore apre. Il lettore legge file PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV e di testo.
+
+< Reading…
+> Lettura…
+
+< The file is damaged.
+> Il file è danneggiato.
+
+< This file is no longer available. Open it again from the app it came from.
+> Questo file non è più disponibile. Riaprilo dall’app da cui proviene.
+
+< Password
+> Password
+
+< Wrong password
+> Password errata
+
+< This PDF is locked
+> Questo PDF è protetto
+
+< That password didn't open it. Try again.
+> Questa password non lo apre. Riprova.
+
+< Enter its password to read it. The password is used only to open the file on this phone.
+> Inserisci la sua password per leggerlo. La password serve solo ad aprire il file su questo telefono.
+
+< No matches
+> Nessuna corrispondenza
+
+< {0} of {1}
+> {0} di {1}
+
+< Close
+> Chiudi
+
+< Zoom in
+> Ingrandisci
+
+< Zoom out
+> Riduci
+
+< Speaker notes
+> Note del relatore
+
+< Copy this page's text
+> Copia il testo di questa pagina
+
+< File information
+> Informazioni sul file
+
+< This slide has no speaker notes.
+> Questa diapositiva non ha note del relatore.
+
+< Speaker notes · slide {0}
+> Note del relatore · diapositiva {0}
+
+< This page has no text to copy (it may be a scanned picture).
+> Questa pagina non ha testo da copiare (potrebbe essere un’immagine scansionata).
+
+< Text of page {0} copied.
+> Testo della pagina {0} copiato.
+
+< Open with
+> Apri con
+
+< No app on this phone can handle this action.
+> Nessuna app su questo telefono può gestire questa azione.
+
+< Title: {0}
+> Titolo: {0}
+
+< Not shown:
+> Non mostrati:
+
+< Files are only read on this phone: nothing is changed or sent anywhere.
+> I file vengono solo letti su questo telefono: non viene modificato né inviato nulla.
+
+< Link
+> Link
+
+< Opening it starts your browser; this app itself never connects to the internet.
+> Aprirlo avvia il browser; l’app stessa non si connette mai a internet.
+
+< Copy
+> Copia
+
+< Link copied.
+> Link copiato.
+
+< Sheet {0}
+> Foglio {0}
+
+< This sheet holds a chart or pictures, which this app doesn't draw.
+> Questo foglio contiene un grafico o immagini, che l’app non disegna.
+
+< This sheet is empty.
+> Questo foglio è vuoto.
+
+< Sheets
+> Fogli
+
+< {0} sheet
+< {0} sheets
+> {0} foglio
+> {0} fogli
+
+< {0} hidden sheet (not shown)
+< {0} hidden sheets (not shown)
+> {0} foglio nascosto (non mostrato)
+> {0} fogli nascosti (non mostrati)
+
+< {0} cell with content
+< {0} cells with content
+> {0} cella con contenuto
+> {0} celle con contenuto
+
+< Picture
+> Immagine
+
+< Hidden slide
+> Diapositiva nascosta
+
+< {0}. {1}
+> {0}. {1}
+
 < Unnamed person
 > Persona senza nome
 
@@ -2198,9 +2463,6 @@
 < Loading people…
 > Caricamento delle persone…
 
-< {0} of {1}
-> {0} di {1}
-
 < Type a name, then Enter
 > Digita un nome, poi premi Invio
 
@@ -2326,9 +2588,6 @@
 < still analysing {0} more
 > ancora {0} in analisi
 > ancora {0} in analisi
-
-< No matches
-> Nessuna corrispondenza
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > Prova un nome che hai dato a qualcuno, o parole come cane, auto, spiaggia, cibo, tramonto o documento.
@@ -2762,9 +3021,6 @@
 
 < Captured pages are deleted from the app's private storage; gallery photos aren't affected.
 > Le pagine acquisite vengono eliminate dall’archivio privato dell’app; le foto della galleria non sono interessate.
-
-< Page {0}
-> Pagina {0}
 
 < No pages yet
 > Ancora nessuna pagina
@@ -3574,9 +3830,6 @@
 < Choose a printer
 > Scegli una stampante
 
-< Close
-> Chiudi
-
 @ printers kept in the app
 < Saved
 > Salvata
@@ -3685,18 +3938,10 @@
 < Couldn't prepare the preview
 > Impossibile preparare l’anteprima
 
-< {0} sheet
-< {0} sheets
-> {0} foglio
-> {0} fogli
-
 < first {0} shown
 < first {0} shown
 > mostrati i primi {0}
 > mostrati i primi {0}
-
-< Sheet {0}
-> Foglio {0}
 
 < {0} copy
 < {0} copies
@@ -3717,9 +3962,6 @@
 
 < Couldn't read the shared files.
 > Impossibile leggere i file condivisi.
-
-< No app on this phone can handle this action.
-> Nessuna app su questo telefono può gestire questa azione.
 
 < This device has no camera. Add pages from the gallery instead.
 > Questo dispositivo non ha una fotocamera. Aggiungi invece le pagine dalla galleria.
@@ -4096,9 +4338,6 @@
 
 < City & buildings
 > Città ed edifici
-
-< Document
-> Documento
 
 < Night
 > Notte
@@ -4740,9 +4979,6 @@
 < The PDF has no pages.
 > Il PDF non ha pagine.
 
-< Page {0} of {1}
-> Pagina {0} di {1}
-
 < Page {0} could not be opened; the PDF may be damaged.
 > La pagina {0} non ha potuto essere aperta; il PDF potrebbe essere danneggiato.
 
@@ -4845,6 +5081,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > Crea un film dai momenti che controlli, quindi non può essere eseguito in una catena
 
+< Shows documents instead of saving files, so it can't be a step of a stack
+> Mostra documenti invece di salvare file, quindi non può essere un passaggio di una catena
+
 < Can't be part of a stack
 > Non può far parte di una catena
 
@@ -4919,11 +5158,11 @@
 < Create and slim down animations
 > Crea animazioni e alleggeriscile
 
-< PDF
-> PDF
+< Documents & PDF
+> Documenti e PDF
 
-< Pages, scans and merges
-> Pagine, scansioni e unioni
+< Read documents; convert, merge and scan PDFs
+> Leggi documenti; converti, unisci e scansiona i PDF
 
 < Photos and documents on your Wi-Fi printer
 > Foto e documenti sulla tua stampante Wi-Fi
@@ -5164,6 +5403,15 @@
 
 < Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
 > Ricodifica le GIF in modo più efficiente mantenendo identico ogni pixel visualizzato.
+
+< File reader
+> Lettore di file
+
+< Open PDF, Word, Excel, PowerPoint and more
+> Apri PDF, Word, Excel, PowerPoint e altro
+
+< Reads the documents Android can't open by itself — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, EPUB e-books, CSV and text files — right on this phone. Zoom, search the text, and jump between chapters, sheets and slides. Files are only read: nothing is changed or uploaded.
+> Legge i documenti che Android non sa aprire da solo — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, ebook EPUB, file CSV e di testo — direttamente su questo telefono. Ingrandisci, cerca nel testo e passa tra capitoli, fogli e diapositive. I file vengono solo letti: non viene modificato né caricato nulla.
 
 < PDF → images
 > PDF → immagini
@@ -5604,6 +5852,163 @@
 
 < The H.264 encoder rejected the output settings ({0}×{1}).
 > Il codificatore H.264 ha rifiutato le impostazioni di output ({0}×{1}).
+
+< Excel binary workbooks (.xlsb) can't be opened yet. Saved as .xlsx in Excel, they can.
+> Le cartelle Excel binarie (.xlsb) non si possono ancora aprire. Salvate come .xlsx da Excel, sì.
+
+< This file was made by a very old Word version, which this app can't read.
+> Questo file è stato creato con una versione molto vecchia di Word, che l’app non può leggere.
+
+< PDF files are shown by the PDF viewer.
+> I file PDF vengono mostrati dal visualizzatore PDF.
+
+< This file is very long: only its first {0} MB are shown.
+> Questo file è molto lungo: vengono mostrati solo i primi {0} MB.
+
+< This Word file is damaged: its text is missing.
+> Questo file Word è danneggiato: manca il suo testo.
+
+< This file was made by Word 6 or Word 95, which this app can't read yet.
+> Questo file è stato creato con Word 6 o Word 95, che l’app non può ancora leggere.
+
+< This file is protected with a password, which this app can't open.
+> Questo file è protetto da una password, che l’app non può aprire.
+
+< Text in boxes and shapes
+> Testo in riquadri e forme
+
+< Notes
+> Note
+
+< Some pictures and drawings in this document aren't shown.
+> Alcune immagini e alcuni disegni di questo documento non vengono mostrati.
+
+< This isn't a Word document: its main part is missing.
+> Non è un documento Word: manca la sua parte principale.
+
+< {0} chart isn't shown.
+< {0} charts aren't shown.
+> {0} grafico non viene mostrato.
+> {0} grafici non vengono mostrati.
+
+< {0} diagram isn't shown.
+< {0} diagrams aren't shown.
+> {0} diagramma non viene mostrato.
+> {0} diagrammi non vengono mostrati.
+
+< {0} picture is linked from outside the file and isn't shown.
+< {0} pictures are linked from outside the file and aren't shown.
+> {0} immagine è collegata dall’esterno del file e non viene mostrata.
+> {0} immagini sono collegate dall’esterno del file e non vengono mostrate.
+
+< {0} embedded object is shown only as its picture.
+< {0} embedded objects are shown only as their pictures.
+> {0} oggetto incorporato viene mostrato solo come immagine.
+> {0} oggetti incorporati vengono mostrati solo come immagini.
+
+< Chart
+> Grafico
+
+< Diagram
+> Diagramma
+
+< Linked picture
+> Immagine collegata
+
+< Table
+> Tabella
+
+< This e-book is damaged: its list of chapters is missing.
+> Questo ebook è danneggiato: manca l’elenco dei capitoli.
+
+< This e-book is protected with DRM, so it can only be read in the app it was bought for.
+> Questo ebook è protetto con DRM, quindi può essere letto solo nell’app per cui è stato acquistato.
+
+< This e-book has no chapters that can be shown.
+> Questo ebook non ha capitoli che si possano mostrare.
+
+< This OpenDocument file is damaged: its content is missing.
+> Questo file OpenDocument è danneggiato: manca il suo contenuto.
+
+< {0} embedded object isn't shown.
+< {0} embedded objects aren't shown.
+> {0} oggetto incorporato non viene mostrato.
+> {0} oggetti incorporati non vengono mostrati.
+
+< This workbook has no sheets.
+> Questa cartella di lavoro non ha fogli.
+
+< Charts and pictures on the sheets aren't drawn.
+> Grafici e immagini sui fogli non vengono disegnati.
+
+< This file was made by a very old PowerPoint version, which this app can't read.
+> Questo file è stato creato con una versione molto vecchia di PowerPoint, che l’app non può leggere.
+
+< The file is damaged: its contents can't be unpacked.
+> Il file è danneggiato: il suo contenuto non può essere decompresso.
+
+< The file unpacks to far more data than it holds, so it wasn't opened.
+> Il file si decomprime in molti più dati di quelli che contiene, quindi non è stato aperto.
+
+< The file is damaged: a part of it can't be unpacked.
+> Il file è danneggiato: una sua parte non può essere decompressa.
+
+< This PowerPoint file is damaged: its slides are missing.
+> Questo file PowerPoint è danneggiato: mancano le diapositive.
+
+< The slides of this presentation can't be read.
+> Le diapositive di questa presentazione non possono essere lette.
+
+< {0} picture in an older format isn't shown.
+< {0} pictures in an older format aren't shown.
+> {0} immagine in un formato più vecchio non viene mostrata.
+> {0} immagini in un formato più vecchio non vengono mostrate.
+
+< This isn't a PowerPoint presentation: its main part is missing.
+> Non è una presentazione PowerPoint: manca la sua parte principale.
+
+< {0} chart is shown as a box.
+< {0} charts are shown as boxes.
+> {0} grafico viene mostrato come riquadro.
+> {0} grafici vengono mostrati come riquadri.
+
+< {0} diagram is shown as a box.
+< {0} diagrams are shown as boxes.
+> {0} diagramma viene mostrato come riquadro.
+> {0} diagrammi vengono mostrati come riquadri.
+
+< {0} video or sound isn't played.
+< {0} videos or sounds aren't played.
+> {0} video o file audio non viene riprodotto.
+> {0} video o file audio non vengono riprodotti.
+
+< Embedded object
+> Oggetto incorporato
+
+< This Excel file is damaged: its sheets are missing.
+> Questo file Excel è danneggiato: mancano i fogli.
+
+< This file was made by a very old Excel version, which this app can't read.
+> Questo file è stato creato con una versione molto vecchia di Excel, che l’app non può leggere.
+
+@ spreadsheet value
+< TRUE
+> VERO
+
+@ spreadsheet value
+< FALSE
+> FALSO
+
+< This isn't an Excel workbook: its main part is missing.
+> Non è una cartella di lavoro Excel: manca la sua parte principale.
+
+< {0} chart sheet isn't drawn.
+< {0} chart sheets aren't drawn.
+> {0} foglio grafico non viene disegnato.
+> {0} fogli grafici non vengono disegnati.
+
+< This workbook is very large: only its first {0} cells are shown.
+> Questa cartella di lavoro è molto grande: vengono mostrate solo le prime {0} celle.
 
 < Printing {0} file on {1}
 < Printing {0} files on {1}

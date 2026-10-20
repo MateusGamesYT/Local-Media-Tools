@@ -38,7 +38,7 @@ private fun work(f: File, n: Int, out: File, setFormat: (String) -> Unit): Strin
                 File(out, "$n.txt").writeText(doc.plainText())
                 if (doc is Workbook) File(out, "$n.cells").bufferedWriter().use { w ->
                     for ((si, sh) in doc.sheets.withIndex()) for (r in sh.cells.rowIndices()) for ((c, cell) in sh.cells.row(r)!!) {
-                        if (cell.text.isNotEmpty()) w.write("$si\t${sh.name}\t$r\t$c\t${if (cell.formula != null) "f" else "v"}\t${cell.text.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ')}\n")
+                        if (cell.text.isNotEmpty()) w.write("$si\t${sh.name}\t$r\t$c\t${if (cell.formula != null) "f" else "v"}\t${cell.text.take(2000).replace('\t', ' ').replace('\n', ' ').replace('\r', ' ')}\n")
                     }
                 }
                 val detail = when (doc) {

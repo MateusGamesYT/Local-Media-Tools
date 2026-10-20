@@ -7,6 +7,7 @@ import com.localmediatools.core.Format
 import com.localmediatools.core.MediaProbe
 import com.localmediatools.docs.core.DocFormat
 import com.localmediatools.i18n.tr
+import com.localmediatools.i18n.trc
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -166,7 +167,7 @@ object FormatLook {
         DocFormat.ODT -> tr("OpenDocument text")
         DocFormat.ODS -> tr("OpenDocument spreadsheet")
         DocFormat.ODP -> tr("OpenDocument presentation")
-        DocFormat.TEXT -> tr("Text")
+        DocFormat.TEXT -> trc("kind of file", "Text")
         else -> f.label
     }
 

@@ -1208,6 +1208,9 @@
 < scan document camera paper
 > сканировать сканер документ камера бумага
 
+< open view read viewer document pdf word docx doc excel xlsx xls spreadsheet powerpoint pptx ppt slides odt ods odp rtf epub ebook book csv txt text markdown
+> открыть смотреть читать просмотрщик документ pdf word docx doc excel xlsx xls таблица powerpoint pptx ppt слайды odt ods odp rtf epub эбук книга csv txt текст markdown
+
 < split pdf pages select
 > разделить отделить pdf страницы выбрать извлечь
 
@@ -1797,6 +1800,274 @@
 < Keep editing
 > Продолжить редактирование
 
+< This document has no text to show.
+> В этом документе нет текста для показа.
+
+< [Picture]
+> [Изображение]
+
+< Picture: {0} (in a format this app can't draw)
+> Изображение: {0} (в формате, который это приложение не умеет показывать)
+
+< A picture in a format this app can't draw
+> Изображение в формате, который это приложение не умеет показывать
+
+< About {0} word
+< About {0} words
+> Около {0} слово
+> Около {0} слова
+> Около {0} слов
+
+< {0} table
+< {0} tables
+> {0} таблица
+> {0} таблицы
+> {0} таблиц
+
+< {0} picture
+< {0} pictures
+> {0} изображение
+> {0} изображения
+> {0} изображений
+
+< Page {0} of {1}
+> Страница {0} из {1}
+
+< Slide {0} of {1}
+> Слайд {0} из {1}
+
+< This file has no text to search.
+> В этом файле нет текста для поиска.
+
+< Searching page {0} of {1}…
+> Поиск на странице {0} из {1}…
+
+< Slide {0}
+> Слайд {0}
+
+< Page {0}
+> Страница {0}
+
+< Slides
+> Слайды
+
+< Contents
+> Содержание
+
+< The file is damaged: its pages can't be read.
+> Файл повреждён: его страницы не удаётся прочитать.
+
+< This file is built too deeply to be shown.
+> Этот файл слишком глубоко вложен, чтобы его показать.
+
+< This file is too large to show with the memory this phone has free.
+> Файл слишком большой для показа при свободной памяти этого телефона.
+
+< Document
+> Документ
+
+< Word 97–2003
+> Word 97–2003
+
+< Excel 97–2003
+> Excel 97–2003
+
+< PowerPoint 97–2003
+> PowerPoint 97–2003
+
+< OpenDocument text
+> Текст OpenDocument
+
+< OpenDocument spreadsheet
+> Таблица OpenDocument
+
+< OpenDocument presentation
+> Презентация OpenDocument
+
+@ kind of file
+< Text
+> Текст
+
+< Open a file
+> Открыть файл
+
+< Also in other apps: choose “Open with” and then Local Media Tools.
+> Также в других приложениях: выберите «Открыть с помощью», а затем Local Media Tools.
+
+< Recent files
+> Недавние файлы
+
+< Documents are read on this phone and never uploaded. The reader only shows files: it doesn't change them.
+> Документы читаются на этом телефоне и никогда не загружаются. Читалка только показывает файлы и ничего в них не меняет.
+
+< Files you open show up here.
+> Открытые файлы появятся здесь.
+
+< Clear the list
+> Очистить список
+
+< Remove {0} from the list
+> Убрать {0} из списка
+
+< Search
+> Поиск
+
+< More
+> Ещё
+
+< Close search
+> Закрыть поиск
+
+< Find in document
+> Найти в документе
+
+< Previous match
+> Предыдущее совпадение
+
+< Next match
+> Следующее совпадение
+
+< Opening…
+> Открытие…
+
+< This file can't be shown
+> Этот файл нельзя показать
+
+< Open in another app
+> Открыть в другом приложении
+
+< Copying the file… {0}
+> Копирование файла… {0}
+
+< This kind of file isn't one the reader opens. It reads PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV and text files.
+> Такой тип файла читалка не открывает. Она читает PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV и текстовые файлы.
+
+< Reading…
+> Чтение…
+
+< The file is damaged.
+> Файл повреждён.
+
+< This file is no longer available. Open it again from the app it came from.
+> Этот файл больше недоступен. Откройте его снова из приложения, откуда он пришёл.
+
+< Password
+> Пароль
+
+< Wrong password
+> Неверный пароль
+
+< This PDF is locked
+> Этот PDF защищён паролем
+
+< That password didn't open it. Try again.
+> Этот пароль не подошёл. Попробуйте ещё раз.
+
+< Enter its password to read it. The password is used only to open the file on this phone.
+> Введите пароль, чтобы прочитать файл. Пароль используется только для открытия файла на этом телефоне.
+
+< No matches
+> Нет совпадений
+
+< {0} of {1}
+> {0} из {1}
+
+< Close
+> Закрыть
+
+< Zoom in
+> Увеличить
+
+< Zoom out
+> Уменьшить
+
+< Speaker notes
+> Заметки докладчика
+
+< Copy this page's text
+> Копировать текст страницы
+
+< File information
+> Сведения о файле
+
+< This slide has no speaker notes.
+> У этого слайда нет заметок докладчика.
+
+< Speaker notes · slide {0}
+> Заметки докладчика · слайд {0}
+
+< This page has no text to copy (it may be a scanned picture).
+> На этой странице нет текста для копирования (возможно, это скан-изображение).
+
+< Text of page {0} copied.
+> Текст страницы {0} скопирован.
+
+< Open with
+> Открыть с помощью
+
+< No app on this phone can handle this action.
+> Ни одно приложение на этом телефоне не может выполнить это действие.
+
+< Title: {0}
+> Заголовок: {0}
+
+< Not shown:
+> Не показано:
+
+< Files are only read on this phone: nothing is changed or sent anywhere.
+> Файлы только читаются на этом телефоне: ничего не меняется и никуда не отправляется.
+
+< Link
+> Ссылка
+
+< Opening it starts your browser; this app itself never connects to the internet.
+> При открытии запускается браузер; само приложение никогда не подключается к интернету.
+
+< Copy
+> Копировать
+
+< Link copied.
+> Ссылка скопирована.
+
+< Sheet {0}
+> Лист {0}
+
+< This sheet holds a chart or pictures, which this app doesn't draw.
+> Этот лист содержит диаграмму или изображения, которые приложение не показывает.
+
+< This sheet is empty.
+> Этот лист пуст.
+
+< Sheets
+> Листы
+
+< {0} sheet
+< {0} sheets
+> {0} лист
+> {0} листа
+> {0} листов
+
+< {0} hidden sheet (not shown)
+< {0} hidden sheets (not shown)
+> {0} скрытый лист (не показан)
+> {0} скрытых листа (не показаны)
+> {0} скрытых листов (не показаны)
+
+< {0} cell with content
+< {0} cells with content
+> {0} ячейка с данными
+> {0} ячейки с данными
+> {0} ячеек с данными
+
+< Picture
+> Изображение
+
+< Hidden slide
+> Скрытый слайд
+
+< {0}. {1}
+> {0}. {1}
+
 < Unnamed person
 > Человек без имени
 
@@ -2260,9 +2531,6 @@
 < Loading people…
 > Загрузка людей…
 
-< {0} of {1}
-> {0} из {1}
-
 < Type a name, then Enter
 > Введите имя и нажмите Enter
 
@@ -2394,9 +2662,6 @@
 > Ещё анализируется: {0}
 > Ещё анализируется: {0}
 > Ещё анализируется: {0}
-
-< No matches
-> Нет совпадений
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > Попробуйте имя, которое вы кому-то дали, или слова вроде «собака», «машина», «пляж», «еда», «закат» или «документ».
@@ -2838,9 +3103,6 @@
 
 < Captured pages are deleted from the app's private storage; gallery photos aren't affected.
 > Снятые страницы удаляются из личного хранилища приложения; фото в галерее не затрагиваются.
-
-< Page {0}
-> Страница {0}
 
 < No pages yet
 > Пока нет страниц
@@ -3659,9 +3921,6 @@
 < Choose a printer
 > Выберите принтер
 
-< Close
-> Закрыть
-
 @ printers kept in the app
 < Saved
 > Сохранён
@@ -3772,20 +4031,11 @@
 < Couldn't prepare the preview
 > Не удалось подготовить предпросмотр
 
-< {0} sheet
-< {0} sheets
-> {0} лист
-> {0} листа
-> {0} листов
-
 < first {0} shown
 < first {0} shown
 > показаны первые {0}
 > показаны первые {0}
 > показаны первые {0}
-
-< Sheet {0}
-> Лист {0}
 
 < {0} copy
 < {0} copies
@@ -3807,9 +4057,6 @@
 
 < Couldn't read the shared files.
 > Не удалось прочитать полученные файлы.
-
-< No app on this phone can handle this action.
-> Ни одно приложение на этом телефоне не может выполнить это действие.
 
 < This device has no camera. Add pages from the gallery instead.
 > На этом устройстве нет камеры. Добавьте страницы из галереи.
@@ -4192,9 +4439,6 @@
 
 < City & buildings
 > Город и здания
-
-< Document
-> Документ
 
 < Night
 > Ночь
@@ -4871,9 +5115,6 @@
 < The PDF has no pages.
 > В PDF нет страниц.
 
-< Page {0} of {1}
-> Страница {0} из {1}
-
 < Page {0} could not be opened; the PDF may be damaged.
 > Не удалось открыть страницу {0}; PDF может быть повреждён.
 
@@ -4982,6 +5223,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > Делает один фильм из моментов, которые вы проверяете, поэтому не может выполняться в цепочке
 
+< Shows documents instead of saving files, so it can't be a step of a stack
+> Показывает документы вместо сохранения файлов, поэтому не может быть шагом цепочки
+
 < Can't be part of a stack
 > Не может быть частью цепочки
 
@@ -5057,11 +5301,11 @@
 < Create and slim down animations
 > Создание анимаций и уменьшение их размера
 
-< PDF
-> PDF
+< Documents & PDF
+> Документы и PDF
 
-< Pages, scans and merges
-> Страницы, сканы и объединение
+< Read documents; convert, merge and scan PDFs
+> Читайте документы; конвертируйте, объединяйте и сканируйте PDF
 
 < Photos and documents on your Wi-Fi printer
 > Фото и документы на принтере в вашей сети Wi-Fi
@@ -5302,6 +5546,15 @@
 
 < Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
 > Перекодирует GIF эффективнее, сохраняя каждый показываемый пиксель идентичным.
+
+< File reader
+> Просмотр файлов
+
+< Open PDF, Word, Excel, PowerPoint and more
+> Открывайте PDF, Word, Excel, PowerPoint и другие
+
+< Reads the documents Android can't open by itself — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, EPUB e-books, CSV and text files — right on this phone. Zoom, search the text, and jump between chapters, sheets and slides. Files are only read: nothing is changed or uploaded.
+> Читает документы, которые Android сам открыть не может: PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, электронные книги EPUB, CSV и текстовые файлы — прямо на этом телефоне. Увеличивайте и уменьшайте, ищите текст и переходите между главами, листами и слайдами. Файлы только читаются: ничего не меняется и не загружается.
 
 < PDF → images
 > PDF → изображения
@@ -5752,6 +6005,173 @@
 
 < The H.264 encoder rejected the output settings ({0}×{1}).
 > Кодировщик H.264 отклонил параметры вывода ({0}×{1}).
+
+< Excel binary workbooks (.xlsb) can't be opened yet. Saved as .xlsx in Excel, they can.
+> Двоичные книги Excel (.xlsb) пока нельзя открыть. Сохранённые в Excel как .xlsx, они открываются.
+
+< This file was made by a very old Word version, which this app can't read.
+> Этот файл создан очень старой версией Word, которую это приложение не может прочитать.
+
+< PDF files are shown by the PDF viewer.
+> Файлы PDF показываются просмотрщиком PDF.
+
+< This file is very long: only its first {0} MB are shown.
+> Этот файл очень большой: показаны только первые {0} МБ.
+
+< This Word file is damaged: its text is missing.
+> Файл Word повреждён: в нём нет текста.
+
+< This file was made by Word 6 or Word 95, which this app can't read yet.
+> Этот файл создан в Word 6 или Word 95, которые это приложение пока не может прочитать.
+
+< This file is protected with a password, which this app can't open.
+> Этот файл защищён паролем, и это приложение не может его открыть.
+
+< Text in boxes and shapes
+> Текст в рамках и фигурах
+
+< Notes
+> Заметки
+
+< Some pictures and drawings in this document aren't shown.
+> Некоторые изображения и рисунки в этом документе не показаны.
+
+< This isn't a Word document: its main part is missing.
+> Это не документ Word: его основная часть отсутствует.
+
+< {0} chart isn't shown.
+< {0} charts aren't shown.
+> {0} диаграмма не показана
+> {0} диаграммы не показаны
+> {0} диаграмм не показаны
+
+< {0} diagram isn't shown.
+< {0} diagrams aren't shown.
+> {0} схема не показана
+> {0} схемы не показаны
+> {0} схем не показаны
+
+< {0} picture is linked from outside the file and isn't shown.
+< {0} pictures are linked from outside the file and aren't shown.
+> {0} изображение связано с внешним файлом и не показано
+> {0} изображения связаны с внешним файлом и не показаны
+> {0} изображений связаны с внешним файлом и не показаны
+
+< {0} embedded object is shown only as its picture.
+< {0} embedded objects are shown only as their pictures.
+> {0} встроенный объект показан только как его изображение
+> {0} встроенных объекта показаны только как их изображения
+> {0} встроенных объектов показаны только как их изображения
+
+< Chart
+> Диаграмма
+
+< Diagram
+> Схема
+
+< Linked picture
+> Связанное изображение
+
+< Table
+> Таблица
+
+< This e-book is damaged: its list of chapters is missing.
+> Эта электронная книга повреждена: её список глав отсутствует.
+
+< This e-book is protected with DRM, so it can only be read in the app it was bought for.
+> Эта электронная книга защищена DRM, поэтому её можно читать только в приложении, для которого она куплена.
+
+< This e-book has no chapters that can be shown.
+> В этой электронной книге нет глав, которые можно показать.
+
+< This OpenDocument file is damaged: its content is missing.
+> Файл OpenDocument повреждён: его содержимое отсутствует.
+
+< {0} embedded object isn't shown.
+< {0} embedded objects aren't shown.
+> {0} встроенный объект не показан
+> {0} встроенных объекта не показаны
+> {0} встроенных объектов не показаны
+
+< This workbook has no sheets.
+> В этой книге нет листов.
+
+< Charts and pictures on the sheets aren't drawn.
+> Диаграммы и изображения на листах не отображаются.
+
+< This file was made by a very old PowerPoint version, which this app can't read.
+> Этот файл создан очень старой версией PowerPoint, которую это приложение не может прочитать.
+
+< The file is damaged: its contents can't be unpacked.
+> Файл повреждён: его содержимое не удаётся распаковать.
+
+< The file unpacks to far more data than it holds, so it wasn't opened.
+> Файл распаковывается в гораздо больший объём данных, поэтому он не открыт.
+
+< The file is damaged: a part of it can't be unpacked.
+> Файл повреждён: часть его не удаётся распаковать.
+
+< This PowerPoint file is damaged: its slides are missing.
+> Файл PowerPoint повреждён: в нём отсутствуют слайды.
+
+< The slides of this presentation can't be read.
+> Слайды этой презентации не удаётся прочитать.
+
+< {0} picture in an older format isn't shown.
+< {0} pictures in an older format aren't shown.
+> {0} изображение в старом формате не показано
+> {0} изображения в старом формате не показаны
+> {0} изображений в старом формате не показаны
+
+< This isn't a PowerPoint presentation: its main part is missing.
+> Это не презентация PowerPoint: её основная часть отсутствует.
+
+< {0} chart is shown as a box.
+< {0} charts are shown as boxes.
+> {0} диаграмма показана в виде рамки
+> {0} диаграммы показаны в виде рамок
+> {0} диаграмм показаны в виде рамок
+
+< {0} diagram is shown as a box.
+< {0} diagrams are shown as boxes.
+> {0} схема показана в виде рамки
+> {0} схемы показаны в виде рамок
+> {0} схем показаны в виде рамок
+
+< {0} video or sound isn't played.
+< {0} videos or sounds aren't played.
+> {0} видео или звук не воспроизводится
+> {0} видео или звука не воспроизводятся
+> {0} видео или звуков не воспроизводятся
+
+< Embedded object
+> Встроенный объект
+
+< This Excel file is damaged: its sheets are missing.
+> Файл Excel повреждён: в нём отсутствуют листы.
+
+< This file was made by a very old Excel version, which this app can't read.
+> Этот файл создан очень старой версией Excel, которую это приложение не может прочитать.
+
+@ spreadsheet value
+< TRUE
+> ИСТИНА
+
+@ spreadsheet value
+< FALSE
+> ЛОЖЬ
+
+< This isn't an Excel workbook: its main part is missing.
+> Это не книга Excel: её основная часть отсутствует.
+
+< {0} chart sheet isn't drawn.
+< {0} chart sheets aren't drawn.
+> {0} лист диаграммы не отображается
+> {0} листа диаграммы не отображаются
+> {0} листов диаграмм не отображаются
+
+< This workbook is very large: only its first {0} cells are shown.
+> Эта книга очень большая: показаны только первые {0} ячеек.
 
 < Printing {0} file on {1}
 < Printing {0} files on {1}

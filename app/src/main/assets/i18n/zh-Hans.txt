@@ -1134,6 +1134,9 @@
 < scan document camera paper
 > 扫描 文档 相机 纸张
 
+< open view read viewer document pdf word docx doc excel xlsx xls spreadsheet powerpoint pptx ppt slides odt ods odp rtf epub ebook book csv txt text markdown
+> 打开 查看 阅读 查看器 文档 pdf word docx doc excel xlsx xls 电子表格 powerpoint pptx ppt 幻灯片 odt ods odp rtf epub 电子书 书籍 csv txt 文本 文字 markdown
+
 < split pdf pages select
 > 拆分 提取 pdf 页面 选择
 
@@ -1703,6 +1706,262 @@
 < Keep editing
 > 继续编辑
 
+< This document has no text to show.
+> 此文档没有可显示的文字。
+
+< [Picture]
+> [图片]
+
+< Picture: {0} (in a format this app can't draw)
+> 图片：{0}（本应用无法绘制此格式）
+
+< A picture in a format this app can't draw
+> 本应用无法绘制此格式的图片
+
+< About {0} word
+< About {0} words
+> 约{0}个字
+
+< {0} table
+< {0} tables
+> {0}个表格
+
+< {0} picture
+< {0} pictures
+> {0}张图片
+
+< Page {0} of {1}
+> 第{0}页，共{1}页
+
+< Slide {0} of {1}
+> 第{0}张幻灯片，共{1}张
+
+< This file has no text to search.
+> 此文件没有可搜索的文字。
+
+< Searching page {0} of {1}…
+> 正在搜索第{0}页，共{1}页…
+
+< Slide {0}
+> 幻灯片 {0}
+
+< Page {0}
+> 第{0}页
+
+< Slides
+> 幻灯片
+
+< Contents
+> 目录
+
+< The file is damaged: its pages can't be read.
+> 文件已损坏：无法读取其页面。
+
+< This file is built too deeply to be shown.
+> 此文件的结构嵌套过深，无法显示。
+
+< This file is too large to show with the memory this phone has free.
+> 此文件太大，这部手机的可用内存不足以显示。
+
+< Document
+> 文档
+
+< Word 97–2003
+> Word 97–2003
+
+< Excel 97–2003
+> Excel 97–2003
+
+< PowerPoint 97–2003
+> PowerPoint 97–2003
+
+< OpenDocument text
+> OpenDocument 文本
+
+< OpenDocument spreadsheet
+> OpenDocument 电子表格
+
+< OpenDocument presentation
+> OpenDocument 演示文稿
+
+@ kind of file
+< Text
+> 文本
+
+< Open a file
+> 打开文件
+
+< Also in other apps: choose “Open with” and then Local Media Tools.
+> 在其他应用中也可以：选择“打开方式”，然后选择 Local Media Tools。
+
+< Recent files
+> 最近的文件
+
+< Documents are read on this phone and never uploaded. The reader only shows files: it doesn't change them.
+> 文档只在这部手机上读取，从不上传。阅读器只显示文件，不会更改它们。
+
+< Files you open show up here.
+> 你打开的文件会显示在这里。
+
+< Clear the list
+> 清空列表
+
+< Remove {0} from the list
+> 从列表中移除{0}
+
+< Search
+> 搜索
+
+< More
+> 更多
+
+< Close search
+> 关闭搜索
+
+< Find in document
+> 在文档中查找
+
+< Previous match
+> 上一个匹配项
+
+< Next match
+> 下一个匹配项
+
+< Opening…
+> 正在打开…
+
+< This file can't be shown
+> 无法显示此文件
+
+< Open in another app
+> 用其他应用打开
+
+< Copying the file… {0}
+> 正在复制文件… {0}
+
+< This kind of file isn't one the reader opens. It reads PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV and text files.
+> 阅读器不支持打开这种文件。它可以读取 PDF、Word、Excel、PowerPoint、OpenDocument、RTF、EPUB、CSV 和文本文件。
+
+< Reading…
+> 正在读取…
+
+< The file is damaged.
+> 文件已损坏。
+
+< This file is no longer available. Open it again from the app it came from.
+> 此文件已不可用。请从它的来源应用中重新打开。
+
+< Password
+> 密码
+
+< Wrong password
+> 密码错误
+
+< This PDF is locked
+> 此 PDF 已加密
+
+< That password didn't open it. Try again.
+> 该密码无法打开文件。请重试。
+
+< Enter its password to read it. The password is used only to open the file on this phone.
+> 请输入密码以读取此文件。密码仅用于在这部手机上打开文件。
+
+< No matches
+> 没有匹配项
+
+< {0} of {1}
+> {0} / {1}
+
+< Close
+> 关闭
+
+< Zoom in
+> 放大
+
+< Zoom out
+> 缩小
+
+< Speaker notes
+> 演讲者备注
+
+< Copy this page's text
+> 复制本页文字
+
+< File information
+> 文件信息
+
+< This slide has no speaker notes.
+> 这张幻灯片没有演讲者备注。
+
+< Speaker notes · slide {0}
+> 演讲者备注 · 幻灯片 {0}
+
+< This page has no text to copy (it may be a scanned picture).
+> 本页没有可复制的文字（可能是扫描图片）。
+
+< Text of page {0} copied.
+> 已复制第{0}页的文字。
+
+< Open with
+> 打开方式
+
+< No app on this phone can handle this action.
+> 这部手机上没有应用可以处理此操作。
+
+< Title: {0}
+> 标题：{0}
+
+< Not shown:
+> 未显示：
+
+< Files are only read on this phone: nothing is changed or sent anywhere.
+> 文件仅在这部手机上读取：不会更改任何内容，也不会发送到任何地方。
+
+< Link
+> 链接
+
+< Opening it starts your browser; this app itself never connects to the internet.
+> 打开链接会启动浏览器；本应用本身从不连接互联网。
+
+< Copy
+> 复制
+
+< Link copied.
+> 链接已复制。
+
+< Sheet {0}
+> 第{0}张
+
+< This sheet holds a chart or pictures, which this app doesn't draw.
+> 此工作表包含图表或图片，本应用不会绘制它们。
+
+< This sheet is empty.
+> 此工作表为空。
+
+< Sheets
+> 工作表
+
+< {0} sheet
+< {0} sheets
+> {0}张纸
+
+< {0} hidden sheet (not shown)
+< {0} hidden sheets (not shown)
+> {0}个隐藏的工作表（未显示）
+
+< {0} cell with content
+< {0} cells with content
+> {0}个有内容的单元格
+
+< Picture
+> 图片
+
+< Hidden slide
+> 隐藏的幻灯片
+
+< {0}. {1}
+> {0}. {1}
+
 < Unnamed person
 > 未命名的人物
 
@@ -2136,9 +2395,6 @@
 < Loading people…
 > 正在加载人物…
 
-< {0} of {1}
-> {0} / {1}
-
 < Type a name, then Enter
 > 输入名称，然后按回车
 
@@ -2258,9 +2514,6 @@
 < still analysing {0} more
 < still analysing {0} more
 > 还有{0}个仍在分析
-
-< No matches
-> 没有匹配项
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > 试试你给某人起的名字，或“狗”“汽车”“海滩”“食物”“日落”“文档”之类的词。
@@ -2686,9 +2939,6 @@
 
 < Captured pages are deleted from the app's private storage; gallery photos aren't affected.
 > 拍摄的页面会从应用的私有存储中删除；图库中的照片不受影响。
-
-< Page {0}
-> 第{0}页
 
 < No pages yet
 > 还没有页面
@@ -3489,9 +3739,6 @@
 < Choose a printer
 > 选择打印机
 
-< Close
-> 关闭
-
 @ printers kept in the app
 < Saved
 > 已保存
@@ -3598,16 +3845,9 @@
 < Couldn't prepare the preview
 > 无法准备预览
 
-< {0} sheet
-< {0} sheets
-> {0}张纸
-
 < first {0} shown
 < first {0} shown
 > 显示前{0}张
-
-< Sheet {0}
-> 第{0}张
 
 < {0} copy
 < {0} copies
@@ -3627,9 +3867,6 @@
 
 < Couldn't read the shared files.
 > 无法读取分享的文件。
-
-< No app on this phone can handle this action.
-> 这部手机上没有应用可以处理此操作。
 
 < This device has no camera. Add pages from the gallery instead.
 > 此设备没有相机。请改为从图库添加页面。
@@ -4000,9 +4237,6 @@
 
 < City & buildings
 > 城市和建筑
-
-< Document
-> 文档
 
 < Night
 > 夜景
@@ -4609,9 +4843,6 @@
 < The PDF has no pages.
 > 该 PDF 没有页面。
 
-< Page {0} of {1}
-> 第{0}页，共{1}页
-
 < Page {0} could not be opened; the PDF may be damaged.
 > 第{0}页无法打开；PDF 可能已损坏。
 
@@ -4708,6 +4939,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > 用你审阅的瞬间制作一部影片，因此无法在组合中运行
 
+< Shows documents instead of saving files, so it can't be a step of a stack
+> 显示文档而不是保存文件，因此不能作为组合的一个步骤
+
 < Can't be part of a stack
 > 无法作为组合的一部分
 
@@ -4781,11 +5015,11 @@
 < Create and slim down animations
 > 创建动图并减小体积
 
-< PDF
-> PDF
+< Documents & PDF
+> 文档与 PDF
 
-< Pages, scans and merges
-> 页面、扫描和合并
+< Read documents; convert, merge and scan PDFs
+> 阅读文档；转换、合并和扫描 PDF
 
 < Photos and documents on your Wi-Fi printer
 > 在你的 Wi-Fi 打印机上打印照片和文档
@@ -5026,6 +5260,15 @@
 
 < Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
 > 更高效地重新编码 GIF，同时保持每个显示出来的像素完全一致。
+
+< File reader
+> 文件阅读器
+
+< Open PDF, Word, Excel, PowerPoint and more
+> 打开 PDF、Word、Excel、PowerPoint 等
+
+< Reads the documents Android can't open by itself — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, EPUB e-books, CSV and text files — right on this phone. Zoom, search the text, and jump between chapters, sheets and slides. Files are only read: nothing is changed or uploaded.
+> 直接在这部手机上读取 Android 本身无法打开的文档——PDF、Word（DOCX、DOC）、Excel（XLSX、XLS）、PowerPoint（PPTX、PPT）、OpenDocument、RTF、EPUB 电子书、CSV 和文本文件。可以缩放、搜索文字，并在章节、工作表和幻灯片之间跳转。文件只供读取：不会更改或上传任何内容。
 
 < PDF → images
 > PDF 转图片
@@ -5456,6 +5699,153 @@
 
 < The H.264 encoder rejected the output settings ({0}×{1}).
 > H.264 编码器拒绝了输出设置（{0}×{1}）。
+
+< Excel binary workbooks (.xlsb) can't be opened yet. Saved as .xlsx in Excel, they can.
+> 暂时无法打开 Excel 二进制工作簿（.xlsb）。在 Excel 中另存为 .xlsx 后即可打开。
+
+< This file was made by a very old Word version, which this app can't read.
+> 此文件由非常旧的 Word 版本生成，本应用无法读取。
+
+< PDF files are shown by the PDF viewer.
+> PDF 文件由 PDF 查看器显示。
+
+< This file is very long: only its first {0} MB are shown.
+> 此文件很长：仅显示前 {0} MB。
+
+< This Word file is damaged: its text is missing.
+> 此 Word 文件已损坏：缺少文字。
+
+< This file was made by Word 6 or Word 95, which this app can't read yet.
+> 此文件由 Word 6 或 Word 95 生成，本应用暂时无法读取。
+
+< This file is protected with a password, which this app can't open.
+> 此文件受密码保护，本应用无法打开。
+
+< Text in boxes and shapes
+> 文本框和形状中的文字
+
+< Notes
+> 备注
+
+< Some pictures and drawings in this document aren't shown.
+> 本文档中的部分图片和绘图未显示。
+
+< This isn't a Word document: its main part is missing.
+> 这不是 Word 文档：缺少其主要部分。
+
+< {0} chart isn't shown.
+< {0} charts aren't shown.
+> 未显示{0}个图表。
+
+< {0} diagram isn't shown.
+< {0} diagrams aren't shown.
+> 未显示{0}个示意图。
+
+< {0} picture is linked from outside the file and isn't shown.
+< {0} pictures are linked from outside the file and aren't shown.
+> {0}张图片链接自文件外部，未显示。
+
+< {0} embedded object is shown only as its picture.
+< {0} embedded objects are shown only as their pictures.
+> {0}个嵌入对象仅以图片形式显示。
+
+< Chart
+> 图表
+
+< Diagram
+> 示意图
+
+< Linked picture
+> 链接图片
+
+< Table
+> 表格
+
+< This e-book is damaged: its list of chapters is missing.
+> 此电子书已损坏：缺少章节列表。
+
+< This e-book is protected with DRM, so it can only be read in the app it was bought for.
+> 此电子书受 DRM 保护，因此只能在购买时所用的应用中阅读。
+
+< This e-book has no chapters that can be shown.
+> 此电子书没有可显示的章节。
+
+< This OpenDocument file is damaged: its content is missing.
+> 此 OpenDocument 文件已损坏：缺少内容。
+
+< {0} embedded object isn't shown.
+< {0} embedded objects aren't shown.
+> 未显示{0}个嵌入对象。
+
+< This workbook has no sheets.
+> 此工作簿没有工作表。
+
+< Charts and pictures on the sheets aren't drawn.
+> 工作表上的图表和图片未绘制。
+
+< This file was made by a very old PowerPoint version, which this app can't read.
+> 此文件由非常旧的 PowerPoint 版本生成，本应用无法读取。
+
+< The file is damaged: its contents can't be unpacked.
+> 文件已损坏：无法解压其内容。
+
+< The file unpacks to far more data than it holds, so it wasn't opened.
+> 该文件解压后的数据量远超其自身大小，因此未打开。
+
+< The file is damaged: a part of it can't be unpacked.
+> 文件已损坏：其中一部分无法解压。
+
+< This PowerPoint file is damaged: its slides are missing.
+> 此 PowerPoint 文件已损坏：缺少幻灯片。
+
+< The slides of this presentation can't be read.
+> 无法读取此演示文稿中的幻灯片。
+
+< {0} picture in an older format isn't shown.
+< {0} pictures in an older format aren't shown.
+> 未显示{0}张旧格式图片。
+
+< This isn't a PowerPoint presentation: its main part is missing.
+> 这不是 PowerPoint 演示文稿：缺少其主要部分。
+
+< {0} chart is shown as a box.
+< {0} charts are shown as boxes.
+> {0}个图表以方框显示。
+
+< {0} diagram is shown as a box.
+< {0} diagrams are shown as boxes.
+> {0}个示意图以方框显示。
+
+< {0} video or sound isn't played.
+< {0} videos or sounds aren't played.
+> 未播放{0}个视频或声音。
+
+< Embedded object
+> 嵌入对象
+
+< This Excel file is damaged: its sheets are missing.
+> 此 Excel 文件已损坏：缺少工作表。
+
+< This file was made by a very old Excel version, which this app can't read.
+> 此文件由非常旧的 Excel 版本生成，本应用无法读取。
+
+@ spreadsheet value
+< TRUE
+> TRUE
+
+@ spreadsheet value
+< FALSE
+> FALSE
+
+< This isn't an Excel workbook: its main part is missing.
+> 这不是 Excel 工作簿：缺少其主要部分。
+
+< {0} chart sheet isn't drawn.
+< {0} chart sheets aren't drawn.
+> 未绘制{0}个图表工作表。
+
+< This workbook is very large: only its first {0} cells are shown.
+> 此工作簿很大：仅显示前{0}个单元格。
 
 < Printing {0} file on {1}
 < Printing {0} files on {1}

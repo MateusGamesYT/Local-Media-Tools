@@ -138,6 +138,7 @@ class ReaderUiTest {
         sheet.selectCell(7, 1); idle()
         assertEquals("B8", sheet.selectedRef.toString())
         assertEquals("=B9+B10", sheet.selectedText.toString())
+        render(a, "2_xlsx_formula")
         sheet.selectCell(0, 0); idle()
         assertEquals("Table 26--Monthly estimates of fiscal 2009 U.S. sugar supply and use", sheet.selectedText.toString())
         render(a, "2_xlsx")

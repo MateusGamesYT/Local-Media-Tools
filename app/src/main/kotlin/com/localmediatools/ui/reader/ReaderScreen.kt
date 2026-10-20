@@ -261,7 +261,7 @@ class ReaderScreen(activity: MainActivity, private val source: ReaderSource, pri
         c.search(q) { st -> searchCount.text = when {
             st.busy -> st.progress ?: "…"
             q.isBlank() -> ""
-            st.total == 0 -> tr("None")
+            st.total == 0 -> tr("No matches")
             else -> tr("{0} of {1}", st.current, st.total)
         } }
     }

@@ -29,7 +29,6 @@ import com.localmediatools.docs.core.Sheet
 import com.localmediatools.docs.core.VAlign
 import com.localmediatools.docs.core.Workbook
 import com.localmediatools.docs.core.XlsxReader
-import com.localmediatools.i18n.I18n
 import com.localmediatools.i18n.tr
 import com.localmediatools.i18n.trn
 import com.localmediatools.ui.Palette
@@ -497,7 +496,7 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
         searchThread?.interrupt()
         if (query.isBlank()) { clearSearch(); update(SearchStatus(0, 0)); return }
         update(SearchStatus(0, 0, busy = true))
-        val q = query.lowercase(I18n.locale)
+        val q = query
         lateinit var t: Thread
         t = Thread {
             val found = ArrayList<Hit>()
@@ -506,7 +505,7 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
                 for (r in s.cells.rowIndices()) {
                     if (Thread.currentThread().isInterrupted) return@Thread
                     for ((c, cell) in s.cells.row(r) ?: continue) {
-                        if (cell.text.lowercase(I18n.locale).contains(q) || cell.formula?.lowercase(I18n.locale)?.contains(q) == true) found.add(Hit(si, r, c))
+                        if (cell.text.contains(q, ignoreCase = true) || cell.formula?.contains(q, ignoreCase = true) == true) found.add(Hit(si, r, c))
                         if (found.size >= 100_000) break@loop
                     }
                 }

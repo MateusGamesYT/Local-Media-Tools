@@ -84,7 +84,9 @@ object XlsxReader {
     private val ESCAPE = Regex("_x([0-9A-Fa-f]{4})_")
 
     /** Characters XML can't hold are written as _xHHHH_ ("_x000D_" for a carriage return). */
-    fun unescape(s: String): String {
+    fun unescape(raw: String): String {
+        // Excel holds at most 32,767 characters in a cell; longer text is a file made to be too big.
+        val s = if (raw.length > 32767) raw.substring(0, 32767) else raw
         if (!s.contains("_x")) return s
         return ESCAPE.replace(s) { m -> m.groupValues[1].toInt(16).toChar().toString() }.replace("\r\n", "\n").replace('\r', '\n')
     }

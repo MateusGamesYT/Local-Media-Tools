@@ -14,7 +14,45 @@ import java.util.zip.ZipFile
  * stops with a message instead of filling the memory.
  */
 class Parts(file: File, private val maxPartBytes: Long = 256L shl 20, private val maxTotalBytes: Long = 1L shl 30) : Closeable {
-    private val zip: ZipFile = try { ZipFile(file) } catch (e: Exception) { throw UnreadableException(tr("The file is damaged: its contents can't be unpacked.")) }
+    /** A rebuilt copy, when the file had to be recovered (deleted on close). */
+    private var rebuilt: File? = null
+    private val zip: ZipFile = try { ZipFile(file) } catch (e: Exception) { recover(file) }
+
+    /**
+     * A ZIP whose directory at the end is missing (a cut-off download, a streaming writer) still has
+     * each part's own header: the parts are read in order from those and copied into a proper ZIP,
+     * as Office and LibreOffice do. Capped like every read.
+     */
+    private fun recover(file: File): ZipFile {
+        val damaged = UnreadableException(tr("The file is damaged: its contents can't be unpacked."))
+        val out = try { File.createTempFile("recovered", ".zip") } catch (_: Exception) { throw damaged }
+        var parts = 0
+        try {
+            java.util.zip.ZipInputStream(file.inputStream().buffered()).use { zin ->
+                java.util.zip.ZipOutputStream(out.outputStream().buffered()).use { zout ->
+                    var written = 0L
+                    val buf = ByteArray(1 shl 16)
+                    while (true) {
+                        val e = try { zin.nextEntry } catch (_: Exception) { null } ?: break
+                        if (e.isDirectory) continue
+                        // Each part whole or not at all: the one the file was cut in is left out.
+                        val part = java.io.ByteArrayOutputStream()
+                        try {
+                            while (true) {
+                                val n = zin.read(buf); if (n < 0) break
+                                written += n
+                                if (written > maxTotalBytes || part.size() > maxPartBytes) throw UnreadableException(tr("The file unpacks to far more data than it holds, so it wasn't opened."))
+                                part.write(buf, 0, n)
+                            }
+                        } catch (x: UnreadableException) { throw x } catch (_: Exception) { break }
+                        zout.putNextEntry(java.util.zip.ZipEntry(e.name)); part.writeTo(zout); zout.closeEntry(); parts++
+                    }
+                }
+            }
+            if (parts == 0) throw damaged
+            return ZipFile(out).also { rebuilt = out }
+        } catch (x: UnreadableException) { out.delete(); throw x } catch (_: Exception) { out.delete(); throw damaged }
+    }
     private val exact = HashMap<String, java.util.zip.ZipEntry>()
     private val folded = HashMap<String, java.util.zip.ZipEntry>()
     private var total = 0L
@@ -62,7 +100,7 @@ class Parts(file: File, private val maxPartBytes: Long = 256L shl 20, private va
 
     fun xml(name: String, html: Boolean = false): XmlReader? = open(name)?.let { XmlReader.of(it, html) }
 
-    override fun close() = zip.close()
+    override fun close() { try { zip.close() } finally { rebuilt?.delete() } }
 
     companion object {
         fun normalise(name: String): String {

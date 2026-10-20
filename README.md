@@ -4,8 +4,9 @@
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
 photos and lets you search them in plain words, **highlight videos** cut to music the phone writes
-itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **33
-tools** for photos, video, GIF, PDF and audio, including on-device AI for **face blurring in photos and
+itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **34
+tools** for photos, video, GIF, documents, PDF and audio, among them a **file reader** for the PDF,
+Word, Excel and PowerPoint files Android can't open by itself, and on-device AI for **face blurring in photos and
 videos**, **background removal**, **one-tap enhancement**, a **magic eraser**, a **duplicate finder** and
 a **denoiser** that keeps RAW files RAW. Nothing is uploaded: the app never connects to servers
 on the internet (its only network traffic is to your own printer, and the code allows nothing else),
@@ -15,7 +16,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.10.3.apk`](release/LocalMediaTools-1.10.3.apk)
+**Install:** [`release/LocalMediaTools-1.11.0.apk`](release/LocalMediaTools-1.11.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -30,6 +31,12 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 | Highlight video | Duplicate finder | One group at a time | Name people |
 |---|---|---|---|
 | ![](docs/screenshots/highlight.png) | ![](docs/screenshots/duplicates.png) | ![](docs/screenshots/duplicates-review.png) | ![](docs/screenshots/name-people.png) |
+
+| File reader | A Word document | A spreadsheet | Slides | A PDF, searched |
+|---|---|---|---|---|
+| ![](docs/screenshots/reader.png) | ![](docs/screenshots/reader-word.png) | ![](docs/screenshots/reader-sheet.png) | ![](docs/screenshots/reader-slides.png) | ![](docs/screenshots/reader-pdf.png) |
+
+The reader screenshots show a NASA report, a USDA table and an EPA project summary (public domain) and an Apache POI sample presentation (Apache-2.0); credits in [`CREDITS.md`](app/src/test/resources/docs/CREDITS.md).
 
 | Print | Choosing the printer |
 |---|---|
@@ -53,7 +60,107 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.10.3: RAW photos are files like any other
+## What's new in 1.11.0: a file reader for documents Android can't open
+
+- **File reader** is a new tool in *Documents & PDF*. It opens **PDF, Word (DOCX, DOC), Excel (XLSX,
+  XLS), PowerPoint (PPTX, PPT), OpenDocument (ODT, ODS, ODP), RTF, EPUB e-books, CSV/TSV, Markdown,
+  HTML, JSON, XML and text files**. Open them with *Open a file*, or from another app (Files, e-mail,
+  messengers) with **Open with → File reader (Local Media Tools)**. What a file is comes from its
+  contents, not its name, so a renamed attachment still opens. Files are only read: nothing is changed,
+  and nothing is uploaded.
+- **Text documents** (Word, OpenDocument text, RTF, e-books, HTML, Markdown, text) reflow on a white
+  page that fits the phone. They keep:
+  - headings, bold, italic, underline, colours, sizes and highlighting;
+  - lists with their numbers and bullets;
+  - tables, including merged cells (wide ones scroll sideways);
+  - pictures, footnotes and endnotes (gathered under *Notes* at the end), and text in text boxes and
+    shapes.
+
+  Pinch (or *Zoom in*/*Zoom out* in the menu) changes the text size, and text can be selected and
+  copied. *Contents* lists the headings or the book's chapters.
+- **Spreadsheets** (XLSX, XLS, ODS, CSV) show as a grid with column letters and row numbers, like on
+  a computer. They keep:
+  - every number format as Excel shows it: dates and times, currencies, percentages, fractions,
+    scientific notation, colours and conditions, with the separators of the app's language;
+  - fonts, fills, borders and alignment, merged cells, frozen rows and columns, and hidden rows,
+    columns and sheets;
+  - text running over into empty neighbouring cells.
+
+  Tapping a cell shows its content or its formula in the bar above (old .xls files too: the app spells
+  their formulas back out of Excel's binary format, `=SUM(B2:B6)`, sheet references and array
+  formulas included). Tabs at the bottom switch sheets. Formulas aren't recalculated: cells show the
+  values the file was saved with, as Excel does when it opens a file.
+- **Slides** (PPTX, PPT, ODP) are drawn: backgrounds, shapes with their fills and outlines, cropped
+  pictures, tables, and text with bullets, alignment and the presentation's shrink-to-fit. Old .ppt
+  files also get their colour scheme, the master's logos and lines, and grouped shapes in their right
+  place. *Speaker notes* are in the menu, hidden slides are marked, and *Slides* lists every slide by
+  its title.
+- **PDF pages** are drawn by Android's own PDF engine, the same as the system viewer. Zoom goes to
+  6×, and the part on screen is drawn again sharply once you stop moving. Search marks every match on
+  the pages, and *Contents* shows the PDF's bookmarks. A **password-protected PDF** asks for its
+  password; the unlocked copy stays in the app's private cache only while it's shown. *Copy this
+  page's text* and *Print* are in the menu.
+- **Search** works in every kind of file: "3 of 27", next and previous, every match marked. Large PDFs
+  are searched page by page, showing how far it has got.
+- **Links** in documents are never opened by surprise. A tap shows the address first, with *Copy* and
+  *Open*; *Open* hands it to your browser. The app itself still never connects to the internet.
+- **Nothing is left out silently.** What a reader can't show is said in a note on top and in *File
+  information*: charts and diagrams (drawn as labelled boxes), pictures in old metafile formats (WMF,
+  EMF), embedded objects, linked pictures, chart sheets.
+- **Recent files** are listed on the reader's first screen:
+  - a file picked in the reader is read again from where it is (Android keeps the permission);
+  - a file another app only lent ("Open with") is kept as a private copy, at most 12 files and
+    300 MB, removed together with its entry; *Clear the list* removes them all.
+- **Damaged and hostile files stop with a message, never a crash.**
+  - Every size and count is checked: at most 256 MB per part and 1 GB in all, so a small file that
+    unpacks to gigabytes stops; cells hold at most 32,767 characters, as in Excel.
+  - Deeply nested files are read on a thread with a large stack.
+  - A cut-off ZIP (a broken download) is rebuilt from its parts' own headers, as Office and
+    LibreOffice do.
+  - Password-protected Office files, Word 6/95 files and Excel binary workbooks (.xlsb) say exactly
+    that.
+- **Measured on 1,972 real files**: Apache POI's test files (every Office version, many made to break
+  readers) and thread 0 of govdocs1 (documents from U.S. government web servers). The scripts are in
+  [`buildtools/docs/`](buildtools/docs/README.md).
+  - **1,807 of 1,911** Office, OpenDocument, RTF, HTML, CSV, XML and text files opened, including
+    **540 of the 542** government files. Of the 104 that didn't: 51 are fuzzer test files, 19 are
+    password-protected, 14 are Word 6/95, 11 are .xlsb, 2 come from even older versions, and 7 are
+    damaged.
+  - **Text against Apache Tika** (median share of Tika's words the app shows / of the app's words
+    Tika also has): Word 0.991 / 1.000 (.doc) and 0.989 / 1.000 (.docx); Excel 1.000 / 1.000;
+    PowerPoint 0.945 / 1.000 (.ppt) and 0.874 / 1.000 (.pptx); HTML 0.992 / 0.991; text and CSV
+    1.000. Where the app shows less, it is mostly text Tika also pulls from places the page doesn't
+    show: embedded objects, chart data, notes and handout masters, document properties, picture names.
+  - **Every spreadsheet cell against LibreOffice** (cells as shown): of 1,837,717 cells in 453 .xls
+    files, 99.13 % read exactly the same, and 99.52 % leaving out formula cells that LibreOffice
+    recalculates (TODAY() and the like). Of 1,050,233 cells in 348 .xlsx files: 99.86 % and 99.90 %.
+    This check found seven bugs, all fixed, among them rounding (30.395 now shows as 30.40, as in
+    Excel), system date codes shown twice, and charts' cached data taken for cells.
+  - **The newer formats on real content**: 45 government documents of each kind re-saved by
+    LibreOffice as DOCX, ODT, XLSX, ODS, PPTX and ODP. All 270 open; median recall against Tika's
+    reading of the original is 0.997 for DOCX and ODT, 1.000 for XLSX and ODS, 0.983 for PPTX and
+    0.960 for ODP.
+  - **Pictures**: 155 in 28 .doc files, 808 in 90 .ppt files, and 206 of 274 in .docx and .pptx files
+    are shown. 583 pictures in old metafile formats in 72 .ppt files, and those in 55 .doc files, are
+    named in the notes instead.
+- **Tested** on the JVM and in the Android test runtime with real documents: a NASA report, a USDA
+  table and an EPA project summary (public domain), in their original Office 97–2003 files and
+  re-saved in every newer format, plus Apache POI's samples made by Microsoft Office; credits in
+  [`CREDITS.md`](app/src/test/resources/docs/CREDITS.md).
+  - The same report reads alike (within 1 % of its 3,389 words) in .doc, .docx, .odt, .rtf and .epub,
+    with its two figures in each.
+  - The same table gives identical cells in .xls, .xlsx, .ods and .csv, and identical formulas in the
+    first three.
+  - The UI tests open each kind of file from the tool, from the file picker and through "Open with",
+    and also cover search, the formula bar, slides, PDF pages and search (with PDFBox, since the test
+    runtime has no Android PDF engine), recent files, and locked and unknown files.
+  - Not tried on a phone.
+- **Limits**: metafile pictures (WMF, EMF), charts, SmartArt and equations aren't drawn; Word 6/95 and
+  .xlsb files can't be opened yet. Fonts are the phone's, so lines can break a little differently than
+  on a computer.
+- **Translated** into all ten languages.
+
+## What was new in 1.10.3: RAW photos are files like any other
 
 This replaces the RAW rules of 1.10.1 and 1.10.2.
 
@@ -617,7 +724,8 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | GIF | Video → GIF | FPS, width, source mode, adaptive colours | `Pictures/LocalMediaTools/Converted/GIF` |
 | | GIF compressor | Width, FPS, 32/64/128/256 colours | `Pictures/LocalMediaTools/GIFs` |
 | | GIF optimizer | Pixel-preserving re-pack | `Pictures/LocalMediaTools/GIFs` |
-| PDF | PDF → images | PNG/JPEG, scale 50–400 % | `Pictures/LocalMediaTools/PDF Images` |
+| Documents & PDF | File reader | Reads PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV and text files: zoom, search, contents, formulas, speaker notes; also from other apps' "Open with" | — (only shows files) |
+| | PDF → images | PNG/JPEG, scale 50–400 % | `Pictures/LocalMediaTools/PDF Images` |
 | | Images → PDF | A4 pages in your order | `Documents/LocalMediaTools/PDF` |
 | | Merge PDFs | Structural merge: text and links kept | `Documents/LocalMediaTools/PDF` |
 | | Extract PDF pages | `1-3, 5, 8-` into one PDF or one per page | `Documents/LocalMediaTools/PDF` |

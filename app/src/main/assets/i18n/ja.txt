@@ -1134,6 +1134,9 @@
 < scan document camera paper
 > スキャン 書類 ドキュメント カメラ 紙
 
+< open view read viewer document pdf word docx doc excel xlsx xls spreadsheet powerpoint pptx ppt slides odt ods odp rtf epub ebook book csv txt text markdown
+> 開く 表示 読む ビューア ドキュメント pdf word docx doc excel xlsx xls スプレッドシート powerpoint pptx ppt スライド odt ods odp rtf epub 電子書籍 本 csv txt テキスト markdown
+
 < split pdf pages select
 > 分割 抽出 pdf ページ 選択
 
@@ -1703,6 +1706,262 @@
 < Keep editing
 > 編集を続ける
 
+< This document has no text to show.
+> このドキュメントには表示するテキストがありません。
+
+< [Picture]
+> [画像]
+
+< Picture: {0} (in a format this app can't draw)
+> 画像：{0}（このアプリでは描画できない形式）
+
+< A picture in a format this app can't draw
+> このアプリでは描画できない形式の画像
+
+< About {0} word
+< About {0} words
+> 約{0}語
+
+< {0} table
+< {0} tables
+> 表{0}個
+
+< {0} picture
+< {0} pictures
+> 画像{0}枚
+
+< Page {0} of {1}
+> ページ {0}/{1}
+
+< Slide {0} of {1}
+> スライド {0}/{1}
+
+< This file has no text to search.
+> このファイルには検索できるテキストがありません。
+
+< Searching page {0} of {1}…
+> ページ {0}/{1} を検索中…
+
+< Slide {0}
+> スライド{0}
+
+< Page {0}
+> ページ{0}
+
+< Slides
+> スライド
+
+< Contents
+> 目次
+
+< The file is damaged: its pages can't be read.
+> ファイルが破損しているため、ページを読み込めません。
+
+< This file is built too deeply to be shown.
+> このファイルは構造が深すぎて表示できません。
+
+< This file is too large to show with the memory this phone has free.
+> このファイルは、この端末の空きメモリで表示するには大きすぎます。
+
+< Document
+> 書類
+
+< Word 97–2003
+> Word 97–2003
+
+< Excel 97–2003
+> Excel 97–2003
+
+< PowerPoint 97–2003
+> PowerPoint 97–2003
+
+< OpenDocument text
+> OpenDocumentテキスト
+
+< OpenDocument spreadsheet
+> OpenDocumentスプレッドシート
+
+< OpenDocument presentation
+> OpenDocumentプレゼンテーション
+
+@ kind of file
+< Text
+> テキスト
+
+< Open a file
+> ファイルを開く
+
+< Also in other apps: choose “Open with” and then Local Media Tools.
+> ほかのアプリでは「アプリで開く」を選び、Local Media Toolsを選んでください。
+
+< Recent files
+> 最近使ったファイル
+
+< Documents are read on this phone and never uploaded. The reader only shows files: it doesn't change them.
+> ドキュメントはこの端末内で読み込まれ、アップロードされることはありません。リーダーはファイルを表示するだけで、変更しません。
+
+< Files you open show up here.
+> 開いたファイルはここに表示されます。
+
+< Clear the list
+> リストをクリア
+
+< Remove {0} from the list
+> リストから「{0}」を削除
+
+< Search
+> 検索
+
+< More
+> その他
+
+< Close search
+> 検索を閉じる
+
+< Find in document
+> ドキュメント内を検索
+
+< Previous match
+> 前の一致
+
+< Next match
+> 次の一致
+
+< Opening…
+> 開いています…
+
+< This file can't be shown
+> このファイルは表示できません
+
+< Open in another app
+> 別のアプリで開く
+
+< Copying the file… {0}
+> ファイルをコピーしています… {0}
+
+< This kind of file isn't one the reader opens. It reads PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV and text files.
+> この種類のファイルはリーダーでは開けません。リーダーが開けるのは、PDF、Word、Excel、PowerPoint、OpenDocument、RTF、EPUB、CSV、テキストファイルです。
+
+< Reading…
+> 読み込み中…
+
+< The file is damaged.
+> ファイルが破損しています。
+
+< This file is no longer available. Open it again from the app it came from.
+> このファイルは利用できなくなりました。元のアプリから開き直してください。
+
+< Password
+> パスワード
+
+< Wrong password
+> パスワードが正しくありません
+
+< This PDF is locked
+> このPDFはパスワードで保護されています
+
+< That password didn't open it. Try again.
+> そのパスワードでは開けませんでした。もう一度お試しください。
+
+< Enter its password to read it. The password is used only to open the file on this phone.
+> 読むにはパスワードを入力してください。パスワードは、この端末でファイルを開くためだけに使われます。
+
+< No matches
+> 一致なし
+
+< {0} of {1}
+> {0}/{1}
+
+< Close
+> 閉じる
+
+< Zoom in
+> 拡大
+
+< Zoom out
+> 縮小
+
+< Speaker notes
+> 発表者ノート
+
+< Copy this page's text
+> このページのテキストをコピー
+
+< File information
+> ファイル情報
+
+< This slide has no speaker notes.
+> このスライドには発表者ノートがありません。
+
+< Speaker notes · slide {0}
+> 発表者ノート · スライド{0}
+
+< This page has no text to copy (it may be a scanned picture).
+> このページにはコピーできるテキストがありません（スキャンされた画像の可能性があります）。
+
+< Text of page {0} copied.
+> ページ{0}のテキストをコピーしました。
+
+< Open with
+> アプリで開く
+
+< No app on this phone can handle this action.
+> この端末には、この操作に対応できるアプリがありません。
+
+< Title: {0}
+> タイトル：{0}
+
+< Not shown:
+> 表示されない項目：
+
+< Files are only read on this phone: nothing is changed or sent anywhere.
+> ファイルはこの端末内で読み込むだけです。何も変更されず、どこにも送信されません。
+
+< Link
+> リンク
+
+< Opening it starts your browser; this app itself never connects to the internet.
+> 開くとブラウザが起動します。このアプリ自体はインターネットに接続しません。
+
+< Copy
+> コピー
+
+< Link copied.
+> リンクをコピーしました。
+
+< Sheet {0}
+> {0}枚目
+
+< This sheet holds a chart or pictures, which this app doesn't draw.
+> このシートにはグラフや画像がありますが、このアプリでは描画されません。
+
+< This sheet is empty.
+> このシートは空です。
+
+< Sheets
+> シート
+
+< {0} sheet
+< {0} sheets
+> 用紙{0}枚
+
+< {0} hidden sheet (not shown)
+< {0} hidden sheets (not shown)
+> 非表示のシート{0}枚（表示されません）
+
+< {0} cell with content
+< {0} cells with content
+> 内容のあるセル{0}個
+
+< Picture
+> 画像
+
+< Hidden slide
+> 非表示のスライド
+
+< {0}. {1}
+> {0}. {1}
+
 < Unnamed person
 > 名前のない人物
 
@@ -2136,9 +2395,6 @@
 < Loading people…
 > 人物を読み込み中…
 
-< {0} of {1}
-> {0}/{1}
-
 < Type a name, then Enter
 > 名前を入力して、Enterを押してください
 
@@ -2258,9 +2514,6 @@
 < still analysing {0} more
 < still analysing {0} more
 > あと{0}件を分析中
-
-< No matches
-> 一致なし
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > 付けた名前、または「犬」「車」「ビーチ」「食べ物」「夕焼け」「書類」などで検索してみてください。
@@ -2686,9 +2939,6 @@
 
 < Captured pages are deleted from the app's private storage; gallery photos aren't affected.
 > 撮影したページはアプリの専用ストレージから削除されます。ギャラリーの写真には影響しません。
-
-< Page {0}
-> ページ{0}
 
 < No pages yet
 > ページはまだありません
@@ -3489,9 +3739,6 @@
 < Choose a printer
 > プリンターを選択
 
-< Close
-> 閉じる
-
 @ printers kept in the app
 < Saved
 > 登録済み
@@ -3598,16 +3845,9 @@
 < Couldn't prepare the preview
 > プレビューを準備できませんでした
 
-< {0} sheet
-< {0} sheets
-> 用紙{0}枚
-
 < first {0} shown
 < first {0} shown
 > 先頭{0}枚を表示
-
-< Sheet {0}
-> {0}枚目
 
 < {0} copy
 < {0} copies
@@ -3627,9 +3867,6 @@
 
 < Couldn't read the shared files.
 > 共有されたファイルを読み込めませんでした。
-
-< No app on this phone can handle this action.
-> この端末には、この操作に対応できるアプリがありません。
 
 < This device has no camera. Add pages from the gallery instead.
 > この端末にはカメラがありません。代わりにギャラリーからページを追加してください。
@@ -4000,9 +4237,6 @@
 
 < City & buildings
 > 街・建物
-
-< Document
-> 書類
 
 < Night
 > 夜景
@@ -4609,9 +4843,6 @@
 < The PDF has no pages.
 > PDFにページがありません。
 
-< Page {0} of {1}
-> ページ {0}/{1}
-
 < Page {0} could not be opened; the PDF may be damaged.
 > {0}ページ目を開けませんでした。PDFが破損している可能性があります。
 
@@ -4708,6 +4939,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > 確認した場面から1本の動画を作るため、スタックでは実行できません
 
+< Shows documents instead of saving files, so it can't be a step of a stack
+> ファイルを保存せずにドキュメントを表示するため、スタックの1ステップにはできません
+
 < Can't be part of a stack
 > スタックには含められません
 
@@ -4781,11 +5015,11 @@
 < Create and slim down animations
 > アニメーションの作成と軽量化
 
-< PDF
-> PDF
+< Documents & PDF
+> ドキュメントとPDF
 
-< Pages, scans and merges
-> ページ、スキャン、結合
+< Read documents; convert, merge and scan PDFs
+> ドキュメントを読み込み、PDFを変換・結合・スキャン
 
 < Photos and documents on your Wi-Fi printer
 > Wi-Fiプリンターで写真やドキュメントを印刷
@@ -5026,6 +5260,15 @@
 
 < Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
 > 表示されるピクセルをすべて同一に保ったまま、GIFをより効率よく再エンコードします。
+
+< File reader
+> ファイルリーダー
+
+< Open PDF, Word, Excel, PowerPoint and more
+> PDF、Word、Excel、PowerPoint などを開く
+
+< Reads the documents Android can't open by itself — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, EPUB e-books, CSV and text files — right on this phone. Zoom, search the text, and jump between chapters, sheets and slides. Files are only read: nothing is changed or uploaded.
+> Androidだけでは開けないドキュメントを、この端末内で読み込みます。対応形式は、PDF、Word（DOCX、DOC）、Excel（XLSX、XLS）、PowerPoint（PPTX、PPT）、OpenDocument、RTF、EPUB電子書籍、CSV、テキストファイルです。拡大、テキスト検索、章・シート・スライド間の移動に対応しています。ファイルは読み込むだけで、変更やアップロードは行われません。
 
 < PDF → images
 > PDF→画像
@@ -5456,6 +5699,153 @@
 
 < The H.264 encoder rejected the output settings ({0}×{1}).
 > H.264エンコーダーが出力設定（{0}×{1}）を受け付けませんでした。
+
+< Excel binary workbooks (.xlsb) can't be opened yet. Saved as .xlsx in Excel, they can.
+> Excelのバイナリブック（.xlsb）はまだ開けません。Excelで.xlsxとして保存すると開けます。
+
+< This file was made by a very old Word version, which this app can't read.
+> このファイルは非常に古いバージョンのWordで作成されたもので、このアプリでは読み込めません。
+
+< PDF files are shown by the PDF viewer.
+> PDFファイルはPDFビューアで表示されます。
+
+< This file is very long: only its first {0} MB are shown.
+> このファイルは非常に長いため、最初の{0} MBだけが表示されます。
+
+< This Word file is damaged: its text is missing.
+> このWordファイルは破損しています。テキストがありません。
+
+< This file was made by Word 6 or Word 95, which this app can't read yet.
+> このファイルはWord 6またはWord 95で作成されたもので、このアプリではまだ読み込めません。
+
+< This file is protected with a password, which this app can't open.
+> このファイルはパスワードで保護されているため、このアプリでは開けません。
+
+< Text in boxes and shapes
+> テキストボックスと図形のテキスト
+
+< Notes
+> 注釈
+
+< Some pictures and drawings in this document aren't shown.
+> このドキュメントの一部の画像や図形は表示されません。
+
+< This isn't a Word document: its main part is missing.
+> これはWordドキュメントではありません。主要な部分がありません。
+
+< {0} chart isn't shown.
+< {0} charts aren't shown.
+> グラフ{0}個は表示されません。
+
+< {0} diagram isn't shown.
+< {0} diagrams aren't shown.
+> ダイアグラム{0}個は表示されません。
+
+< {0} picture is linked from outside the file and isn't shown.
+< {0} pictures are linked from outside the file and aren't shown.
+> ファイル外にリンクされた画像{0}枚は表示されません。
+
+< {0} embedded object is shown only as its picture.
+< {0} embedded objects are shown only as their pictures.
+> 埋め込みオブジェクト{0}個は、画像としてのみ表示されます。
+
+< Chart
+> グラフ
+
+< Diagram
+> ダイアグラム
+
+< Linked picture
+> リンクされた画像
+
+< Table
+> 表
+
+< This e-book is damaged: its list of chapters is missing.
+> この電子書籍は破損しています。章の一覧がありません。
+
+< This e-book is protected with DRM, so it can only be read in the app it was bought for.
+> この電子書籍はDRMで保護されているため、購入したアプリでのみ読むことができます。
+
+< This e-book has no chapters that can be shown.
+> この電子書籍には表示できる章がありません。
+
+< This OpenDocument file is damaged: its content is missing.
+> このOpenDocumentファイルは破損しています。内容がありません。
+
+< {0} embedded object isn't shown.
+< {0} embedded objects aren't shown.
+> 埋め込みオブジェクト{0}個は表示されません。
+
+< This workbook has no sheets.
+> このブックにはシートがありません。
+
+< Charts and pictures on the sheets aren't drawn.
+> シート上のグラフと画像は描画されません。
+
+< This file was made by a very old PowerPoint version, which this app can't read.
+> このファイルは非常に古いバージョンのPowerPointで作成されたもので、このアプリでは読み込めません。
+
+< The file is damaged: its contents can't be unpacked.
+> ファイルが破損しているため、内容を展開できません。
+
+< The file unpacks to far more data than it holds, so it wasn't opened.
+> このファイルは、格納されているデータよりはるかに大きなデータに展開されるため、開けませんでした。
+
+< The file is damaged: a part of it can't be unpacked.
+> ファイルが破損しているため、一部を展開できません。
+
+< This PowerPoint file is damaged: its slides are missing.
+> このPowerPointファイルは破損しています。スライドがありません。
+
+< The slides of this presentation can't be read.
+> このプレゼンテーションのスライドは読み込めません。
+
+< {0} picture in an older format isn't shown.
+< {0} pictures in an older format aren't shown.
+> 旧形式の画像{0}枚は表示されません。
+
+< This isn't a PowerPoint presentation: its main part is missing.
+> これはPowerPointプレゼンテーションではありません。主要な部分がありません。
+
+< {0} chart is shown as a box.
+< {0} charts are shown as boxes.
+> グラフ{0}個は枠として表示されます。
+
+< {0} diagram is shown as a box.
+< {0} diagrams are shown as boxes.
+> ダイアグラム{0}個は枠として表示されます。
+
+< {0} video or sound isn't played.
+< {0} videos or sounds aren't played.
+> 動画または音声{0}個は再生されません。
+
+< Embedded object
+> 埋め込みオブジェクト
+
+< This Excel file is damaged: its sheets are missing.
+> このExcelファイルは破損しています。シートがありません。
+
+< This file was made by a very old Excel version, which this app can't read.
+> このファイルは非常に古いバージョンのExcelで作成されたもので、このアプリでは読み込めません。
+
+@ spreadsheet value
+< TRUE
+> TRUE
+
+@ spreadsheet value
+< FALSE
+> FALSE
+
+< This isn't an Excel workbook: its main part is missing.
+> これはExcelブックではありません。主要な部分がありません。
+
+< {0} chart sheet isn't drawn.
+< {0} chart sheets aren't drawn.
+> グラフシート{0}枚は描画されません。
+
+< This workbook is very large: only its first {0} cells are shown.
+> このブックは非常に大きいため、最初の{0}セルだけが表示されます。
 
 < Printing {0} file on {1}
 < Printing {0} files on {1}
