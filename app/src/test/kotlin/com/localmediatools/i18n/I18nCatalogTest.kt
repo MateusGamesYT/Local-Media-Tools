@@ -285,8 +285,11 @@ private object Source {
             val c = src[i]
             if (c == '"') {
                 var j: Int
-                if (src.startsWith("\"\"\"", i)) j = src.indexOf("\"\"\"", i + 3) + 3
-                else { j = i + 1; while (j < src.length && src[j] != '"') j += if (src[j] == '\\') 2 else 1; j++ }
+                if (src.startsWith("\"\"\"", i)) {
+                    // A raw string ends at the last quote of its closing run ("…x""""" ends after all of them).
+                    j = src.indexOf("\"\"\"", i + 3)
+                    if (j < 0) j = src.length else { j += 3; while (j < src.length && src[j] == '"') j++ }
+                } else { j = i + 1; while (j < src.length && src[j] != '"') j += if (src[j] == '\\') 2 else 1; j++ }
                 out.append(src, i, minOf(j, src.length)); i = j; continue
             }
             if (c == '\'') {

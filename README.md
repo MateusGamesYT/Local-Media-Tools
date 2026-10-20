@@ -772,7 +772,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 146 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 161 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -813,7 +813,12 @@ so updates install over each other; use your own key for a store release.
   behind moving ones; the song code on music of known tempo (beat, start on a beat, silence skipped,
   repeating on whole bars, level, no beat in a held chord); the Gallery's choice of video frames;
   the duplicate finder's progress (the grouping's share done only moving forward, the time left);
-  and how close a full-quality JPEG stays to the picture on 87 real photos.
+  and how close a full-quality JPEG stays to the picture on 87 real photos. New in 1.11: the
+  document readers on real documents (a NASA report, a USDA spreadsheet, an EPA PDF, Apache POI's
+  samples) in every format they read — text, tables, pictures, notes, formulas, merged cells, slides,
+  locked files saying so — and Excel's number formats as Excel shows them (rounding, General,
+  sections and colours, dates and times, fractions, each language's separators and month names),
+  each case standing for a difference found against LibreOffice on 2.9 million real cells.
 * `app/src/roboTest` — 78 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
@@ -848,13 +853,18 @@ so updates install over each other; use your own key for a store release.
   only ever moving forward; new in 1.10.3, RAW photos following your format choice (converter,
   compressor, optimizer), and a real phone DNG through Auto enhance, Bulk watermark and Remove
   metadata like the files around it (a pixel-identical PNG among PNGs, otherwise a full-quality JPEG:
-  every quantisation step 1, full colour resolution, no metadata).
+  every quantisation step 1, full colour resolution, no metadata); new in 1.11, the file reader end
+  to end on real documents: opened from the tool, the system's file picker and another app's "Open
+  with", Word text searched and zoomed, a spreadsheet's formula bar and cell search (.xlsx and .xls),
+  slides from .pptx, .ppt and .odp drawn with their notes, PDF pages drawn and searched, the recent
+  list keeping a copy of a lent file, and locked and unknown files saying so.
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
 tested against), MediaCodec/MediaExtractor video paths (including the GPU face blur, the GPU video
 denoiser, merging and speed changes, the highlight video's analysis of videos, decoding your song, GPU
-drawing, H.264 and AAC encoding, and the Gallery's video frames), PdfRenderer (also used to print PDF pages), BitmapRegionDecoder, the camera intent,
+drawing, H.264 and AAC encoding, and the Gallery's video frames), PdfRenderer (also used to print PDF
+pages and to show them in the file reader; the tests draw PDFs with the PDFBox fallback), BitmapRegionDecoder, the camera intent,
 the photo-library scan and trash request, MediaStore and the background indexing service on a real
 phone, and the native OpenCV/TFLite code on a device (the face and cut-out models are tested on the
 JVM with OpenCV's desktop build, the eraser model against PyTorch, and the gallery's TFLite models

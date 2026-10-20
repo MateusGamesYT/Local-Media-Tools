@@ -1134,6 +1134,9 @@
 < scan document camera paper
 > 스캔 스캐너 문서 카메라 종이
 
+< open view read viewer document pdf word docx doc excel xlsx xls spreadsheet powerpoint pptx ppt slides odt ods odp rtf epub ebook book csv txt text markdown
+> 열기 보기 읽기 뷰어 문서 pdf word 워드 docx doc excel 엑셀 xlsx xls 스프레드시트 powerpoint 파워포인트 pptx ppt 슬라이드 odt ods odp rtf epub 전자책 책 csv txt 텍스트 markdown
+
 < split pdf pages select
 > 나누기 분할 추출 페이지 선택
 
@@ -1703,6 +1706,262 @@
 < Keep editing
 > 계속 편집
 
+< This document has no text to show.
+> 이 문서에는 표시할 텍스트가 없어요.
+
+< [Picture]
+> [그림]
+
+< Picture: {0} (in a format this app can't draw)
+> 그림: {0} (이 앱에서 그릴 수 없는 형식)
+
+< A picture in a format this app can't draw
+> 이 앱에서 그릴 수 없는 형식의 그림
+
+< About {0} word
+< About {0} words
+> 단어 약 {0}개
+
+< {0} table
+< {0} tables
+> 표 {0}개
+
+< {0} picture
+< {0} pictures
+> 그림 {0}개
+
+< Page {0} of {1}
+> 페이지 {0}/{1}
+
+< Slide {0} of {1}
+> 슬라이드 {0} / {1}
+
+< This file has no text to search.
+> 이 파일에는 검색할 텍스트가 없어요.
+
+< Searching page {0} of {1}…
+> {1}페이지 중 {0}페이지 검색 중…
+
+< Slide {0}
+> 슬라이드 {0}
+
+< Page {0}
+> {0}페이지
+
+< Slides
+> 슬라이드
+
+< Contents
+> 목차
+
+< The file is damaged: its pages can't be read.
+> 파일이 손상되어 페이지를 읽을 수 없어요.
+
+< This file is built too deeply to be shown.
+> 이 파일은 구조가 너무 깊어서 표시할 수 없어요.
+
+< This file is too large to show with the memory this phone has free.
+> 이 파일은 이 휴대전화의 남은 메모리로 표시하기에는 너무 커요.
+
+< Document
+> 문서
+
+< Word 97–2003
+> Word 97–2003
+
+< Excel 97–2003
+> Excel 97–2003
+
+< PowerPoint 97–2003
+> PowerPoint 97–2003
+
+< OpenDocument text
+> OpenDocument 텍스트
+
+< OpenDocument spreadsheet
+> OpenDocument 스프레드시트
+
+< OpenDocument presentation
+> OpenDocument 프레젠테이션
+
+@ kind of file
+< Text
+> 텍스트
+
+< Open a file
+> 파일 열기
+
+< Also in other apps: choose “Open with” and then Local Media Tools.
+> 다른 앱에서도 “다른 앱으로 열기”를 누른 다음 Local Media Tools를 선택하세요.
+
+< Recent files
+> 최근 파일
+
+< Documents are read on this phone and never uploaded. The reader only shows files: it doesn't change them.
+> 문서는 이 휴대전화에서 읽고 절대 업로드하지 않아요. 리더는 파일을 보여 줄 뿐 바꾸지 않아요.
+
+< Files you open show up here.
+> 연 파일이 여기에 표시돼요.
+
+< Clear the list
+> 목록 비우기
+
+< Remove {0} from the list
+> 목록에서 {0} 제거
+
+< Search
+> 검색
+
+< More
+> 더보기
+
+< Close search
+> 검색 닫기
+
+< Find in document
+> 문서에서 찾기
+
+< Previous match
+> 이전 결과
+
+< Next match
+> 다음 결과
+
+< Opening…
+> 여는 중…
+
+< This file can't be shown
+> 이 파일은 표시할 수 없어요
+
+< Open in another app
+> 다른 앱에서 열기
+
+< Copying the file… {0}
+> 파일 복사 중… {0}
+
+< This kind of file isn't one the reader opens. It reads PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV and text files.
+> 이 종류의 파일은 리더가 열 수 없어요. 리더는 PDF, Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, CSV, 텍스트 파일을 읽어요.
+
+< Reading…
+> 읽는 중…
+
+< The file is damaged.
+> 파일이 손상되었어요.
+
+< This file is no longer available. Open it again from the app it came from.
+> 이 파일은 더 이상 사용할 수 없어요. 파일이 있던 앱에서 다시 열어 주세요.
+
+< Password
+> 비밀번호
+
+< Wrong password
+> 비밀번호가 틀렸어요
+
+< This PDF is locked
+> 이 PDF는 잠겨 있어요
+
+< That password didn't open it. Try again.
+> 이 비밀번호로는 열리지 않아요. 다시 시도해 주세요.
+
+< Enter its password to read it. The password is used only to open the file on this phone.
+> 읽으려면 비밀번호를 입력하세요. 비밀번호는 이 휴대전화에서 파일을 여는 데만 쓰여요.
+
+< No matches
+> 일치하는 항목 없음
+
+< {0} of {1}
+> {0}/{1}
+
+< Close
+> 닫기
+
+< Zoom in
+> 확대
+
+< Zoom out
+> 축소
+
+< Speaker notes
+> 발표자 노트
+
+< Copy this page's text
+> 이 페이지의 텍스트 복사
+
+< File information
+> 파일 정보
+
+< This slide has no speaker notes.
+> 이 슬라이드에는 발표자 노트가 없어요.
+
+< Speaker notes · slide {0}
+> 발표자 노트 · 슬라이드 {0}
+
+< This page has no text to copy (it may be a scanned picture).
+> 이 페이지에는 복사할 텍스트가 없어요(스캔한 그림일 수 있어요).
+
+< Text of page {0} copied.
+> {0}페이지의 텍스트를 복사했어요.
+
+< Open with
+> 다른 앱으로 열기
+
+< No app on this phone can handle this action.
+> 이 휴대전화에는 이 작업을 처리할 수 있는 앱이 없어요.
+
+< Title: {0}
+> 제목: {0}
+
+< Not shown:
+> 표시되지 않은 항목:
+
+< Files are only read on this phone: nothing is changed or sent anywhere.
+> 파일은 이 휴대전화에서만 읽어요. 아무것도 바뀌지 않으며 어디로도 전송되지 않아요.
+
+< Link
+> 링크
+
+< Opening it starts your browser; this app itself never connects to the internet.
+> 링크를 열면 브라우저가 실행돼요. 이 앱 자체는 인터넷에 연결하지 않아요.
+
+< Copy
+> 복사
+
+< Link copied.
+> 링크를 복사했어요.
+
+< Sheet {0}
+> 용지 {0}
+
+< This sheet holds a chart or pictures, which this app doesn't draw.
+> 이 시트에는 이 앱이 그리지 않는 차트나 그림이 있어요.
+
+< This sheet is empty.
+> 이 시트는 비어 있어요.
+
+< Sheets
+> 시트
+
+< {0} sheet
+< {0} sheets
+> 용지 {0}장
+
+< {0} hidden sheet (not shown)
+< {0} hidden sheets (not shown)
+> 숨겨진 시트 {0}개(표시되지 않음)
+
+< {0} cell with content
+< {0} cells with content
+> 내용이 있는 셀 {0}개
+
+< Picture
+> 그림
+
+< Hidden slide
+> 숨김 슬라이드
+
+< {0}. {1}
+> {0}. {1}
+
 < Unnamed person
 > 이름 없는 인물
 
@@ -2136,9 +2395,6 @@
 < Loading people…
 > 인물을 불러오는 중…
 
-< {0} of {1}
-> {0}/{1}
-
 < Type a name, then Enter
 > 이름을 입력하고 Enter를 누르세요
 
@@ -2258,9 +2514,6 @@
 < still analysing {0} more
 < still analysing {0} more
 > {0}개 더 분석 중
-
-< No matches
-> 일치하는 항목 없음
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > 지정한 이름이나 '강아지', '자동차', '해변', '음식', '노을', '문서' 같은 단어로 검색해 보세요.
@@ -2686,9 +2939,6 @@
 
 < Captured pages are deleted from the app's private storage; gallery photos aren't affected.
 > 촬영한 페이지는 앱의 전용 저장 공간에서 삭제돼요. 갤러리 사진에는 영향이 없어요.
-
-< Page {0}
-> {0}페이지
 
 < No pages yet
 > 아직 페이지가 없어요
@@ -3489,9 +3739,6 @@
 < Choose a printer
 > 프린터 선택
 
-< Close
-> 닫기
-
 @ printers kept in the app
 < Saved
 > 저장됨
@@ -3598,16 +3845,9 @@
 < Couldn't prepare the preview
 > 미리보기를 준비하지 못했어요
 
-< {0} sheet
-< {0} sheets
-> 용지 {0}장
-
 < first {0} shown
 < first {0} shown
 > 처음 {0}장만 표시
-
-< Sheet {0}
-> 용지 {0}
 
 < {0} copy
 < {0} copies
@@ -3627,9 +3867,6 @@
 
 < Couldn't read the shared files.
 > 공유된 파일을 읽지 못했어요.
-
-< No app on this phone can handle this action.
-> 이 휴대전화에는 이 작업을 처리할 수 있는 앱이 없어요.
 
 < This device has no camera. Add pages from the gallery instead.
 > 이 기기에는 카메라가 없어요. 대신 갤러리에서 페이지를 추가하세요.
@@ -4000,9 +4237,6 @@
 
 < City & buildings
 > 도시 및 건물
-
-< Document
-> 문서
 
 < Night
 > 야경
@@ -4609,9 +4843,6 @@
 < The PDF has no pages.
 > PDF에 페이지가 없어요.
 
-< Page {0} of {1}
-> 페이지 {0}/{1}
-
 < Page {0} could not be opened; the PDF may be damaged.
 > {0}페이지를 열 수 없어요. PDF가 손상되었을 수 있어요.
 
@@ -4708,6 +4939,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > 확인한 장면으로 영상 하나를 만드는 도구라서 스택에서 실행할 수 없어요
 
+< Shows documents instead of saving files, so it can't be a step of a stack
+> 파일을 저장하지 않고 문서를 보여 주므로 스택의 단계가 될 수 없어요.
+
 < Can't be part of a stack
 > 스택에 포함할 수 없어요
 
@@ -4781,11 +5015,11 @@
 < Create and slim down animations
 > 애니메이션 만들기와 용량 줄이기
 
-< PDF
-> PDF
+< Documents & PDF
+> 문서 및 PDF
 
-< Pages, scans and merges
-> 페이지, 스캔, 병합
+< Read documents; convert, merge and scan PDFs
+> 문서 읽기, PDF 변환·병합·스캔
 
 < Photos and documents on your Wi-Fi printer
 > Wi-Fi 프린터로 사진과 문서 인쇄
@@ -5026,6 +5260,15 @@
 
 < Re-encodes GIFs more efficiently while keeping every displayed pixel identical.
 > 표시되는 모든 픽셀을 동일하게 유지하면서 GIF를 더 효율적으로 다시 인코딩해요.
+
+< File reader
+> 파일 리더
+
+< Open PDF, Word, Excel, PowerPoint and more
+> PDF, Word, Excel, PowerPoint 등 열기
+
+< Reads the documents Android can't open by itself — PDF, Word (DOCX, DOC), Excel (XLSX, XLS), PowerPoint (PPTX, PPT), OpenDocument, RTF, EPUB e-books, CSV and text files — right on this phone. Zoom, search the text, and jump between chapters, sheets and slides. Files are only read: nothing is changed or uploaded.
+> Android가 기본으로 열 수 없는 문서를 이 휴대전화에서 바로 읽어요. PDF, Word(DOCX, DOC), Excel(XLSX, XLS), PowerPoint(PPTX, PPT), OpenDocument, RTF, EPUB 전자책, CSV, 텍스트 파일을 지원해요. 확대·축소, 텍스트 검색, 장·시트·슬라이드 사이 이동을 할 수 있어요. 파일은 읽기만 하며, 바뀌거나 업로드되지 않아요.
 
 < PDF → images
 > PDF→이미지
@@ -5456,6 +5699,153 @@
 
 < The H.264 encoder rejected the output settings ({0}×{1}).
 > H.264 인코더가 출력 설정({0}×{1})을 받아들이지 않았어요.
+
+< Excel binary workbooks (.xlsb) can't be opened yet. Saved as .xlsx in Excel, they can.
+> Excel 바이너리 통합 문서(.xlsb)는 아직 열 수 없어요. Excel에서 .xlsx로 저장하면 열 수 있어요.
+
+< This file was made by a very old Word version, which this app can't read.
+> 이 파일은 아주 오래된 Word 버전으로 만들어져서 이 앱에서 읽을 수 없어요.
+
+< PDF files are shown by the PDF viewer.
+> PDF 파일은 PDF 뷰어에서 표시돼요.
+
+< This file is very long: only its first {0} MB are shown.
+> 이 파일은 아주 길어서 처음 {0} MB만 표시돼요.
+
+< This Word file is damaged: its text is missing.
+> 이 Word 파일은 손상되어 텍스트가 없어요.
+
+< This file was made by Word 6 or Word 95, which this app can't read yet.
+> 이 파일은 Word 6 또는 Word 95로 만들어져서 아직 이 앱에서 읽을 수 없어요.
+
+< This file is protected with a password, which this app can't open.
+> 이 파일은 비밀번호로 보호되어 있어서 이 앱에서 열 수 없어요.
+
+< Text in boxes and shapes
+> 상자와 도형 안의 텍스트
+
+< Notes
+> 각주·미주
+
+< Some pictures and drawings in this document aren't shown.
+> 일부 그림과 도형은 표시되지 않아요.
+
+< This isn't a Word document: its main part is missing.
+> 이 파일은 Word 문서가 아니에요. 본문 부분이 없어요.
+
+< {0} chart isn't shown.
+< {0} charts aren't shown.
+> 차트 {0}개는 표시되지 않아요.
+
+< {0} diagram isn't shown.
+< {0} diagrams aren't shown.
+> 다이어그램 {0}개는 표시되지 않아요.
+
+< {0} picture is linked from outside the file and isn't shown.
+< {0} pictures are linked from outside the file and aren't shown.
+> 파일 밖에서 연결된 그림 {0}개는 표시되지 않아요.
+
+< {0} embedded object is shown only as its picture.
+< {0} embedded objects are shown only as their pictures.
+> 삽입된 개체 {0}개는 그림으로만 표시돼요.
+
+< Chart
+> 차트
+
+< Diagram
+> 다이어그램
+
+< Linked picture
+> 연결된 그림
+
+< Table
+> 표
+
+< This e-book is damaged: its list of chapters is missing.
+> 이 전자책은 손상되어 장 목록이 없어요.
+
+< This e-book is protected with DRM, so it can only be read in the app it was bought for.
+> 이 전자책은 DRM으로 보호되어 구매한 앱에서만 읽을 수 있어요.
+
+< This e-book has no chapters that can be shown.
+> 이 전자책에는 표시할 수 있는 장이 없어요.
+
+< This OpenDocument file is damaged: its content is missing.
+> 이 OpenDocument 파일은 손상되어 내용이 없어요.
+
+< {0} embedded object isn't shown.
+< {0} embedded objects aren't shown.
+> 삽입된 개체 {0}개는 표시되지 않아요.
+
+< This workbook has no sheets.
+> 이 통합 문서에는 시트가 없어요.
+
+< Charts and pictures on the sheets aren't drawn.
+> 시트의 차트와 그림은 그려지지 않아요.
+
+< This file was made by a very old PowerPoint version, which this app can't read.
+> 이 파일은 아주 오래된 PowerPoint 버전으로 만들어져서 이 앱에서 읽을 수 없어요.
+
+< The file is damaged: its contents can't be unpacked.
+> 파일이 손상되어 내용을 풀 수 없어요.
+
+< The file unpacks to far more data than it holds, so it wasn't opened.
+> 압축을 풀면 실제 크기보다 훨씬 많은 데이터가 나와서 열지 않았어요.
+
+< The file is damaged: a part of it can't be unpacked.
+> 파일이 손상되어 일부를 풀 수 없어요.
+
+< This PowerPoint file is damaged: its slides are missing.
+> 이 PowerPoint 파일은 손상되어 슬라이드가 없어요.
+
+< The slides of this presentation can't be read.
+> 이 프레젠테이션의 슬라이드를 읽을 수 없어요.
+
+< {0} picture in an older format isn't shown.
+< {0} pictures in an older format aren't shown.
+> 오래된 형식의 그림 {0}개는 표시되지 않아요.
+
+< This isn't a PowerPoint presentation: its main part is missing.
+> 이 파일은 PowerPoint 프레젠테이션이 아니에요. 본문 부분이 없어요.
+
+< {0} chart is shown as a box.
+< {0} charts are shown as boxes.
+> 차트 {0}개는 상자로 표시돼요.
+
+< {0} diagram is shown as a box.
+< {0} diagrams are shown as boxes.
+> 다이어그램 {0}개는 상자로 표시돼요.
+
+< {0} video or sound isn't played.
+< {0} videos or sounds aren't played.
+> 동영상이나 소리 {0}개는 재생되지 않아요.
+
+< Embedded object
+> 삽입 개체
+
+< This Excel file is damaged: its sheets are missing.
+> 이 Excel 파일은 손상되어 시트가 없어요.
+
+< This file was made by a very old Excel version, which this app can't read.
+> 이 파일은 아주 오래된 Excel 버전으로 만들어져서 이 앱에서 읽을 수 없어요.
+
+@ spreadsheet value
+< TRUE
+> TRUE
+
+@ spreadsheet value
+< FALSE
+> FALSE
+
+< This isn't an Excel workbook: its main part is missing.
+> 이 파일은 Excel 통합 문서가 아니에요. 본문 부분이 없어요.
+
+< {0} chart sheet isn't drawn.
+< {0} chart sheets aren't drawn.
+> 차트 시트 {0}개는 그려지지 않아요.
+
+< This workbook is very large: only its first {0} cells are shown.
+> 이 통합 문서는 아주 커서 처음 {0}개 셀만 표시돼요.
 
 < Printing {0} file on {1}
 < Printing {0} files on {1}

@@ -207,7 +207,7 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
             val gen = generation.get()
             val w = (source.widthPt(i) * fit).toInt().coerceAtLeast(1)
             val h = (source.heightPt(i) * fit).toInt().coerceAtLeast(1)
-            renderer.execute {
+            run {
                 // Pages scrolled past before their turn are skipped.
                 if (gen != generation.get() || !visible(i)) { main.post { pendingBase.remove(i) }; return@execute }
                 val bmp = try { Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).also { it.eraseColor(Color.WHITE); source.render(i, it, fit, 0f, 0f) } } catch (_: Throwable) { null }
@@ -234,7 +234,7 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
                 jobs.add(Triple(i, r, vis))
             }
             val ox0 = ox; val oy0 = oy
-            renderer.execute {
+            run {
                 val out = ArrayList<Detail>()
                 for ((i, r, vis) in jobs) {
                     if (gen != generation.get()) return@execute
@@ -306,17 +306,24 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
             if (oldh > 0) scrollToPage(page)
         }
 
-        fun shutdown() {
+        /**
+         * Stops drawing and runs [last] (closing the pages) on the render thread after the page being
+         * drawn, if any: a PDF renderer must not be closed while it draws, and the screen mustn't wait.
+         */
+        fun shutdown(last: () -> Unit) {
             generation.incrementAndGet()
-            renderer.shutdownNow()
-            try { renderer.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS) } catch (_: InterruptedException) { }
+            run(last)
+            renderer.shutdown()
             base.evictAll(); details = emptyList()
         }
+
+        /** Queues [block] on the render thread; ignored once the view is closed. */
+        private fun run(block: () -> Unit) { try { renderer.execute(block) } catch (_: java.util.concurrent.RejectedExecutionException) { } }
 
         fun drawn(i: Int) = base.get(i) != null
 
         /** Runs [block] after pages already queued are drawn (on the render thread, for the source's own state). */
-        fun onRenderThread(block: () -> Unit) = renderer.execute(block)
+        fun onRenderThread(block: () -> Unit) = run(block)
     }
 
     // ------------------------------------------------------------------ ReaderContent
@@ -386,9 +393,11 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
     override fun close() {
         searchThread?.interrupt()
         main.removeCallbacksAndMessages(null)
-        column.shutdown()
-        try { searcher?.close() } catch (_: Exception) { }
-        try { source.close() } catch (_: Exception) { }
+        val s = searcher
+        column.shutdown {
+            try { s?.close() } catch (_: Exception) { }
+            try { source.close() } catch (_: Exception) { }
+        }
     }
 
     /** Whether page [i] has been drawn (for tests). */

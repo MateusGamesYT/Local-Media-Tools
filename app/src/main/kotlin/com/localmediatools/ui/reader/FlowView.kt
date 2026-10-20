@@ -466,7 +466,7 @@ class FlowView(ctx: Context, private val doc: FlowDocument, private val host: Re
             else -> {
                 v.image.setImageDrawable(android.graphics.drawable.ColorDrawable(SOFT))
                 val ref = p.ref
-                loader.execute {
+                if (!loader.isShutdown) loader.execute {
                     val loaded = decode(ref, w)
                     post {
                         if (loaded == null) unreadable.add(ref) else pictures.put(ref, loaded)
