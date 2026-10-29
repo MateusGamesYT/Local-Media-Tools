@@ -13,6 +13,9 @@ import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import com.localmediatools.core.MediaItem
 import com.localmediatools.core.MediaKind
+import com.localmediatools.core.UserFacingException
+import com.localmediatools.docs.core.UnreadableException
+import com.localmediatools.i18n.tr
 import com.localmediatools.image.ImageSource
 import com.localmediatools.pdf.PdfFiles
 import com.localmediatools.print.core.MediaSize
@@ -29,15 +32,20 @@ import java.io.OutputStream
 import kotlin.math.ceil
 
 /**
- * The photos and PDF pages being printed, opened for drawing. Photos are decoded once at the size
- * their place on the sheet needs (the last few are kept); PDF pages are drawn by Android's PDF
- * renderer straight into each strip.
+ * The photos, PDF pages and documents being printed, opened for drawing. Photos are decoded once at
+ * the size their place on the sheet needs (the last few are kept); PDF pages are drawn by Android's
+ * PDF renderer straight into each strip; documents (Word, Excel, PowerPoint…) are laid out on
+ * [paper] and drawn as text and shapes at the printer's resolution.
  */
 class PrintSource(private val ctx: Context, val items: List<MediaItem>, private val tempDir: File, pageRange: String? = null,
                   /** Memory allowed for one decoded photo. */
-                  private val photoBudget: Long = 96L shl 20) : Closeable {
+                  private val photoBudget: Long = 96L shl 20,
+                  /** The paper documents are laid out on. */
+                  private val paper: MediaSize = MediaSize.A4) : Closeable {
     private class Pdf(val pfd: ParcelFileDescriptor, val tmp: File?, val renderer: PdfRenderer)
+    private class Doc(val pages: DocumentPages, val tmp: File?)
     private val pdfs = HashMap<Int, Pdf>()
+    private val docs = HashMap<Int, Doc>()
     private val sources = HashMap<Int, ImageSource>()
     /** item → (sample size, decoded photo); the most recently used last. */
     private val decoded = LinkedHashMap<Int, Pair<Int, Bitmap>>(8, 0.75f, true)
@@ -59,6 +67,16 @@ class PrintSource(private val ctx: Context, val items: List<MediaItem>, private 
                         out.add(PageRef(i, p, page.width.toFloat(), page.height.toFloat(), true))
                         page.close()
                     }
+                } else if (item.kind == MediaKind.DOCUMENT) {
+                    val (file, tmp) = localCopy(item)
+                    val d = try {
+                        DocumentPrint.open(file, item.name, paper) ?: throw UserFacingException(tr("{0} isn't a document this app can print", item.name))
+                    } catch (e: UnreadableException) {
+                        tmp?.delete(); throw UserFacingException(tr("{0} can't be printed: {1}", item.name, e.message ?: tr("The file is damaged.")))
+                    } catch (e: Throwable) { tmp?.delete(); throw e }
+                    docs[i] = Doc(d, tmp)
+                    val wanted = pageRange?.takeIf { it.isNotBlank() }?.let { PageRanges.parse(it, d.count) } ?: (0 until d.count).toList()
+                    for (p in wanted) out.add(PageRef(i, p, d.widthPt(p), d.heightPt(p), true))
                 } else {
                     val s = ImageSource.open(ctx, item)
                     sources[i] = s
@@ -87,6 +105,20 @@ class PrintSource(private val ctx: Context, val items: List<MediaItem>, private 
             } finally { page.close() }
             return
         }
+        val doc = docs[ref.item]
+        if (doc != null) synchronized(doc) {
+            val pages = doc.pages
+            val m = p.matrix(pages.widthPt(ref.page), pages.heightPt(ref.page), pxPerMm)
+            m[5] -= y0
+            // The page is drawn at the sheet's own resolution: text and lines stay sharp.
+            val s = kotlin.math.hypot(m[0], m[3])
+            canvas.save()
+            canvas.clipRect(clip)
+            canvas.concat(Matrix().apply { setValues(floatArrayOf(m[0] / s, m[1] / s, m[2], m[3] / s, m[4] / s, m[5], 0f, 0f, 1f)) })
+            pages.draw(canvas, ref.page, s)
+            canvas.restore()
+            return
+        }
         val bmp = photo(ref.item, p, pxPerMm)
         val m = p.matrix(bmp.width.toFloat(), bmp.height.toFloat(), pxPerMm)
         m[5] -= y0
@@ -94,6 +126,16 @@ class PrintSource(private val ctx: Context, val items: List<MediaItem>, private 
         canvas.clipRect(clip)
         canvas.drawBitmap(bmp, Matrix().apply { setValues(floatArrayOf(m[0], m[1], m[2], m[3], m[4], m[5], 0f, 0f, 1f)) }, paint)
         canvas.restore()
+    }
+
+    /** [item] as a file the readers can seek in: itself when it is one, else a copy in [tempDir] (returned to be deleted). */
+    private fun localCopy(item: MediaItem): Pair<File, File?> {
+        if (item.uri.scheme == "file") item.uri.path?.let { p -> File(p).takeIf { it.isFile && it.canRead() }?.let { return it to null } }
+        val f = File.createTempFile("print", "-" + com.localmediatools.core.Format.safeFileName(item.name), tempDir)
+        try {
+            (ctx.contentResolver.openInputStream(item.uri) ?: throw java.io.FileNotFoundException()).use { input -> f.outputStream().use { input.copyTo(it, 1 shl 16) } }
+        } catch (e: Throwable) { f.delete(); throw e }
+        return f to f
     }
 
     /** The photo decoded at least as large as its place on the sheet needs (never larger than the original). */
@@ -117,6 +159,8 @@ class PrintSource(private val ctx: Context, val items: List<MediaItem>, private 
         sources.clear()
         for (p in pdfs.values) { try { p.renderer.close() } catch (_: Exception) { }; try { p.pfd.close() } catch (_: Exception) { }; p.tmp?.delete() }
         pdfs.clear()
+        for (d in docs.values) { try { d.pages.close() } catch (_: Exception) { }; d.tmp?.delete() }
+        docs.clear()
     }
 }
 

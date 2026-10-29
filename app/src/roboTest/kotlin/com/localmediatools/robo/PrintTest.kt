@@ -82,8 +82,7 @@ class PrintTest {
     @Before fun setUp() {
         Robo.resetUiState()
         shadowOf(app).grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
-        PrintPrefs.paper = null; PrintPrefs.mediaType = null; PrintPrefs.perSheet = 1; PrintPrefs.fit = Fit.FIT; PrintPrefs.borderless = false
-        PrintPrefs.color = true; PrintPrefs.quality = 4; PrintPrefs.copies = 1; PrintPrefs.pages = ""; PrintPrefs.actualSize = false
+        PrintPrefs.reset()
         printer = FakePrinter()
         Printers.discoverOverride = { listOf(FoundPrinter("EPSON L3250 Series", PrinterAddress.parse(printer.uri), mapOf("ty" to "EPSON L3250 Series", "UUID" to "cfe92100-67c4-11d4-a45f-e0bb9e1a2b3c"))) }
     }
@@ -142,6 +141,116 @@ class PrintTest {
         assertEquals(-1, pages[1].at(1440, 4317))
         assertEquals("EPSON L3250 Series", Printers.all(app).single().name)
         a.navigator.pop()
+    }
+
+    private fun documents(vararg names: String): List<MediaItem> {
+        val dir = File(app.cacheDir, "documents").apply { mkdirs() }
+        return names.map { n ->
+            val f = File(dir, n)
+            f.writeBytes(PrintTest::class.java.getResourceAsStream("/docs/$n")!!.readBytes())
+            Robo.item(app, f)
+        }
+    }
+
+    private fun connect(s: PrintScreen) {
+        click(s.view, "Find printers"); idle()
+        val dialog = ShadowDialog.getLatestDialog()!!
+        waitFor("printer found") { texts(dialog.window!!.decorView).contains("EPSON L3250 Series") }
+        click(dialog.window!!.decorView, "EPSON L3250 Series")
+        waitFor("connected") { texts(s.view).any { it == "Ready" } }
+    }
+
+    private fun print(s: PrintScreen): FakePrinter.Job {
+        val before = printer.jobs.size
+        all(s.view).filterIsInstance<ButtonView>().first { it.label == "Print" }.performClick()
+        waitFor("printed") { ExportManager.state.value.history.count { it.tool == ToolId.PRINT && it.status.finished } > before }
+        val snap = ExportManager.state.value.history.first { it.tool == ToolId.PRINT }
+        assertEquals(snap.summary(), JobStatus.SUCCEEDED, snap.status)
+        return printer.jobs.last()
+    }
+
+    @Test fun a4ComesFirstEvenWhenThePrinterIsSetToLetter() {
+        printer.loaded = "na_letter_8.5x11in" to (21590 to 27940)
+        val (_, s) = open()
+        connect(s)
+        // A4 is chosen; the printer's Letter is mentioned, with a way to print on it instead.
+        assertTrue(texts(s.view).toString(), texts(s.view).any { it.startsWith("The printer says it has Letter paper loaded. Load A4 paper, or print on Letter.") })
+        waitFor("preview") { texts(s.view).any { it.startsWith("3 sheets") } }
+        val a4 = print(s)
+        assertEquals(21000, a4.attributes!!["media-col"]!!.collections.single().collection("media-size")?.int("x-dimension"))
+        click(s.view, "Print on Letter"); idle()
+        assertFalse(texts(s.view).any { it.startsWith("The printer says it has") })
+        waitFor("preview") { texts(s.view).any { it.startsWith("3 sheets") } }
+        val letter = print(s)
+        assertEquals(21590, letter.attributes!!["media-col"]!!.collections.single().collection("media-size")?.int("x-dimension"))
+        // Settings printed with are kept for next time; the paper size starts at A4 again.
+        PrintPrefs.reset()
+        PrintPrefs.load(app)
+        assertEquals(null, PrintPrefs.paper)
+    }
+
+    @Test fun wordExcelAndPowerPointFilesPrintAsPages() {
+        val (a, _) = open()
+        a.navigator.pop(); idle()
+        val sel = Selection.of(ToolId.PRINT)
+        sel.clear(); sel.add(documents("boreas.docx", "sugar.xlsx", "SampleShow.pptx"))
+        assertEquals(3, sel.usable.size)
+        printer.duplex = true
+        val s = PrintScreen(a)
+        a.navigator.push(s); idle(600)
+        connect(s)
+        // Two-sided, turned on the short edge.
+        all(s.view).filterIsInstance<ToggleRow>().single { it.title == "Two-sided" }.performClick(); idle()
+        click(s.view, "Flip on short edge  ·  calendars"); idle()
+        waitFor("preview") { texts(s.view).any { it.matches(Regex("\\d+ sheets.*")) } }
+        val sheets = texts(s.view).first { it.matches(Regex("\\d+ sheets.*")) }.substringBefore(' ').toInt()
+        shotIfAsked(s.view, "52_print_documents", dialog = false)
+        val job = print(s)
+        assertEquals("two-sided-short-edge", job.attributes!!["sides"]?.string)
+        val pages = RasterReader.read(job.document)
+        // As many sheets as the documents have pages: the NASA report on several, the sugar table, two slides.
+        val counts = sel.usable.map { item -> com.localmediatools.print.DocumentPrint.open(File(item.uri.path!!), item.name, com.localmediatools.print.core.MediaSize.A4)!!.use { it.count } }
+        assertEquals(2, counts[2])
+        assertTrue("$counts", counts[0] >= 4)
+        assertEquals(counts.sum(), sheets)
+        assertEquals(sheets, pages.size)
+        val mm = 360 / 25.4f
+        for ((i, p) in pages.withIndex()) {
+            assertEquals(2976, p.width); assertEquals(4209, p.height)
+            assertTrue("page ${i + 1} has something on it", ink(p, 0, 0, p.width, p.height) > 2000)
+        }
+        // Text pages keep their 20 mm margins clear (page numbers sit in the foot).
+        val text = pages.take(counts[0])
+        for (p in text) {
+            assertEquals(0, ink(p, 0, 0, p.width, (16 * mm).toInt()))
+            assertEquals(0, ink(p, 0, 0, (16 * mm).toInt(), p.height))
+        }
+        assertTrue("page number in the foot", ink(text[0], (90 * mm).toInt(), (279 * mm).toInt(), (120 * mm).toInt(), (288 * mm).toInt()) > 0)
+        // Slides are turned to fill the portrait paper; the first slide's title is drawn.
+        val slide = pages[counts[0] + counts[1]]
+        assertTrue(ink(slide, (20 * mm).toInt(), (30 * mm).toInt(), (190 * mm).toInt(), (267 * mm).toInt()) > 5000)
+        dumpIfAsked(pages)
+    }
+
+    /** Dark pixels (any channel below 160) in a rectangle of a printed page. */
+    private fun ink(p: com.localmediatools.print.DecodedPage, x0: Int, y0: Int, x1: Int, y1: Int): Int {
+        var n = 0
+        for (y in y0 until minOf(y1, p.height) step 2) for (x in x0 until minOf(x1, p.width) step 2) {
+            val c = p.at(x, y)
+            if ((c shr 16 and 255) < 160 || (c shr 8 and 255) < 160 || (c and 255) < 160) n++
+        }
+        return n
+    }
+
+    private fun dumpIfAsked(pages: List<com.localmediatools.print.DecodedPage>) {
+        val dirName = System.getenv("LMT_SHOTS") ?: return
+        val dir = File(dirName).apply { mkdirs() }
+        for ((i, p) in pages.withIndex()) {
+            val w = p.width / 4; val h = p.height / 4
+            val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            for (y in 0 until h) for (x in 0 until w) bmp.setPixel(x, y, p.at(x * 4, y * 4) or 0xFF000000.toInt())
+            File(dir, "print_page_${i + 1}.png").outputStream().use { bmp.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        }
     }
 
     @Test fun aPrinterAddedByAddressShowsItsProblems() {

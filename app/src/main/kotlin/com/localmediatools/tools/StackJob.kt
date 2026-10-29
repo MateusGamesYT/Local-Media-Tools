@@ -37,7 +37,7 @@ enum class FlowKind(private val nounEn: String) {
             MediaKind.VIDEO -> VIDEO
             MediaKind.PDF -> PDF
             MediaKind.AUDIO -> AUDIO
-            MediaKind.OTHER -> null
+            MediaKind.DOCUMENT, MediaKind.OTHER -> null
         }
 
         fun describe(kinds: Collection<FlowKind>): String = when (kinds.size) {

@@ -313,7 +313,7 @@ class ReaderScreen(activity: MainActivity, private val source: ReaderSource, pri
             add(tr("Zoom out")) { c.zoomBy(0.8f) }
             deckPages?.let { d -> add(tr("Speaker notes")) { speakerNotes(d) } }
             pdfText?.let { t -> add(tr("Copy this page's text")) { copyPageText(t) } }
-            if (format == DocFormat.PDF) add(tr("Print")) { print() }
+            add(tr("Print")) { print() }
         }
         if (source.uri?.scheme == "content") add(tr("Open in another app")) { openElsewhere() }
         add(tr("File information")) { info() }
@@ -345,11 +345,18 @@ class ReaderScreen(activity: MainActivity, private val source: ReaderSource, pri
 
     private fun print() {
         val f = copy ?: return
+        // Files known by their name only (old Office files, text) keep a name that says what they are.
+        val ext = when (format) {
+            DocFormat.DOC -> "doc"; DocFormat.XLS -> "xls"; DocFormat.PPT -> "ppt"; DocFormat.CSV -> "csv"; DocFormat.TSV -> "tsv"
+            DocFormat.MARKDOWN -> "md"; DocFormat.HTML -> "html"; DocFormat.JSON -> "json"; DocFormat.XML -> "xml"; DocFormat.TEXT -> "txt"
+            else -> null
+        }
+        val name = Format.safeFileName(source.name).let { n -> if (ext != null && !n.lowercase(java.util.Locale.ROOT).endsWith(".$ext")) "$n.$ext" else n }
         scope.launch {
             // Printing goes on after this screen closes, so it gets a copy of its own.
             val shared = withContext(Dispatchers.IO) {
                 val dir = File(ctx.cacheDir, "shared").apply { mkdirs() }
-                File(dir, "${System.currentTimeMillis()}-${Format.safeFileName(source.name)}").also { f.copyTo(it, overwrite = true) }
+                File(dir, "${System.currentTimeMillis()}-$name").also { f.copyTo(it, overwrite = true) }
             }
             val sel = com.localmediatools.ui.Selection.of(ToolId.PRINT)
             sel.clear(); sel.addUris(activity, listOf(Uri.fromFile(shared)))

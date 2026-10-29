@@ -36,7 +36,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
     PDFS(arrayOf("application/pdf"), null),
     MEDIA(arrayOf("image/*", "video/*"), "*/*"),
     ANY(arrayOf("image/*", "video/*", "application/pdf"), "*/*"),
-    PRINTABLE(arrayOf("image/*", "application/pdf"), "image/*");
+    PRINTABLE(arrayOf("image/*", "application/pdf", *Documents.MIMES), "image/*");
 
     /** The empty selection card's title ([one]: a tool that works on one file). */
     fun choose(one: Boolean): String = when (this) {
@@ -46,7 +46,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         PDFS -> if (one) tr("Choose a PDF") else tr("Choose PDFs")
         MEDIA -> if (one) tr("Choose a photo or video") else tr("Choose photos or videos")
         ANY -> if (one) tr("Choose a file") else tr("Choose files")
-        PRINTABLE -> if (one) tr("Choose a photo or PDF") else tr("Choose photos or PDFs")
+        PRINTABLE -> if (one) tr("Choose a photo, PDF or document") else tr("Choose photos, PDFs or documents")
     }
 
     /** The selection card's heading. */
@@ -57,7 +57,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         PDFS -> tr("Select PDFs")
         MEDIA -> tr("Select photos or videos")
         ANY -> tr("Select files")
-        PRINTABLE -> tr("Select photos or PDFs")
+        PRINTABLE -> tr("Select photos, PDFs or documents")
     }
 
     fun selectToContinue(): String = when (this) {
@@ -67,7 +67,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         PDFS -> tr("Select PDFs to continue")
         MEDIA -> tr("Select photos or videos to continue")
         ANY -> tr("Select files to continue")
-        PRINTABLE -> tr("Select photos or PDFs to continue")
+        PRINTABLE -> tr("Select photos, PDFs or documents to continue")
     }
 
     fun selectAtLeast(min: Int): String = when (this) {
@@ -77,7 +77,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         PDFS -> trn(min, "Select at least {0} PDF", "Select at least {0} PDFs")
         MEDIA -> trn(min, "Select at least {0} photo or video", "Select at least {0} photos or videos")
         ANY -> trn(min, "Select at least {0} file", "Select at least {0} files")
-        PRINTABLE -> trn(min, "Select at least {0} photo or PDF", "Select at least {0} photos or PDFs")
+        PRINTABLE -> trn(min, "Select at least {0} photo, PDF or document", "Select at least {0} photos, PDFs or documents")
     }
 
     fun selected(n: Int): String = when (this) {
@@ -87,7 +87,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         PDFS -> trn(n, "{0} PDF selected", "{0} PDFs selected")
         MEDIA -> trn(n, "{0} photo or video selected", "{0} photos and videos selected")
         ANY -> trn(n, "{0} file selected", "{0} files selected")
-        PRINTABLE -> trn(n, "{0} photo or PDF selected", "{0} photos and PDFs selected")
+        PRINTABLE -> trn(n, "{0} file selected", "{0} files selected")
     }
 
     fun noneInFolder(): String = when (this) {
@@ -97,8 +97,21 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         PDFS -> tr("No PDFs found in that folder.")
         MEDIA -> tr("No photos or videos found in that folder.")
         ANY -> tr("No files found in that folder.")
-        PRINTABLE -> tr("No photos or PDFs found in that folder.")
+        PRINTABLE -> tr("No photos, PDFs or documents found in that folder.")
     }
+}
+
+/** Document types the system file picker is asked for where documents are taken. */
+object Documents {
+    val MIMES = arrayOf(
+        "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+        "application/vnd.oasis.opendocument.text", "application/vnd.oasis.opendocument.spreadsheet", "application/vnd.oasis.opendocument.presentation",
+        "application/rtf", "text/rtf", "application/epub+zip", "text/plain", "text/csv", "text/comma-separated-values", "text/tab-separated-values",
+        "text/markdown", "text/html",
+    )
 }
 
 /** Which files each tool accepts and how selection behaves. */
@@ -171,7 +184,7 @@ object ToolRules {
             PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else tr("Not a PDF file")
             PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO && t != ToolId.DENOISE)) null else tr("Not a photo or video")
             PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else tr("Not a photo, video, GIF or PDF")
-            PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF) null else tr("Not a photo or PDF")
+            PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF || item.kind == MediaKind.DOCUMENT) null else tr("Not a photo, PDF or document")
             PickKind.IMAGES -> when {
                 item.kind == MediaKind.IMAGE -> null
                 item.kind == MediaKind.GIF -> if (t == ToolId.OPTIMIZE_IMAGES) tr("Use the GIF optimizer for GIFs") else null
@@ -361,7 +374,7 @@ class SelectionPanel(
     companion object {
         fun iconFor(item: MediaItem) = when (item.kind) {
             MediaKind.VIDEO -> R.drawable.ic_video
-            MediaKind.PDF -> R.drawable.ic_file
+            MediaKind.PDF, MediaKind.DOCUMENT -> R.drawable.ic_file
             else -> R.drawable.ic_image
         }
     }

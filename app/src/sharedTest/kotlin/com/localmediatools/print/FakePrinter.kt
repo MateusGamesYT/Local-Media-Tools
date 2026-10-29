@@ -46,6 +46,10 @@ class FakePrinter(
     /** Polls a job stays held up (as with no paper) before it continues. */
     @Volatile var stuckPolls = 0
     @Volatile var acceptingJobs = true
+    /** The paper it says is loaded (and is its default): PWG name and size in hundredths of a millimetre. */
+    @Volatile var loaded: Pair<String, Pair<Int, Int>> = "iso_a4_210x297mm" to (21000 to 29700)
+    /** Prints on both sides (the L3250 doesn't). */
+    @Volatile var duplex = false
 
     private var nextJob = 100
     @Volatile private var closed = false
@@ -88,7 +92,7 @@ class FakePrinter(
                 if (format !in formats) return reply(0x040A)
                 if (!acceptingJobs) return reply(0x0506)
                 val unsupported = IppGroup(IppTag.UNSUPPORTED_GROUP)
-                r.group(IppTag.JOB)?.attributes?.forEach { if (it.name == "sides" && it.string != "one-sided") unsupported.attributes.add(it) }
+                r.group(IppTag.JOB)?.attributes?.forEach { if (it.name == "sides" && it.string != "one-sided" && !duplex) unsupported.attributes.add(it) }
                 if (r.code == IppOp.VALIDATE_JOB) return if (unsupported.attributes.isEmpty()) reply(0) else reply(1, unsupported)
                 val job = Job(nextJob++, r, format, doc, chunked)
                 jobs.add(job)
@@ -137,7 +141,7 @@ class FakePrinter(
             "na_govt-letter_8x10in" to (20320 to 25400), "iso_c6_114x162mm" to (11400 to 16200), "iso_dl_110x220mm" to (11000 to 22000),
             "na_number-10_4.125x9.5in" to (10478 to 24130))
         val borderless = setOf("iso_a4_210x297mm", "na_letter_8.5x11in", "na_index-4x6_4x6in", "na_5x7_5x7in", "oe_photo-l_3.5x5in", "na_govt-letter_8x10in")
-        g.keyword("media-supported", *sizes.map { it.first }.toTypedArray()).keyword("media-default", "iso_a4_210x297mm").keyword("media-ready", "iso_a4_210x297mm")
+        g.keyword("media-supported", *sizes.map { it.first }.toTypedArray()).keyword("media-default", loaded.first).keyword("media-ready", loaded.first)
         g.keyword("media-type-supported", "stationery", "photographic-high-gloss", "photographic-glossy", "photographic-semi-gloss", "photographic-matte", "photographic", "envelope")
         g.keyword("media-source-supported", "main")
         fun col(w: Int, h: Int, m: Int, type: String) = collection {
@@ -151,13 +155,14 @@ class FakePrinter(
             if (name in borderless) db.add(col(wh.first, wh.second, 0, "photographic-glossy"))
         }
         g.collection("media-col-database", *db.toTypedArray())
-        g.collection("media-col-default", col(21000, 29700, 300, "stationery"))
-        g.collection("media-col-ready", col(21000, 29700, 300, "stationery"))
+        g.collection("media-col-default", col(loaded.second.first, loaded.second.second, 300, "stationery"))
+        g.collection("media-col-ready", col(loaded.second.first, loaded.second.second, 300, "stationery"))
         for (side in listOf("bottom", "left", "right", "top")) g.integer("media-$side-margin-supported", 0, 300)
         g.keyword("print-color-mode-supported", "auto", "color", "monochrome").keyword("print-color-mode-default", "auto")
         g.bool("color-supported", true)
         g.enum("print-quality-supported", 3, 4, 5).enum("print-quality-default", 4)
-        g.keyword("sides-supported", "one-sided").keyword("sides-default", "one-sided")
+        if (duplex) g.keyword("sides-supported", "one-sided", "two-sided-long-edge", "two-sided-short-edge") else g.keyword("sides-supported", "one-sided")
+        g.keyword("sides-default", "one-sided")
         g.add("copies-supported", IppTag.RANGE, 1..99).integer("copies-default", 1)
         g.keyword("print-scaling-supported", "auto", "auto-fit", "fill", "fit", "none")
         g.keyword("print-content-optimize-supported", "auto", "photo", "graphics", "text", "text-and-graphics")

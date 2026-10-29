@@ -1,6 +1,7 @@
 package com.localmediatools.ui.print
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.text.InputType
@@ -34,6 +35,7 @@ import com.localmediatools.print.core.LayoutOptions
 import com.localmediatools.print.core.Margins
 import com.localmediatools.print.core.MediaNames
 import com.localmediatools.print.core.MediaSize
+import com.localmediatools.print.core.PaperChoice
 import com.localmediatools.print.core.PrintSettings
 import com.localmediatools.print.core.PrinterCaps
 import com.localmediatools.print.core.PrinterState
@@ -61,7 +63,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** Print settings, kept while the app runs (the printer itself is remembered across runs). */
+/**
+ * Print settings. Paper size and type are kept while the app runs (each time it starts, A4 is offered
+ * first if the printer has it); colour, quality, two-sided and layout are the ones last printed with,
+ * also after the app restarts. Copies and pages are for one job.
+ */
 object PrintPrefs {
     var paper: String? = null
     var mediaType: String? = null
@@ -72,14 +78,46 @@ object PrintPrefs {
     var quality = 4
     var copies = 1
     var twoSided = false
+    var shortEdge = false
     var actualSize = false
     var pages = ""
+    private var loaded = false
+
+    private fun prefs(ctx: Context) = ctx.getSharedPreferences("print-settings", Context.MODE_PRIVATE)
+
+    /** Reads the settings last printed with, once per run of the app. */
+    fun load(ctx: Context) {
+        if (loaded) return
+        loaded = true
+        val p = prefs(ctx)
+        if (!p.contains("quality")) return
+        perSheet = p.getInt("perSheet", 1).takeIf { it in SheetLayout.PER_SHEET } ?: 1
+        fit = Fit.entries.firstOrNull { it.name == p.getString("fit", null) } ?: Fit.FIT
+        borderless = p.getBoolean("borderless", false)
+        color = p.getBoolean("color", true)
+        quality = p.getInt("quality", 4).coerceIn(3, 5)
+        twoSided = p.getBoolean("twoSided", false)
+        shortEdge = p.getBoolean("shortEdge", false)
+        actualSize = p.getBoolean("actualSize", false)
+    }
+
+    fun save(ctx: Context) {
+        prefs(ctx).edit().putInt("perSheet", perSheet).putString("fit", fit.name).putBoolean("borderless", borderless).putBoolean("color", color)
+            .putInt("quality", quality).putBoolean("twoSided", twoSided).putBoolean("shortEdge", shortEdge).putBoolean("actualSize", actualSize).apply()
+    }
+
+    /** Back to the defaults, and settings read again next time (for tests). */
+    fun reset() {
+        paper = null; mediaType = null; perSheet = 1; fit = Fit.FIT; borderless = false; color = true; quality = 4
+        copies = 1; twoSided = false; shortEdge = false; actualSize = false; pages = ""; loaded = false
+    }
 }
 
 /**
- * Printing photos and PDFs on a printer on the Wi-Fi: choose the printer (found on the network or
- * added by IP address), see its state and ink, set paper, layout, colour, quality and copies, and
- * check every sheet in the preview before printing.
+ * Printing photos, PDFs and documents (Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, text) on a
+ * printer on the Wi-Fi: choose the printer (found on the network or added by IP address), see its
+ * state and ink, set paper, layout, colour, quality and copies, and check every sheet in the preview
+ * before printing.
  */
 class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     private var printer: SavedPrinter? = null
@@ -106,6 +144,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     )
 
     override fun buildOptions(container: LinearLayout) {
+        PrintPrefs.load(ctx)
         section(container, tr("Printer"), null, top = 4)
         printerBox = UI.vertical(ctx)
         container.addView(printerBox, lp().apply { topMargin = ctx.dp(8) })
@@ -249,10 +288,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         return list.sortedBy { m -> order.indexOfFirst { MediaSize.fromName(it)?.same(m) == true }.let { if (it < 0) 99 else it } }
     }
 
-    private fun paper(): MediaSize {
-        val choices = paperChoices()
-        return choices.firstOrNull { it.name == PrintPrefs.paper } ?: caps?.defaultSize?.let { d -> choices.firstOrNull { it.same(d) } } ?: choices.first()
-    }
+    private fun paper(): MediaSize = PaperChoice.pick(paperChoices(), PrintPrefs.paper, caps?.defaultSize)
 
     private fun mediaType(): String? {
         val types = caps?.mediaTypes.orEmpty()
@@ -262,6 +298,9 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     private fun borderless() = PrintPrefs.borderless && caps?.borderless(paper()) == true
 
     private fun hasPdf() = selection.usable.any { it.kind == MediaKind.PDF }
+
+    /** PDFs or documents: files with pages to choose from. */
+    private fun hasPages() = selection.usable.any { it.kind == MediaKind.PDF || it.kind == MediaKind.DOCUMENT }
 
     private fun renderSettings() {
         if (!::settingsBox.isInitialized) return
@@ -273,6 +312,14 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         section(box, tr("Paper size"))
         val sizes = paperChoices()
         box.addView(ChoiceGroup(ctx, sizes, { it.label }, paper()) { PrintPrefs.paper = it.name; renderSettings(); schedulePreview() }, lp().apply { topMargin = ctx.dp(10) })
+        // What the printer says is in its tray, when that isn't the size chosen.
+        val ready = c?.readySize
+        if (ready != null && !ready.same(paper()) && sizes.any { it.same(ready) }) {
+            box.addView(UI.note(ctx, tr("The printer says it has {0} paper loaded. Load {1} paper, or print on {0}.", ready.label, paper().label), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(10) })
+            box.addView(UI.ghostButton(ctx, tr("Print on {0}", ready.label)) {
+                PrintPrefs.paper = sizes.first { it.same(ready) }.name; renderSettings(); schedulePreview()
+            }, lp(WRAP, WRAP).apply { topMargin = ctx.dp(4) })
+        }
 
         val types = c?.mediaTypes.orEmpty()
         if (types.isNotEmpty()) {
@@ -290,10 +337,8 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         box.addView(ToggleRow(ctx, tr("Borderless"), if (c == null) tr("Available once the printer is connected") else if (canBorderless) tr("Print to the edges of the paper") else tr("Not available for {0} on this printer", paper().label), borderless()) {
             PrintPrefs.borderless = it; schedulePreview()
         }.apply { setAvailable(canBorderless) }, lp().apply { topMargin = ctx.dp(4) })
-        if (hasPdf()) {
-            box.addView(ToggleRow(ctx, tr("Actual size"), tr("PDF pages at their real size instead of fitted to the paper"), PrintPrefs.actualSize) { PrintPrefs.actualSize = it; schedulePreview() }, lp())
-            box.addView(TextField(ctx, tr("Pages"), tr("All, or e.g. 1-3, 5, 8-"), PrintPrefs.pages) { PrintPrefs.pages = it; refreshValidation(); schedulePreview() }, lp().apply { topMargin = ctx.dp(8) })
-        }
+        if (hasPdf()) box.addView(ToggleRow(ctx, tr("Actual size"), tr("PDF pages at their real size instead of fitted to the paper"), PrintPrefs.actualSize) { PrintPrefs.actualSize = it; schedulePreview() }, lp())
+        if (hasPages()) box.addView(TextField(ctx, tr("Pages"), tr("All, or e.g. 1-3, 5, 8-"), PrintPrefs.pages) { PrintPrefs.pages = it; refreshValidation(); schedulePreview() }, lp().apply { topMargin = ctx.dp(8) })
 
         section(box, tr("Colour"))
         val colors = buildList { if (c?.canColor != false) add(true); if (c?.canMonochrome != false) add(false) }
@@ -306,7 +351,11 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         box.addView(ChoiceGroup(ctx, qualities, { when (it) { 3 -> tr("Draft"); 5 -> trc("print quality", "Best"); else -> tr("Normal") } }, PrintPrefs.quality,
             badgeOf = { if (it == 5) tr("photos") else null }) { PrintPrefs.quality = it }, lp().apply { topMargin = ctx.dp(10) })
 
-        if (c?.canTwoSided == true) box.addView(ToggleRow(ctx, tr("Two-sided"), tr("Print on both sides of the paper"), PrintPrefs.twoSided) { PrintPrefs.twoSided = it }, lp().apply { topMargin = ctx.dp(4) })
+        if (c?.canTwoSided == true) {
+            box.addView(ToggleRow(ctx, tr("Two-sided"), tr("Print on both sides of the paper"), PrintPrefs.twoSided) { PrintPrefs.twoSided = it; renderSettings() }, lp().apply { topMargin = ctx.dp(4) })
+            if (PrintPrefs.twoSided) box.addView(ChoiceGroup(ctx, listOf(false, true), { if (it) tr("Flip on short edge") else tr("Flip on long edge") }, PrintPrefs.shortEdge,
+                badgeOf = { if (it) tr("calendars") else tr("books") }) { PrintPrefs.shortEdge = it }, lp().apply { topMargin = ctx.dp(8) })
+        }
         box.addView(SliderField(ctx, tr("Copies"), 1, 50, PrintPrefs.copies) { PrintPrefs.copies = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(12) })
     }
 
@@ -315,7 +364,8 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     private fun settings(items: List<MediaItem>): PrintSettings {
         val type = mediaType()
         return PrintSettings(paper(), type, borderless(), PrintPrefs.color, PrintPrefs.quality, PrintPrefs.copies,
-            PrintPrefs.twoSided && caps?.canTwoSided == true, photo = items.none { it.kind == MediaKind.PDF } || MediaNames.isPhotoPaper(type),
+            PrintPrefs.twoSided && caps?.canTwoSided == true, shortEdge = PrintPrefs.shortEdge,
+            photo = items.none { it.kind == MediaKind.PDF || it.kind == MediaKind.DOCUMENT } || MediaNames.isPhotoPaper(type),
             jobName = items.firstOrNull()?.baseName?.let { if (items.size > 1) "$it + ${items.size - 1}" else it } ?: "Local Media Tools")
     }
 
@@ -324,17 +374,17 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         if (!::previewRow.isInitialized) return
         previewJob?.cancel()
         val items = selection.usable
-        if (items.isEmpty()) { showPreview(emptyList(), 0, tr("Select photos or PDFs to see the sheets")); return }
+        if (items.isEmpty()) { showPreview(emptyList(), 0, tr("Select photos, PDFs or documents to see the sheets")); return }
         val paper = paper()
         val margins = if (borderless()) Margins.NONE else caps?.margins ?: Margins(300, 300, 300, 300)
         val layout = layoutOptions()
-        val pages = PrintPrefs.pages.takeIf { hasPdf() }
+        val pages = PrintPrefs.pages.takeIf { hasPages() }
         val gray = !PrintPrefs.color
         previewJob = scope.launch {
             delay(200)
             val r = withContext(Dispatchers.IO) {
                 runCatching {
-                    PrintSource(ctx, items, File(ctx.cacheDir, "print").apply { mkdirs() }, pages).use { src ->
+                    PrintSource(ctx, items, File(ctx.cacheDir, "print").apply { mkdirs() }, pages, paper = paper).use { src ->
                         val sheets = SheetLayout.plan(src.pages, paper, margins, layout)
                         val renderer = AndroidSheetRenderer(src, sheets, paper)
                         sheets.size to (0 until minOf(sheets.size, 12)).map { i -> renderer.image(i, 220).let { if (gray) grayscale(it) else it } }
@@ -384,13 +434,14 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
         super.validate()?.let { return it }
         if (printer == null) return tr("Choose a printer")
         if (conn == null) return if (connecting) tr("Connecting to the printer…") else problem ?: tr("Can't reach the printer")
-        if (hasPdf() && PrintPrefs.pages.isNotBlank()) PageRanges.validateSyntax(PrintPrefs.pages)?.let { return it }
+        if (hasPages() && PrintPrefs.pages.isNotBlank()) PageRanges.validateSyntax(PrintPrefs.pages)?.let { return it }
         return null
     }
 
     override fun createJob(items: List<MediaItem>): ExportJob {
         val c = conn ?: throw IllegalArgumentException(tr("Choose a printer first"))
-        return PrintJob(items, c.printer, settings(items), layoutOptions(), PrintPrefs.pages.takeIf { hasPdf() && it.isNotBlank() })
+        PrintPrefs.save(ctx)
+        return PrintJob(items, c.printer, settings(items), layoutOptions(), PrintPrefs.pages.takeIf { hasPages() && it.isNotBlank() })
     }
 
     override fun outputCard(): View {

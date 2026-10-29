@@ -123,45 +123,33 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
         var sheet: Sheet = book.sheets.firstOrNull() ?: Sheet("", com.localmediatools.docs.core.CellGrid())
         var zoom = 1f
         val ppp get() = density * 1.33f * zoom
-        var colX = FloatArray(1); var rowY = FloatArray(1)
-        var cols = 0; var rows = 0
+        var painter = SheetPainter(book, sheet, 26, 60)
+        val colX get() = painter.colX
+        val rowY get() = painter.rowY
+        val cols get() = painter.cols
+        val rows get() = painter.rows
         var sx = 0f; var sy = 0f
         var selR = 0; var selC = 0
-        private var merges: Map<Long, Merge> = emptyMap()
         private val scroller = OverScroller(ctx)
         private val gridPaint = Paint().apply { color = 0xFFE1E4E8.toInt(); strokeWidth = 1f }
-        private val fill = Paint()
-        private val line = Paint().apply { strokeWidth = max(1f, density) }
         private val headPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFF5F6670.toInt(); textAlign = Paint.Align.CENTER }
         private val headFill = Paint().apply { color = 0xFFF3F4F6.toInt() }
         private val headSel = Paint().apply { color = 0xFFDCE3F7.toInt() }
         private val selPaint = Paint().apply { color = 0xFF2F6FED.toInt(); style = Paint.Style.STROKE; strokeWidth = 2.2f * resources.displayMetrics.density }
         private val freeze = Paint().apply { color = 0xFFB0B6BF.toInt(); strokeWidth = 2f * resources.displayMetrics.density }
-        private val paints = HashMap<Long, TextPaint>()
-        private val wrapped = object : LruCache<String, StaticLayout>(600) {}
 
         fun load(s: Sheet) {
             sheet = s
-            cols = min(16384, max(s.cells.maxCol + 1, s.merges.maxOfOrNull { it.c2 + 1 } ?: 0) + 8).coerceAtLeast(26)
-            rows = min(1_048_576 + 64, max(s.cells.maxRow + 1, s.merges.maxOfOrNull { it.r2 + 1 } ?: 0) + 40).coerceAtLeast(60)
-            colX = FloatArray(cols + 1)
-            for (c in 0 until cols) colX[c + 1] = colX[c] + if (c in s.hiddenCols) 0f else (s.colWidths[c] ?: s.defaultColWidthPt)
-            rowY = FloatArray(rows + 1)
-            for (r in 0 until rows) rowY[r + 1] = rowY[r] + if (r in s.hiddenRows) 0f else (s.rowHeights[r] ?: s.defaultRowHeightPt)
-            val m = HashMap<Long, Merge>()
-            for (mg in s.merges) {
-                if ((mg.r2 - mg.r1 + 1).toLong() * (mg.c2 - mg.c1 + 1) > 20_000) { m[key(mg.r1, mg.c1)] = mg; continue }
-                for (r in mg.r1..mg.r2) for (c in mg.c1..mg.c2) m[key(r, c)] = mg
-            }
-            merges = m
+            val cols = min(16384, max(s.cells.maxCol + 1, s.merges.maxOfOrNull { it.c2 + 1 } ?: 0) + 8).coerceAtLeast(26)
+            val rows = min(1_048_576 + 64, max(s.cells.maxRow + 1, s.merges.maxOfOrNull { it.r2 + 1 } ?: 0) + 40).coerceAtLeast(60)
+            painter = SheetPainter(book, s, cols, rows)
             sx = 0f; sy = 0f
             scroller.forceFinished(true)
-            wrapped.evictAll()
             invalidate()
         }
 
-        private fun key(r: Int, c: Int) = (r.toLong() shl 20) or c.toLong()
-        fun mergeAt(r: Int, c: Int): Merge? = merges[key(r, c)]
+        private fun key(r: Int, c: Int) = painter.key(r, c)
+        fun mergeAt(r: Int, c: Int): Merge? = painter.mergeAt(r, c)
 
         val fr get() = sheet.frozenRows.coerceIn(0, rows - 1)
         val fc get() = sheet.frozenCols.coerceIn(0, cols - 1)
@@ -175,11 +163,7 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
         private fun clamp() { sx = sx.coerceIn(0f, maxSx); sy = sy.coerceIn(0f, maxSy) }
 
         /** First index i with arr[i + 1] > v (the column or row at content position v, in points). */
-        private fun at(arr: FloatArray, n: Int, v: Float): Int {
-            var lo = 0; var hi = n - 1
-            while (lo < hi) { val mid = (lo + hi) ushr 1; if (arr[mid + 1] <= v) lo = mid + 1 else hi = mid }
-            return lo.coerceIn(0, max(0, n - 1))
-        }
+        private fun at(arr: FloatArray, n: Int, v: Float): Int = painter.at(arr, n, v)
 
         // Screen position of content x (points) for a column, frozen or scrolled.
         private fun xOf(c: Int) = headW + colX[c] * ppp - (if (c >= fc) sx else 0f)
@@ -204,18 +188,6 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
                 if (left < sx || right > sx + view) sx = left - view * 0.2f
             }
             clamp(); invalidate()
-        }
-
-        private fun paintFor(styleIndex: Int, color: Int): TextPaint {
-            val k = (styleIndex.toLong() shl 32) or (color.toLong() and 0xFFFFFFFFL)
-            return paints.getOrPut(k) {
-                val st = book.style(styleIndex)
-                TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-                    typeface = Typeface.create(Typeface.DEFAULT, (if (st.bold) Typeface.BOLD else 0) or (if (st.italic) Typeface.ITALIC else 0))
-                    this.color = when { color != 0 -> color or 0xFF000000.toInt(); st.color != 0 -> st.color or 0xFF000000.toInt(); else -> Color.BLACK }
-                    isUnderlineText = st.underline; isStrikeThruText = st.strike
-                }
-            }.also { it.textSize = (book.style(styleIndex).sizePt.takeIf { s -> s > 0 } ?: 11f) * ppp }
         }
 
         // ------------------------------------------------------------------ drawing
@@ -251,134 +223,8 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
             val oy = headH - (if (r0 >= fr && fr < rows) sy else 0f)
             val cs = max(c0, at(colX, cols, (left - ox) / ppp)); val ce = min(c1 - 1, at(colX, cols, (right - ox) / ppp))
             val rs = max(r0, at(rowY, rows, (top - oy) / ppp)); val re = min(r1 - 1, at(rowY, rows, (bottom - oy) / ppp))
-            if (cs > ce || rs > re) { canvas.restore(); return }
-            fun x(c: Int) = ox + colX[c] * ppp
-            fun y(r: Int) = oy + rowY[r] * ppp
-            val cells = sheet.cells
-            val visibleRows = cells.rowsBetween(rs, re)
-            // Fills and search marks.
-            for ((r, row) in visibleRows) for ((c, cell) in row.subMap(cs, ce + 1)) {
-                val st = book.style(cell.style)
-                val mark = matchColor(r, c)
-                val color = if (mark != 0) mark else st.fill
-                if (color != 0 && mergeAt(r, c) == null) { fill.color = color or 0xFF000000.toInt(); canvas.drawRect(x(c), y(r), x(c + 1), y(r + 1), fill) }
-            }
-            if (sheet.gridLines) {
-                for (c in cs..ce + 1) { val xx = x(c); canvas.drawLine(xx, y(rs), xx, y(re + 1), gridPaint) }
-                for (r in rs..re + 1) { val yy = y(r); canvas.drawLine(x(cs), yy, x(ce + 1), yy, gridPaint) }
-            }
-            // Merged areas cover the grid lines inside them.
-            val drawnMerges = HashSet<Merge>()
-            for (mg in sheet.merges) {
-                if (mg.r2 < rs || mg.r1 > re || mg.c2 < cs || mg.c1 > ce) continue
-                drawnMerges.add(mg)
-                val cell = cells[mg.r1, mg.c1]
-                val mark = matchColor(mg.r1, mg.c1)
-                val color = if (mark != 0) mark else cell?.let { book.style(it.style).fill } ?: 0
-                fill.color = if (color != 0) color or 0xFF000000.toInt() else Color.WHITE
-                canvas.drawRect(x(mg.c1) + 0.5f, y(mg.r1) + 0.5f, x(mg.c2 + 1) - 0.5f, y(mg.r2 + 1) - 0.5f, fill)
-            }
-            // Borders.
-            for ((r, row) in visibleRows) for ((c, cell) in row.subMap(cs, ce + 1)) {
-                val mg = mergeAt(r, c)
-                if (mg != null && (mg.r1 != r || mg.c1 != c)) continue
-                val st = book.style(cell.style)
-                if (st.borderTop or st.borderRight or st.borderBottom or st.borderLeft == 0) continue
-                val l = x(c); val t = y(r); val rr = x((mg?.c2 ?: c) + 1); val b = y((mg?.r2 ?: r) + 1)
-                if (st.borderTop != 0) { line.color = st.borderTop or 0xFF000000.toInt(); canvas.drawLine(l, t, rr, t, line) }
-                if (st.borderBottom != 0) { line.color = st.borderBottom or 0xFF000000.toInt(); canvas.drawLine(l, b, rr, b, line) }
-                if (st.borderLeft != 0) { line.color = st.borderLeft or 0xFF000000.toInt(); canvas.drawLine(l, t, l, b, line) }
-                if (st.borderRight != 0) { line.color = st.borderRight or 0xFF000000.toInt(); canvas.drawLine(rr, t, rr, b, line) }
-            }
-            // Text: rows on screen, plus text running in from cells just left of it.
-            for ((r, row) in visibleRows) {
-                if (r in sheet.hiddenRows) continue
-                val from = lastFilled(row, cs)?.let { max(c0, it) } ?: cs
-                for ((c, cell) in row.subMap(from, ce + 1)) {
-                    if (cell.text.isEmpty() || c in sheet.hiddenCols) continue
-                    val mg = mergeAt(r, c)
-                    if (mg != null) continue
-                    text(canvas, r, c, cell, x(c), y(r), x(c + 1), y(r + 1), row, ox)
-                }
-            }
-            for (mg in drawnMerges) {
-                val cell = cells[mg.r1, mg.c1] ?: continue
-                if (cell.text.isEmpty()) continue
-                text(canvas, mg.r1, mg.c1, cell, x(mg.c1), y(mg.r1), x(mg.c2 + 1), y(mg.r2 + 1), null, ox)
-            }
+            painter.draw(canvas, rs, re, cs, ce, c0, ox, oy, ppp, sheet.gridLines, max(1f, density), 1f, ::matchColor)
             canvas.restore()
-        }
-
-        private fun text(canvas: Canvas, r: Int, c: Int, cell: Cell, l: Float, t: Float, rr: Float, b: Float, row: java.util.SortedMap<Int, Cell>?, ox: Float) {
-            val st = book.style(cell.style)
-            val p = paintFor(cell.style, cell.color)
-            val pad = 3 * ppp
-            val indent = st.indent * 9f * ppp
-            val align = when (st.hAlign) {
-                HAlign.GENERAL -> when (cell.kind) { CellKind.NUMBER -> HAlign.RIGHT; CellKind.BOOLEAN, CellKind.ERROR -> HAlign.CENTER; else -> HAlign.LEFT }
-                HAlign.FILL, HAlign.JUSTIFY -> HAlign.LEFT
-                else -> st.hAlign
-            }
-            val cw = rr - l
-            if (st.wrap && cw > 2 * pad) {
-                val k = "$sheetIndex:$r:$c:${cw.toInt()}:${zoom}"
-                val lay = wrapped.get(k) ?: StaticLayout.Builder.obtain(cell.text, 0, cell.text.length, p, (cw - 2 * pad - indent).toInt().coerceAtLeast(1))
-                    .setAlignment(when (align) { HAlign.CENTER -> Layout.Alignment.ALIGN_CENTER; HAlign.RIGHT -> Layout.Alignment.ALIGN_OPPOSITE; else -> Layout.Alignment.ALIGN_NORMAL })
-                    .setIncludePad(false).build().also { wrapped.put(k, it) }
-                val ty = when (st.vAlign) { VAlign.TOP -> t + pad * 0.5f; VAlign.CENTER -> t + (b - t - lay.height) / 2; VAlign.BOTTOM -> b - lay.height - pad * 0.5f }
-                canvas.save(); canvas.clipRect(l, t, rr, b); canvas.translate(l + pad + indent, max(t, ty)); lay.draw(canvas); canvas.restore()
-                return
-            }
-            var s = cell.text.replace('\n', ' ')
-            var tw = p.measureText(s)
-            var left = l; var right = rr
-            val roomy = cell.kind == CellKind.TEXT && row != null
-            if (tw + 2 * pad + indent > cw && roomy) {
-                // Text runs into empty cells beside it, as in Excel.
-                if (align == HAlign.LEFT || align == HAlign.CENTER) {
-                    // Only a cell with content stops it (one with just a border or fill doesn't).
-                    val next = row!!.tailMap(c + 1).entries.firstOrNull { it.value.text.isNotEmpty() }?.key ?: cols
-                    var e = c + 1
-                    while (e < min(next, cols) && xOf(e) - l < tw + 2 * pad + indent && mergeAt(r, e) == null) e++
-                    right = ox + colX[e] * ppp
-                }
-                if (align == HAlign.RIGHT || align == HAlign.CENTER) {
-                    val prev = lastFilled(row!!, c) ?: -1
-                    var s0 = c
-                    while (s0 - 1 > prev && rr - (ox + colX[s0] * ppp) < tw + 2 * pad && mergeAt(r, s0 - 1) == null) s0--
-                    left = ox + colX[s0] * ppp
-                }
-            }
-            val size = p.textSize
-            if (cell.kind == CellKind.NUMBER && tw + 2 * pad > cw) {
-                // Numbers never run over: smaller if that's enough, ### if not (tap to read it in the bar).
-                val f = (cw - 2 * pad) / tw
-                if (f >= 0.7f) { p.textSize = size * f; tw = p.measureText(s) } else { s = "#".repeat(max(1, ((cw - 2 * pad) / p.measureText("#")).toInt())); tw = p.measureText(s) }
-            }
-            val fm = p.fontMetrics
-            val th = fm.descent - fm.ascent
-            val baseline = when (st.vAlign) {
-                VAlign.TOP -> t + pad * 0.3f - fm.ascent
-                VAlign.CENTER -> t + (b - t - th) / 2 - fm.ascent
-                VAlign.BOTTOM -> b - pad * 0.4f - fm.descent
-            }
-            val tx = when (align) {
-                HAlign.RIGHT -> right - pad - tw - indent
-                HAlign.CENTER -> (left + right - tw) / 2
-                else -> left + pad + indent
-            }
-            canvas.save(); canvas.clipRect(left, t, right, b)
-            canvas.drawText(s, tx, baseline, p)
-            canvas.restore()
-            p.textSize = size
-        }
-
-        /** The nearest column left of [c] whose cell has content (a few dozen columns back at most). */
-        private fun lastFilled(row: java.util.SortedMap<Int, Cell>, c: Int): Int? {
-            val left = (row as? java.util.NavigableMap<Int, Cell>)?.headMap(c, false)?.descendingMap() ?: return row.headMap(c).entries.lastOrNull { it.value.text.isNotEmpty() }?.key
-            var n = 0
-            for ((k, v) in left) { if (v.text.isNotEmpty()) return k; if (++n > 64) break }
-            return null
         }
 
         private fun headers(canvas: Canvas, w: Float, h: Float) {
@@ -459,7 +305,7 @@ class SheetView(ctx: Context, private val book: Workbook, private val host: Read
             zoom = next
             sx = (sx + fx - headWOld) * k - (fx - headW)
             sy = (sy + fy - headHOld) * k - (fy - headH)
-            clamp(); wrapped.evictAll(); invalidate()
+            clamp(); painter.clearCache(); invalidate()
         }
 
         override fun computeScroll() {

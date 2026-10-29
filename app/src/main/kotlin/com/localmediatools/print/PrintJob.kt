@@ -20,7 +20,7 @@ import com.localmediatools.tools.ToolId
 import java.io.File
 import kotlinx.coroutines.withContext
 
-/** Prints photos and PDFs on a network printer, in the background like any other job. */
+/** Prints photos, PDFs and documents on a network printer, in the background like any other job. */
 class PrintJob(
     inputs: List<MediaItem>,
     val printer: SavedPrinter,
@@ -39,7 +39,7 @@ class PrintJob(
                 val conn = Printers.connect(ctx.app, printer)
                 val tmp = File(ctx.app.cacheDir, "print").apply { mkdirs() }
                 ctx.status(tr("Preparing"), null)
-                PrintSource(ctx.app, inputs, tmp, pageRange, photoBudget = ctx.memoryBudget(2)).use { src ->
+                PrintSource(ctx.app, inputs, tmp, pageRange, photoBudget = ctx.memoryBudget(2), paper = settings.paper).use { src ->
                     if (src.pages.isEmpty()) throw UserFacingException(tr("There's nothing to print (no pages chosen)"))
                     val margins = if (layout.borderless) Margins.NONE else conn.caps.margins
                     val sheets = SheetLayout.plan(src.pages, settings.paper, margins, layout)

@@ -17,6 +17,7 @@ import com.localmediatools.print.core.Mdns
 import com.localmediatools.print.core.MediaSize
 import com.localmediatools.print.core.NotLocalException
 import com.localmediatools.print.core.PageRef
+import com.localmediatools.print.core.PaperChoice
 import com.localmediatools.print.core.PinnedTrust
 import com.localmediatools.print.core.PrintCancelled
 import com.localmediatools.print.core.PrintRun
@@ -431,6 +432,28 @@ class PrintCoreTest {
             assertTrue(caps.canColor); assertTrue(caps.canMonochrome); assertFalse(caps.canTwoSided)
             assertEquals(99, caps.maxCopies)
             assertEquals("Glossy photo paper", com.localmediatools.print.core.MediaNames.mediaType("photographic-glossy"))
+        }
+    }
+
+    @Test fun a4IsOfferedFirstWhenThePrinterHasIt() {
+        val letter = MediaSize.LETTER
+        val photo = MediaSize.fromName("na_index-4x6_4x6in")!!
+        val all = listOf(letter, MediaSize.A4, photo)
+        // A4, whatever the printer has loaded or calls its default.
+        assertEquals(MediaSize.A4, PaperChoice.pick(all, null, letter))
+        assertEquals(MediaSize.A4, PaperChoice.pick(all, null, photo))
+        // A size chosen for this printer, while it still offers it.
+        assertEquals(photo, PaperChoice.pick(all, photo.name, letter))
+        assertEquals(MediaSize.A4, PaperChoice.pick(all, "iso_a3_297x420mm", letter))
+        // No A4: the printer's own default, else its first size.
+        assertEquals(photo, PaperChoice.pick(listOf(letter, photo), null, photo))
+        assertEquals(letter, PaperChoice.pick(listOf(letter, photo), null, null))
+        // A printer set to Letter says so, and still gets A4 first.
+        FakePrinter().use { printer ->
+            printer.loaded = "na_letter_8.5x11in" to (21590 to 27940)
+            val caps = PrintRun.capabilities(IppClient(PrinterAddress.parse(printer.uri)))
+            assertEquals("Letter", caps.readySize?.label)
+            assertEquals("A4", PaperChoice.pick(caps.sizes, null, caps.defaultSize).label)
         }
     }
 

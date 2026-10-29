@@ -435,6 +435,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("Open Images V7 annotations (Google)", "CC BY 4.0", tr("Human-verified labels used to calibrate and train the category recognisers.")),
             Triple("Kotlin & kotlinx.coroutines", "Apache License 2.0", tr("Language runtime.")),
             Triple("Inter typeface", "SIL Open Font License 1.1", tr("App typography.")),
+            Triple("Carlito, Caladea and Liberation fonts", "SIL Open Font License 1.1", tr("Showing and printing documents with the widths of Calibri, Cambria, Arial, Times New Roman and Courier New, so lines break as on a computer.")),
         )
         for ((name, lic, what) in items) {
             body.addView(UI.card(ctx, 14).apply {
@@ -444,7 +445,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
         for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/InsightFace-models.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
-                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt")) {
+                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt", "licenses/Document-fonts-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })
             body.addView(UI.text(ctx, text, TextStyle.CAPTION).apply { setTextIsSelectable(true) })

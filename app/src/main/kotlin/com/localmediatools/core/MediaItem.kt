@@ -9,7 +9,8 @@ import com.localmediatools.i18n.tr
 import java.util.Locale
 import com.localmediatools.i18n.takeWhole
 
-enum class MediaKind { IMAGE, GIF, VIDEO, PDF, AUDIO, OTHER }
+/** DOCUMENT: Word, Excel, PowerPoint, OpenDocument, RTF, EPUB and text files the file reader opens. */
+enum class MediaKind { IMAGE, GIF, VIDEO, PDF, AUDIO, DOCUMENT, OTHER }
 
 /** Container/codec family recognised from the file's leading bytes. */
 enum class SniffedFormat(val kind: MediaKind, private val code: String) {
@@ -23,10 +24,11 @@ enum class SniffedFormat(val kind: MediaKind, private val code: String) {
     MATROSKA(MediaKind.VIDEO, "MKV/WebM"), AVI(MediaKind.VIDEO, "AVI"), MPEG_TS(MediaKind.VIDEO, "MPEG-TS"),
     PDF(MediaKind.PDF, "PDF"),
     AUDIO(MediaKind.AUDIO, "Audio"),
+    DOCUMENT(MediaKind.DOCUMENT, "Document"),
     UNKNOWN(MediaKind.OTHER, "Unknown");
 
-    /** The format's name as shown ("JPEG", "MKV/WebM"; "Audio" and "Unknown" in the app's language). */
-    val label: String get() = when (this) { AUDIO -> tr("Audio"); UNKNOWN -> tr("Unknown"); else -> code }
+    /** The format's name as shown ("JPEG", "MKV/WebM"; "Audio", "Document" and "Unknown" in the app's language). */
+    val label: String get() = when (this) { AUDIO -> tr("Audio"); DOCUMENT -> tr("Document"); UNKNOWN -> tr("Unknown"); else -> code }
 
     /** A camera RAW file (DNG included): only the denoiser and the format tools (convert, compress) take these. */
     val isRaw: Boolean get() = this == DNG || this == RAW_CAMERA
@@ -34,6 +36,30 @@ enum class SniffedFormat(val kind: MediaKind, private val code: String) {
     companion object {
         /** TIFF-based camera RAW extensions (Nikon, Sony, Pentax, Samsung, Hasselblad, Phase One, Leica, Kodak…). */
         private val RAW_TIFF_EXT = setOf("cr2", "nef", "nrw", "arw", "srf", "sr2", "pef", "srw", "3fr", "fff", "iiq", "erf", "kdc", "dcr", "mef", "mos", "rwl", "raw", "orf", "rw2", "raf", "gpr")
+
+        private val OFFICE_ZIP_EXT = setOf("docx", "docm", "dotx", "xlsx", "xlsm", "xltx", "pptx", "pptm", "ppsx", "potx", "odt", "ott", "ods", "ots", "odp", "otp", "epub")
+        private val OLE2_DOC_EXT = setOf("doc", "dot", "xls", "xlt", "xlw", "ppt", "pps", "pot")
+        private val TEXT_EXT = setOf("txt", "text", "csv", "tsv", "tab", "md", "markdown", "htm", "html", "xhtml", "json", "xml", "log")
+        private val OLE2_DOC_MIME = setOf("application/msword", "application/vnd.ms-excel", "application/vnd.ms-powerpoint")
+        private val TEXT_MIME = setOf("text/plain", "text/csv", "text/tab-separated-values", "text/comma-separated-values", "text/markdown", "text/html", "application/json", "application/xml", "text/xml")
+
+        /**
+         * A ZIP file that is an Office, OpenDocument or EPUB document: its first part is
+         * [Content_Types].xml (Office) or an OpenDocument or EPUB "mimetype", or its name says so.
+         */
+        private fun officeZip(h: ByteArray, n: Int, ext: String): Boolean {
+            if (ext in OFFICE_ZIP_EXT) return true
+            if (n < 30) return false
+            val nameLen = (h[26].toInt() and 0xFF) or ((h[27].toInt() and 0xFF) shl 8)
+            val extraLen = (h[28].toInt() and 0xFF) or ((h[29].toInt() and 0xFF) shl 8)
+            if (30 + nameLen > n) return false
+            val first = String(h, 30, nameLen, Charsets.ISO_8859_1)
+            if (first == "[Content_Types].xml") return true
+            if (first != "mimetype") return false
+            val at = 30 + nameLen + extraLen
+            val type = if (at < n) String(h, at, minOf(64, n - at), Charsets.ISO_8859_1) else ""
+            return type.startsWith("application/vnd.oasis.opendocument.") || type.startsWith("application/epub+zip")
+        }
 
         /** Whether a TIFF's first directory, as far as [n] bytes of [h] hold it, has DNG's DNGVersion tag. */
         private fun hasDngVersion(h: ByteArray, n: Int): Boolean {
@@ -106,6 +132,11 @@ enum class SniffedFormat(val kind: MediaKind, private val code: String) {
                 ext == "tga" || ext == "icb" || ext == "vda" -> TGA
                 ext == "wbmp" -> WBMP
                 ext == "heic" || ext == "heif" -> HEIF
+                // Documents the file reader opens (and printing takes).
+                at(0, "PK") && b(2) == 3 && b(3) == 4 -> if (officeZip(h, n, ext)) DOCUMENT else UNKNOWN
+                b(0) == 0xD0 && b(1) == 0xCF && b(2) == 0x11 && b(3) == 0xE0 -> if (ext in OLE2_DOC_EXT || mime in OLE2_DOC_MIME) DOCUMENT else UNKNOWN
+                String(h, 0, minOf(n, 16), Charsets.ISO_8859_1).trimStart('\uFEFF', 'ï', '»', '¿', ' ', '\r', '\n', '\t').startsWith("{\\rtf") -> DOCUMENT
+                (ext in TEXT_EXT || mime in TEXT_MIME) && com.localmediatools.docs.core.TextDecode.looksLikeText(h, n) -> DOCUMENT
                 else -> UNKNOWN
             }
         }

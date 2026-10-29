@@ -7,7 +7,8 @@ import com.localmediatools.i18n.tr
  * (fields show their result), with paragraphs, tables, page breaks and footnotes; headings come from
  * the paragraph styles, and bold, italic, underline, size and colour from the character formatting.
  * Pictures placed in the text (PNG, JPEG, bitmaps) are shown; text in text boxes and shapes follows
- * the main text. Floating drawings aren't drawn. Word 6 and 95 files and encrypted ones say so.
+ * the main text. Tables get their column widths and merged cells from each row's definition. Floating
+ * drawings aren't drawn. Word 6 and 95 files and encrypted ones say so.
  */
 class DocReader private constructor(private val ole: Ole2) {
     companion object {
@@ -31,6 +32,15 @@ class DocReader private constructor(private val ole: Ole2) {
     private val pictureRuns = ArrayList<Triple<Int, Int, Int>>()
     private val dataStream: ByteArray? by lazy { try { ole.stream("Data") } catch (_: Exception) { null } }
     private var missedPictures = 0
+
+    /** A table row as the file defines it (sprmTDefTable): cell boundaries in twips, merge flags, header row. */
+    private class RowDef(val centers: IntArray, val horz: IntArray, val vert: IntArray, var header: Boolean)
+    /** Row definitions by the file offsets of the paragraph that ends the row. */
+    private val rowDefs = ArrayList<Triple<Int, Int, RowDef>>()
+    /** File offsets of the paragraphs that end table rows (sprmPFTtp), when the file marks them. */
+    private val rowEnds = ArrayList<IntArray>()
+    /** File offsets of the paragraphs in table cells (sprmPFInTable). */
+    private val inTables = ArrayList<IntArray>()
 
     private fun read(): FlowDocument {
         if (le16(wd, 0) == 0xA5DC) throw UnreadableException(tr("This file was made by Word 6 or Word 95, which this app can't read yet."))
@@ -197,6 +207,7 @@ class DocReader private constructor(private val ole: Ole2) {
         val cellParas = ArrayList<Block>()
         val cells = ArrayList<TableCell>()
         val rows = ArrayList<TableRow>()
+        val defs = ArrayList<RowDef?>()
         var lastWasCellEnd = false
         var footnote = 0
         fun add(s: String, fc: Int) {
@@ -207,23 +218,38 @@ class DocReader private constructor(private val ole: Ole2) {
         }
         val pics = ArrayList<Block>()
         fun paragraph(fc: Int): Paragraph = Paragraph(spans.toList(), headingOf(istdAt(fc))).also { spans.clear() }
-        fun flushTable() { if (rows.isNotEmpty()) { out.add(Table(rows.toList())); rows.clear() }; cells.clear() }
+        // Cells still waiting for their row's end (damaged files) end the row.
+        fun flushTable() {
+            if (cells.isNotEmpty()) { rows.add(TableRow(cells.toList())); defs.add(null); cells.clear() }
+            if (rows.isNotEmpty()) { out.add(table(rows, defs)); rows.clear(); defs.clear() }
+        }
         for (i in text.indices) {
             val c = text[i]; val fc = fcs[i]
             when (c) {
                 '\r' -> {
                     val p = paragraph(fc)
-                    if (cells.isNotEmpty()) cellParas.add(p) else { if (rows.isNotEmpty()) flushTable(); cellParas.add(p) }
+                    // With the file's table marks, a paragraph is in a cell exactly when it is marked so
+                    // (a cell can start with several paragraphs); without them, once a cell of the row has ended.
+                    val flagged = rowEnds.isNotEmpty()
+                    val inCell = if (flagged) isInTable(fc) else cells.isNotEmpty()
+                    if (!inCell && (rows.isNotEmpty() || cells.isNotEmpty())) flushTable()
+                    cellParas.add(p)
                     // Pictures in the paragraph come right after its text.
                     if (pics.isNotEmpty()) { if (p.isEmpty()) cellParas.removeAt(cellParas.size - 1); cellParas.addAll(pics); pics.clear() }
                     lastWasCellEnd = false
-                    // Paragraphs not followed by a cell end are ordinary text: keep only the last one waiting.
-                    if (cells.isEmpty() && cellParas.size > 1) { out.addAll(cellParas.subList(0, cellParas.size - 1)); val keep = cellParas.last(); cellParas.clear(); cellParas.add(keep) }
+                    if (flagged) { if (!inCell) { out.addAll(cellParas); cellParas.clear() } }
+                    // Unmarked: paragraphs not followed by a cell end are ordinary text, so only the last one waits.
+                    else if (cells.isEmpty() && cellParas.size > 1) { out.addAll(cellParas.subList(0, cellParas.size - 1)); val keep = cellParas.last(); cellParas.clear(); cellParas.add(keep) }
                 }
                 '\u0007' -> {
                     val p = paragraph(fc)
-                    if (lastWasCellEnd && p.isEmpty() && cellParas.isEmpty()) {
-                        if (cells.isNotEmpty()) rows.add(TableRow(cells.toList()))
+                    // A row ends at the mark of a paragraph flagged as the row's end; files without the
+                    // flags are read by their shape (an empty "cell" right after a cell's end).
+                    val rowEnd = if (rowEnds.isNotEmpty()) isRowEnd(fc) else lastWasCellEnd && p.isEmpty() && cellParas.isEmpty()
+                    if (rowEnd) {
+                        // (Text before a row's end mark, in damaged files, is kept as one more cell.)
+                        if (!p.isEmpty() || cellParas.isNotEmpty()) { if (!p.isEmpty()) cellParas.add(p); cells.add(TableCell(cellParas.toList())); cellParas.clear() }
+                        if (cells.isNotEmpty()) { rows.add(TableRow(cells.toList())); defs.add(rowDefAt(fc)) }
                         cells.clear()
                         lastWasCellEnd = false
                     } else {
@@ -234,7 +260,21 @@ class DocReader private constructor(private val ole: Ole2) {
                     }
                 }
                 '\u000B' -> add("\n", fc)
-                '\u000C' -> { out.addAll(cellParas); cellParas.clear(); val p = paragraph(fc); if (!p.isEmpty()) out.add(p); flushTable(); out.add(PageBreak) }
+                '\u000C' -> {
+                    val p = paragraph(fc)
+                    if (cells.isNotEmpty()) {
+                        // A page break inside a row (damaged files): what is waiting is the row's last cell.
+                        if (!p.isEmpty()) cellParas.add(p)
+                        if (cellParas.isNotEmpty()) cells.add(TableCell(cellParas.toList()))
+                        cellParas.clear()
+                        flushTable()
+                    } else {
+                        flushTable()
+                        out.addAll(cellParas); cellParas.clear()
+                        if (!p.isEmpty()) out.add(p)
+                    }
+                    out.add(PageBreak)
+                }
                 '\u000E' -> add("\n", fc)
                 '\u0013' -> { if (field < 32) { inResult[field] = false; field++ } }
                 '\u0014' -> { if (field > 0) inResult[field - 1] = true }
@@ -254,10 +294,172 @@ class DocReader private constructor(private val ole: Ole2) {
         }
         if (spans.isNotEmpty()) cellParas.add(paragraph(fcs.let { if (it.n > 0) it[it.n - 1] else 0 }))
         cellParas.addAll(pics)
-        if (cells.isNotEmpty()) rows.add(TableRow(cells.toList()))
         flushTable()
         out.addAll(cellParas)
         return out
+    }
+
+    // ------------------------------------------------------------------ tables
+    private fun isRowEnd(fc: Int) = within(rowEnds, fc)
+    private fun isInTable(fc: Int) = within(inTables, fc)
+
+    private fun within(ranges: List<IntArray>, fc: Int): Boolean {
+        var lo = 0; var hi = ranges.size - 1
+        while (lo <= hi) {
+            val mid = (lo + hi) ushr 1
+            val r = ranges[mid]
+            if (fc < r[0]) hi = mid - 1 else if (fc >= r[1]) lo = mid + 1 else return true
+        }
+        return false
+    }
+
+    private fun rowDefAt(fc: Int): RowDef? {
+        var lo = 0; var hi = rowDefs.size - 1
+        while (lo <= hi) {
+            val mid = (lo + hi) ushr 1
+            val (s, e, d) = rowDefs[mid]
+            if (fc < s) hi = mid - 1 else if (fc >= e) lo = mid + 1 else return d
+        }
+        return null
+    }
+
+    /**
+     * A table from its rows of cells and each row's definition: the columns are every cell boundary
+     * of every row (Word rows needn't line up), so each cell spans the columns between its edges;
+     * horizontally merged cells join the cell before them, and a cell continuing a vertical merge
+     * lengthens the cell above it. Without a definition for every row, cells just follow each other.
+     */
+    private fun table(rows: List<TableRow>, defs: List<RowDef?>): Table {
+        if (rows.indices.any { r -> defs[r].let { d -> d == null || d.centers.size - 1 != rows[r].cells.size } }) return Table(rows.toList())
+        // The grid: boundaries from all rows, ones less than a point apart taken as one.
+        val all = defs.flatMap { it!!.centers.toList() }.sorted()
+        val grid = ArrayList<Int>()
+        for (x in all) if (grid.isEmpty() || x - grid.last() > 20) grid.add(x)
+        if (grid.size < 2) return Table(rows.toList())
+        fun col(x: Int): Int { var best = 0; for (k in grid.indices) if (kotlin.math.abs(grid[k] - x) < kotlin.math.abs(grid[best] - x)) best = k; return best }
+        class C(val blocks: MutableList<Block>, val c0: Int, var c1: Int, val vert: Int) { var rowSpan = 1 }
+        // Text in a cell merged into another is kept, after that cell's own.
+        fun hasText(b: List<Block>) = b.any { it !is Paragraph || !it.isEmpty() }
+        val placed = rows.mapIndexed { r, row ->
+            val d = defs[r]!!
+            val list = ArrayList<C>()
+            for ((k, cell) in row.cells.withIndex()) {
+                val c0 = col(d.centers[k]); val c1 = col(d.centers[k + 1])
+                // Merged with the cell before it (horzMerge 2 or 3): that cell grows.
+                if (d.horz[k] >= 2 && list.isNotEmpty()) {
+                    list.last().c1 = maxOf(list.last().c1, c1)
+                    if (hasText(cell.blocks)) list.last().blocks.addAll(cell.blocks)
+                    continue
+                }
+                list.add(C(cell.blocks.toMutableList(), c0, maxOf(c1, c0 + 1), d.vert[k]))
+            }
+            list
+        }
+        // Vertical merges: a continuing cell (vertMerge 1) lengthens the cell above that starts at the same column.
+        val open = HashMap<Int, C>()
+        val kept = placed.map { row ->
+            row.filter { c ->
+                val above = open[c.c0]
+                if (c.vert == 1 && above != null && above.c1 == c.c1) {
+                    above.rowSpan++
+                    if (hasText(c.blocks)) above.blocks.addAll(c.blocks)
+                    false
+                } else { open[c.c0] = c; true }
+            }
+        }
+        // Rows that start later than column 0, or leave gaps between cells, get empty cells there.
+        val busy = HashMap<Int, java.util.BitSet>()
+        val out = kept.mapIndexed { r, row ->
+            val cellsOut = ArrayList<TableCell>()
+            val taken = busy.getOrPut(r) { java.util.BitSet() }
+            var at = 0
+            for (c in row) {
+                while (at < c.c0) {
+                    if (taken[at]) { at++; continue }
+                    var e = at; while (e < c.c0 && !taken[e]) e++
+                    cellsOut.add(TableCell(emptyList(), e - at)); at = e
+                }
+                for (rr in r until (r + c.rowSpan).coerceAtMost(kept.size)) busy.getOrPut(rr) { java.util.BitSet() }.set(c.c0, c.c1)
+                cellsOut.add(TableCell(c.blocks, c.c1 - c.c0, c.rowSpan, widthPt = (grid[c.c1] - grid[c.c0]) / 20f))
+                at = c.c1
+            }
+            TableRow(cellsOut, defs[r]!!.header)
+        }
+        return Table(out, columnsPt = (0 until grid.size - 1).map { (grid[it + 1] - grid[it]) / 20f })
+    }
+
+    /**
+     * The table row definition in a paragraph's properties ([b] from [start], [len] bytes of sprms),
+     * following sprmPHugePapx into the Data stream when the properties are too large for their page.
+     */
+    /** Whether the last properties read by [rowDef] marked the end of a table row, or a paragraph in a table. */
+    private var lastTtp = false
+    private var lastInTable = false
+
+    private fun rowDef(b: ByteArray, start: Int, len: Int, depth: Int = 0): RowDef? {
+        var i = start
+        val end = minOf(start + len, b.size)
+        var def: RowDef? = null
+        var header = false
+        if (depth == 0) { lastTtp = false; lastInTable = false }
+        while (i + 2 <= end) {
+            val sprm = le16(b, i); i += 2
+            when (sprm) {
+                // sprmTDefTable: a two-byte size (one more than the bytes that follow it).
+                0xD608, 0xD606 -> {
+                    val cb = le16(b, i)
+                    if (cb < 1) return def
+                    if (sprm == 0xD608) parseDefTable(b, i + 2, minOf(i + 2 + cb - 1, end))?.let { def = it }
+                    i += 2 + cb - 1
+                    continue
+                }
+                0x6646 -> if (depth == 0) dataStream?.let { d ->
+                    val at = le32(b, i)
+                    if (at >= 0 && at + 2 <= d.size) rowDef(d, at + 2, le16(d, at), 1)?.let { def = it; header = header || it.header }
+                }
+                0x3404 -> header = (b.getOrNull(i)?.toInt() ?: 0) != 0
+                // sprmPFTtp and sprmPFInnerTtp: this paragraph ends a row (of a table, or of a nested one).
+                0x2417, 0x244C -> if ((b.getOrNull(i)?.toInt() ?: 0) != 0) lastTtp = true
+                0x2416 -> if ((b.getOrNull(i)?.toInt() ?: 0) != 0) lastInTable = true
+            }
+            val spra = sprm ushr 13
+            val size = when {
+                // sprmPChgTabs with its long form.
+                sprm == 0xC615 && (b.getOrNull(i)?.toInt()?.and(0xFF) ?: 0) == 255 -> {
+                    val del = b.getOrNull(i + 1)?.toInt()?.and(0xFF) ?: 0
+                    val add = b.getOrNull(i + 2 + del * 4)?.toInt()?.and(0xFF) ?: 0
+                    1 + 1 + del * 4 + 1 + add * 3
+                }
+                spra == 0 || spra == 1 -> 1
+                spra == 2 || spra == 4 || spra == 5 -> 2
+                spra == 7 -> 3
+                spra == 3 -> 4
+                spra == 6 -> (b.getOrNull(i)?.toInt()?.and(0xFF) ?: 0) + 1
+                else -> 1
+            }
+            i += size
+        }
+        def?.let { it.header = it.header || header }
+        return def
+    }
+
+    /** TDefTableOperand after its size: the number of cells, their boundaries, then a TC80 for each cell. */
+    private fun parseDefTable(b: ByteArray, op: Int, opEnd: Int): RowDef? {
+        if (op >= opEnd) return null
+        val n = b[op].toInt() and 0xFF
+        if (n == 0 || n > 63 || op + 1 + 2 * (n + 1) > opEnd) return null
+        val centers = IntArray(n + 1) { k -> le16(b, op + 1 + 2 * k).toShort().toInt() }
+        for (k in 0 until n) if (centers[k + 1] < centers[k]) return null
+        val tc = op + 1 + 2 * (n + 1)
+        val horz = IntArray(n); val vert = IntArray(n)
+        for (k in 0 until n) {
+            val t = tc + 20 * k
+            if (t + 2 > opEnd) break
+            val g = le16(b, t)
+            horz[k] = g and 3
+            vert[k] = (g shr 5) and 3
+        }
+        return RowDef(centers, horz, vert, false)
     }
 
     // ------------------------------------------------------------------ styles and formatting
@@ -324,11 +526,19 @@ class DocReader private constructor(private val ole: Ole2) {
                     var at = page + off + 1
                     if (cb == 0) { cb = wd[at].toInt() and 0xFF; at++ ; cb *= 2 } else cb = cb * 2 - 1
                     istd = le16(wd, at)
+                    if (cb > 2) {
+                        rowDef(wd, at + 2, cb - 2)?.let { rowDefs.add(Triple(s, e, it)) }
+                        if (lastTtp) rowEnds.add(intArrayOf(s, e))
+                        if (lastInTable || lastTtp) inTables.add(intArrayOf(s, e))
+                    }
                 }
                 papx.add(Triple(s, e, istd))
             }
         }
         papx.sortBy { it.first }
+        rowDefs.sortBy { it.first }
+        rowEnds.sortBy { it[0] }
+        inTables.sortBy { it[0] }
     }
 
     /** Where a run's picture is in the Data stream (sprmCPicLocation), or -1. */

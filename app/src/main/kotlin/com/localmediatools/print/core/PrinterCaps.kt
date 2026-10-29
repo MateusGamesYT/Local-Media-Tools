@@ -109,11 +109,16 @@ class PrinterCaps(val attrs: IppMessage) {
 
     /** The printer's default size (what is loaded, if it says). */
     val defaultSize: MediaSize? get() {
-        val ready = a("media-col-ready")?.collections?.firstNotNullOfOrNull { sizeOf(it) }
-            ?: strings("media-ready").firstNotNullOfOrNull { MediaSize.fromName(it) }
         val dflt = a("media-col-default")?.collections?.firstNotNullOfOrNull { sizeOf(it) } ?: a("media-default")?.string?.let { MediaSize.fromName(it) }
-        val pick = ready ?: dflt ?: return null
+        val pick = readySize ?: dflt ?: return null
         return sizes.firstOrNull { it.same(pick) } ?: pick
+    }
+
+    /** The size the printer says is loaded (or set for its tray), when it says. */
+    val readySize: MediaSize? get() {
+        val ready = a("media-col-ready")?.collections?.firstNotNullOfOrNull { sizeOf(it) }
+            ?: strings("media-ready").firstNotNullOfOrNull { MediaSize.fromName(it) } ?: return null
+        return sizes.firstOrNull { it.same(ready) } ?: ready
     }
 
     private fun sizeOf(c: IppCollection): MediaSize? {
@@ -169,6 +174,21 @@ class PrinterCaps(val attrs: IppMessage) {
     companion object {
         /** Just the state, for watching a printer while it prints. */
         val STATUS = arrayOf("printer-state", "printer-state-reasons", "printer-state-message", "printer-is-accepting-jobs", "marker-names", "marker-levels", "marker-colors", "marker-low-levels", "marker-types")
+    }
+}
+
+/** Which paper size to offer first. */
+object PaperChoice {
+    /**
+     * The size chosen before for this printer when it still offers it, else A4 when it offers A4
+     * (whatever its own default is), else the printer's default, else the first of [choices].
+     */
+    fun pick(choices: List<MediaSize>, remembered: String?, printerDefault: MediaSize?): MediaSize {
+        require(choices.isNotEmpty())
+        remembered?.let { n -> choices.firstOrNull { it.name == n }?.let { return it } }
+        choices.firstOrNull { it.same(MediaSize.A4) }?.let { return it }
+        printerDefault?.let { d -> choices.firstOrNull { it.same(d) }?.let { return it } }
+        return choices.first()
     }
 }
 

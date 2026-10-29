@@ -75,7 +75,8 @@ class TableCell(
 
 class TableRow(val cells: List<TableCell>, val header: Boolean = false)
 
-class Table(val rows: List<TableRow>, val borders: Boolean = true) : Block() {
+/** [columnsPt]: the width of each grid column when the file gives them (empty when it doesn't). */
+class Table(val rows: List<TableRow>, val borders: Boolean = true, val columnsPt: List<Float> = emptyList()) : Block() {
     val columns: Int get() = rows.maxOfOrNull { r -> r.cells.sumOf { it.colSpan } } ?: 0
 }
 
