@@ -62,7 +62,9 @@ class GFace(
     val ignored: Boolean = false,
 )
 
-class GPerson(val id: Long, val name: String?, val hidden: Boolean, val coverFace: Long?, val faceCount: Int, val mediaCount: Int) {
+/** [me]: the person the user said they are; [favorite]: one they starred (both listed first). */
+class GPerson(val id: Long, val name: String?, val hidden: Boolean, val coverFace: Long?, val faceCount: Int, val mediaCount: Int,
+              val favorite: Boolean = false, val me: Boolean = false) {
     val named get() = !name.isNullOrBlank()
 }
 
@@ -97,13 +99,14 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
             confirmed INTEGER NOT NULL DEFAULT 0, ignored INTEGER NOT NULL DEFAULT 0)""")
         db.execSQL("CREATE INDEX faces_media ON faces(media_id)")
         db.execSQL("CREATE INDEX faces_person ON faces(person_id)")
-        db.execSQL("CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, hidden INTEGER NOT NULL DEFAULT 0, cover_face INTEGER, created INTEGER NOT NULL)")
+        db.execSQL("CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, hidden INTEGER NOT NULL DEFAULT 0, cover_face INTEGER, created INTEGER NOT NULL, favorite INTEGER NOT NULL DEFAULT 0)")
         db.execSQL("CREATE TABLE not_person(face_id INTEGER NOT NULL, person_id INTEGER NOT NULL, PRIMARY KEY(face_id, person_id)) WITHOUT ROWID")
         db.execSQL("CREATE TABLE meta(k TEXT PRIMARY KEY, v TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // First version; future upgrades go here.
+        // 2: favourite people (1.12). Everything already there stays.
+        if (oldVersion < 2) db.execSQL("ALTER TABLE people ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0")
     }
 
     // ---------------------------------------------------------------- media
@@ -367,17 +370,55 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
         return m.mapValues { it.value.toLongArray() }
     }
 
+    /** People: the user first, then favourites, then named ones, then the rest, each by how many photos they are in. */
     fun people(includeHidden: Boolean = false): List<GPerson> {
         val out = ArrayList<GPerson>()
+        val me = meta(ME_KEY)?.toLongOrNull()
         readableDatabase.rawQuery(
-            "SELECT p.id, p.name, p.hidden, p.cover_face, COUNT(f.id), COUNT(DISTINCT f.media_id) FROM people p " +
+            "SELECT p.id, p.name, p.hidden, p.cover_face, COUNT(f.id), COUNT(DISTINCT f.media_id), p.favorite FROM people p " +
                 "LEFT JOIN faces f ON f.person_id = p.id GROUP BY p.id " +
                 (if (includeHidden) "" else "HAVING p.hidden = 0 ") +
                 "ORDER BY (p.name IS NULL OR p.name = ''), COUNT(DISTINCT f.media_id) DESC, p.id", null).use { c ->
-            while (c.moveToNext()) out.add(GPerson(c.getLong(0), c.getString(1), c.getInt(2) == 1, if (c.isNull(3)) null else c.getLong(3), c.getInt(4), c.getInt(5)))
+            while (c.moveToNext()) out.add(GPerson(c.getLong(0), c.getString(1), c.getInt(2) == 1, if (c.isNull(3)) null else c.getLong(3), c.getInt(4), c.getInt(5),
+                favorite = c.getInt(6) == 1, me = c.getLong(0) == me))
         }
-        return out
+        return out.sortedWith(compareByDescending<GPerson> { it.me }.thenByDescending { it.favorite })
     }
+
+    /** The person the user said they are, if they still exist. */
+    fun me(): Long? = meta(ME_KEY)?.toLongOrNull()?.takeIf { id ->
+        readableDatabase.rawQuery("SELECT 1 FROM people WHERE id=?", arrayOf(id.toString())).use { it.moveToFirst() }
+    }
+
+    /**
+     * [id] is the user ([null]: no one is). Their faces are confirmed, so regrouping keeps them
+     * together under this person even before they have a name.
+     */
+    fun setMe(id: Long?) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            if (id == null) db.delete("meta", "k=?", arrayOf(ME_KEY)) else {
+                db.insertWithOnConflict("meta", null, ContentValues().apply { put("k", ME_KEY); put("v", id.toString()) }, SQLiteDatabase.CONFLICT_REPLACE)
+                db.execSQL("UPDATE faces SET confirmed=1 WHERE person_id=?", arrayOf(id))
+            }
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+    }
+
+    /** Stars [id] (or takes the star away); a starred person's faces are confirmed like a named person's. */
+    fun setFavorite(id: Long, favorite: Boolean) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            db.update("people", ContentValues().apply { put("favorite", if (favorite) 1 else 0) }, "id=?", arrayOf(id.toString()))
+            if (favorite) db.execSQL("UPDATE faces SET confirmed=1 WHERE person_id=?", arrayOf(id))
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+    }
+
+    /** Forgets "me" when it pointed at [id] (inside the caller's transaction). */
+    private fun dropMe(db: SQLiteDatabase, id: Long) = db.execSQL("DELETE FROM meta WHERE k=? AND v=?", arrayOf(ME_KEY, id.toString()))
 
     fun person(id: Long) = people(includeHidden = true).firstOrNull { it.id == id }
 
@@ -453,6 +494,7 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
             db.execSQL("UPDATE faces SET ignored=1, person_id=NULL, confirmed=0 WHERE person_id=?", arrayOf(personId))
             db.execSQL("DELETE FROM not_person WHERE person_id=?", arrayOf(personId))
             db.delete("people", "id=? AND (name IS NULL OR name = '')", arrayOf(personId.toString()))
+            dropMe(db, personId)
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
     }
@@ -473,6 +515,9 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
             db.execSQL("DELETE FROM not_person WHERE person_id=?", arrayOf(from))
             // A face rejected from one of the two can't stay rejected from the merged person if it is in it.
             db.execSQL("DELETE FROM not_person WHERE person_id=? AND face_id IN (SELECT id FROM faces WHERE person_id=?)", arrayOf(into, into))
+            // The star and "me" go with the person kept.
+            db.execSQL("UPDATE people SET favorite = MAX(favorite, (SELECT favorite FROM people WHERE id=?)) WHERE id=?", arrayOf(from, into))
+            db.execSQL("UPDATE meta SET v=? WHERE k=? AND v=?", arrayOf(into.toString(), ME_KEY, from.toString()))
             db.delete("people", "id=?", arrayOf(from.toString()))
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
@@ -486,6 +531,7 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
             db.execSQL("UPDATE faces SET person_id=NULL, confirmed=0 WHERE person_id=?", arrayOf(id))
             db.execSQL("DELETE FROM not_person WHERE person_id=?", arrayOf(id))
             db.delete("people", "id=?", arrayOf(id.toString()))
+            dropMe(db, id)
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
     }
@@ -521,7 +567,8 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
     }
 
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
+        private const val ME_KEY = "me_person"
         @Volatile private var instance: GalleryDb? = null
 
         fun get(ctx: Context): GalleryDb = instance ?: synchronized(this) {

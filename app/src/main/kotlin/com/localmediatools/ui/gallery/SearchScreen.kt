@@ -88,7 +88,7 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
     private fun loadSuggestions() = scope.launch {
         val s = withContext(Dispatchers.IO) {
             val db = GalleryDb.get(ctx)
-            val people = db.people().filter { it.named && it.mediaCount > 0 }.map { it to GalleryRepo.coverFace(ctx, it) }
+            val people = db.people().filter { (it.named || it.me) && it.mediaCount > 0 }.map { it to GalleryRepo.coverFace(ctx, it) }
             val counts = GalleryRepo.categoryCounts(ctx)
             val cats = GalleryRepo.categories(ctx).mapNotNull { c -> counts[c.key]?.takeIf { it > 0 }?.let { c to it } }.sortedByDescending { it.second }
             val albums = db.albums().take(12).map { it.first to it.second }
@@ -163,7 +163,7 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val p = SearchParser.normalize(prefix)
         val lastWord = p.substringAfterLast(' ')
         fun matches(vararg words: String) = lastWord.isEmpty() || words.any { w -> SearchParser.normalize(w).split(' ').any { it.startsWith(lastWord) } }
-        val people = s.people.filter { matches(it.first.name ?: "") }
+        val people = s.people.filter { matches(it.first.shownName(), *(if (it.first.me) arrayOf(tr("Me")) else emptyArray())) }
         val cats = s.cats.filter { (c, _) -> matches(c.name, *c.searchWords.toTypedArray()) }
         val albums = s.albums.filter { matches(it.second) }
         if (people.isNotEmpty()) {
@@ -207,10 +207,10 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val img = ImageView(ctx).apply { scaleType = ImageView.ScaleType.CENTER_CROP; background = Shapes.circle(Palette.SURFACE_2); clipToOutline = true }
         f?.let { GalleryThumbs.face(ctx, it, 192, img) }
         addView(img, LinearLayout.LayoutParams(ctx.dp(60), ctx.dp(60)))
-        addView(UI.text(ctx, p.name ?: "", TextStyle.CAPTION, Palette.TEXT).apply { maxLines = 1; gravity = Gravity.CENTER; setPadding(0, ctx.dp(5), 0, 0) })
+        addView(UI.text(ctx, p.shownName(), TextStyle.CAPTION, Palette.TEXT).apply { maxLines = 1; gravity = Gravity.CENTER; setPadding(0, ctx.dp(5), 0, 0) })
         isClickable = true; isFocusable = true
-        contentDescription = p.name
-        setOnClickListener { pick(p.name ?: return@setOnClickListener) }
+        contentDescription = p.shownName()
+        setOnClickListener { pick(p.shownName()) }
     }
 
     private fun chip(label: String, count: String?, onClick: () -> Unit): View = UI.horizontal(ctx).apply {

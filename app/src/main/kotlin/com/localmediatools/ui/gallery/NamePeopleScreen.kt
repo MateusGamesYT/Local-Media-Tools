@@ -45,8 +45,8 @@ import com.localmediatools.i18n.takeWhole
 /**
  * Names people quickly: the unnamed groups one after another, most photos first, with the keyboard
  * ready. Type a name and press Enter (an existing name adds the faces to that person), tap a
- * suggestion ("looks like Ana"), skip, or say it's no one to keep track of. Everything is saved at
- * once; faces are regrouped when leaving, not after every name.
+ * suggestion ("looks like Ana"), say "This is me", skip, or say it's no one to keep track of.
+ * Everything is saved at once; faces are regrouped when leaving, not after every name.
  */
 class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
     private class Group(val person: GPerson, val kind: FaceKind)
@@ -58,6 +58,8 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
     private val named = LinkedHashMap<Long, String>()
     private val sums = HashMap<Pair<Long, FaceKind>, NameSuggestions.Faces>()
     private var named0 = 0
+    /** The person the user said they are (none yet: "This is me" is offered). */
+    private var meId: Long? = null
 
     private lateinit var top: FrameLayout
     private lateinit var body: LinearLayout
@@ -89,6 +91,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
             for ((pid, fs) in byPerson) for ((kind, list) in fs.groupBy { it.kind })
                 NameSuggestions.of(list.map { it.emb!! }, pid)?.let { sums[pid to kind] = it }
             val unnamed = all.filter { !it.named && it.faceCount >= 2 && it.mediaCount > 0 }.sortedByDescending { it.faceCount }
+            meId = db.me()
             unnamed.map { p -> Group(p, byPerson[p.id]?.groupingBy { it.kind }?.eachCount()?.maxByOrNull { it.value }?.key ?: FaceKind.AI) } to all.filter { it.named }
         }
         queue = groups
@@ -186,6 +189,7 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
 
     private fun renderSuggestions(g: Group) {
         suggestions.removeAllViews()
+        if (meId == null) suggestions.addView(chip(tr("This is me"), false) { markMe(g) })
         val mine = sums[g.person.id to g.kind]
         val others = sums.filterKeys { it.second == g.kind && it.first in named }.values.toList()
         val similar = if (mine == null) emptyList() else NameSuggestions.forGroup(mine, others, ClusterParams.of(g.kind))
@@ -236,6 +240,17 @@ class NamePeopleScreen(activity: MainActivity) : Screen(activity) {
                 else NameSuggestions.Faces(personId, FloatArray(a.sum.size) { a.sum[it] + b.sum[it] }, a.count + b.count)
             Toast.makeText(ctx, tr("Added to {0}", name), Toast.LENGTH_SHORT).show()
             next()
+        }
+    }
+
+    /** The group is the user: marked at once; a name can still be typed. */
+    private fun markMe(g: Group) {
+        scope.launch {
+            withContext(Dispatchers.IO) { GalleryDb.get(ctx).setMe(g.person.id) }
+            meId = g.person.id
+            changed = true
+            Toast.makeText(ctx, tr("Marked as you. Type your name too, or tap Skip."), Toast.LENGTH_LONG).show()
+            renderSuggestions(g)
         }
     }
 

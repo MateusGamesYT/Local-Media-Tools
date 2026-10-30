@@ -36,7 +36,8 @@ import kotlinx.coroutines.withContext
 
 /**
  * One person: their photos, their name, and tools to keep them right — rename, merge with someone,
- * review every face, hide, and "is this also them?" suggestions for similar unnamed groups.
+ * review every face, hide, and "is this also them?" suggestions for similar unnamed groups; a star
+ * to keep them among the favourites, and "This is me".
  */
 class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(activity) {
     private lateinit var grid: MediaGrid
@@ -95,7 +96,11 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         }
         person = p
         topBar.removeAllViews()
-        topBar.addView(TopBar(this@PersonScreen, p.name ?: tr("Unnamed person"), UI.iconButton(ctx, R.drawable.ic_more, tr("Options")) { menu() }))
+        val buttons = UI.horizontal(ctx)
+        buttons.addView(UI.iconButton(ctx, if (p.favorite) R.drawable.ic_star else R.drawable.ic_star_outline,
+            if (p.favorite) tr("Remove from favourites") else tr("Add to favourites"), if (p.favorite) Palette.WARNING else Palette.TEXT) { toggleFavorite(p) })
+        buttons.addView(UI.iconButton(ctx, R.drawable.ic_more, tr("Options")) { menu() })
+        topBar.addView(TopBar(this@PersonScreen, p.shownName(), buttons))
         renderHeader(d)
         grid.setItems(d.items)
     }
@@ -132,9 +137,11 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         d.cover?.let { GalleryThumbs.face(ctx, it, 256, img) }
         row.addView(img, LinearLayout.LayoutParams(ctx.dp(76), ctx.dp(76)))
         val info = UI.vertical(ctx).apply { setPadding(ctx.dp(14), 0, 0, 0) }
-        info.addView(UI.text(ctx, p.name ?: tr("Who is this?"), TextStyle.TITLE))
+        info.addView(UI.text(ctx, p.name ?: if (p.me) tr("Me") else tr("Who is this?"), TextStyle.TITLE))
         val n = d.items.size
         info.addView(UI.text(ctx, trn(n, "{0} photo or video", "{0} photos and videos") + " · " + trn(p.faceCount, "{0} face", "{0} faces"), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
+        val marks = listOfNotNull(if (p.me) tr("This is you") else null, if (p.favorite) tr("Favourite") else null)
+        if (marks.isNotEmpty()) info.addView(UI.text(ctx, marks.joinToString(" · "), TextStyle.CAPTION, Palette.ACCENT).apply { setPadding(0, ctx.dp(3), 0, 0) })
         row.addView(info, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         header.addView(row)
         val actions = UI.horizontal(ctx).apply { setPadding(0, ctx.dp(12), 0, 0) }
@@ -165,6 +172,18 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         row.addView(UI.iconButton(ctx, R.drawable.ic_close, tr("Not {0}", p.name), Palette.DANGER) { notSame(p, o) })
         row.addView(UI.iconButton(ctx, R.drawable.ic_check, tr("Yes, {0}", p.name), Palette.SUCCESS) { merge(p.id, o.id) })
         addView(row)
+    }
+
+    private fun toggleFavorite(p: GPerson) = scope.launch {
+        withContext(Dispatchers.IO) { GalleryDb.get(ctx).setFavorite(p.id, !p.favorite) }
+        GalleryIndex.notifyChanged()
+        Toast.makeText(ctx, if (p.favorite) tr("Removed from favourites") else tr("Added to favourites"), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setMe(p: GPerson, me: Boolean) = scope.launch {
+        withContext(Dispatchers.IO) { GalleryDb.get(ctx).setMe(if (me) p.id else null) }
+        GalleryIndex.notifyChanged()
+        Toast.makeText(ctx, if (me) tr("Marked as you. Search for \"me\" to find your photos.") else tr("No longer marked as you"), Toast.LENGTH_LONG).show()
     }
 
     private fun notSame(p: GPerson, o: GPerson) = scope.launch {
@@ -206,6 +225,8 @@ class PersonScreen(activity: MainActivity, private val personId: Long) : Screen(
         val p = person ?: return
         val opts = ArrayList<Pair<String, () -> Unit>>()
         opts.add((if (p.named) tr("Rename") else tr("Add name")) to { rename() })
+        opts.add((if (p.me) tr("This isn't me") else tr("This is me")) to { setMe(p, !p.me) })
+        opts.add((if (p.favorite) tr("Remove from favourites") else tr("Add to favourites")) to { toggleFavorite(p) })
         opts.add(tr("Merge with…") to { pickMerge(p) })
         opts.add(tr("Review faces") to { push(FacesScreen(activity, personId)) })
         opts.add((if (p.hidden) tr("Show in People") else tr("Hide from People")) to {

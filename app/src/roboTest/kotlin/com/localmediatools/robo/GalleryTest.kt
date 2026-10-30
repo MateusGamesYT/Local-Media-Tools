@@ -209,6 +209,85 @@ class GalleryTest {
         for (p in db.people().filter { it.named }) assertEquals(p.name, if (p.name == "Caroline") 11 else 12, GalleryRepo.person(app, p.id).size)
     }
 
+    @Test fun meAndFavouritePeople() {
+        val a = openGallery()
+        val db = GalleryDb.get(app)
+        fun groupOf(owner: Int) = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == owner } }
+        fun owners(id: Long) = db.faces("f.person_id = ?", arrayOf(id.toString())).map { FakeGallery.faceOwners[it.id] }.distinct()
+        // The People tab asks which one is the user; choosing Caroline's (still unnamed) group.
+        all(a.navigator.top!!.view).filterIsInstance<TextView>().first { it.text == "People" }.performClick()
+        waitFor("which one is you") { texts(a).any { it == "Which one is you?" } }
+        render(a, "48_people_which_is_you")
+        all(a.navigator.top!!.view).filterIsInstance<TextView>().first { it.text == "Which one is you?" }.let { t ->
+            var v: View? = t; while (v != null && !v.isClickable) v = v.parent as? View; v!!.performClick()
+        }
+        idle()
+        // The same list the picker shows: the People tab's (named, or two faces or more), named first, most photos first.
+        val choices = db.people().filter { it.mediaCount > 0 && (it.named || it.faceCount >= 2) }.sortedWith(compareByDescending<com.localmediatools.gallery.GPerson> { it.named }.thenByDescending { it.mediaCount })
+        val caroline = groupOf(0)
+        val dialog = org.robolectric.shadows.ShadowAlertDialog.getLatestAlertDialog()
+        assertTrue("picker shown", dialog != null && dialog.isShowing)
+        val shown = (0 until dialog.listView.adapter.count).map { dialog.listView.adapter.getItem(it).toString() }
+        assertEquals(shown.toString(), choices.size, shown.size)
+        shadowOf(dialog).clickOnItem(choices.indexOfFirst { it.id == caroline.id })
+        waitFor("me set") { db.me() != null }
+        assertEquals("me is Caroline's group (picked from $shown)", caroline.id, db.me())
+        waitFor("listed first") { texts(a).any { it == "YOU AND FAVOURITES" } }
+        assertTrue(texts(a).contains("Me"))
+        assertTrue(texts(a).none { it == "Which one is you?" })
+        // "Me" in search finds her photos, also with a place.
+        assertEquals(11, GalleryRepo.search(app, "me").items.size)
+        assertEquals(setOf(6L, 7L, 8L), GalleryRepo.search(app, "me at the beach").items.map { it.id }.toSet())
+        // Regrouping keeps "me" on the same faces (they were confirmed).
+        GalleryIndex.regroupNow(app)
+        waitFor("regroup") { GalleryIndex.state.value.phase != GalleryIndex.Phase.GROUPING }
+        idle(500)
+        assertEquals(caroline.id, db.me())
+        assertEquals(listOf(0), owners(caroline.id))
+        // A star for Ian, on his screen.
+        val ian = groupOf(1)
+        a.navigator.push(PersonScreen(a, ian.id))
+        waitFor("person screen") { all(a.navigator.top!!.view).any { it.contentDescription == "Add to favourites" } }
+        all(a.navigator.top!!.view).first { it.contentDescription == "Add to favourites" }.performClick()
+        waitFor("starred") { db.person(ian.id)?.favorite == true && all(a.navigator.top!!.view).any { it.contentDescription == "Remove from favourites" } }
+        assertTrue(texts(a).any { it == "Favourite" })
+        render(a, "49_person_favourite")
+        a.navigator.pop(); idle(500)
+        // Listed first: the user, then favourites.
+        assertEquals(listOf(caroline.id, ian.id), db.people().take(2).map { it.id })
+        assertTrue(db.people().first().me && db.people()[1].favorite)
+        waitFor("tiles") { all(a.navigator.top!!.view).any { it.contentDescription == "Favourite" } }
+        render(a, "48_people_me_favourites")
+        // Merging: the star and "me" go with the person kept.
+        db.mergePeople(ian.id, caroline.id)
+        assertEquals(ian.id, db.me())
+        assertTrue(db.person(ian.id)!!.favorite)
+        // Removing the person forgets "me".
+        db.deletePerson(ian.id)
+        assertEquals(null, db.me())
+    }
+
+    @Test fun anOlderGalleryIsUpdatedKeepingItsPeople() {
+        // A gallery written by 1.11 (database version 1, no favourites).
+        com.localmediatools.gallery.GalleryDb.closeForTests()
+        app.deleteDatabase("gallery.db")
+        val old = android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(app.getDatabasePath("gallery.db").apply { parentFile?.mkdirs() }, null)
+        old.execSQL("CREATE TABLE media(id INTEGER PRIMARY KEY, video INTEGER NOT NULL, mime TEXT NOT NULL, name TEXT NOT NULL, bucket_id TEXT NOT NULL, bucket TEXT NOT NULL, path TEXT NOT NULL, taken INTEGER NOT NULL, modified INTEGER NOT NULL, size INTEGER NOT NULL, width INTEGER NOT NULL, height INTEGER NOT NULL, orientation INTEGER NOT NULL, duration INTEGER NOT NULL, favorite INTEGER NOT NULL DEFAULT 0, analyzed INTEGER NOT NULL DEFAULT 0, failures INTEGER NOT NULL DEFAULT 0)")
+        old.execSQL("CREATE TABLE tags(media_id INTEGER NOT NULL, cat TEXT NOT NULL, score REAL NOT NULL, PRIMARY KEY(media_id, cat)) WITHOUT ROWID")
+        old.execSQL("CREATE TABLE faces(id INTEGER PRIMARY KEY AUTOINCREMENT, media_id INTEGER NOT NULL, x REAL NOT NULL, y REAL NOT NULL, w REAL NOT NULL, h REAL NOT NULL, score REAL NOT NULL, eye REAL NOT NULL, yaw REAL NOT NULL, good INTEGER NOT NULL, quality REAL NOT NULL, frame_ms INTEGER NOT NULL DEFAULT 0, kind INTEGER NOT NULL DEFAULT 0, emb BLOB, person_id INTEGER, confirmed INTEGER NOT NULL DEFAULT 0, ignored INTEGER NOT NULL DEFAULT 0)")
+        old.execSQL("CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, hidden INTEGER NOT NULL DEFAULT 0, cover_face INTEGER, created INTEGER NOT NULL)")
+        old.execSQL("CREATE TABLE not_person(face_id INTEGER NOT NULL, person_id INTEGER NOT NULL, PRIMARY KEY(face_id, person_id)) WITHOUT ROWID")
+        old.execSQL("CREATE TABLE meta(k TEXT PRIMARY KEY, v TEXT)")
+        old.execSQL("INSERT INTO people(id, name, hidden, created) VALUES(7, 'Ana', 0, 1)")
+        old.version = 1
+        old.close()
+        val db = GalleryDb.get(app)
+        val ana = db.people(includeHidden = true).single()
+        assertEquals("Ana", ana.name); assertEquals(false, ana.favorite)
+        db.setFavorite(7, true)
+        assertTrue(db.person(7)!!.favorite)
+    }
+
     @Test fun anExistingNameAddsTheFacesToThatPerson() {
         val a = openGallery()
         val db = GalleryDb.get(app)

@@ -26,6 +26,7 @@ import com.localmediatools.ui.Shapes
 import com.localmediatools.ui.TextStyle
 import com.localmediatools.ui.UI
 import com.localmediatools.ui.dp
+import com.localmediatools.ui.icon
 import com.localmediatools.ui.lp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -270,8 +271,21 @@ class GalleryTab(private val shell: MainShell) {
             isClickable = true; isFocusable = true
             setOnClickListener { shell.push(FacesScreen(activity)) }
         }, lp().apply { bottomMargin = ctx.dp(14); leftMargin = ctx.dp(4); rightMargin = ctx.dp(4) })
-        val named = d.people.filter { it.first.named }
-        val unnamed = d.people.filter { !it.first.named }
+        val mine = d.people.filter { it.first.me || it.first.favorite }
+        val named = d.people.filter { it.first.named && !it.first.me && !it.first.favorite }
+        val unnamed = d.people.filter { !it.first.named && !it.first.me && !it.first.favorite }
+        // Which one is the user (until they say, or say "not now").
+        if (d.people.isNotEmpty() && d.people.none { it.first.me } && !mePromptDismissed()) {
+            col.addView(UI.horizontal(ctx).apply {
+                background = Shapes.clickable(ctx, Palette.SURFACE, 18f, Palette.STROKE)
+                setPadding(ctx.dp(14), ctx.dp(12), ctx.dp(4), ctx.dp(12))
+                addView(UI.iconTile(ctx, R.drawable.ic_star, Palette.WARNING, 38, 20))
+                addView(UI.titled(ctx, tr("Which one is you?"), tr("You're listed first, and searching for \"me\" finds your photos")).apply { setPadding(ctx.dp(12), 0, 0, 0) }, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+                addView(UI.iconButton(ctx, R.drawable.ic_close, tr("Not now"), Palette.TEXT_3) { dismissMePrompt(); reload() })
+                isClickable = true; isFocusable = true
+                setOnClickListener { chooseMe(d.people.map { it.first }) }
+            }, lp().apply { bottomMargin = ctx.dp(14); leftMargin = ctx.dp(4); rightMargin = ctx.dp(4) })
+        }
         if (unnamed.isNotEmpty()) {
             // The quick way through every unnamed group, keyboard ready.
             col.addView(UI.horizontal(ctx).apply {
@@ -291,8 +305,12 @@ class GalleryTab(private val shell: MainShell) {
                 if (st.working) tr("Faces are being found and grouped on this phone. People appear here as soon as the same face shows up in a few photos.")
                 else tr("When the same person appears in several photos, they show up here so you can name them.")))
         }
+        if (mine.isNotEmpty()) {
+            col.addView(UI.label(ctx, tr("You and favourites")), lp().apply { leftMargin = ctx.dp(6); bottomMargin = ctx.dp(8) })
+            gridOf(col, mine.map { (p, f) -> PersonTile(ctx, p, f) { shell.push(PersonScreen(activity, p.id)) } }, 3)
+        }
         if (named.isNotEmpty()) {
-            col.addView(UI.label(ctx, tr("Named")), lp().apply { leftMargin = ctx.dp(6); bottomMargin = ctx.dp(8) })
+            col.addView(UI.label(ctx, tr("Named")), lp().apply { leftMargin = ctx.dp(6); topMargin = ctx.dp(if (mine.isNotEmpty()) 18 else 0); bottomMargin = ctx.dp(8) })
             gridOf(col, named.map { (p, f) -> PersonTile(ctx, p, f) { shell.push(PersonScreen(activity, p.id)) } }, 3)
         }
         if (unnamed.isNotEmpty()) {
@@ -300,6 +318,23 @@ class GalleryTab(private val shell: MainShell) {
             gridOf(col, unnamed.map { (p, f) -> PersonTile(ctx, p, f) { shell.push(PersonScreen(activity, p.id)) } }, 3)
         }
         scroll.addView(col)
+    }
+
+    private fun mePromptDismissed() = ctx.getSharedPreferences("gallery", android.content.Context.MODE_PRIVATE).getBoolean("me_prompt_dismissed", false)
+    private fun dismissMePrompt() = ctx.getSharedPreferences("gallery", android.content.Context.MODE_PRIVATE).edit().putBoolean("me_prompt_dismissed", true).apply()
+
+    /** "Which one is you?": the people (named ones first) to choose from. */
+    private fun chooseMe(people: List<GPerson>) {
+        val list = people.filter { it.mediaCount > 0 }.sortedWith(compareByDescending<GPerson> { it.named }.thenByDescending { it.mediaCount }).take(40)
+        if (list.isEmpty()) return
+        val labels = list.map { it.shownName() + " · " + trn(it.mediaCount, "{0} photo", "{0} photos") }.toTypedArray()
+        AlertDialog.Builder(activity).setTitle(tr("Which one is you?")).setItems(labels) { _, w ->
+            shell.scope.launch {
+                withContext(Dispatchers.IO) { GalleryDb.get(ctx).setMe(list[w].id) }
+                GalleryIndex.notifyChanged()
+                reload()
+            }
+        }.setNegativeButton(tr("Cancel"), null).show()
     }
 
     // ------------------------------------------------------------------ things
@@ -473,7 +508,10 @@ class AlbumTile(ctx: android.content.Context, name: String, count: Int, cover: G
     }
 }
 
-/** Round face with a name (or "Add name") and photo count. */
+/** How a person is called on screen: their name, "Me" for the user before they have one, else "Unnamed person". */
+fun GPerson.shownName(): String = name?.takeIf { it.isNotBlank() } ?: if (me) tr("Me") else tr("Unnamed person")
+
+/** Round face with a name (or "Add name") and photo count; a star on favourites, "Me" under the user. */
 class PersonTile(ctx: android.content.Context, p: GPerson, face: com.localmediatools.gallery.GFace?, onClick: () -> Unit) : LinearLayout(ctx) {
     init {
         orientation = VERTICAL
@@ -487,13 +525,22 @@ class PersonTile(ctx: android.content.Context, p: GPerson, face: com.localmediat
             outlineProvider = android.view.ViewOutlineProvider.BACKGROUND
         }
         if (face != null) GalleryThumbs.face(ctx, face, 256, img)
-        addView(img, lp(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply { leftMargin = ctx.dp(6); rightMargin = ctx.dp(6) })
-        addView(UI.text(ctx, p.name ?: tr("Add name"), TextStyle.SUBTITLE, if (p.named) Palette.TEXT else Palette.ACCENT).apply {
+        val frame = android.widget.FrameLayout(ctx)
+        frame.addView(img, android.widget.FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        if (p.favorite) frame.addView(ImageView(ctx).apply {
+            setImageDrawable(ctx.icon(R.drawable.ic_star, Palette.WARNING))
+            background = Shapes.circle(Palette.BG)
+            setPadding(ctx.dp(4), ctx.dp(4), ctx.dp(4), ctx.dp(4))
+            contentDescription = tr("Favourite")
+        }, android.widget.FrameLayout.LayoutParams(ctx.dp(26), ctx.dp(26), Gravity.TOP or Gravity.END))
+        addView(frame, lp(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply { leftMargin = ctx.dp(6); rightMargin = ctx.dp(6) })
+        addView(UI.text(ctx, p.name?.takeIf { it.isNotBlank() } ?: if (p.me) tr("Me") else tr("Add name"), TextStyle.SUBTITLE, if (p.named || p.me) Palette.TEXT else Palette.ACCENT).apply {
             textSize = 14f; gravity = Gravity.CENTER; maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END; setPadding(0, ctx.dp(7), 0, 0)
         })
-        addView(UI.text(ctx, trn(p.mediaCount, "{0} photo", "{0} photos"), TextStyle.CAPTION, Palette.TEXT_3).apply { gravity = Gravity.CENTER })
+        val count = trn(p.mediaCount, "{0} photo", "{0} photos")
+        addView(UI.text(ctx, if (p.me && p.named) tr("Me · {0}", count) else count, TextStyle.CAPTION, if (p.me) Palette.ACCENT else Palette.TEXT_3).apply { gravity = Gravity.CENTER })
         isClickable = true; isFocusable = true
-        contentDescription = trn(p.mediaCount, "{1}, {0} photo", "{1}, {0} photos", p.name ?: tr("Unnamed person"))
+        contentDescription = trn(p.mediaCount, "{1}, {0} photo", "{1}, {0} photos", p.shownName()) + (if (p.me) ", " + tr("this is you") else "") + (if (p.favorite) ", " + tr("favourite") else "")
         setOnClickListener { onClick() }
     }
 }

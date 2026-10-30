@@ -32,7 +32,8 @@ object GalleryRepo {
         val people = db.people(includeHidden = true).filter { it.named }.map { it.id to it.name!! }
         val categories = categories(ctx).map { Triple(it.key, it.name, it.searchWords + it.englishName) }
         val albums = db.albums().map { it.first to it.second }
-        return SearchVocabulary(people, categories, albums)
+        val me = db.me()?.let { id -> id to (db.person(id)?.name?.takeIf { it.isNotBlank() } ?: com.localmediatools.i18n.tr("Me")) }
+        return SearchVocabulary(people, categories, albums, me)
     }
 
     fun search(ctx: Context, text: String): SearchResult {

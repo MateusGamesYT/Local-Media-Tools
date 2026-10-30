@@ -167,6 +167,18 @@ class GalleryCoreTest {
         assertEquals(MediaFilter.SCREENSHOTS, (SearchParser.parse("screenshots", vocab).terms.single() as SearchTerm.Kind).kind)
     }
 
+    @Test fun meFindsThePersonTheUserSaidTheyAre() {
+        val withMe = SearchVocabulary(vocab.people, vocab.categories, vocab.albums, me = 2L to "Sophie")
+        assertEquals(listOf("p:2", "p:1", "c:beach"), SearchParser.parse("me and John at the beach", withMe).terms.map { SearchParser.termKey(it) })
+        assertEquals(setOf("p:2", "k:PHOTOS"), SearchParser.parse("photos of me", withMe).terms.map { SearchParser.termKey(it) }.toSet())
+        assertEquals(listOf("p:2"), SearchParser.parse("myself", withMe).terms.map { SearchParser.termKey(it) })
+        // An unnamed "me" is found by "me" too.
+        val unnamed = SearchVocabulary(vocab.people, vocab.categories, vocab.albums, me = 9L to "Me")
+        assertEquals(listOf("p:9", "c:dog"), SearchParser.parse("me with dogs", unnamed).terms.map { SearchParser.termKey(it) })
+        // No one marked: "me" is a word to leave out, as before.
+        assertEquals(listOf("p:1"), SearchParser.parse("me and John", vocab).terms.map { SearchParser.termKey(it) })
+    }
+
     @Test fun parsesDates() {
         val utc = TimeZone.getTimeZone("UTC")
         val now = Calendar.getInstance(utc).apply { set(2026, Calendar.OCTOBER, 8, 12, 0, 0); set(Calendar.MILLISECOND, 0) }.timeInMillis

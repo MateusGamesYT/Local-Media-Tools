@@ -52,6 +52,8 @@ class SearchVocabulary(
     /** Category key, display name and the words that find it. */
     val categories: List<Triple<String, String, List<String>>>,
     val albums: List<Pair<String, String>>,
+    /** The person the user said they are (id, as shown): "me" finds them. */
+    val me: Pair<Long, String>? = null,
 )
 
 /** A parsed query: the terms, plus "did you mean" fixes that were applied to misspelled words. */
@@ -164,6 +166,10 @@ object SearchParser {
             // A first name alone finds someone when no one else has it (not for names written without spaces).
             val first = n.substringBefore(' ')
             if (first != n && !unspaced.containsMatchIn(n) && vocab.people.count { normalize(it.second).substringBefore(' ') == first } == 1) dict.putIfAbsent(first) { SearchTerm.Person(id, name) }
+        }
+        // "Me" and the words for it in the app's language find the person the user said they are.
+        vocab.me?.let { (id, name) ->
+            for (w in list("me,myself," + trc("search words meaning yourself (the phone's owner), separated by commas", "me,myself") + "," + tr("Me") + "," + name)) dict[w] = { SearchTerm.Person(id, name) }
         }
         val monthNames = monthNames(dict.keys + stop)
         val maxLen = dict.keys.maxOfOrNull { it.count { c -> c == ' ' } + 1 } ?: 1
