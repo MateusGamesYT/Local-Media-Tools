@@ -21,7 +21,9 @@ class DocxReader private constructor(private val parts: Parts, private val main:
     }
 
     private val rels = parts.rels(main)
-    private val styles = WordStyles.read(parts, rels.values.firstOrNull { it.type.endsWith("/styles") }?.target)
+    private val styles = WordStyles.read(parts, rels.values.firstOrNull { it.type.endsWith("/styles") }?.target, rels.values.firstOrNull { it.type.endsWith("/theme") }?.target)
+    /** The page of the document's first section (or its only one). */
+    private var page: PageSetup? = null
     private val numbering = WordNumbering.read(parts, rels.values.firstOrNull { it.type.endsWith("/numbering") }?.target)
     private val footnoteBodies by lazy { notesPart("/footnotes", "footnote") }
     private val endnoteBodies by lazy { notesPart("/endnotes", "endnote") }
@@ -59,7 +61,8 @@ class DocxReader private constructor(private val parts: Parts, private val main:
         if (embedded > 0) notes.add(trn(embedded, "{0} embedded object is shown only as its picture.", "{0} embedded objects are shown only as their pictures."))
         val outline = blocks.withIndex().mapNotNull { (i, b) -> (b as? Paragraph)?.takeIf { it.heading in 1..3 && it.text.isNotBlank() }?.let { it.text.trim().take(80) to i } }
         val title = coreTitle(parts) ?: (blocks.firstOrNull { it is Paragraph && it.heading == 1 && it.text.isNotBlank() } as? Paragraph)?.text?.trim()
-        return FlowDocument(title, blocks, Media { ref -> parts.bytes(ref, 64L shl 20) }, notes, outline, styles.baseSizePt)
+        return FlowDocument(title, blocks, Media { ref -> parts.bytes(ref, 64L shl 20) }, notes, outline, styles.baseSizePt,
+            defaultFont = styles.defaultFont, page = page?.takeIf { it.sane })
     }
 
     // ------------------------------------------------------------------ block level
@@ -72,7 +75,8 @@ class DocxReader private constructor(private val parts: Parts, private val main:
                 c.ns == Ns.W && (c.local == "sdt") -> sdt(c, out)
                 c.ns == Ns.W && (c.local == "customXml" || c.local == "ins" || c.local == "moveTo") -> body(c, out)
                 c.ns == Ns.W && c.local == "sdtContent" -> body(c, out)
-                c.ns == Ns.W && (c.local == "sectPr" || c.local == "del" || c.local == "moveFrom") -> c.skip()
+                c.ns == Ns.W && c.local == "sectPr" -> { val sect = WordStyles.readSect(c); if (page == null) page = sect.page }
+                c.ns == Ns.W && (c.local == "del" || c.local == "moveFrom") -> c.skip()
                 c.ns == Ns.MC && c.local == "AlternateContent" -> alternate(c) { body(it, out) }
                 c.ns == Ns.M && c.local == "oMathPara" -> out.add(Paragraph(listOf(Span(c.readText(), RunStyle(italic = true))), align = Align.CENTER))
                 else -> c.skip()
@@ -147,11 +151,12 @@ class DocxReader private constructor(private val parts: Parts, private val main:
         val hasText = spans.any { it.text.isNotBlank() }
         if (hasText || label != null || b.trailing.isEmpty()) {
             out.add(Paragraph(spans, heading, p.align ?: Align.START, indent, p.firstLine ?: 0f, p.before ?: 0f, p.after ?: 0f,
-                label?.takeIf { it.isNotEmpty() }, p.ilvl ?: 0, p.shading ?: 0))
+                label?.takeIf { it.isNotEmpty() }, p.ilvl ?: 0, p.shading ?: 0, lineSpacing = p.lineMult ?: 0f, lineHeightPt = p.lineExact ?: 0f))
         }
         out.addAll(b.trailing)
         if (b.pageBreakAfter) out.add(PageBreak)
-        if (p.sectionBreak) out.add(PageBreak)
+        // A section ending here: the next starts on a new page unless it is a continuous one.
+        b.props.section?.let { sect -> if (page == null) page = sect.page; if (!sect.continuous) out.add(PageBreak) }
     }
 
     /** Run-level content: runs, links, fields, changes, content controls… */
@@ -454,25 +459,33 @@ class WordStyles private constructor() {
         fun over(o: RProps?): RProps = if (o == null) this else RProps(
             o.bold ?: bold, o.italic ?: italic, o.underline ?: underline, o.strike ?: strike, o.sizePt ?: sizePt, o.color ?: color,
             o.highlight ?: highlight, o.font ?: font, o.vertical ?: vertical, o.caps ?: caps, o.vanish ?: vanish, o.styleId ?: styleId,
-        )
+        ).also { it.themeFonts = themeFonts ?: o.themeFonts }
 
         fun toStyle(base: Float) = RunStyle(
             bold = bold == true, italic = italic == true, underline = underline == true, strike = strike == true,
             sizePt = sizePt ?: base, color = color ?: 0, highlight = highlight ?: 0, monospace = Units.isMonospace(font),
-            vertical = vertical ?: 0, font = font,
+            vertical = vertical ?: 0, font = font?.let { themeFonts?.get(it) ?: it.takeUnless { f -> f.startsWith("@") } },
         )
+
+        /** The theme's fonts, for "@minor" and "@major" (set by [WordStyles]). */
+        internal var themeFonts: Map<String, String>? = null
     }
 
     class PProps(
         var styleId: String? = null, var align: Align? = null, var indLeft: Float? = null, var firstLine: Float? = null,
         var before: Float? = null, var after: Float? = null, var numId: String? = null, var ilvl: Int? = null,
-        var outline: Int? = null, var shading: Int? = null, var pageBreakBefore: Boolean = false, var sectionBreak: Boolean = false,
+        var outline: Int? = null, var shading: Int? = null, var pageBreakBefore: Boolean = false, var section: Sect? = null,
+        var lineMult: Float? = null, var lineExact: Float? = null,
     ) {
         fun over(o: PProps?): PProps = if (o == null) this else PProps(
             o.styleId ?: styleId, o.align ?: align, o.indLeft ?: indLeft, o.firstLine ?: firstLine, o.before ?: before, o.after ?: after,
-            o.numId ?: numId, o.ilvl ?: ilvl, o.outline ?: outline, o.shading ?: shading, o.pageBreakBefore || pageBreakBefore, o.sectionBreak,
+            o.numId ?: numId, o.ilvl ?: ilvl, o.outline ?: outline, o.shading ?: shading, o.pageBreakBefore || pageBreakBefore, o.section,
+            if (o.lineMult != null || o.lineExact != null) o.lineMult else lineMult, if (o.lineMult != null || o.lineExact != null) o.lineExact else lineExact,
         )
     }
+
+    /** A section's properties: whether it follows on the same page, and its page. */
+    class Sect(val continuous: Boolean, val page: PageSetup?)
 
     private class Style(val type: String, val name: String, val basedOn: String?, val r: RProps?, val p: PProps?, val tableBorders: Boolean?)
 
@@ -481,14 +494,59 @@ class WordStyles private constructor() {
     private var defaultP = PProps()
     private var defaultParaStyle: String? = null
     var baseSizePt = 10f; private set
+    /** The font of text that names none. */
+    var defaultFont: String? = null; private set
+    private var themeFonts: Map<String, String> = emptyMap()
 
     companion object {
-        fun read(parts: Parts, part: String?): WordStyles {
+        fun read(parts: Parts, part: String?, themePart: String? = null): WordStyles {
             val s = WordStyles()
+            s.themeFonts = readTheme(parts, themePart ?: "word/theme/theme1.xml")
             val x = part?.let { parts.xml(it) } ?: parts.xml("word/styles.xml")
             if (x != null) s.load(x)
-            s.baseSizePt = s.effectiveR(PProps(), RProps()).sizePt ?: 10f
+            val base = s.effectiveR(PProps(), RProps())
+            s.baseSizePt = base.sizePt ?: 10f
+            s.defaultFont = base.toStyle(s.baseSizePt).font
             return s
+        }
+
+        /** The theme's heading ("@major") and body ("@minor") fonts. */
+        private fun readTheme(parts: Parts, part: String): Map<String, String> {
+            val x = parts.xml(part) ?: return emptyMap()
+            val out = HashMap<String, String>()
+            var which: String? = null
+            while (x.next() != Event.EOF) {
+                if (x.event == Event.START && x.ns == Ns.A) when (x.local) {
+                    "majorFont" -> which = "@major"
+                    "minorFont" -> which = "@minor"
+                    "latin" -> which?.let { w -> x.attr("typeface")?.takeIf { it.isNotBlank() }?.let { if (w !in out) out[w] = it } }
+                }
+                if (x.event == Event.END && x.ns == Ns.A && (x.local == "majorFont" || x.local == "minorFont")) which = null
+            }
+            return out
+        }
+
+        /** A w:sectPr: its break type and page size and margins (twips). */
+        fun readSect(x: XmlReader): Sect {
+            var continuous = false
+            var w = 0; var h = 0; var top = -1; var bottom = -1; var left = -1; var right = -1
+            x.children { c ->
+                if (c.event != Event.START) return@children
+                if (c.ns == Ns.W) when (c.local) {
+                    "type" -> continuous = c.attr(Ns.W, "val") == "continuous"
+                    "pgSz" -> { w = c.attr(Ns.W, "w")?.toIntOrNull() ?: 0; h = c.attr(Ns.W, "h")?.toIntOrNull() ?: 0 }
+                    "pgMar" -> {
+                        top = c.attr(Ns.W, "top")?.toIntOrNull()?.let { kotlin.math.abs(it) } ?: -1
+                        bottom = c.attr(Ns.W, "bottom")?.toIntOrNull()?.let { kotlin.math.abs(it) } ?: -1
+                        left = (c.attr(Ns.W, "left") ?: c.attr(Ns.W, "start"))?.toIntOrNull() ?: -1
+                        right = (c.attr(Ns.W, "right") ?: c.attr(Ns.W, "end"))?.toIntOrNull() ?: -1
+                    }
+                }
+                c.skip()
+            }
+            val page = if (w > 0 && h > 0 && top >= 0 && bottom >= 0 && left >= 0 && right >= 0)
+                PageSetup(Units.twipsToPt(w), Units.twipsToPt(h), Units.twipsToPt(top), Units.twipsToPt(bottom), Units.twipsToPt(left), Units.twipsToPt(right)) else null
+            return Sect(continuous, page)
         }
     }
 
@@ -529,7 +587,7 @@ class WordStyles private constructor() {
     }
 
     fun readRPr(x: XmlReader): RProps {
-        val r = RProps()
+        val r = RProps().also { it.themeFonts = themeFonts }
         x.children { c ->
             if (c.event != Event.START || c.ns != Ns.W) { if (c.event == Event.START) c.skip(); return@children }
             val v = c.attr(Ns.W, "val")
@@ -542,7 +600,9 @@ class WordStyles private constructor() {
                 "color" -> r.color = Units.hexColor(v) ?: 0
                 "highlight" -> r.highlight = Units.highlightColor(v) ?: 0
                 "shd" -> Units.hexColor(c.attr(Ns.W, "fill"))?.let { if (it != 0xFFFFFFFF.toInt()) r.highlight = it }
-                "rFonts" -> r.font = c.attr(Ns.W, "ascii") ?: c.attr(Ns.W, "hAnsi") ?: c.attr(Ns.W, "cs")
+                "rFonts" -> r.font = c.attr(Ns.W, "ascii") ?: c.attr(Ns.W, "hAnsi")
+                    ?: (c.attr(Ns.W, "asciiTheme") ?: c.attr(Ns.W, "hAnsiTheme"))?.let { t -> if (t.startsWith("major")) "@major" else "@minor" }
+                    ?: c.attr(Ns.W, "cs")
                 "vertAlign" -> r.vertical = when (v) { "superscript" -> 1; "subscript" -> -1; else -> 0 }
                 "caps" -> r.caps = Units.onOff(v)
                 "vanish" -> r.vanish = Units.onOff(v)
@@ -572,6 +632,13 @@ class WordStyles private constructor() {
                 "spacing" -> {
                     c.attr(Ns.W, "before")?.toIntOrNull()?.let { p.before = Units.twipsToPt(it) }
                     c.attr(Ns.W, "after")?.toIntOrNull()?.let { p.after = Units.twipsToPt(it) }
+                    // Line spacing: 240ths of single ("auto"), else a height in twips (exact or at least).
+                    c.attr(Ns.W, "line")?.toIntOrNull()?.takeIf { it > 0 }?.let { line ->
+                        when (c.attr(Ns.W, "lineRule") ?: "auto") {
+                            "auto" -> { p.lineMult = line / 240f; p.lineExact = null }
+                            else -> { p.lineExact = Units.twipsToPt(line); p.lineMult = null }
+                        }
+                    }
                     c.skip()
                 }
                 "numPr" -> c.children { n ->
@@ -583,7 +650,7 @@ class WordStyles private constructor() {
                 "outlineLvl" -> { p.outline = v?.toIntOrNull(); c.skip() }
                 "shd" -> { p.shading = Units.hexColor(c.attr(Ns.W, "fill"))?.takeIf { it != 0xFFFFFFFF.toInt() }; c.skip() }
                 "pageBreakBefore" -> { p.pageBreakBefore = Units.onOff(v); c.skip() }
-                "sectPr" -> { p.sectionBreak = true; c.skip() }
+                "sectPr" -> p.section = readSect(c)
                 "rPr" -> mark = readRPr(c)
                 else -> c.skip()
             }

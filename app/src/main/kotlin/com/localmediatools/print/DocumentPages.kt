@@ -95,10 +95,12 @@ object DocumentPrint {
 
 // ====================================================================== text documents
 /**
- * A text document (Word, OpenDocument text, RTF, e-book, HTML, Markdown, text) on [paper] with 20 mm
- * margins: paragraphs with their styles, lists and indents; headings kept with the text after them;
- * no single line of a paragraph left alone at the foot or top of a page; tables with their header
- * rows repeated on each page; pictures fitted to the page; page numbers at the foot.
+ * A text document (Word, OpenDocument text, RTF, e-book, HTML, Markdown, text) on pages: the page and
+ * margins the document was written for when it says (the page is then fitted to the paper), else
+ * [paper] with 20 mm margins. Paragraphs keep their styles, fonts (with the widths of the ones named,
+ * see [com.localmediatools.ui.reader.DocFonts]), line spacing, lists and indents; headings stay with
+ * the text after them; no single line of a paragraph is left alone at the foot or top of a page;
+ * tables repeat their header rows on each page; pictures fit the page; page numbers go in the foot.
  */
 class FlowPages(private val doc: FlowDocument, paper: MediaSize) : DocumentPages {
     private companion object {
@@ -113,12 +115,18 @@ class FlowPages(private val doc: FlowDocument, paper: MediaSize) : DocumentPages
         const val FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG
     }
 
-    private val pageW = DocumentPrint.pt(paper.widthMm)
-    private val pageH = DocumentPrint.pt(paper.heightMm)
-    private val margin = DocumentPrint.pt(20f)
-    private val width = ((pageW - 2 * margin) * K).toInt()
-    private val height = (pageH - 2 * margin) * K
+    private val setup = doc.page?.takeIf { it.sane }
+    private val pageW = setup?.widthPt ?: DocumentPrint.pt(paper.widthMm)
+    private val pageH = setup?.heightPt ?: DocumentPrint.pt(paper.heightMm)
+    private val mLeft = setup?.leftPt ?: DocumentPrint.pt(20f)
+    private val mRight = setup?.rightPt ?: DocumentPrint.pt(20f)
+    private val mTop = setup?.topPt ?: DocumentPrint.pt(20f)
+    private val mBottom = setup?.bottomPt ?: DocumentPrint.pt(20f)
+    private val width = ((pageW - mLeft - mRight) * K).toInt()
+    private val height = (pageH - mTop - mBottom) * K
     private val base = doc.baseSizePt.coerceIn(6f, 30f) * K
+    /** The document's own font for text that names none (else the phone's). */
+    private val face: Typeface = com.localmediatools.ui.reader.DocFonts.typeface(doc.defaultFont) ?: Typeface.DEFAULT
 
     // ------------------------------------------------------------------ what goes on a page
     private sealed class Ink
@@ -161,7 +169,7 @@ class FlowPages(private val doc: FlowDocument, paper: MediaSize) : DocumentPages
         val first = (indent + p.firstLinePt * K * scale).coerceIn(0f, maxIndent)
         val paint = TextPaint(FLAGS).apply {
             textSize = textPx; color = INK
-            typeface = when { p.code -> Typeface.MONOSPACE; p.heading in 1..6 && noSizes -> Typeface.DEFAULT_BOLD; else -> Typeface.DEFAULT }
+            typeface = when { p.code -> Typeface.MONOSPACE; p.heading in 1..6 && noSizes -> Typeface.create(face, Typeface.BOLD); else -> face }
         }
         if (p.listLabel != null) {
             val label = p.listLabel + " "
@@ -179,8 +187,17 @@ class FlowPages(private val doc: FlowDocument, paper: MediaSize) : DocumentPages
         }
         val text: CharSequence = if (sb.isEmpty()) " " else sb
         val pad = if (p.shading != 0) 4 * K * scale else 0f
+        // Line spacing as Word sets it: single is the font's own line height (with its line gap), times the
+        // document's multiple; or a fixed height.
+        val fm = paint.fontMetrics
+        val natural = fm.descent - fm.ascent
+        val gap = fm.leading.coerceAtLeast(0f)
+        val (mult, add) = when {
+            p.lineHeightPt > 0f -> (p.lineHeightPt * K * scale / natural).coerceIn(0.5f, 4f) to 0f
+            else -> { val m = (if (p.lineSpacing > 0f) p.lineSpacing else 1f).coerceIn(0.5f, 4f); m to gap * m }
+        }
         val layout = StaticLayout.Builder.obtain(text, 0, text.length, paint, (w - 2 * pad).toInt().coerceAtLeast(1))
-            .setLineSpacing(0f, if (p.code) 1f else 1.1f)
+            .setLineSpacing(add, mult)
             .setIncludePad(true)
             .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
             .setJustificationMode(if (p.align == Align.JUSTIFY && !p.code) Layout.JUSTIFICATION_MODE_INTER_WORD else Layout.JUSTIFICATION_MODE_NONE)
@@ -458,9 +475,9 @@ class FlowPages(private val doc: FlowDocument, paper: MediaSize) : DocumentPages
         canvas.scale(pxPerPt / K, pxPerPt / K)
         if (pages.size > 1) {
             footer.textSize = 9f * K
-            canvas.drawText((i + 1).toString(), pageW * K / 2, (pageH - margin * 0.55f) * K, footer)
+            canvas.drawText((i + 1).toString(), pageW * K / 2, (pageH - (mBottom * 0.5f).coerceIn(10f, 36f)) * K, footer)
         }
-        canvas.translate(margin * K, margin * K)
+        canvas.translate(mLeft * K, mTop * K)
         for (ink in list) when (ink) {
             is BoxInk -> {
                 boxPaint.color = ink.color

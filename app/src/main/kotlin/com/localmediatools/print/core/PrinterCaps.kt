@@ -152,6 +152,21 @@ class PrinterCaps(val attrs: IppMessage) {
         return listOf("media-top-margin-supported", "media-bottom-margin-supported", "media-left-margin-supported", "media-right-margin-supported").all { 0 in ints(it) }
     }
 
+    /**
+     * Whether sheets come out face down, so they already stack in order (laser printers, mostly);
+     * false for face up (most inkjets); null when the printer doesn't say.
+     */
+    val facesDown: Boolean? get() {
+        a("page-delivery-default")?.string?.let { d -> if (d.endsWith("face-down")) return true; if (d.endsWith("face-up")) return false }
+        when (a("output-bin-default")?.string) { "face-down" -> return true; "face-up" -> return false }
+        // printer-output-tray: "type=…;stackingorder=…;pagedelivery=faceUp;…" for each tray.
+        val trays = strings("printer-output-tray").mapNotNull { t ->
+            t.split(';').firstOrNull { it.trim().startsWith("pagedelivery=") }?.substringAfter('=')?.trim()?.lowercase()
+        }
+        if (trays.isNotEmpty()) return trays.first() == "facedown"
+        return null
+    }
+
     val colorModes: List<String> get() = strings("print-color-mode-supported")
     val canColor: Boolean get() = when {
         a("color-supported")?.bool == false -> false

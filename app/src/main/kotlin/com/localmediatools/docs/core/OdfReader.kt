@@ -20,6 +20,10 @@ object OdfReader {
         val cellFill: Int? = null, val cellAlign: HAlign? = null, val cellVAlign: VAlign? = null, val wrap: Boolean? = null, val border: Int? = null,
         val fill: Int? = null, val noFill: Boolean = false, val stroke: Int? = null, val noStroke: Boolean = false, val strokeWidth: Float? = null,
         val listStyle: String? = null, val display: String? = null, val name: String = "",
+        /** Line spacing: a multiple of single, or a height (pt). */
+        val lineMult: Float? = null, val lineExact: Float? = null,
+        /** Starts (or ends) with a page break; [masterPage]: a paragraph style that starts a page of another kind. */
+        val breakBefore: Boolean? = null, val breakAfter: Boolean? = null, val masterPage: String? = null,
     )
 
     private class ListLevel(val bullet: String?, val format: String?, val suffix: String, val prefix: String, val start: Int)
@@ -29,6 +33,8 @@ object OdfReader {
         val lists = HashMap<String, Map<Int, ListLevel>>()
         var pageW = 0f; var pageH = 0f
         val pageLayouts = HashMap<String, Pair<Float, Float>>()
+        /** Page layouts with their margins: name → page. */
+        val pageSetups = HashMap<String, PageSetup>()
         val masters = HashMap<String, String>()
 
         fun chain(name: String?): List<St> {
@@ -68,7 +74,18 @@ object OdfReader {
                 x.ns == Ns.TEXT && x.local == "list-style" -> x.attr(Ns.STYLE, "name")?.let { n -> into.lists[n] = listStyle(x) }
                 x.ns == Ns.STYLE && x.local == "page-layout" -> {
                     val n = x.attr(Ns.STYLE, "name") ?: continue
-                    x.children { c -> if (c.event == Event.START) { if (c.local == "page-layout-properties") into.pageLayouts[n] = (Units.lengthToPt(c.attr(Ns.FO, "page-width")) ?: 0f) to (Units.lengthToPt(c.attr(Ns.FO, "page-height")) ?: 0f); c.skip() } }
+                    x.children { c ->
+                        if (c.event == Event.START) {
+                            if (c.local == "page-layout-properties") {
+                                val w = Units.lengthToPt(c.attr(Ns.FO, "page-width")) ?: 0f; val h = Units.lengthToPt(c.attr(Ns.FO, "page-height")) ?: 0f
+                                into.pageLayouts[n] = w to h
+                                val all = Units.lengthToPt(c.attr(Ns.FO, "margin"))
+                                fun m(side: String) = Units.lengthToPt(c.attr(Ns.FO, "margin-$side")) ?: all ?: 0f
+                                if (w > 0 && h > 0) into.pageSetups[n] = PageSetup(w, h, m("top"), m("bottom"), m("left"), m("right"))
+                            }
+                            c.skip()
+                        }
+                    }
                 }
                 x.ns == Ns.STYLE && x.local == "master-page" -> {
                     val n = x.attr(Ns.STYLE, "name"); val pl = x.attr(Ns.STYLE, "page-layout-name")
@@ -90,6 +107,8 @@ object OdfReader {
         var align: Align? = null; var ml: Float? = null; var ind: Float? = null; var before: Float? = null; var after: Float? = null; var pbg: Int? = null
         var colW: Float? = null; var rowH: Float? = null; var cellFill: Int? = null; var cellAlign: HAlign? = null; var cellV: VAlign? = null; var wrap: Boolean? = null; var border: Int? = null
         var fill: Int? = null; var noFill = false; var stroke: Int? = null; var noStroke = false; var strokeW: Float? = null
+        var lineMult: Float? = null; var lineExact: Float? = null; var breakBefore: Boolean? = null; var breakAfter: Boolean? = null
+        val masterPage = x.attr(Ns.STYLE, "master-page-name")?.takeIf { it.isNotEmpty() }
         x.children { c ->
             if (c.event != Event.START) return@children
             when (c.local) {
@@ -110,6 +129,12 @@ object OdfReader {
                     ml = Units.lengthToPt(c.attr(Ns.FO, "margin-left")); ind = Units.lengthToPt(c.attr(Ns.FO, "text-indent"))
                     before = Units.lengthToPt(c.attr(Ns.FO, "margin-top")); after = Units.lengthToPt(c.attr(Ns.FO, "margin-bottom"))
                     c.attr(Ns.FO, "background-color")?.let { if (it != "transparent") pbg = Units.hexColor(it) }
+                    // Line height: "115%" of single, or a length (also "at least" one).
+                    (c.attr(Ns.FO, "line-height") ?: c.attr(Ns.STYLE, "line-height-at-least"))?.let { v ->
+                        if (v.endsWith("%")) v.removeSuffix("%").toFloatOrNull()?.let { lineMult = it / 100f } else if (v != "normal") lineExact = Units.lengthToPt(v)
+                    }
+                    c.attr(Ns.FO, "break-before")?.let { breakBefore = it == "page" }
+                    c.attr(Ns.FO, "break-after")?.let { breakAfter = it == "page" }
                     c.skip()
                 }
                 "table-column-properties" -> { colW = Units.lengthToPt(c.attr(Ns.STYLE, "column-width")); c.skip() }
@@ -134,7 +159,8 @@ object OdfReader {
         // Cell alignment comes from the paragraph alignment in spreadsheets.
         cellAlign = when (align) { Align.CENTER -> HAlign.CENTER; Align.END -> HAlign.RIGHT; Align.START -> HAlign.LEFT; Align.JUSTIFY -> HAlign.JUSTIFY; else -> null }
         return name to St(parent, bold, italic, underline, strike, size, sizePct, color, bg, font, vert, align, ml, ind, before, after, pbg, outline,
-            colW, rowH, cellFill, cellAlign, cellV, wrap, border, fill, noFill, stroke, noStroke, strokeW, listStyle, display, display)
+            colW, rowH, cellFill, cellAlign, cellV, wrap, border, fill, noFill, stroke, noStroke, strokeW, listStyle, display, display,
+            lineMult, lineExact, breakBefore, breakAfter, masterPage)
     }
 
     private fun listStyle(x: XmlReader): Map<Int, ListLevel> {
@@ -176,8 +202,11 @@ object OdfReader {
             }
         }
         val title = metaTitle(parts)
+        // The text's default font (the default paragraph style or the "Standard" one) and the page of the standard master page.
+        val defaultFont = styles.first("Standard") { it.font } ?: styles.byName["__default_paragraph"]?.font
+        val page = (styles.masters["Standard"] ?: styles.masters.values.firstOrNull())?.let { styles.pageSetups[it] }
         return FlowDocument(title ?: (t.blocks.firstOrNull { it is Paragraph && it.heading == 1 } as? Paragraph)?.text, t.blocks, Media { parts.bytes(it, 64L shl 20) },
-            t.noteList(), HtmlReader.outlineOf(t.blocks), 12f)
+            t.noteList(), HtmlReader.outlineOf(t.blocks), 12f, defaultFont = defaultFont, page = page?.takeIf { it.sane })
     }
 
     private fun metaTitle(parts: Parts): String? {
@@ -263,12 +292,18 @@ object OdfReader {
             val align = styles.first(styleName) { it.align } ?: Align.START
             val indent = (styles.first(styleName) { it.marginLeft } ?: 0f) + (list?.let { 18f * (it.second + 1) } ?: 0f)
             val text = spans.joinToString("") { it.text }
+            // A page break before it (its style says so, or starts a page of another kind), unless it is the first thing.
+            val breakBefore = styles.first(styleName) { it.breakBefore } == true || styleName?.let { styles.byName[it]?.masterPage } != null
+            if (breakBefore && out.isNotEmpty() && out.last() !is PageBreak) out.add(PageBreak)
             if (text.isNotBlank() || label != null || trailing.isEmpty()) {
+                val lineMult = styles.first(styleName) { it.lineMult }; val lineExact = styles.first(styleName) { it.lineExact }
                 out.add(Paragraph(merge(spans), heading.coerceIn(0, 6), align, indent, styles.first(styleName) { it.indent } ?: 0f,
                     styles.first(styleName) { it.before } ?: 0f, styles.first(styleName) { it.after } ?: 0f,
-                    label?.takeIf { it.isNotEmpty() }, list?.second ?: 0, styles.first(styleName) { it.paraBackground } ?: 0))
+                    label?.takeIf { it.isNotEmpty() }, list?.second ?: 0, styles.first(styleName) { it.paraBackground } ?: 0,
+                    lineSpacing = if (lineExact == null) lineMult ?: 0f else 0f, lineHeightPt = lineExact ?: 0f))
             }
             out.addAll(trailing)
+            if (styles.first(styleName) { it.breakAfter } == true) out.add(PageBreak)
         }
 
         private fun merge(spans: List<Span>): List<Span> {

@@ -51,11 +51,14 @@ object RichText {
     private val SERIF = Regex("times|georgia|cambria|garamond|book|serif|palatino|baskerville|minion|constantia|century|didot|bodoni|caslon|liberation serif|dejavu serif|noto serif", RegexOption.IGNORE_CASE)
     private val MONO = Regex("courier|consolas|mono|menlo|lucida console|andale|fixedsys|source code", RegexOption.IGNORE_CASE)
 
+    /** The typeface for a run's font: the document fonts ([DocFonts]) first, else the phone's serif or fixed-width one. */
     fun family(font: String?): Typeface? = when {
         font == null -> null
-        MONO.containsMatchIn(font) -> Typeface.MONOSPACE
-        SERIF.containsMatchIn(font) && !font.contains("sans", true) -> Typeface.SERIF
-        else -> null
+        else -> DocFonts.typeface(font) ?: when {
+            MONO.containsMatchIn(font) -> Typeface.MONOSPACE
+            SERIF.containsMatchIn(font) && !font.contains("sans", true) -> Typeface.SERIF
+            else -> null
+        }
     }
 
     /**

@@ -81,6 +81,8 @@ object PrintPrefs {
     var shortEdge = false
     var actualSize = false
     var pages = ""
+    /** Last page first: null until chosen (then on, unless the printer stacks face down). */
+    var reverse: Boolean? = null
     private var loaded = false
 
     private fun prefs(ctx: Context) = ctx.getSharedPreferences("print-settings", Context.MODE_PRIVATE)
@@ -99,17 +101,19 @@ object PrintPrefs {
         twoSided = p.getBoolean("twoSided", false)
         shortEdge = p.getBoolean("shortEdge", false)
         actualSize = p.getBoolean("actualSize", false)
+        reverse = if (p.contains("reverse")) p.getBoolean("reverse", true) else null
     }
 
     fun save(ctx: Context) {
         prefs(ctx).edit().putInt("perSheet", perSheet).putString("fit", fit.name).putBoolean("borderless", borderless).putBoolean("color", color)
-            .putInt("quality", quality).putBoolean("twoSided", twoSided).putBoolean("shortEdge", shortEdge).putBoolean("actualSize", actualSize).apply()
+            .putInt("quality", quality).putBoolean("twoSided", twoSided).putBoolean("shortEdge", shortEdge).putBoolean("actualSize", actualSize)
+            .apply { reverse?.let { putBoolean("reverse", it) } ?: remove("reverse") }.apply()
     }
 
     /** Back to the defaults, and settings read again next time (for tests). */
     fun reset() {
         paper = null; mediaType = null; perSheet = 1; fit = Fit.FIT; borderless = false; color = true; quality = 4
-        copies = 1; twoSided = false; shortEdge = false; actualSize = false; pages = ""; loaded = false
+        copies = 1; twoSided = false; shortEdge = false; actualSize = false; pages = ""; reverse = null; loaded = false
     }
 }
 
@@ -297,6 +301,9 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
 
     private fun borderless() = PrintPrefs.borderless && caps?.borderless(paper()) == true
 
+    /** Last page first: on unless chosen otherwise, or the printer says its sheets come out face down. */
+    private fun reverse() = PrintPrefs.reverse ?: (caps?.facesDown != true)
+
     private fun hasPdf() = selection.usable.any { it.kind == MediaKind.PDF }
 
     /** PDFs or documents: files with pages to choose from. */
@@ -356,6 +363,11 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
             if (PrintPrefs.twoSided) box.addView(ChoiceGroup(ctx, listOf(false, true), { if (it) tr("Flip on short edge") else tr("Flip on long edge") }, PrintPrefs.shortEdge,
                 badgeOf = { if (it) tr("calendars") else tr("books") }) { PrintPrefs.shortEdge = it }, lp().apply { topMargin = ctx.dp(8) })
         }
+        box.addView(ToggleRow(ctx, tr("Last page first"),
+            if (c?.facesDown == true) tr("This printer puts sheets face down, so they already stack in order")
+            else tr("Sheets come out face up: printed last page first, the stack ends in order with page 1 on top"), reverse()) {
+            PrintPrefs.reverse = it
+        }, lp().apply { topMargin = ctx.dp(4) })
         box.addView(SliderField(ctx, tr("Copies"), 1, 50, PrintPrefs.copies) { PrintPrefs.copies = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(12) })
     }
 
@@ -364,7 +376,7 @@ class PrintScreen(a: MainActivity) : ToolScreen(a, ToolId.PRINT) {
     private fun settings(items: List<MediaItem>): PrintSettings {
         val type = mediaType()
         return PrintSettings(paper(), type, borderless(), PrintPrefs.color, PrintPrefs.quality, PrintPrefs.copies,
-            PrintPrefs.twoSided && caps?.canTwoSided == true, shortEdge = PrintPrefs.shortEdge,
+            PrintPrefs.twoSided && caps?.canTwoSided == true, shortEdge = PrintPrefs.shortEdge, reverse = reverse(),
             photo = items.none { it.kind == MediaKind.PDF || it.kind == MediaKind.DOCUMENT } || MediaNames.isPhotoPaper(type),
             jobName = items.firstOrNull()?.baseName?.let { if (items.size > 1) "$it + ${items.size - 1}" else it } ?: "Local Media Tools")
     }

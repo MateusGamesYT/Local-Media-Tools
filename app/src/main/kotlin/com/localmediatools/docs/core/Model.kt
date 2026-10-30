@@ -60,6 +60,10 @@ class Paragraph(
     val quote: Boolean = false,
     /** Preformatted: monospace, spaces and line breaks kept. */
     val code: Boolean = false,
+    /** Line spacing as a multiple of single (1.15, 1.5, 2); 0 when the file doesn't say. */
+    val lineSpacing: Float = 0f,
+    /** A fixed line height (pt), for files that set one ("exactly 14 pt"); 0 when not. */
+    val lineHeightPt: Float = 0f,
 ) : Block() {
     val text: String get() = spans.joinToString("") { it.text }
     fun isEmpty() = spans.all { it.text.isBlank() } && listLabel == null
@@ -92,6 +96,13 @@ object Rule : Block()
 /** Something the reader can't draw, kept as a labelled placeholder ("Chart", "Equation"). */
 class Placeholder(val label: String) : Block()
 
+/** The page a document was written for: its size and margins, in points. */
+class PageSetup(val widthPt: Float, val heightPt: Float, val topPt: Float, val bottomPt: Float, val leftPt: Float, val rightPt: Float) {
+    /** Sizes that make sense (a page at least 1 inch, margins leaving room for text). */
+    val sane: Boolean get() = widthPt in 72f..3000f && heightPt in 72f..3000f && leftPt >= 0 && rightPt >= 0 && topPt >= 0 && bottomPt >= 0 &&
+        widthPt - leftPt - rightPt >= 72f && heightPt - topPt - bottomPt >= 72f
+}
+
 class FlowDocument(
     override val title: String?,
     val blocks: List<Block>,
@@ -101,6 +112,10 @@ class FlowDocument(
     val outline: List<Pair<String, Int>> = emptyList(),
     /** The document's normal text size (pt). */
     val baseSizePt: Float = 11f,
+    /** The font of text that names none ("Calibri"), when the file says. */
+    val defaultFont: String? = null,
+    /** The page it was written for, when the file says. */
+    val page: PageSetup? = null,
 ) : Opened()
 
 // ====================================================================== spreadsheets

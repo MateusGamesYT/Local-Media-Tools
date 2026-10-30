@@ -30,6 +30,11 @@ class PrintSettings(
     val shortEdge: Boolean = false,
     /** Mostly photos (the printer may tune its colour for them). */
     val photo: Boolean = false,
+    /**
+     * The last sheet first, so sheets coming out face up stack with the first on top (two-sided:
+     * whole sheets in reverse, each still front then back).
+     */
+    val reverse: Boolean = false,
     val jobName: String = "Local Media Tools",
 )
 
@@ -142,8 +147,24 @@ class PrintRun(
     }
 
     // ------------------------------------------------------------------ sending
+    /**
+     * The sides sent, in order: sheet numbers, -1 for a blank back. Copies made here follow each other;
+     * two-sided, an odd copy gets a blank back so the next starts on a new sheet.
+     */
+    private val sides: List<Int> by lazy {
+        val pages = ArrayList<Int>()
+        repeat(streamCopies) {
+            for (s in 0 until sheets) pages.add(s)
+            if (settings.twoSided && sheets % 2 == 1 && (streamCopies > 1 || settings.reverse)) pages.add(-1)
+        }
+        when {
+            !settings.reverse -> pages
+            !settings.twoSided -> pages.reversed()
+            else -> pages.chunked(2).reversed().flatten()
+        }
+    }
     /** Sheet sides in the document sent. */
-    private val total get() = sheets * streamCopies + if (settings.twoSided && sheets % 2 == 1 && streamCopies > 1) streamCopies else 0
+    private val total get() = sides.size
     /** Sides the printer will print, copies included. */
     private val printed get() = total * (if (printerCopies) settings.copies else 1)
 
@@ -174,7 +195,7 @@ class PrintRun(
 
     private fun writeDocument(out: OutputStream) {
         if (raster == null) {
-            renderer.pdf((0 until sheets).toList().let { s -> (1..streamCopies).flatMap { s } }, settings.paper, dpi, out)
+            renderer.pdf(sides.filter { it >= 0 }, settings.paper, dpi, out)
             return
         }
         val w = RasterWriter(out, raster, total)
@@ -184,11 +205,7 @@ class PrintRun(
         val buf = IntArray(widthPx * band)
         val rowBuf = IntArray(widthPx)
         var side = 0
-        val pages = ArrayList<Int>()
-        repeat(streamCopies) {
-            for (s in 0 until sheets) pages.add(s)
-            if (settings.twoSided && sheets % 2 == 1 && streamCopies > 1) pages.add(-1) // blank back, so copies start on a new sheet
-        }
+        val pages = sides
         for ((n, s) in pages.withIndex()) {
             if (cancelled()) throw PrintCancelled()
             val back = settings.twoSided && side % 2 == 1
@@ -236,7 +253,7 @@ class PrintRun(
 
     private fun sendJpegs(): List<Int> {
         val ids = ArrayList<Int>()
-        val list = (1..streamCopies).flatMap { 0 until sheets }
+        val list = sides.filter { it >= 0 }
         for ((n, s) in list.withIndex()) {
             if (cancelled()) throw PrintCancelled()
             listener.update(PrintStage.SENDING, n.toDouble() / list.size * 0.9, if (list.size > 1) tr("Sending sheet {0} of {1}", n + 1, list.size) else tr("Sending to the printer"))

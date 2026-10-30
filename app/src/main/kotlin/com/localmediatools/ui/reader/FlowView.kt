@@ -75,6 +75,8 @@ class FlowView(ctx: Context, private val doc: FlowDocument, private val host: Re
     /** Document points to pixels: the document's normal text size becomes 16 sp (× zoom). */
     private val pxPerPt get() = basePx / doc.baseSizePt.coerceIn(6f, 30f)
     private val pad = (18 * density).toInt()
+    /** The document's own font for text that names none, with the widths of the one it names (else the phone's). */
+    private val face: Typeface = DocFonts.typeface(doc.defaultFont) ?: Typeface.DEFAULT
 
     // ------------------------------------------------------------------ items
     private sealed class Item(val block: Int)
@@ -190,8 +192,8 @@ class FlowView(ctx: Context, private val doc: FlowDocument, private val host: Re
         tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, textPx)
         tv.typeface = when {
             p.code -> Typeface.MONOSPACE
-            p.heading in 1..6 && noSizes -> Typeface.DEFAULT_BOLD
-            else -> Typeface.DEFAULT
+            p.heading in 1..6 && noSizes -> Typeface.create(face, Typeface.BOLD)
+            else -> face
         }
         val bg = if (p.shading != 0) p.shading or 0xFF000000.toInt() else PAGE
         val sb = RichText.paragraph(p, pxPerPt, INK, bg, LINK, host::link)
@@ -374,7 +376,7 @@ class FlowView(ctx: Context, private val doc: FlowDocument, private val host: Re
                     if (p.listLabel != null) sb.insert(0, p.listLabel + " ")
                     val ms = matches.filter { m -> m.row == r && m.cell == pc.index && m.para == k }
                     if (ms.isNotEmpty()) RichText.mark(sb, ms.map { m -> m.range }, ms.indexOfFirst { m -> m.index == current })
-                    val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = basePx * 0.92f; color = INK; typeface = if (table(it).rows[r].header) Typeface.DEFAULT_BOLD else Typeface.DEFAULT }
+                    val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = basePx * 0.92f; color = INK; typeface = if (table(it).rows[r].header) Typeface.create(face, Typeface.BOLD) else face }
                     val align = when (p.align) { Align.CENTER -> Layout.Alignment.ALIGN_CENTER; Align.END -> Layout.Alignment.ALIGN_OPPOSITE; else -> Layout.Alignment.ALIGN_NORMAL }
                     StaticLayout.Builder.obtain(sb, 0, sb.length, paint, w.toInt()).setAlignment(align).setLineSpacing(0f, 1.1f).setIncludePad(true).build()
                 }

@@ -133,7 +133,8 @@ class PrintTest {
         assertEquals(0, col.int("media-top-margin"))
         assertEquals("photographic-glossy", col.string("media-type"))
         assertEquals(5, job.attributes!!["print-quality"]?.int)
-        val pages = RasterReader.read(job.document)
+        // Last page first (the default): the sheet with one photo arrives first.
+        val pages = RasterReader.read(job.document).reversed()
         assertEquals(2, pages.size)
         for (p in pages) { assertEquals(2880, p.width); assertEquals(4320, p.height); assertEquals(720, p.dpi) }
         // Borderless fill: photos right up to the corners (the second sheet has one photo, at the top).
@@ -199,9 +200,13 @@ class PrintTest {
         val s = PrintScreen(a)
         a.navigator.push(s); idle(600)
         connect(s)
-        // Two-sided, turned on the short edge.
+        // Two-sided, turned on the short edge; first page first.
         all(s.view).filterIsInstance<ToggleRow>().single { it.title == "Two-sided" }.performClick(); idle()
         click(s.view, "Flip on short edge  ·  calendars"); idle()
+        val lastFirst = all(s.view).filterIsInstance<ToggleRow>().single { it.title == "Last page first" }
+        assertTrue("on by default", lastFirst.switch.isChecked)
+        lastFirst.performClick(); idle()
+        assertEquals(false, PrintPrefs.reverse)
         waitFor("preview") { texts(s.view).any { it.matches(Regex("\\d+ sheets.*")) } }
         val sheets = texts(s.view).first { it.matches(Regex("\\d+ sheets.*")) }.substringBefore(' ').toInt()
         shotIfAsked(s.view, "52_print_documents", dialog = false)
@@ -219,13 +224,14 @@ class PrintTest {
             assertEquals(2976, p.width); assertEquals(4209, p.height)
             assertTrue("page ${i + 1} has something on it", ink(p, 0, 0, p.width, p.height) > 2000)
         }
-        // Text pages keep their 20 mm margins clear (page numbers sit in the foot).
+        // Text pages keep their margins clear (the report's own 1 inch on its Letter page, fitted to A4); page numbers sit in the foot.
         val text = pages.take(counts[0])
         for (p in text) {
             assertEquals(0, ink(p, 0, 0, p.width, (16 * mm).toInt()))
             assertEquals(0, ink(p, 0, 0, (16 * mm).toInt(), p.height))
         }
-        assertTrue("page number in the foot", ink(text[0], (90 * mm).toInt(), (279 * mm).toInt(), (120 * mm).toInt(), (288 * mm).toInt()) > 0)
+        assertTrue("page number in the foot", ink(text[0], (90 * mm).toInt(), (258 * mm).toInt(), (120 * mm).toInt(), (292 * mm).toInt()) > 0)
+        assertEquals("nothing else in the foot", 0, ink(text[0], 0, (258 * mm).toInt(), (90 * mm).toInt(), (292 * mm).toInt()))
         // Slides are turned to fill the portrait paper; the first slide's title is drawn.
         val slide = pages[counts[0] + counts[1]]
         assertTrue(ink(slide, (20 * mm).toInt(), (30 * mm).toInt(), (190 * mm).toInt(), (267 * mm).toInt()) > 5000)

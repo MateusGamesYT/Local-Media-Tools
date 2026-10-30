@@ -435,6 +435,43 @@ class PrintCoreTest {
         }
     }
 
+    @Test fun lastPageFirstLeavesAFaceUpStackInOrder() {
+        fun pixels(r: AwtRenderer, sheet: Int) = r.given[sheet]!!.map { it or (0xFF shl 24) }.toIntArray()
+        // One-sided: the three photos' sheets arrive last first.
+        FakePrinter().use { printer ->
+            val (renderer, result) = job(printer, PrintSettings(MediaSize.A4, quality = 3, reverse = true), LayoutOptions())
+            assertTrue(result.getOrThrow().ok)
+            val pages = RasterReader.read(printer.jobs.single().document)
+            assertEquals(3, pages.size)
+            for (k in 0 until 3) assertArrayEquals("side ${k + 1}", pixels(renderer, 2 - k), pages[k].pixels)
+        }
+        // Two-sided: whole sheets in reverse, each front then back; the odd last sheet gets a blank back.
+        FakePrinter().use { printer ->
+            printer.duplex = true
+            val (renderer, result) = job(printer, PrintSettings(MediaSize.A4, quality = 3, twoSided = true, reverse = true), LayoutOptions())
+            assertTrue(result.getOrThrow().ok)
+            val job = printer.jobs.single()
+            assertEquals("two-sided-long-edge", job.attributes!!["sides"]?.string)
+            val pages = RasterReader.read(job.document)
+            assertEquals(4, pages.size)
+            assertArrayEquals(pixels(renderer, 2), pages[0].pixels)
+            assertTrue("blank back", pages[1].pixels.all { it == -1 })
+            assertArrayEquals(pixels(renderer, 0), pages[2].pixels)
+            assertArrayEquals(pixels(renderer, 1), pages[3].pixels)
+        }
+        // In order when asked, as before.
+        FakePrinter().use { printer ->
+            val (renderer, result) = job(printer, PrintSettings(MediaSize.A4, quality = 3), LayoutOptions())
+            assertTrue(result.getOrThrow().ok)
+            val pages = RasterReader.read(printer.jobs.single().document)
+            for (k in 0 until 3) assertArrayEquals(pixels(renderer, k), pages[k].pixels)
+        }
+        // Printers that say their sheets come out face down already stack in order.
+        FakePrinter().use { printer ->
+            assertEquals(null, PrintRun.capabilities(IppClient(PrinterAddress.parse(printer.uri))).facesDown)
+        }
+    }
+
     @Test fun a4IsOfferedFirstWhenThePrinterHasIt() {
         val letter = MediaSize.LETTER
         val photo = MediaSize.fromName("na_index-4x6_4x6in")!!

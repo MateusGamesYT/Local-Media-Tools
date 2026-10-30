@@ -22,11 +22,18 @@ class DocReader private constructor(private val ole: Ole2) {
     private lateinit var table: ByteArray
     private class Piece(val cpStart: Int, val cpEnd: Int, val fc: Int, val compressed: Boolean)
     private val pieces = ArrayList<Piece>()
-    /** Character runs by file offset: (fcStart, fcEnd, style). */
-    private val chpx = ArrayList<Triple<Int, Int, RunStyle>>()
-    /** Paragraph style index by file offset of the paragraph's end. */
-    private val papx = ArrayList<Triple<Int, Int, Int>>()
+    /** Character runs by file offset: their formatting's place in the WordDocument stream (offset, length; -1 for none). */
+    private class Run(val s: Int, val e: Int, val at: Int, val cb: Int)
+    private val chpx = ArrayList<Run>()
+    /** Paragraphs by file offset: their style, and their own formatting's place (offset, length). */
+    private class Para(val s: Int, val e: Int, val istd: Int, val at: Int, val cb: Int)
+    private val papx = ArrayList<Para>()
     private val styleNames = HashMap<Int, String>()
+    /** A style: the one it is based on, its kind (1 paragraph, 2 character) and its formatting in the table stream. */
+    private class StyleDef(val base: Int, val kind: Int, val para: IntRange?, val chars: IntRange?)
+    private val styleDefs = HashMap<Int, StyleDef>()
+    private val fontNames = ArrayList<String>()
+    private var defaultFtc = -1
     private var notes = ArrayList<String>()
     /** Inline pictures: (fcStart, fcEnd, offset of the picture in the Data stream). */
     private val pictureRuns = ArrayList<Triple<Int, Int, Int>>()
@@ -62,9 +69,11 @@ class DocReader private constructor(private val ole: Ole2) {
         fun lcb(i: Int) = le32(wd, pairs + i * 8 + 4)
         readPieces(fc(33), lcb(33))
         if (pieces.isEmpty()) throw UnreadableException(tr("This Word file is damaged: its text is missing."))
+        try { readFonts(fc(15), lcb(15)) } catch (_: Exception) { fontNames.clear() }
         try { readStyles(fc(1), lcb(1)) } catch (_: Exception) {}
         try { readChpx(fc(12), lcb(12)) } catch (_: Exception) { chpx.clear() }
         try { readPapx(fc(13), lcb(13)) } catch (_: Exception) { papx.clear() }
+        try { readSections(fc(6), lcb(6)) } catch (_: Exception) { sections.clear() }
         val blocks = build(0, ccpText)
         fun valid(n: Int) = n in 1..(Int.MAX_VALUE / 8)
         // The other stories follow the main text in this order: footnotes, headers, (macros), comments, endnotes, text boxes.
@@ -88,7 +97,9 @@ class DocReader private constructor(private val ole: Ole2) {
         }
         if (missedPictures > 0 || hasDrawings) notes.add(tr("Some pictures and drawings in this document aren't shown."))
         val title = (blocks.firstOrNull { it is Paragraph && it.heading == 1 && it.text.isNotBlank() } as? Paragraph)?.text?.trim()
-        return FlowDocument(title, blocks, Media { ref -> picture(ref.removePrefix("pic:").toIntOrNull() ?: -1) }, notes, outline = HtmlReader.outlineOf(blocks), baseSizePt = 12f)
+        val normal = runStyleOf(0)
+        return FlowDocument(title, blocks, Media { ref -> picture(ref.removePrefix("pic:").toIntOrNull() ?: -1) }, notes, outline = HtmlReader.outlineOf(blocks),
+            baseSizePt = normal.sizePt.takeIf { it in 4f..72f } ?: 12f, defaultFont = normal.font, page = sections.firstOrNull()?.page?.takeIf { it.sane })
     }
 
     private var hasDrawings = false
@@ -170,26 +181,161 @@ class DocReader private constructor(private val ole: Ole2) {
 
     private class IntArrayList { var a = IntArray(1024); var n = 0; fun add(v: Int) { if (n == a.size) a = a.copyOf(n * 2); a[n++] = v }; operator fun get(i: Int) = a[i] }
 
+    private val runStyles = HashMap<Long, RunStyle>()
+
+    /** The formatting of the character at [fc]: its paragraph style's, with the run's own on top. */
     private fun styleAt(fc: Int): RunStyle {
-        // Binary search over sorted runs.
+        val istd = istdAt(fc)
         var lo = 0; var hi = chpx.size - 1
         while (lo <= hi) {
             val mid = (lo + hi) ushr 1
-            val (s, e, st) = chpx[mid]
-            if (fc < s) hi = mid - 1 else if (fc >= e) lo = mid + 1 else return st
+            val r = chpx[mid]
+            if (fc < r.s) hi = mid - 1 else if (fc >= r.e) lo = mid + 1 else {
+                if (r.at < 0) return runStyleOf(istd)
+                return runStyles.getOrPut((istd.toLong() shl 32) or mid.toLong()) { sprmsRun(wd, r.at, r.cb, runStyleOf(istd)) }
+            }
         }
-        return RunStyle(sizePt = 12f)
+        return runStyleOf(istd)
     }
 
-    private fun istdAt(fc: Int): Int {
+    private fun paraAt(fc: Int): Para? {
         var lo = 0; var hi = papx.size - 1
         while (lo <= hi) {
             val mid = (lo + hi) ushr 1
-            val (s, e, st) = papx[mid]
-            if (fc < s) hi = mid - 1 else if (fc >= e) lo = mid + 1 else return st
+            val p = papx[mid]
+            if (fc < p.s) hi = mid - 1 else if (fc >= p.e) lo = mid + 1 else return p
         }
-        return 0
+        return null
     }
+
+    private fun istdAt(fc: Int): Int = paraAt(fc)?.istd ?: 0
+
+    // ------------------------------------------------------------------ style sheet, fonts, paragraph and page formatting
+    private val styleRuns = HashMap<Int, RunStyle>()
+
+    /** The character formatting style [istd] gives (through the styles it is based on); Word's own defaults at the root. */
+    private fun runStyleOf(istd: Int, depth: Int = 0): RunStyle = styleRuns[istd] ?: run {
+        val def = styleDefs[istd]
+        val base = if (def != null && def.base >= 0 && def.base != istd && depth < 12) runStyleOf(def.base, depth + 1)
+            else RunStyle(sizePt = 10f, font = fontNames.getOrNull(defaultFtc))
+        val st = def?.chars?.let { sprmsRun(table, it.first, it.last - it.first + 1, base) } ?: base
+        st.also { if (depth == 0) styleRuns[istd] = it }
+    }
+
+    /** Paragraph formatting (twips, or 240ths of a line for multiples). */
+    private class PP(var align: Align = Align.START, var left: Int = 0, var first: Int = 0, var before: Int = 0, var after: Int = 0,
+                     var lineMult: Float = 0f, var lineExact: Float = 0f, var breakBefore: Boolean = false) {
+        fun copy() = PP(align, left, first, before, after, lineMult, lineExact, breakBefore)
+    }
+
+    private val stylePara = HashMap<Int, PP>()
+
+    private fun paraStyleOf(istd: Int, depth: Int = 0): PP = stylePara[istd]?.copy() ?: run {
+        val def = styleDefs[istd]
+        val base = if (def != null && def.base >= 0 && def.base != istd && depth < 12) paraStyleOf(def.base, depth + 1) else PP()
+        def?.para?.let { sprmsPara(table, it.first, it.last - it.first + 1, base) }
+        if (depth == 0) stylePara[istd] = base.copy()
+        base
+    }
+
+    /** The paragraph formatting of the paragraph holding [fc]: its style's, with its own on top. */
+    private fun paraPropsAt(fc: Int): PP {
+        val p = paraAt(fc) ?: return paraStyleOf(0)
+        val pp = paraStyleOf(p.istd)
+        if (p.cb > 0) sprmsPara(wd, p.at, p.cb, pp)
+        return pp
+    }
+
+    private fun sprmsPara(b: ByteArray, start: Int, len: Int, pp: PP) {
+        var i = start
+        val end = (start + len).coerceAtMost(b.size)
+        while (i + 2 <= end) {
+            val sprm = le16(b, i); i += 2
+            if (sprm == 0xD608 || sprm == 0xD606) { val cb = le16(b, i); i += 2 + maxOf(0, cb - 1); continue }
+            val spra = sprm ushr 13
+            val size = when {
+                sprm == 0xC615 && (b.getOrNull(i)?.toInt()?.and(0xFF) ?: 0) == 255 -> {
+                    val del = b.getOrNull(i + 1)?.toInt()?.and(0xFF) ?: 0
+                    1 + 1 + del * 4 + 1 + (b.getOrNull(i + 2 + del * 4)?.toInt()?.and(0xFF) ?: 0) * 3
+                }
+                spra == 0 || spra == 1 -> 1; spra == 2 || spra == 4 || spra == 5 -> 2; spra == 7 -> 3; spra == 3 -> 4
+                spra == 6 -> (b.getOrNull(i)?.toInt()?.and(0xFF) ?: 0) + 1
+                else -> 1
+            }
+            val v = b.getOrNull(i)?.toInt()?.and(0xFF) ?: 0
+            when (sprm) {
+                0x2403, 0x2461 -> pp.align = when (v) { 1 -> Align.CENTER; 2 -> Align.END; 3, 4, 5 -> Align.JUSTIFY; else -> Align.START }
+                0x840F, 0x845E -> pp.left = le16(b, i).toShort().toInt()
+                0x8411, 0x8460 -> pp.first = le16(b, i).toShort().toInt()
+                0xA413 -> pp.before = le16(b, i)
+                0xA414 -> pp.after = le16(b, i)
+                0x2407 -> pp.breakBefore = v != 0
+                0x6412 -> {
+                    val dya = le16(b, i).toShort().toInt(); val mult = le16(b, i + 2)
+                    // A multiple of single (240 = single), else a height in twips (negative: exactly; positive: at least).
+                    if (mult != 0) { pp.lineMult = dya / 240f; pp.lineExact = 0f } else if (dya != 0) { pp.lineExact = kotlin.math.abs(dya) / 20f; pp.lineMult = 0f }
+                }
+            }
+            i += size
+        }
+    }
+
+    /** The font table (SttbfFfn): each FFN holds its own size less one, then 39 bytes, then the name. */
+    private fun readFonts(fc: Int, lcb: Int) {
+        if (fc < 0 || lcb < 4 || fc + lcb > table.size) return
+        var p = fc
+        val end = fc + lcb
+        var count = le16(table, p); p += 2
+        if (count == 0xFFFF) { count = le16(table, p); p += 2 }
+        val extra = le16(table, p); p += 2
+        for (k in 0 until count.coerceAtMost(4096)) {
+            if (p >= end) break
+            val size = (table[p].toInt() and 0xFF) + 1
+            val sb = StringBuilder()
+            var q = p + 40
+            while (q + 1 < minOf(p + size, end)) { val ch = le16(table, q); if (ch == 0) break; sb.append(ch.toChar()); q += 2 }
+            fontNames.add(sb.toString().trim())
+            p += size + extra
+        }
+    }
+
+    /** A section: where it starts (cp), whether it follows on the same page, and its page. */
+    private class Section(val cp: Int, val continuous: Boolean, val page: PageSetup)
+    private val sections = ArrayList<Section>()
+
+    /** The sections (PlcfSed) and their page size and margins (SEPX), with Word's defaults where a section says nothing. */
+    private fun readSections(fc: Int, lcb: Int) {
+        if (fc < 0 || lcb < 16 || fc + lcb > table.size) return
+        val n = (lcb - 4) / 16
+        for (k in 0 until n) {
+            val cp = le32(table, fc + k * 4)
+            val sed = fc + (n + 1) * 4 + k * 12
+            val fcSepx = le32(table, sed + 2)
+            var w = 12240; var h = 15840; var l = 1800; var r = 1800; var t = 1440; var b = 1440; var bkc = 2
+            if (fcSepx >= 0 && fcSepx + 2 <= wd.size) {
+                val cb = le16(wd, fcSepx)
+                var i = fcSepx + 2
+                val e = minOf(fcSepx + 2 + cb, wd.size)
+                while (i + 2 <= e) {
+                    val sprm = le16(wd, i); i += 2
+                    val spra = sprm ushr 13
+                    val size = when (spra) { 0, 1 -> 1; 2, 4, 5 -> 2; 7 -> 3; 3 -> 4; 6 -> (wd.getOrNull(i)?.toInt()?.and(0xFF) ?: 0) + 1; else -> 1 }
+                    val v16 = le16(wd, i)
+                    when (sprm) {
+                        0xB01F -> w = v16; 0xB020 -> h = v16
+                        0xB021 -> l = v16; 0xB022 -> r = v16
+                        0x9023 -> t = kotlin.math.abs(v16.toShort().toInt()); 0x9024 -> b = kotlin.math.abs(v16.toShort().toInt())
+                        0x3009 -> bkc = wd[i].toInt() and 0xFF
+                    }
+                    i += size
+                }
+            }
+            sections.add(Section(cp, bkc == 0, PageSetup(w / 20f, h / 20f, t / 20f, b / 20f, l / 20f, r / 20f)))
+        }
+    }
+
+    /** Whether a section mark at [cp] leads into a section that goes on on the same page. */
+    private fun continuousAfter(cp: Int): Boolean = sections.firstOrNull { it.cp > cp }?.continuous == true
 
     private fun headingOf(istd: Int): Int {
         val n = styleNames[istd]?.lowercase() ?: return 0
@@ -217,7 +363,13 @@ class DocReader private constructor(private val ole: Ole2) {
             if (last != null && last.style == st) spans[spans.size - 1] = Span(last.text + s, st) else spans.add(Span(s, st))
         }
         val pics = ArrayList<Block>()
-        fun paragraph(fc: Int): Paragraph = Paragraph(spans.toList(), headingOf(istdAt(fc))).also { spans.clear() }
+        fun paragraph(fc: Int): Paragraph {
+            val pp = paraPropsAt(fc)
+            val p = Paragraph(spans.toList(), headingOf(istdAt(fc)), pp.align, pp.left / 20f, pp.first / 20f, pp.before / 20f, pp.after / 20f,
+                lineSpacing = pp.lineMult, lineHeightPt = pp.lineExact)
+            spans.clear()
+            return p
+        }
         // Cells still waiting for their row's end (damaged files) end the row.
         fun flushTable() {
             if (cells.isNotEmpty()) { rows.add(TableRow(cells.toList())); defs.add(null); cells.clear() }
@@ -233,6 +385,11 @@ class DocReader private constructor(private val ole: Ole2) {
                     val flagged = rowEnds.isNotEmpty()
                     val inCell = if (flagged) isInTable(fc) else cells.isNotEmpty()
                     if (!inCell && (rows.isNotEmpty() || cells.isNotEmpty())) flushTable()
+                    // A paragraph that asks for a page break before it (not the first one, nor one in a table).
+                    if (!inCell && paraPropsAt(fc).breakBefore) {
+                        out.addAll(cellParas); cellParas.clear()
+                        if (out.isNotEmpty() && out.last() !is PageBreak) out.add(PageBreak)
+                    }
                     cellParas.add(p)
                     // Pictures in the paragraph come right after its text.
                     if (pics.isNotEmpty()) { if (p.isEmpty()) cellParas.removeAt(cellParas.size - 1); cellParas.addAll(pics); pics.clear() }
@@ -262,6 +419,8 @@ class DocReader private constructor(private val ole: Ole2) {
                 '\u000B' -> add("\n", fc)
                 '\u000C' -> {
                     val p = paragraph(fc)
+                    // A section mark before a continuous section isn't a page break.
+                    val sectionGoesOn = continuousAfter(cp0 + i)
                     if (cells.isNotEmpty()) {
                         // A page break inside a row (damaged files): what is waiting is the row's last cell.
                         if (!p.isEmpty()) cellParas.add(p)
@@ -273,7 +432,7 @@ class DocReader private constructor(private val ole: Ole2) {
                         out.addAll(cellParas); cellParas.clear()
                         if (!p.isEmpty()) out.add(p)
                     }
-                    out.add(PageBreak)
+                    if (!sectionGoesOn) out.add(PageBreak)
                 }
                 '\u000E' -> add("\n", fc)
                 '\u0013' -> { if (field < 32) { inResult[field] = false; field++ } }
@@ -464,20 +623,42 @@ class DocReader private constructor(private val ole: Ole2) {
 
     // ------------------------------------------------------------------ styles and formatting
     private fun readStyles(fc: Int, lcb: Int) {
-        if (fc <= 0 || lcb <= 0 || fc + lcb > table.size) return
+        if (fc < 0 || lcb <= 0 || fc + lcb > table.size) return
         val cbStshi = le16(table, fc)
         val stshi = fc + 2
         val cstd = le16(table, stshi)
         val cbSTDBaseInFile = le16(table, stshi + 2)
+        // rgftcStandardChpStsh: the font of text whose styles name none.
+        if (cbStshi >= 18) defaultFtc = le16(table, stshi + 12)
         var p = stshi + cbStshi
         for (istd in 0 until cstd) {
             if (p + 2 > fc + lcb) break
             val cbStd = le16(table, p)
             if (cbStd > 0) {
                 val base = p + 2
+                val end = minOf(base + cbStd, table.size)
                 val nameAt = base + cbSTDBaseInFile
                 val len = le16(table, nameAt)
                 if (len in 1..255 && nameAt + 2 + len * 2 <= table.size) styleNames[istd] = String(table, nameAt + 2, len * 2, Charsets.UTF_16LE)
+                // StdfBase: kind (stk) and the style it is based on; then cupx formatting blocks after the name.
+                val w2 = le16(table, base + 2)
+                val kind = w2 and 0xF
+                val istdBase = w2 ushr 4
+                val cupx = le16(table, base + 4) and 0xF
+                var u = nameAt + 2 + len * 2 + 2
+                var para: IntRange? = null; var chars: IntRange? = null
+                for (k in 0 until cupx) {
+                    if (u + 2 > end) break
+                    val cb = le16(table, u); val d = u + 2
+                    if (d + cb > end) break
+                    when {
+                        kind == 1 && k == 0 && cb >= 2 -> para = (d + 2) until (d + cb) // UpxPapx: istd, then sprms
+                        kind == 1 && k == 1 -> chars = d until (d + cb)
+                        kind == 2 && k == 0 -> chars = d until (d + cb)
+                    }
+                    u = d + cb + (cb % 2)
+                }
+                if (len in 0..255) styleDefs[istd] = StyleDef(if (istdBase == 0xFFF) -1 else istdBase, kind, para, chars)
             }
             p += 2 + cbStd
         }
@@ -485,7 +666,7 @@ class DocReader private constructor(private val ole: Ole2) {
 
     /** The character runs of the document, from the CHPX bin table and its formatted disk pages. */
     private fun readChpx(fc: Int, lcb: Int) {
-        if (fc <= 0 || lcb < 8 || fc + lcb > table.size) return
+        if (fc < 0 || lcb < 8 || fc + lcb > table.size) return
         val n = (lcb - 4) / 8
         for (k in 0 until n) {
             val pn = le32(table, fc + (n + 1) * 4 + k * 4) and 0x3FFFFF
@@ -495,21 +676,19 @@ class DocReader private constructor(private val ole: Ole2) {
             for (r in 0 until crun) {
                 val s = le32(wd, page + r * 4); val e = le32(wd, page + (r + 1) * 4)
                 val off = (wd[page + (crun + 1) * 4 + r].toInt() and 0xFF) * 2
-                var style = RunStyle(sizePt = 12f)
                 if (off > 0) {
                     val cb = wd[page + off].toInt() and 0xFF
-                    style = sprmsRun(wd, page + off + 1, cb, style)
+                    chpx.add(Run(s, e, page + off + 1, cb))
                     pictureLocation(wd, page + off + 1, cb).let { if (it >= 0) pictureRuns.add(Triple(s, e, it)) }
-                }
-                chpx.add(Triple(s, e, style))
+                } else chpx.add(Run(s, e, -1, 0))
             }
         }
-        chpx.sortBy { it.first }
+        chpx.sortBy { it.s }
         pictureRuns.sortBy { it.first }
     }
 
     private fun readPapx(fc: Int, lcb: Int) {
-        if (fc <= 0 || lcb < 8 || fc + lcb > table.size) return
+        if (fc < 0 || lcb < 8 || fc + lcb > table.size) return
         val n = (lcb - 4) / 8
         for (k in 0 until n) {
             val pn = le32(table, fc + (n + 1) * 4 + k * 4) and 0x3FFFFF
@@ -521,21 +700,23 @@ class DocReader private constructor(private val ole: Ole2) {
                 // BX: 13 bytes per paragraph after the fc array; first byte = word offset of PAPX.
                 val off = (wd[page + (crun + 1) * 4 + r * 13].toInt() and 0xFF) * 2
                 var istd = 0
+                var papxAt = -1; var papxCb = 0
                 if (off > 0) {
                     var cb = wd[page + off].toInt() and 0xFF
                     var at = page + off + 1
                     if (cb == 0) { cb = wd[at].toInt() and 0xFF; at++ ; cb *= 2 } else cb = cb * 2 - 1
                     istd = le16(wd, at)
+                    papxAt = at; papxCb = cb
                     if (cb > 2) {
                         rowDef(wd, at + 2, cb - 2)?.let { rowDefs.add(Triple(s, e, it)) }
                         if (lastTtp) rowEnds.add(intArrayOf(s, e))
                         if (lastInTable || lastTtp) inTables.add(intArrayOf(s, e))
                     }
                 }
-                papx.add(Triple(s, e, istd))
+                papx.add(Para(s, e, istd, if (off > 0) papxAt + 2 else -1, if (off > 0) papxCb - 2 else 0))
             }
         }
-        papx.sortBy { it.first }
+        papx.sortBy { it.s }
         rowDefs.sortBy { it.first }
         rowEnds.sortBy { it[0] }
         inTables.sortBy { it[0] }
@@ -574,11 +755,20 @@ class DocReader private constructor(private val ole: Ole2) {
                 0x2A48 -> s = s.copy(vertical = when (v1) { 1 -> 1; 2 -> -1; else -> 0 })
                 0x6870 -> { val c = le32(b, i); if (c ushr 24 == 0) s = s.copy(color = (0xFF shl 24) or ((c and 0xFF) shl 16) or (c and 0xFF00) or ((c shr 16) and 0xFF)) }
                 0x083C -> if (toggle(false)) s = s.copy() // vanish: kept visible (rare)
+                0x4A4F -> fontNames.getOrNull(le16(b, i))?.takeIf { it.isNotEmpty() }?.let { s = s.copy(font = it) }
+                // A character style: its formatting, then the run's own.
+                0x4A30 -> if (charStyleDepth < 4) styleDefs[le16(b, i)]?.takeIf { it.kind == 2 }?.chars?.let { r ->
+                    charStyleDepth++
+                    try { s = sprmsRun(table, r.first, r.last - r.first + 1, s) } finally { charStyleDepth-- }
+                }
             }
             i += size
         }
         return s
     }
+
+    /** How deep character styles applying character styles go (damaged files can loop). */
+    private var charStyleDepth = 0
 
     private val CP1252: CharArray = String(ByteArray(256) { it.toByte() }, charset("windows-1252")).toCharArray()
 }

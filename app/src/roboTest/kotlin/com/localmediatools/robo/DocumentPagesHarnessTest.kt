@@ -24,13 +24,14 @@ class DocumentPagesHarnessTest {
                 val line = try {
                     val pages = DocumentPrint.open(f, f.name, MediaSize.LETTER)
                     if (pages == null) "$path\terror\tnot a document" else pages.use { p ->
-                        // With $LMT_PAGES_SHOTS, every page as a picture too (at 1 pixel to the point).
+                        // With $LMT_PAGES_SHOTS, every page as a picture too (at 1 pixel to the point, or $LMT_PAGES_SCALE).
                         System.getenv("LMT_PAGES_SHOTS")?.let { d ->
                             val dir = File(d).apply { mkdirs() }
+                            val k = System.getenv("LMT_PAGES_SCALE")?.toFloatOrNull() ?: 1f
                             for (i in 0 until p.count) {
-                                val bmp = android.graphics.Bitmap.createBitmap(p.widthPt(i).toInt(), p.heightPt(i).toInt(), android.graphics.Bitmap.Config.ARGB_8888)
+                                val bmp = android.graphics.Bitmap.createBitmap((p.widthPt(i) * k).toInt(), (p.heightPt(i) * k).toInt(), android.graphics.Bitmap.Config.ARGB_8888)
                                 bmp.eraseColor(android.graphics.Color.WHITE)
-                                p.draw(android.graphics.Canvas(bmp), i, 1f)
+                                p.draw(android.graphics.Canvas(bmp), i, k)
                                 File(dir, "${f.nameWithoutExtension}-${f.extension}-${i + 1}.png").outputStream().use { bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
                             }
                         }
