@@ -318,24 +318,39 @@ object PdfMeta {
         return d.trailer != null && d.xref.isNotEmpty()
     }
 
+    private object NeedMore
+
+    /** A cross-reference table at [off]; returns the previous one's offset. */
     private fun classic(d: Doc, off: Long): Long? {
-        val w = d.window(off, minOf(64L shl 20, d.f.size - off).toInt())
+        // 20 bytes per object: start with 1 MB, and read more only for a longer table (at most 64 MB).
+        var size = 1L shl 20
+        while (true) {
+            val n = minOf(size, d.f.size - off)
+            val r = classicIn(d, d.window(off, n.toInt()), whole = n == d.f.size - off || size >= (64L shl 20))
+            if (r !== NeedMore) return r as Long?
+            size *= 8
+        }
+    }
+
+    private fun classicIn(d: Doc, w: ByteArray, whole: Boolean): Any? {
         val l = Lexer(w)
+        fun short() = !whole && l.p >= w.size - 64
         l.token() // xref
         while (true) {
             val save = l.p
             val t = l.token()
             if (t == "trailer") break
-            val start = t.toIntOrNull() ?: run { l.p = save; return null }
-            val count = l.token().toIntOrNull() ?: return null
+            val start = t.toIntOrNull() ?: run { if (short()) return NeedMore; l.p = save; return null }
+            val count = l.token().toIntOrNull() ?: return if (short()) NeedMore else null
             for (k in 0 until count) {
-                val o = l.token().toLongOrNull() ?: return null
+                val o = l.token().toLongOrNull() ?: return if (short()) NeedMore else null
                 l.token()
                 val type = l.token()
                 if (type == "n" && o > 0) d.xref.putIfAbsent(start + k, Entry(o))
             }
         }
-        @Suppress("UNCHECKED_CAST") val t = l.value() as? Map<String, Any?> ?: return null
+        @Suppress("UNCHECKED_CAST") val t = l.value() as? Map<String, Any?> ?: return if (short()) NeedMore else null
+        if (short()) return NeedMore
         if (d.trailer == null) d.trailer = t
         (t["XRefStm"] as? Long)?.let { xrefStream(d, it) }
         return t["Prev"] as? Long

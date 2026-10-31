@@ -4,9 +4,10 @@
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
 photos and lets you search them in plain words, **highlight videos** cut to music the phone writes
-itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **34
+itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **35
 tools** for photos, video, GIF, documents, PDF and audio, among them a **file reader** for the PDF,
-Word, Excel and PowerPoint files Android can't open by itself, and on-device AI for **face blurring in photos and
+Word, Excel and PowerPoint files Android can't open by itself, a **metadata viewer** that shows what
+any file reveals about you, and on-device AI for **face blurring in photos and
 videos**, **background removal**, **one-tap enhancement**, a **magic eraser**, a **duplicate finder** and
 a **denoiser** that keeps RAW files RAW. Nothing is uploaded: the app never connects to servers
 on the internet (its only network traffic is to your own printer, and the code allows nothing else),
@@ -16,7 +17,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.11.0.apk`](release/LocalMediaTools-1.11.0.apk)
+**Install:** [`release/LocalMediaTools-1.12.0.apk`](release/LocalMediaTools-1.12.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -37,6 +38,12 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 | ![](docs/screenshots/reader.png) | ![](docs/screenshots/reader-word.png) | ![](docs/screenshots/reader-sheet.png) | ![](docs/screenshots/reader-slides.png) | ![](docs/screenshots/reader-pdf.png) |
 
 The reader screenshots show a NASA report, a USDA table and an EPA project summary (public domain) and an Apache POI sample presentation (Apache-2.0); credits in [`CREDITS.md`](app/src/test/resources/docs/CREDITS.md).
+
+| Metadata viewer: a photo | A Word file | A Word 97 file's authors |
+|---|---|---|
+| ![](docs/screenshots/metadata.png) | ![](docs/screenshots/metadata-docx.png) | ![](docs/screenshots/metadata-doc.png) |
+
+The metadata screenshots show files made for the tests (a test pattern tagged with an invented place and owner) and the NASA report (public domain); credits in [`CREDITS.md`](app/src/test/resources/meta/CREDITS.md).
 
 | Print | Choosing the printer |
 |---|---|
@@ -60,7 +67,71 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.11.0: a file reader for documents Android can't open
+## What's new in 1.12.0: a metadata viewer, printing documents, and "Me" in the Gallery
+
+- **Metadata viewer** is a new tool in *Privacy & audio*. It shows everything a file says about itself,
+  for photos (JPEG, PNG, WebP, GIF, HEIC, AVIF, TIFF, Photoshop), camera RAW files (DNG, CR2, CR3, NEF,
+  ARW, ORF, RW2, RAF and more), videos (MP4, MOV, MKV, WebM, AVI, 3GP), sound (MP3, M4A, FLAC, Ogg,
+  Opus, WAV), PDFs, Word, Excel and PowerPoint files (new and 97–2003), OpenDocument, EPUB, RTF, HTML
+  and ZIP archives. Open it from the tools list, from the Gallery (*Open in a tool*) or from the file
+  reader's menu (*All metadata*).
+  - **First, what the file tells others**, in plain words: where it was made (with the position, and
+    *Open in a maps app*), who made or owns it, the camera, phone or computer (serial numbers
+    included), when it was made or changed, the programs used, numbers that link it to other files,
+    pictures hidden inside (thumbnails, previews, HDR gain maps, cover art) and written comments.
+    For photos and videos, *Make a copy without them* hands the file to *Remove metadata*.
+  - **Then every field**, grouped as the file stores them (EXIF, GPS, XMP, IPTC, colour profile, ID3,
+    QuickTime tracks, PDF, Office properties…), common ones named in plain words, dates as dates.
+    Search filters the fields; a tap shows the full value with *Copy*; the menu copies or shares
+    them all as text.
+  - **Things other viewers miss**: the history of who saved a Word 97–2003 file and in which folder
+    (`Teresa G. Yow (\\Daacs\GUIDEdocs\…)`), who wrote its comments, the e-mail address Office adds
+    when a document is sent, the last person who opened a PowerPoint file, places stored in a video's
+    3GPP location box or Matroska tags, and the details of PDFs protected against changes (RC4 and
+    AES up to 256-bit, as every PDF viewer opens them; a PDF that needs a password says so).
+  - **Measured against ExifTool**, the reference program, field by field (scripts in
+    [`buildtools/meta/`](buildtools/meta/README.md)): on 2,393 real documents (Word, Excel,
+    PowerPoint, PDF, RTF, HTML, OpenDocument) it finds 97.1 % of the fields ExifTool shows, 96.1 %
+    with the same value; on 18 videos and songs made with ffmpeg 96.1 % / 95.5 %; on ExifTool's own
+    test files of the kinds phones hold 87.8 % / 86.0 % (they are made to cover odd corners). Left
+    out on purpose: camera makers' private notes, technical tables (strip offsets, colour lookup
+    tables) and a few rare containers. The comparison found a real bug before release: photos taken
+    south of the equator or west of Greenwich were placed on the wrong side of the map.
+  - Files are only read, never changed. A long video is read in place, without copying it; an Office
+    file shared by another app is copied to the app's cache for the moment it's read.
+- **Printing documents**: Word, Excel, PowerPoint, OpenDocument, RTF, EPUB and text files now print
+  from the Print tool, the file reader and other apps' *Share*. Text pages get their margins and page
+  numbers, sheets print as Excel prints them, slides one per page, all drawn at the printer's
+  resolution; page ranges work for documents too.
+- **Documents look as on a computer**: the app now carries metric-compatible fonts (Carlito,
+  Caladea, Liberation Sans, Serif and Mono, OFL 1.1), so text set in Calibri, Cambria, Arial, Times
+  New Roman or Courier New takes the same width and lines break in the same places. Word files keep
+  their theme and default fonts, line spacing, page size and margins; OpenDocument files their page
+  layout and page breaks; Word 97–2003 files their styles, alignment, indents, spacing and sections.
+  Printed page counts now match LibreOffice's exactly for 52 of 149 real documents and within 10 %
+  for 89 (were 29 and 63).
+- **A4 first**: A4 is chosen when the printer has it (else the printer's own default). When the
+  printer reports another paper loaded, the screen says so and offers to print on it.
+- **Last page first**, on by default, so a pile of face-up sheets ends in page order. It starts off
+  for printers that say they deliver pages face down (they already stack in order). Two-sided
+  printing keeps each sheet's front and back together, and can flip on the long or the short edge.
+- **Remembered settings**: colour, quality, two-sided, layout and order are kept between prints.
+- **"Me" and favourites in the Gallery**: tell the app which person is you (on the People tab, in a
+  person's menu, or while naming people), and star favourites. You and your favourites are listed
+  first, your faces stay together when people are regrouped, and the marks follow merges. Searching
+  for **"me"** (or the word in the app's language) finds your photos, alone or with others ("me and
+  Ana at the beach"). Existing galleries are upgraded and keep everything.
+- **Tested** with the JVM and Android test runtimes: the metadata readers on files made for the tests
+  (photos tagged with a place, owner and serial number; a video with a place; songs with covers;
+  PDFs protected with RC4 and AES-256; a Word file with e-mail properties) and on the reader's real
+  documents, plus 192 cut-off and damaged copies that must still give an answer within 5 seconds; the
+  viewer's screen (picking, summary, search, handing over to Remove metadata); printing documents to
+  the simulated Epson printer; "Me" and favourites on the real-photo gallery. Not tried on a phone.
+- **Limits**: spreadsheet cells print in the phone's font rather than the cell's; the metadata viewer
+  doesn't decode camera makers' private notes or ICC profiles inside PDFs.
+- **Translated** into all ten languages.
+
+## What was new in 1.11.0: a file reader for documents Android can't open
 
 - **File reader** is a new tool in *Documents & PDF*. It opens **PDF, Word (DOCX, DOC), Excel (XLSX,
   XLS), PowerPoint (PPTX, PPT), OpenDocument (ODT, ODS, ODP), RTF, EPUB e-books, CSV/TSV, Markdown,
@@ -730,8 +801,9 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Merge PDFs | Structural merge: text and links kept | `Documents/LocalMediaTools/PDF` |
 | | Extract PDF pages | `1-3, 5, 8-` into one PDF or one per page | `Documents/LocalMediaTools/PDF` |
 | | PDF scanner | Camera and gallery pages, A4 | `Documents/LocalMediaTools/PDF` |
-| Print | Print | Photos and PDFs on AirPrint / Mopria / IPP Everywhere printers on the Wi-Fi: paper size and type, borderless, 1–9 per sheet, colour, quality, copies, preview | — (prints) |
-| Privacy & audio | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos; RAW photos as clean full-quality copies like the other files | `Pictures/…/Clean`, `Movies/…/Clean` |
+| Print | Print | Photos, PDFs and documents (Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, text) on AirPrint / Mopria / IPP Everywhere printers on the Wi-Fi: paper size (A4 first) and type, borderless, 1–9 per sheet, colour, quality, two-sided, last page first, copies, preview | — (prints) |
+| Privacy & audio | Metadata viewer | Every field a photo, RAW file, video, song, PDF or document keeps, with a summary of what it reveals about you (place, people, device, dates, programs, hidden pictures) | — (only shows files) |
+| | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos; RAW photos as clean full-quality copies like the other files | `Pictures/…/Clean`, `Movies/…/Clean` |
 | | Extract audio | AAC track to M4A without re-encoding | `Music/LocalMediaTools/Extracted Audio` |
 
 Exports run in a foreground service with progress notifications and one queue for the whole app.
