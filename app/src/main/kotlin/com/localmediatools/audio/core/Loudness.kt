@@ -110,6 +110,21 @@ class LoudnessMeter(private val rate: Int, private val channels: Int) {
         return Result(integrated, range, db(peak), db(max(peak, truePeak.max)))
     }
 
+    /** The power of each 400 ms block (75 % overlap), for loudness measured over several files ([integrated]). */
+    fun blockPowers(): DoubleArray = blocks(4)
+
+    companion object {
+        /** Integrated loudness (LUFS) of several files together, from their [blockPowers]: an album's loudness. */
+        fun integrated(blocks: List<DoubleArray>): Double {
+            fun lufs(power: Double) = if (power <= 0) Double.NEGATIVE_INFINITY else -0.691 + 10 * log10(power)
+            val abs = blocks.flatMap { b -> b.filter { lufs(it) > -70.0 } }
+            if (abs.isEmpty()) return Double.NEGATIVE_INFINITY
+            val rel = lufs(abs.average()) - 10
+            val gated = abs.filter { lufs(it) > rel }
+            return if (gated.isEmpty()) Double.NEGATIVE_INFINITY else lufs(gated.average())
+        }
+    }
+
     private fun percentile(sorted: List<Double>, p: Double): Double {
         val x = p * (sorted.size - 1)
         val i = x.toInt(); val f = x - i

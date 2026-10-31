@@ -5,8 +5,8 @@ import java.security.MessageDigest
 
 /**
  * A FLAC encoder (lossless): each block of [blockSize] frames is coded per channel as constant,
- * verbatim or with the fixed predictor of order 0–4 that leaves the smallest residual, the residual
- * Rice-coded in partitions; stereo picks the cheapest of left/right, left/side, side/right and
+ * verbatim, with a fixed predictor (order 0–4) or with linear prediction (LPC up to order 12),
+ * whichever leaves the fewest bits, the residual Rice-coded in partitions; stereo picks the cheapest of left/right, left/side, side/right and
  * mid/side. The output is a complete .flac file (STREAMINFO with the samples' MD5, optional Vorbis
  * comments and picture), written to [out]; [finish] goes back to fill in the totals when [rewrite]
  * can seek.
