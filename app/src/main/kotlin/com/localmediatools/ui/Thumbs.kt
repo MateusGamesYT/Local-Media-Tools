@@ -2,6 +2,7 @@ package com.localmediatools.ui
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.pdf.PdfRenderer
@@ -65,7 +66,22 @@ object Thumbs {
         MediaKind.IMAGE, MediaKind.GIF -> ImageSource.open(ctx, item).use { it.preview(size) }
         MediaKind.VIDEO -> videoFrame(ctx, item, size)
         MediaKind.PDF -> pdfPage(ctx, item, size)
+        MediaKind.AUDIO -> cover(ctx, item, size)
         else -> null
+    }
+
+    /** A sound file's cover picture, if it has one. */
+    private fun cover(ctx: Context, item: MediaItem, size: Int): Bitmap? {
+        val mmr = MediaMetadataRetriever()
+        try {
+            mmr.setDataSource(ctx, item.uri)
+            val pic = mmr.embeddedPicture ?: return null
+            val o = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(pic, 0, pic.size, o)
+            var sample = 1
+            while (o.outWidth / (sample * 2) >= size && o.outHeight / (sample * 2) >= size) sample *= 2
+            return BitmapFactory.decodeByteArray(pic, 0, pic.size, BitmapFactory.Options().apply { inSampleSize = sample })
+        } catch (_: Exception) { return null } finally { try { mmr.release() } catch (_: Exception) { } }
     }
 
     private fun videoFrame(ctx: Context, item: MediaItem, size: Int): Bitmap? {

@@ -211,7 +211,7 @@ class RemoveAudioJob(inputs: List<MediaItem>) : ExportJob(ToolId.REMOVE_AUDIO, i
 }
 
 // =========================================================================== 18. Extract audio
-class ExtractAudioJob(inputs: List<MediaItem>) : ExportJob(ToolId.EXTRACT_AUDIO, inputs) {
+class ExtractAudioJob(inputs: List<MediaItem>, private val out: com.localmediatools.audio.AudioOutput? = null) : ExportJob(ToolId.EXTRACT_AUDIO, inputs) {
     override val title = trn(inputs.size, "Extracting audio from {0} video", "Extracting audio from {0} videos")
 
     override suspend fun run(ctx: JobContext) {
@@ -219,9 +219,12 @@ class ExtractAudioJob(inputs: List<MediaItem>) : ExportJob(ToolId.EXTRACT_AUDIO,
             val info = VideoProbe.probe(ctx.app, item.uri)
             val audio = info.audio
             if (audio.isEmpty()) throw SkipItemException(tr("This video has no audio track."))
+            if (out != null) return@forEachItem extractAudioConverted(ctx, index, item, out, null)
             val aac = audio.filter { it.isAac }
             if (aac.isEmpty()) {
-                throw SkipItemException(tr("No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.", audio.joinToString { it.codecLabel }))
+                // Not AAC (Opus, AC-3…): converted to AAC in an .m4a.
+                return@forEachItem extractAudioConverted(ctx, index, item, com.localmediatools.audio.AudioOutput(com.localmediatools.audio.AudioFormatOut.AAC, kbps = 192),
+                    tr("This video's sound is {0}, so it was converted to AAC (M4A).", audio.joinToString { it.codecLabel }))
             }
             val outs = ArrayList<OutputFile>()
             for ((k, t) in aac.withIndex()) {

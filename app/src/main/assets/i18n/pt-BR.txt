@@ -867,6 +867,12 @@
 < Choose photos, PDFs or documents
 > Escolha fotos, PDFs ou documentos
 
+< Choose a sound file
+> Escolha um arquivo de áudio
+
+< Choose sound files
+> Escolha arquivos de áudio
+
 < Select images
 > Selecione imagens
 
@@ -888,6 +894,9 @@
 < Select photos, PDFs or documents
 > Selecione fotos, PDFs ou documentos
 
+< Select sound files
+> Selecione arquivos de áudio
+
 < Select images to continue
 > Selecione imagens para continuar
 
@@ -908,6 +917,9 @@
 
 < Select photos, PDFs or documents to continue
 > Selecione fotos, PDFs ou documentos para continuar
+
+< Select sound files to continue
+> Selecione arquivos de áudio para continuar
 
 < Select at least {0} image
 < Select at least {0} images
@@ -944,6 +956,11 @@
 > Selecione pelo menos {0} foto, PDF ou documento
 > Selecione pelo menos {0} fotos, PDFs ou documentos
 
+< Select at least {0} sound file
+< Select at least {0} sound files
+> Selecione pelo menos {0} arquivo de áudio
+> Selecione pelo menos {0} arquivos de áudio
+
 < {0} image selected
 < {0} images selected
 > {0} imagem selecionada
@@ -974,6 +991,11 @@
 > {0} arquivo selecionado
 > {0} arquivos selecionados
 
+< {0} sound file selected
+< {0} sound files selected
+> {0} arquivo de áudio selecionado
+> {0} arquivos de áudio selecionados
+
 < No images found in that folder.
 > Nenhuma imagem encontrada nessa pasta.
 
@@ -994,6 +1016,9 @@
 
 < No photos, PDFs or documents found in that folder.
 > Nenhuma foto, PDF ou documento foi encontrado nessa pasta.
+
+< No sound files found in that folder.
+> Nenhum arquivo de áudio foi encontrado nessa pasta.
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -1019,6 +1044,9 @@
 
 < Not a photo, PDF or document
 > Não é uma foto, um PDF nem um documento
+
+< Not a sound file
+> Não é um arquivo de áudio
 
 < Use the GIF optimizer for GIFs
 > Use o otimizador de GIF para GIFs
@@ -1160,8 +1188,29 @@
 < exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
 > exif xmp iptc id3 etiquetas propriedades detalhes info informações inspecionar verificar gps localização câmera autor privacidade
 
-< mp3 m4a sound music
-> mp3 m4a som música áudio
+< mp3 m4a aac sound music video soundtrack rip
+> mp3 m4a aac som música áudio vídeo trilha extrair
+
+< cut shorten ringtone clip song mp3 fade in out sound music voice
+> cortar encurtar toque trecho música mp3 fade in out som áudio voz
+
+< join combine concatenate songs mp3 crossfade mix playlist sound music
+> juntar unir combinar concatenar músicas mp3 crossfade mixagem playlist som áudio
+
+< mp3 m4a aac opus ogg flac wav format bitrate sound music
+> mp3 m4a aac opus ogg flac wav formato bitrate som áudio música
+
+< normalize normalise loudness louder quieter gain lufs replaygain level boost sound music
+> normalizar volume mais alto mais baixo ganho lufs replaygain nível reforço som música
+
+< tempo faster slower pitch key semitone transpose practice sound music voice
+> andamento velocidade mais rápido mais lento tom tonalidade semitom transpor praticar som música voz
+
+< cut parts tracks chapters album recording sound music
+> cortar partes faixas capítulos álbum gravação som música
+
+< silent pauses gaps trim voice note podcast lecture recording sound
+> silêncio pausas intervalos cortar voz nota podcast aula gravação som
 
 < mute silent sound
 > mudo silencioso sem som
@@ -3441,6 +3490,321 @@
 < The chosen people don't appear in these files
 > As pessoas escolhidas não aparecem nestes arquivos
 
+< Waveform: drag the handles to choose the part
+> Forma de onda: arraste as alças para escolher o trecho
+
+< Waveform
+> Forma de onda
+
+< Same as the original
+> Igual ao original
+
+< Save as
+> Salvar como
+
+< The kind of file and its quality
+> O tipo de arquivo e a qualidade
+
+< Keep channels
+> Manter canais
+
+< Stereo
+> Estéreo
+
+< The same kind of file as each original, at a quality no lower than its own. MP3, M4A and Opus are compressed again, which loses a little; choose FLAC or WAV to lose nothing more.
+> O mesmo tipo de arquivo de cada original, com qualidade não inferior à dele. MP3, M4A e Opus são comprimidos de novo, o que perde um pouco; escolha FLAC ou WAV para não perder mais nada.
+
+< Lossless: keeps every detail of the sound as it is now. Files are large (FLAC about half the size of WAV).
+> Sem perdas: mantém cada detalhe do som como está agora. Os arquivos são grandes (o FLAC tem cerca da metade do tamanho do WAV).
+
+< Opus sounds the best for its size, but older devices and car stereos may not play it.
+> O Opus soa melhor para o tamanho que tem, mas aparelhos mais antigos e som de carro podem não reproduzi-lo.
+
+< Higher bit rates sound better and make larger files. 192 kbps and up is hard to tell from the original.
+> Taxas de bits mais altas soam melhor e geram arquivos maiores. A partir de 192 kbps, é difícil perceber a diferença do original.
+
+< 32-bit float
+> Ponto flutuante de 32 bits
+
+< {0}-bit
+> {0} bits
+
+< Drawing the waveform…
+> Desenhando a forma de onda…
+
+< {0} (the same type as the original)
+> {0} (do mesmo tipo do original)
+
+< {0} couldn't be read: {1}
+> Não foi possível ler {0}: {1}
+
+< Select a sound file to choose the part to keep.
+> Selecione um arquivo de áudio para escolher o trecho a manter.
+
+< Start
+> Início
+
+< End
+> Fim
+
+< Listen to the part
+> Ouvir o trecho
+
+< What to keep
+> O que manter
+
+< Keep the part
+> Manter o trecho
+
+< Cut the part out
+> Remover o trecho
+
+< None
+> Nenhum
+
+< Fade in
+> Fade in
+
+< From silence to full volume at the start
+> Do silêncio ao volume total, no início
+
+< Fade out
+> Fade out
+
+< Down to silence at the end
+> Até o silêncio, no fim
+
+< Start {0} · End {1} · keeps {2}
+> Início {0} · Fim {1} · mantém {2}
+
+< This file can't be played here.
+> Este arquivo não pode ser reproduzido aqui.
+
+< The part to keep is too short
+> O trecho a manter é curto demais
+
+< Nothing would be left
+> Não sobraria nada
+
+< Select two or more sound files. They're joined in the order shown above (tap Review to reorder).
+> Selecione dois ou mais arquivos de áudio. Eles são unidos na ordem mostrada acima (toque em Revisar para reordenar).
+
+< Between the files
+> Entre os arquivos
+
+< Back to back
+> Um após o outro
+
+< A pause
+> Uma pausa
+
+< Crossfade
+> Crossfade
+
+< Even out the volume
+> Nivelar o volume
+
+< Brings every file to the same loudness first
+> Antes, iguala todos os arquivos ao mesmo volume percebido
+
+< Like the first file
+> Como o primeiro arquivo
+
+< Checking the files…
+> Verificando os arquivos…
+
+< One of the files couldn't be read as sound.
+> Um dos arquivos não pôde ser lido como áudio.
+
+< {0} file · {1} in total
+< {0} files · {1} in total
+> {0} arquivo · {1} no total
+> {0} arquivos · {1} no total
+
+< Opus is always 48 kHz; MP3 and M4A use the nearest rate they support
+> O Opus é sempre 48 kHz; MP3 e M4A usam a taxa mais próxima que suportam
+
+< Keep
+> Manter
+
+< Videos can be chosen too: their sound is converted. Title, artist, album and cover are kept (M4A files keep the sound only).
+> Vídeos também podem ser escolhidos: o som deles é convertido. Título, artista, álbum e capa são mantidos (arquivos M4A mantêm só o som).
+
+< How
+> Como
+
+< Same loudness
+> Mesmo volume percebido
+
+< Peak level
+> Nível de pico
+
+< Louder or quieter
+> Mais alto ou mais baixo
+
+< Limit peaks to −1 dB
+> Limitar picos a −1 dB
+
+< A limiter keeps louder parts from clipping
+> Um limitador evita que as partes mais altas distorçam
+
+< Album mode
+> Modo álbum
+
+< One change for all the files, measured together: the songs of an album keep their differences
+> Uma só mudança para todos os arquivos, medida em conjunto: as músicas de um álbum mantêm suas diferenças
+
+< −14 LUFS · streaming (Spotify, YouTube)
+> −14 LUFS · streaming (Spotify, YouTube)
+
+< −16 LUFS · podcasts, Apple Music
+> −16 LUFS · podcasts, Apple Music
+
+< −18 LUFS · quieter
+> −18 LUFS · mais baixo
+
+< −23 LUFS · TV and radio (EBU R128)
+> −23 LUFS · TV e rádio (EBU R128)
+
+< Loudness is measured as people hear it (ITU-R BS.1770), so files sound equally loud however their peaks look.
+> O volume é medido como as pessoas o ouvem (ITU-R BS.1770), então os arquivos soam igualmente altos, seja qual for a aparência dos picos.
+
+< The loudest moment (including peaks between samples) is set to this level.
+> O momento mais alto (incluindo picos entre amostras) é ajustado para este nível.
+
+< Change
+> Trocar
+
+< +6 dB is about twice as loud in level, −6 dB half
+> +6 dB é cerca de duas vezes a amplitude; −6 dB, a metade
+
+< Choose a change other than 0 dB
+> Escolha uma mudança diferente de 0 dB
+
+< Pitch stays the same
+> O tom continua o mesmo
+
+< Pitch
+> Tom
+
+< In semitones; speed stays the same (12 = an octave)
+> Em semitons; a velocidade continua a mesma (12 = uma oitava)
+
+< 0 = unchanged
+> 0 = sem mudança
+
+< Voices stay natural from about 0.75× to 1.5×; further than that, and more than a few semitones, the sound starts to show the change. For videos, use Speed & timelapse.
+> As vozes soam naturais de cerca de 0,75× a 1,5×; além disso, e com mais de alguns semitons, o som começa a denunciar a mudança. Para vídeos, use Velocidade e timelapse.
+
+< {0} becomes {1}
+> {0} vira {1}
+
+< pitch {1} {0} semitone
+< pitch {1} {0} semitones
+> tom {1} {0} semitom
+> tom {1} {0} semitons
+
+< up
+> para cima
+
+< down
+> para baixo
+
+< Unchanged
+> Sem mudança
+
+< Change the speed or the pitch
+> Mudar a velocidade ou o tom
+
+< Split
+> Dividir
+
+< Every…
+> A cada…
+
+< Into equal parts
+> Em partes iguais
+
+< At silences
+> Nos silêncios
+
+< Custom length (minutes)
+> Duração personalizada (minutos)
+
+< e.g. 2.5
+> ex.: 2,5
+
+< {0} part
+< {0} parts
+> {0} parte
+> {0} partes
+
+< Silences at least this long separate the parts:
+> Silêncios com pelo menos essa duração separam as partes:
+
+< For recordings of several songs or tracks: each part starts where the sound comes back, and the silence between is left out.
+> Para gravações de várias músicas ou faixas: cada parte começa onde o som volta, e o silêncio entre elas fica de fora.
+
+< Cut at quiet moments
+> Cortar nos momentos silenciosos
+
+< Moves each cut up to 3 seconds to a pause, so words and notes aren't cut in half
+> Move cada corte em até 3 segundos para uma pausa, para que palavras e notas não sejam cortadas ao meio
+
+< Enter a length between 0.1 and 600 minutes
+> Digite uma duração entre 0,1 e 600 minutos
+
+< One file per part: {0}, {1} …
+> Um arquivo por parte: {0}, {1} …
+
+< At the start and end
+> No início e no fim
+
+< Removes the silence before the sound starts and after it ends
+> Remove o silêncio antes de o som começar e depois de ele terminar
+
+< Shorten pauses
+> Encurtar pausas
+
+< Long pauses inside are cut down to the length below
+> Pausas longas no meio são reduzidas à duração abaixo
+
+< keep {0}
+> manter {0}
+
+< What counts as silence
+> O que conta como silêncio
+
+< Only silence
+> Só silêncio
+
+< Pauses in speech
+> Pausas na fala
+
+< Also very soft parts
+> Também partes muito baixas
+
+< Select a sound file to see what would be removed.
+> Selecione um arquivo de áudio para ver o que seria removido.
+
+< Silence is judged against each recording's own background noise, so pauses with room noise or breathing are found too. The shaded parts above will be removed (shown for the first file).
+> O silêncio é avaliado pelo ruído de fundo de cada gravação, então pausas com ruído ambiente ou respiração também são encontradas. As partes sombreadas acima serão removidas (mostradas para o primeiro arquivo).
+
+< Choose what to remove
+> Escolha o que remover
+
+< No silence to remove at this setting.
+> Nenhum silêncio a remover com esta configuração.
+
+< Removes {0}: {1} becomes {2}
+> Remove {0}: {1} vira {2}
+
+< Original (no re-encoding)
+> Original (sem recodificar)
+
+< Original: AAC sound (most phone videos) is copied into an .m4a file exactly as it is — no quality loss. Other sound (Opus, AC-3…) is converted to M4A.
+> Original: o som AAC (da maioria dos vídeos de celular) é copiado para um arquivo .m4a exatamente como está, sem perda de qualidade. Outros sons (Opus, AC-3…) são convertidos para M4A.
+
 < Preview at 100 %
 > Prévia a 100%
 
@@ -4008,9 +4372,6 @@
 < Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
 > Use vírgulas entre as páginas; intervalos como 4-9; "8-" significa da página 8 até o fim. As páginas são salvas na ordem em que você as escrever.
 
-< Save as
-> Salvar como
-
 < name_pages.pdf
 > nome_pages.pdf
 
@@ -4125,9 +4486,6 @@
 < Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
 > Sem som e até 120 fps, o vídeo só tem o tempo reajustado: sem recodificar, sem perda de qualidade. Caso contrário, é recodificado em MP4 H.264; os timelapses mantêm 30 quadros por segundo.
 
-< {0} becomes {1}
-> {0} vira {1}
-
 < only {0} frame per second, so it will look choppy
 < only {0} frames per second, so it will look choppy
 > só {0} quadro por segundo, então vai parecer travado
@@ -4234,9 +4592,6 @@
 
 < Start and length can't be negative
 > O início e a duração não podem ser negativos
-
-< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
-> A faixa de som AAC é copiada para um arquivo .m4a exatamente como está — sem recodificar, sem perda de qualidade. Vídeos cujo áudio não é AAC (por exemplo Opus ou AC-3) ou que não têm som são listados claramente nos resultados.
 
 < Watermark preview
 > Prévia da marca d'água
@@ -4397,9 +4752,6 @@
 
 < encrypted
 > criptografada
-
-< Change
-> Trocar
 
 < unknown
 > desconhecido
@@ -4584,6 +4936,51 @@
 
 < This action isn't available on this phone.
 > Esta ação não está disponível neste celular.
+
+< No sound could be read from this file.
+> Não foi possível ler nenhum som deste arquivo.
+
+< There was no sound to save.
+> Não havia som para salvar.
+
+< The written file failed verification, so it was discarded.
+> O arquivo gravado não passou na verificação, então foi descartado.
+
+< This file couldn't be read as audio.
+> Este arquivo não pôde ser lido como áudio.
+
+< This video has no sound.
+> Este vídeo não tem som.
+
+< This file has no sound that can be read.
+> Este arquivo não tem nenhum som que possa ser lido.
+
+< WAV/AIFF ({0}-bit)
+> WAV/AIFF ({0} bits)
+
+< This phone can't decode {0} sound.
+> Este celular não consegue decodificar som {0}.
+
+< The sound decoder stopped responding.
+> O decodificador de som parou de responder.
+
+< WAV files can't be larger than 4 GB. Choose FLAC for very long recordings.
+> Arquivos WAV não podem ter mais de 4 GB. Escolha FLAC para gravações muito longas.
+
+< The sound encoder stopped responding.
+> O codificador de som parou de responder.
+
+< This phone's AAC encoder can't write {0} Hz, {1} channels.
+> O codificador AAC deste celular não consegue gravar {0} Hz, {1} canais.
+
+< The AAC encoder gave no sound.
+> O codificador AAC não gerou som.
+
+< This phone has no Opus encoder. Choose M4A (AAC) or MP3 instead.
+> Este celular não tem codificador Opus. Escolha M4A (AAC) ou MP3.
+
+< The Opus encoder gave no sound.
+> O codificador Opus não gerou som.
 
 < Nothing was produced.
 > Nada foi produzido.
@@ -5241,6 +5638,121 @@
 < H.264 from {0}
 > H.264 a partir de {0}
 
+< Trimming {0} sound file
+< Trimming {0} sound files
+> Cortando {0} arquivo de áudio
+> Cortando {0} arquivos de áudio
+
+< The length of this file couldn't be read.
+> Não foi possível ler a duração deste arquivo.
+
+< The part to keep is too short.
+> O trecho a manter é curto demais.
+
+< Nothing would be left.
+> Não sobraria nada.
+
+< Merging {0} sound file
+< Merging {0} sound files
+> Juntando {0} arquivo de áudio
+> Juntando {0} arquivos de áudio
+
+< {0} sound file
+< {0} sound files
+> {0} arquivo de áudio
+> {0} arquivos de áudio
+
+< Select at least two sound files to merge.
+> Selecione pelo menos dois arquivos de áudio para juntar.
+
+< Reading the files
+> Lendo os arquivos
+
+< Measuring loudness
+> Medindo o volume percebido
+
+< Joining
+> Unindo
+
+< crossfaded over {0}
+> com transição suave de {0}
+
+< {0} of silence between
+> {0} de silêncio entre eles
+
+< one after another
+> um após o outro
+
+< Volume evened out to the same loudness.
+> Volume nivelado ao mesmo volume percebido.
+
+< Converting {0} sound file to {1}
+< Converting {0} sound files to {1}
+> Convertendo {0} arquivo de áudio para {1}
+> Convertendo {0} arquivos de áudio para {1}
+
+< A lossless copy of {0} sound keeps exactly what it had, but can't bring back what {0} left out.
+> Uma cópia sem perdas de som {0} mantém exatamente o que ele tinha, mas não traz de volta o que o {0} deixou de fora.
+
+< Adjusting the volume of {0} sound file
+< Adjusting the volume of {0} sound files
+> Ajustando o volume de {0} arquivo de áudio
+> Ajustando o volume de {0} arquivos de áudio
+
+< This file is silent, so its volume can't be set.
+> Este arquivo está em silêncio, então o volume não pode ser ajustado.
+
+< Already at that volume ({0}), so nothing was changed.
+> Já está nesse volume ({0}), então nada foi alterado.
+
+< peak {0} → {1}
+> pico {0} → {1}
+
+< Peaks were held under −1 dBTP by the limiter (by up to {0}).
+> O limitador manteve os picos abaixo de −1 dBTP (em até {0}).
+
+< Reached {0} instead: louder would have clipped its peaks. Turn on the limiter to go all the way.
+> Atingiu {0} em vez disso: um volume mais alto distorceria os picos. Ative o limitador para chegar até o fim.
+
+< Changing the speed and pitch of {0} sound file
+< Changing the speed and pitch of {0} sound files
+> Alterando a velocidade e o tom de {0} arquivo de áudio
+> Alterando a velocidade e o tom de {0} arquivos de áudio
+
+< Speed and pitch are unchanged, so there is nothing to do.
+> Velocidade e tom estão iguais, então não há nada a fazer.
+
+< Splitting {0} sound file
+< Splitting {0} sound files
+> Dividindo {0} arquivo de áudio
+> Dividindo {0} arquivos de áudio
+
+< Finding the quiet moments
+> Procurando os momentos silenciosos
+
+< No silence long enough to split at was found.
+> Não foi encontrado silêncio longo o bastante para dividir.
+
+< {0} long — already within one part, nothing to split.
+> {0} de duração — já cabe em uma parte, nada a dividir.
+
+< Removing silence from {0} sound file
+< Removing silence from {0} sound files
+> Removendo o silêncio de {0} arquivo de áudio
+> Removendo o silêncio de {0} arquivos de áudio
+
+< Finding the silence
+> Procurando o silêncio
+
+< The whole file is silent at this sensitivity, so nothing was saved.
+> O arquivo inteiro está em silêncio com esta sensibilidade, então nada foi salvo.
+
+< No silence to remove was found.
+> Nenhum silêncio a remover foi encontrado.
+
+< {0} of silence removed ({1} → {2})
+> {0} de silêncio removido ({1} → {2})
+
 < Vertical
 > Vertical
 
@@ -5874,14 +6386,17 @@
 < Read documents; convert, merge and scan PDFs
 > Leia documentos; converta, junte e escaneie PDFs
 
+< Audio
+> Áudio
+
+< Trim, join, convert and tune sound files
+> Corte, una, converta e ajuste arquivos de áudio
+
 < Photos and documents on your Wi-Fi printer
 > Fotos e documentos na sua impressora Wi-Fi
 
-< Privacy & audio
-> Privacidade e áudio
-
-< Clean metadata and extract sound
-> Limpe metadados e extraia o som
+< See and clean what files say about you
+> Veja e limpe o que os arquivos revelam sobre você
 
 < Tool stack
 > Pilha de ferramentas
@@ -6189,14 +6704,77 @@
 < Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
 > Cria cópias limpas de fotos e vídeos sem a localização GPS, os detalhes da câmera, datas, comentários ou miniaturas ocultas. Os pixels das fotos e as faixas de vídeo são copiados sem alteração (sem perda de qualidade); a orientação e o perfil de cor são mantidos.
 
+< Trim audio
+> Cortar áudio
+
+< Keep the part you want, with fades
+> Mantenha o trecho que quiser, com fade in e fade out
+
+< Choose the part of a song, recording or voice note to keep — or to cut out — on its waveform, listen to it, and add a fade in and out. Saves as MP3, M4A, Opus, FLAC or WAV.
+> Escolha na forma de onda o trecho de uma música, gravação ou nota de voz que quer manter (ou remover), ouça-o e adicione fade in e fade out. Salva em MP3, M4A, Opus, FLAC ou WAV.
+
+< Merge audio
+> Juntar áudio
+
+< Join sound files, with crossfades
+> Una arquivos de áudio, com transições suaves
+
+< Joins songs, recordings and voice notes into one file in your order, back to back, with a pause between, or crossfading from one into the next. Can even out their volume first.
+> Une músicas, gravações e notas de voz em um só arquivo, na sua ordem: uma após a outra, com uma pausa entre elas, ou com transição suave de uma para a seguinte. Também pode nivelar o volume antes.
+
+< Convert audio
+> Converter áudio
+
+< MP3, M4A, Opus, FLAC or WAV
+> MP3, M4A, Opus, FLAC ou WAV
+
+< Converts sound files — and the sound of videos — between MP3, M4A (AAC), Opus, FLAC and WAV, at the quality you choose, keeping the title, artist and cover.
+> Converte arquivos de áudio — e o som de vídeos — entre MP3, M4A (AAC), Opus, FLAC e WAV, na qualidade que você escolher, mantendo título, artista e capa.
+
+< Volume & normalize
+> Volume e normalização
+
+< Even loudness, louder or quieter
+> Mesmo volume percebido, mais alto ou mais baixo
+
+< Brings sound files to the same loudness (as streaming services and broadcasters measure it), to a peak level, or changes the volume by the amount you choose. A limiter keeps peaks from clipping. Album mode keeps the differences between the songs of an album.
+> Iguala arquivos de áudio ao mesmo volume percebido (como serviços de streaming e emissoras medem), a um nível de pico, ou muda o volume na quantidade que você escolher. Um limitador evita que os picos distorçam. O modo álbum mantém as diferenças entre as músicas de um álbum.
+
+< Speed & pitch
+> Velocidade e tom
+
+< Faster or slower, higher or lower
+> Mais rápido ou mais lento, mais agudo ou mais grave
+
+< Changes how fast a recording plays without making voices squeaky, or moves its pitch up or down without changing its speed — or both. Good for practising music, podcasts and lectures.
+> Muda a velocidade de uma gravação sem deixar as vozes esganiçadas, ou sobe ou desce o tom dela sem mudar a velocidade — ou as duas coisas. Ótimo para praticar música, podcasts e aulas.
+
+< Split audio
+> Dividir áudio
+
+< Into parts, by length or at silences
+> Em partes, por duração ou nos silêncios
+
+< Cuts long recordings into parts of the length you choose, into a number of equal parts, or at the silences between tracks. Cuts can move to the nearest quiet moment so words aren't cut in half.
+> Corta gravações longas em partes da duração que você escolher, em um número de partes iguais ou nos silêncios entre as faixas. Os cortes podem ir ao momento silencioso mais próximo, para que as palavras não sejam cortadas ao meio.
+
+< Remove silence
+> Remover silêncio
+
+< Trim silent starts, ends and long pauses
+> Corta o silêncio no início, no fim e as pausas longas
+
+< Removes the silence at the start and end of recordings and shortens long pauses in speech, so voice notes, lectures and podcasts get to the point. What counts as silence follows each recording's own background noise.
+> Remove o silêncio no início e no fim das gravações e encurta pausas longas na fala, para que notas de voz, aulas e podcasts vão direto ao ponto. O que conta como silêncio segue o ruído de fundo de cada gravação.
+
 < Extract audio
 > Extrair áudio
 
-< Save a video's AAC sound as M4A
-> Salve o som AAC de um vídeo como M4A
+< Save the sound of videos
+> Salvar o som de vídeos
 
-< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
-> Copia a faixa de som AAC de cada vídeo para um arquivo de áudio M4A sem recodificar.
+< Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
+> Salva o som de cada vídeo como arquivo de áudio. O som AAC é copiado para um arquivo M4A como está, sem recodificar; outros sons, ou qualquer formato que você escolher (MP3, Opus, FLAC, WAV), são convertidos.
 
 < Merging {0} video
 < Merging {0} videos
@@ -6223,9 +6801,6 @@
 
 < The converted clips still can't be joined on this device ({0}).
 > Os clipes convertidos ainda não podem ser unidos neste aparelho ({0}).
-
-< Joining
-> Unindo
 
 < Finishing
 > Finalizando
@@ -6266,11 +6841,6 @@
 
 < Some parts are longer than {0} because the video has few keyframes (longest {1}).
 > Algumas partes são mais longas que {0} porque o vídeo tem poucos quadros-chave (a mais longa tem {1}).
-
-< {0} part
-< {0} parts
-> {0} parte
-> {0} partes
 
 < cuts at keyframes
 > cortes em quadros-chave
@@ -6324,8 +6894,8 @@
 < This video has no audio track.
 > Este vídeo não tem faixa de áudio.
 
-< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
-> Nenhuma faixa de áudio AAC compatível (o áudio deste vídeo é {0}). Nada foi extraído.
+< This video's sound is {0}, so it was converted to AAC (M4A).
+> O som deste vídeo é {0}, então foi convertido para AAC (M4A).
 
 < {0} non-AAC audio track was not extracted.
 < {0} non-AAC audio tracks were not extracted.
@@ -7045,9 +7615,6 @@
 
 < Read/write error: {0}
 > Erro de leitura/gravação: {0}
-
-< Audio
-> Áudio
 
 < Unknown
 > Desconhecido

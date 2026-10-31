@@ -258,6 +258,29 @@ class ScreenshotTest {
         com.localmediatools.ui.tools.DenoiseScreen.previewOverride = { _ ->
             Triple(res("sidd_0144_2_noisy.png"), res("sidd_0144_2_denoised.png"), com.localmediatools.denoise.core.PhotoDenoiser.Noise(6.3, 2.6, 1.34))
         }
+
+        // Audio: real recordings (test resources audio/, CC BY): a song to trim and speech with pauses.
+        fun sound(n: String) = Robo.item(app, Robo.write(inDir, n, ScreenshotTest::class.java.getResourceAsStream("/audio/$n")!!.readBytes()))
+        Selection.of(ToolId.TRIM_AUDIO).add(listOf(sound("music.wav")))
+        a.navigator.push(ToolScreens.create(a, ToolId.TRIM_AUDIO)); idle(1500)
+        run {
+            val deadline = System.currentTimeMillis() + 20_000
+            while (System.currentTimeMillis() < deadline && texts(a).none { it.startsWith("Start 0:") }) { idle(50); Thread.sleep(20) }
+            layoutRoot(a)
+            val w = all(a.navigator.top!!.view).filterIsInstance<com.localmediatools.ui.tools.WaveformView>().first()
+            fun drag(f: Float) {
+                val x = w.width * (0.04f + 0.92f * f); val y = w.height / 2f
+                w.dispatchTouchEvent(android.view.MotionEvent.obtain(0, 0, android.view.MotionEvent.ACTION_DOWN, x, y, 0))
+                w.dispatchTouchEvent(android.view.MotionEvent.obtain(0, 10, android.view.MotionEvent.ACTION_UP, x, y, 0))
+            }
+            drag(0.16f); drag(0.82f); idle(300)
+            shot(a, dir, "33_trim_audio")
+            @Suppress("DEPRECATION") a.onBackPressed(); idle()
+        }
+        Selection.of(ToolId.REMOVE_SILENCE).add(listOf(sound("speech.wav")))
+        open(a, ToolId.REMOVE_SILENCE, dir, "34_remove_silence") { texts(a).any { it.startsWith("Removes ") && " becomes " in it } }
+        Selection.of(ToolId.AUDIO_VOLUME).add(listOf(sound("speech.wav"), sound("music.wav")))
+        open(a, ToolId.AUDIO_VOLUME, dir, "35_volume") { true }
         val noisy = Robo.item(app, Robo.write(inDir, "night_street.jpg", Robo.encode(res("sidd_0144_2_noisy.png"), Bitmap.CompressFormat.JPEG, 95)))
         val raw = Robo.item(app, Robo.write(inDir, "IMG_2041.dng", ScreenshotTest::class.java.getResourceAsStream("/raw/sm-g960f_crop.dng")!!.readBytes()))
         Selection.of(ToolId.DENOISE).add(listOf(noisy, raw))

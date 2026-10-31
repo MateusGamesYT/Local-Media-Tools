@@ -74,12 +74,13 @@ object StackRules {
         PickKind.MEDIA -> if (t == ToolId.FACE_BLUR || t == ToolId.DENOISE) setOf(FlowKind.IMAGE, FlowKind.VIDEO) else setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.VIDEO)
         PickKind.ANY -> FlowKind.entries.toSet() - FlowKind.AUDIO
         PickKind.PRINTABLE -> setOf(FlowKind.IMAGE, FlowKind.GIF, FlowKind.PDF)
+        PickKind.AUDIO -> setOf(FlowKind.AUDIO, FlowKind.VIDEO)
     }
 
     /** What a tool makes from a file of kind [k]. */
     fun output(t: ToolId, k: FlowKind): FlowKind = when (t) {
         ToolId.VIDEO_TO_GIF -> FlowKind.GIF
-        ToolId.EXTRACT_AUDIO -> FlowKind.AUDIO
+        ToolId.EXTRACT_AUDIO, ToolId.TRIM_AUDIO, ToolId.MERGE_AUDIO, ToolId.CONVERT_AUDIO, ToolId.AUDIO_VOLUME, ToolId.AUDIO_SPEED, ToolId.SPLIT_AUDIO, ToolId.REMOVE_SILENCE -> FlowKind.AUDIO
         ToolId.IMAGES_TO_PDF -> FlowKind.PDF
         ToolId.PDF_TO_IMAGES -> FlowKind.IMAGE
         ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.DENOISE, ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> k

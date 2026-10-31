@@ -850,6 +850,12 @@
 < Choose photos, PDFs or documents
 > 사진, PDF 또는 문서 선택
 
+< Choose a sound file
+> 오디오 파일 선택
+
+< Choose sound files
+> 오디오 파일 선택
+
 < Select images
 > 이미지 선택
 
@@ -871,6 +877,9 @@
 < Select photos, PDFs or documents
 > 사진, PDF 또는 문서 선택
 
+< Select sound files
+> 오디오 파일 선택
+
 < Select images to continue
 > 계속하려면 이미지를 선택해 주세요
 
@@ -891,6 +900,9 @@
 
 < Select photos, PDFs or documents to continue
 > 계속하려면 사진, PDF 또는 문서를 선택하세요
+
+< Select sound files to continue
+> 계속하려면 오디오 파일을 선택해 주세요
 
 < Select at least {0} image
 < Select at least {0} images
@@ -920,6 +932,10 @@
 < Select at least {0} photos, PDFs or documents
 > 사진, PDF 또는 문서를 {0}개 이상 선택하세요
 
+< Select at least {0} sound file
+< Select at least {0} sound files
+> 오디오 파일을 {0}개 이상 선택해 주세요
+
 < {0} image selected
 < {0} images selected
 > 이미지 {0}장 선택됨
@@ -944,6 +960,10 @@
 < {0} files selected
 > 파일 {0}개 선택됨
 
+< {0} sound file selected
+< {0} sound files selected
+> 오디오 파일 {0}개 선택됨
+
 < No images found in that folder.
 > 해당 폴더에 이미지가 없어요.
 
@@ -964,6 +984,9 @@
 
 < No photos, PDFs or documents found in that folder.
 > 이 폴더에서 사진, PDF 또는 문서를 찾지 못했어요.
+
+< No sound files found in that folder.
+> 이 폴더에서 오디오 파일을 찾지 못했어요.
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -987,6 +1010,9 @@
 
 < Not a photo, PDF or document
 > 사진, PDF 또는 문서가 아니에요
+
+< Not a sound file
+> 오디오 파일이 아니에요
 
 < Use the GIF optimizer for GIFs
 > GIF는 'GIF 최적화'를 사용해 주세요
@@ -1124,8 +1150,29 @@
 < exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
 > exif xmp iptc id3 태그 속성 상세 info 정보 검사 확인 gps 위치 카메라 작성자 개인정보
 
-< mp3 m4a sound music
-> 소리 음악 음원 오디오 추출
+< mp3 m4a aac sound music video soundtrack rip
+> mp3 m4a aac 소리 음악 오디오 동영상 사운드트랙 추출
+
+< cut shorten ringtone clip song mp3 fade in out sound music voice
+> 자르기 줄이기 벨소리 클립 노래 mp3 페이드 인 아웃 소리 음악 음성
+
+< join combine concatenate songs mp3 crossfade mix playlist sound music
+> 병합 결합 이어붙이기 노래 mp3 크로스페이드 믹스 재생목록 소리 음악
+
+< mp3 m4a aac opus ogg flac wav format bitrate sound music
+> mp3 m4a aac opus ogg flac wav 형식 비트레이트 소리 음악 오디오
+
+< normalize normalise loudness louder quieter gain lufs replaygain level boost sound music
+> 노멀라이즈 정규화 라우드니스 더크게 더작게 게인 lufs replaygain 레벨 부스트 소리 음악
+
+< tempo faster slower pitch key semitone transpose practice sound music voice
+> 템포 빠르게 느리게 피치 키 반음 조옮김 연습 소리 음악 음성
+
+< cut parts tracks chapters album recording sound music
+> 자르기 부분 트랙 챕터 앨범 녹음 소리 음악
+
+< silent pauses gaps trim voice note podcast lecture recording sound
+> 무음 침묵 일시정지 간격 자르기 음성메모 팟캐스트 강의 녹음 소리
 
 < mute silent sound
 > 음소거 무음 소리 제거 소리끄기
@@ -3358,6 +3405,318 @@
 < The chosen people don't appear in these files
 > 선택한 인물이 이 파일들에 없어요
 
+< Waveform: drag the handles to choose the part
+> 파형: 손잡이를 끌어서 구간을 고르세요
+
+< Waveform
+> 파형
+
+< Same as the original
+> 원본과 같음
+
+< Save as
+> 저장 형식
+
+< The kind of file and its quality
+> 파일 종류와 품질
+
+< Keep channels
+> 채널 유지
+
+< Stereo
+> 스테레오
+
+< The same kind of file as each original, at a quality no lower than its own. MP3, M4A and Opus are compressed again, which loses a little; choose FLAC or WAV to lose nothing more.
+> 각 원본과 같은 종류의 파일이며, 품질은 원본보다 낮지 않아요. MP3, M4A, Opus는 다시 압축되어 조금 손실되니, 더 잃지 않으려면 FLAC이나 WAV를 고르세요.
+
+< Lossless: keeps every detail of the sound as it is now. Files are large (FLAC about half the size of WAV).
+> 무손실: 지금 소리의 모든 세부 요소를 그대로 유지해요. 파일이 커요(FLAC은 WAV의 약 절반 크기예요).
+
+< Opus sounds the best for its size, but older devices and car stereos may not play it.
+> Opus는 크기에 비해 소리가 가장 좋지만, 오래된 기기와 자동차 오디오에서는 재생되지 않을 수 있어요.
+
+< Higher bit rates sound better and make larger files. 192 kbps and up is hard to tell from the original.
+> 비트 전송률이 높을수록 소리가 좋고 파일이 커요. 192 kbps 이상이면 원본과 구별하기 어려워요.
+
+< 32-bit float
+> 32비트 부동소수점
+
+< {0}-bit
+> {0}비트
+
+< Drawing the waveform…
+> 파형을 그리는 중…
+
+< {0} (the same type as the original)
+> {0} (원본과 같은 종류)
+
+< {0} couldn't be read: {1}
+> {0}을(를) 읽을 수 없어요: {1}
+
+< Select a sound file to choose the part to keep.
+> 남길 구간을 고르려면 오디오 파일을 선택해 주세요.
+
+< Start
+> 시작
+
+< End
+> 끝
+
+< Listen to the part
+> 구간 듣기
+
+< What to keep
+> 남길 부분
+
+< Keep the part
+> 구간 남기기
+
+< Cut the part out
+> 구간 잘라내기
+
+< None
+> 없음
+
+< Fade in
+> 페이드 인
+
+< From silence to full volume at the start
+> 시작할 때 무음에서 최대 볼륨까지
+
+< Fade out
+> 페이드 아웃
+
+< Down to silence at the end
+> 끝에서 무음까지 줄어듦
+
+< Start {0} · End {1} · keeps {2}
+> 시작 {0} · 끝 {1} · {2} 남김
+
+< This file can't be played here.
+> 이 파일은 여기서 재생할 수 없어요.
+
+< The part to keep is too short
+> 남길 구간이 너무 짧아요
+
+< Nothing would be left
+> 남는 것이 없어요
+
+< Select two or more sound files. They're joined in the order shown above (tap Review to reorder).
+> 오디오 파일을 2개 이상 선택하세요. 위에 표시된 순서대로 이어 붙여요(순서를 바꾸려면 확인을 누르세요).
+
+< Between the files
+> 파일 사이
+
+< Back to back
+> 간격 없이 이어 붙이기
+
+< A pause
+> 간격 두기
+
+< Crossfade
+> 크로스페이드
+
+< Even out the volume
+> 볼륨 맞추기
+
+< Brings every file to the same loudness first
+> 먼저 모든 파일의 라우드니스를 같게 맞춰요
+
+< Like the first file
+> 첫 번째 파일과 같게
+
+< Checking the files…
+> 파일을 확인하는 중…
+
+< One of the files couldn't be read as sound.
+> 파일 중 하나를 소리로 읽을 수 없어요.
+
+< {0} file · {1} in total
+< {0} files · {1} in total
+> 파일 {0}개 · 총 {1}
+
+< Opus is always 48 kHz; MP3 and M4A use the nearest rate they support
+> Opus는 항상 48 kHz예요. MP3와 M4A는 지원하는 가장 가까운 샘플링 빈도를 사용해요.
+
+< Keep
+> 유지
+
+< Videos can be chosen too: their sound is converted. Title, artist, album and cover are kept (M4A files keep the sound only).
+> 동영상도 고를 수 있어요. 동영상의 소리는 변환돼요. 제목, 아티스트, 앨범, 커버는 유지돼요(M4A 파일은 소리만 유지돼요).
+
+< How
+> 방법
+
+< Same loudness
+> 같은 라우드니스
+
+< Peak level
+> 피크 레벨
+
+< Louder or quieter
+> 더 크게 또는 더 작게
+
+< Limit peaks to −1 dB
+> 피크를 −1 dB로 제한
+
+< A limiter keeps louder parts from clipping
+> 리미터가 큰 부분이 찢어지지(클리핑) 않게 막아요
+
+< Album mode
+> 앨범 모드
+
+< One change for all the files, measured together: the songs of an album keep their differences
+> 모든 파일에 같은 변경을 적용하고 함께 측정해요. 앨범 곡들은 서로 다른 차이를 유지해요
+
+< −14 LUFS · streaming (Spotify, YouTube)
+> −14 LUFS · 스트리밍 (Spotify, YouTube)
+
+< −16 LUFS · podcasts, Apple Music
+> −16 LUFS · 팟캐스트, Apple Music
+
+< −18 LUFS · quieter
+> −18 LUFS · 더 작게
+
+< −23 LUFS · TV and radio (EBU R128)
+> −23 LUFS · TV 및 라디오 (EBU R128)
+
+< Loudness is measured as people hear it (ITU-R BS.1770), so files sound equally loud however their peaks look.
+> 라우드니스는 사람이 듣는 방식대로 측정해요(ITU-R BS.1770). 그래서 피크가 어떻게 보이든 파일이 똑같이 크게 들려요.
+
+< The loudest moment (including peaks between samples) is set to this level.
+> 가장 큰 순간(샘플 사이의 피크 포함)이 이 레벨로 맞춰져요.
+
+< Change
+> 변경
+
+< +6 dB is about twice as loud in level, −6 dB half
+> +6 dB는 레벨이 약 두 배, −6 dB는 절반
+
+< Choose a change other than 0 dB
+> 0 dB가 아닌 변경을 고르세요
+
+< Pitch stays the same
+> 피치는 그대로 유지돼요
+
+< Pitch
+> 피치
+
+< In semitones; speed stays the same (12 = an octave)
+> 반음 단위; 속도는 그대로 유지돼요 (12 = 한 옥타브)
+
+< 0 = unchanged
+> 0 = 변경 없음
+
+< Voices stay natural from about 0.75× to 1.5×; further than that, and more than a few semitones, the sound starts to show the change. For videos, use Speed & timelapse.
+> 목소리는 약 0.75×~1.5×까지는 자연스럽게 들려요. 그 이상이거나 반음을 여러 개 넘으면 소리에서 변화가 드러나기 시작해요. 동영상은 "속도 및 타임랩스"를 사용하세요.
+
+< {0} becomes {1}
+> {0} → {1}
+
+< pitch {1} {0} semitone
+< pitch {1} {0} semitones
+> 피치 {0}반음 {1}
+
+< up
+> 올림
+
+< down
+> 내림
+
+< Unchanged
+> 변경 없음
+
+< Change the speed or the pitch
+> 속도 또는 피치 변경
+
+< Split
+> 분할
+
+< Every…
+> 매 …
+
+< Into equal parts
+> 같은 크기로 나누기
+
+< At silences
+> 무음 지점에서
+
+< Custom length (minutes)
+> 직접 길이 입력 (분)
+
+< e.g. 2.5
+> 예: 2.5
+
+< {0} part
+< {0} parts
+> 파트 {0}개
+
+< Silences at least this long separate the parts:
+> 이 길이 이상의 무음으로 구간을 나눠요:
+
+< For recordings of several songs or tracks: each part starts where the sound comes back, and the silence between is left out.
+> 여러 곡이나 트랙을 녹음한 경우에 쓰여요. 각 구간은 소리가 다시 나오는 곳에서 시작하고, 그 사이의 무음은 빠져요.
+
+< Cut at quiet moments
+> 조용한 순간에 자르기
+
+< Moves each cut up to 3 seconds to a pause, so words and notes aren't cut in half
+> 각 컷을 최대 3초 안의 일시정지 지점으로 옮겨, 단어와 음이 반으로 잘리지 않게 해요
+
+< Enter a length between 0.1 and 600 minutes
+> 0.1에서 600분 사이의 길이를 입력하세요
+
+< One file per part: {0}, {1} …
+> 구간마다 파일 하나: {0}, {1} …
+
+< At the start and end
+> 시작과 끝
+
+< Removes the silence before the sound starts and after it ends
+> 소리가 시작되기 전과 끝난 뒤의 무음을 제거해요
+
+< Shorten pauses
+> 일시정지 줄이기
+
+< Long pauses inside are cut down to the length below
+> 중간의 긴 일시정지를 아래 길이로 줄여요
+
+< keep {0}
+> {0} 유지
+
+< What counts as silence
+> 무음으로 볼 기준
+
+< Only silence
+> 무음만
+
+< Pauses in speech
+> 말하는 중의 일시정지
+
+< Also very soft parts
+> 아주 작은 부분도
+
+< Select a sound file to see what would be removed.
+> 오디오 파일을 선택하면 제거될 부분을 볼 수 있어요.
+
+< Silence is judged against each recording's own background noise, so pauses with room noise or breathing are found too. The shaded parts above will be removed (shown for the first file).
+> 무음은 각 녹음의 배경 소음을 기준으로 판단하므로, 방 소음이나 숨소리가 있는 일시정지도 찾아요. 위의 음영 부분이 제거돼요(첫 번째 파일 기준으로 표시).
+
+< Choose what to remove
+> 제거할 항목 고르기
+
+< No silence to remove at this setting.
+> 이 설정에서는 제거할 무음이 없어요.
+
+< Removes {0}: {1} becomes {2}
+> {0} 제거: {1} → {2}
+
+< Original (no re-encoding)
+> 원본 (다시 인코딩 안 함)
+
+< Original: AAC sound (most phone videos) is copied into an .m4a file exactly as it is — no quality loss. Other sound (Opus, AC-3…) is converted to M4A.
+> 원본: AAC 소리(대부분의 휴대폰 동영상)는 화질 손실 없이 .m4a 파일로 그대로 복사해요. 다른 소리(Opus, AC-3…)는 M4A로 변환해요.
+
 < Preview at 100 %
 > 100%로 미리보기
 
@@ -3919,9 +4278,6 @@
 < Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
 > 페이지는 쉼표로 구분하고, 범위는 4-9처럼 입력해요. "8-"은 8페이지부터 끝까지를 뜻해요. 페이지는 입력한 순서대로 저장돼요.
 
-< Save as
-> 저장 형식
-
 < name_pages.pdf
 > name_pages.pdf
 
@@ -4035,9 +4391,6 @@
 < Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
 > 소리가 없고 최대 120 fps인 경우에는 타이밍만 바꾸므로 다시 인코딩하지 않으며 화질 손실도 없어요. 그 외에는 H.264 MP4로 다시 인코딩되고, 타임랩스는 초당 30프레임을 유지해요.
 
-< {0} becomes {1}
-> {0} → {1}
-
 < only {0} frame per second, so it will look choppy
 < only {0} frames per second, so it will look choppy
 > 초당 {0}프레임뿐이라 끊겨 보여요
@@ -4143,9 +4496,6 @@
 
 < Start and length can't be negative
 > 시작과 길이는 음수일 수 없어요
-
-< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
-> AAC 소리 트랙이 다시 인코딩이나 음질 손실 없이 그대로 .m4a 파일로 복사돼요. 오디오가 AAC가 아니거나(예: Opus, AC-3) 소리가 없는 동영상은 결과에 분명하게 표시돼요.
 
 < Watermark preview
 > 워터마크 미리보기
@@ -4304,9 +4654,6 @@
 
 < encrypted
 > 암호화됨
-
-< Change
-> 변경
 
 < unknown
 > 알 수 없음
@@ -4487,6 +4834,51 @@
 
 < This action isn't available on this phone.
 > 이 작업은 이 휴대전화에서 사용할 수 없어요.
+
+< No sound could be read from this file.
+> 이 파일에서 소리를 읽을 수 없어요.
+
+< There was no sound to save.
+> 저장할 소리가 없었어요.
+
+< The written file failed verification, so it was discarded.
+> 저장된 파일이 검증에 실패해서 버렸어요.
+
+< This file couldn't be read as audio.
+> 이 파일은 오디오로 읽을 수 없어요.
+
+< This video has no sound.
+> 이 동영상에는 소리가 없어요.
+
+< This file has no sound that can be read.
+> 이 파일에는 읽을 수 있는 소리가 없어요.
+
+< WAV/AIFF ({0}-bit)
+> WAV/AIFF ({0}비트)
+
+< This phone can't decode {0} sound.
+> 이 휴대폰은 {0} 소리를 디코딩할 수 없어요.
+
+< The sound decoder stopped responding.
+> 소리 디코더가 응답을 멈췄어요.
+
+< WAV files can't be larger than 4 GB. Choose FLAC for very long recordings.
+> WAV 파일은 4GB를 넘을 수 없어요. 아주 긴 녹음은 FLAC을 고르세요.
+
+< The sound encoder stopped responding.
+> 소리 인코더가 응답을 멈췄어요.
+
+< This phone's AAC encoder can't write {0} Hz, {1} channels.
+> 이 휴대폰의 AAC 인코더는 {0} Hz, {1}채널을 쓸 수 없어요.
+
+< The AAC encoder gave no sound.
+> AAC 인코더가 소리를 만들지 못했어요.
+
+< This phone has no Opus encoder. Choose M4A (AAC) or MP3 instead.
+> 이 휴대폰에는 Opus 인코더가 없어요. 대신 M4A(AAC) 또는 MP3를 고르세요.
+
+< The Opus encoder gave no sound.
+> Opus 인코더가 소리를 만들지 못했어요.
 
 < Nothing was produced.
 > 만들어진 결과가 없어요.
@@ -5130,6 +5522,113 @@
 < H.264 from {0}
 > H.264(원본: {0})
 
+< Trimming {0} sound file
+< Trimming {0} sound files
+> 오디오 파일 {0}개 자르는 중
+
+< The length of this file couldn't be read.
+> 이 파일의 길이를 읽을 수 없어요.
+
+< The part to keep is too short.
+> 남길 구간이 너무 짧아요.
+
+< Nothing would be left.
+> 남는 것이 없어요.
+
+< Merging {0} sound file
+< Merging {0} sound files
+> 오디오 파일 {0}개 병합하는 중
+
+< {0} sound file
+< {0} sound files
+> 오디오 파일 {0}개
+
+< Select at least two sound files to merge.
+> 병합하려면 오디오 파일을 2개 이상 선택하세요.
+
+< Reading the files
+> 파일을 읽는 중
+
+< Measuring loudness
+> 라우드니스 측정 중
+
+< Joining
+> 병합하는 중
+
+< crossfaded over {0}
+> {0} 동안 크로스페이드
+
+< {0} of silence between
+> 사이에 {0} 무음
+
+< one after another
+> 차례대로
+
+< Volume evened out to the same loudness.
+> 볼륨을 같은 라우드니스로 맞췄어요.
+
+< Converting {0} sound file to {1}
+< Converting {0} sound files to {1}
+> 오디오 파일 {0}개를 {1}(으)로 변환하는 중
+
+< A lossless copy of {0} sound keeps exactly what it had, but can't bring back what {0} left out.
+> {0} 소리를 무손실로 복사하면 원래 내용은 그대로 남지만, {0}에서 빠진 부분은 되돌릴 수 없어요.
+
+< Adjusting the volume of {0} sound file
+< Adjusting the volume of {0} sound files
+> 오디오 파일 {0}개의 볼륨 조절 중
+
+< This file is silent, so its volume can't be set.
+> 이 파일은 무음이라 볼륨을 설정할 수 없어요.
+
+< Already at that volume ({0}), so nothing was changed.
+> 이미 그 볼륨({0})이라 아무것도 바꾸지 않았어요.
+
+< peak {0} → {1}
+> 피크 {0} → {1}
+
+< Peaks were held under −1 dBTP by the limiter (by up to {0}).
+> 리미터가 피크를 −1 dBTP 아래로 유지했어요(최대 {0}).
+
+< Reached {0} instead: louder would have clipped its peaks. Turn on the limiter to go all the way.
+> 대신 {0}에 도달했어요. 더 크게 하면 피크가 찢어지기 때문이에요. 리미터를 켜면 끝까지 올릴 수 있어요.
+
+< Changing the speed and pitch of {0} sound file
+< Changing the speed and pitch of {0} sound files
+> 오디오 파일 {0}개의 속도와 피치를 바꾸는 중
+
+< Speed and pitch are unchanged, so there is nothing to do.
+> 속도와 피치가 그대로라서 할 일이 없어요.
+
+< Splitting {0} sound file
+< Splitting {0} sound files
+> 오디오 파일 {0}개 분할하는 중
+
+< Finding the quiet moments
+> 조용한 순간을 찾는 중
+
+< No silence long enough to split at was found.
+> 나눌 만큼 긴 무음을 찾지 못했어요.
+
+< {0} long — already within one part, nothing to split.
+> {0} 길이 — 이미 한 구간 안에 있어서 나눌 것이 없어요.
+
+< Removing silence from {0} sound file
+< Removing silence from {0} sound files
+> 오디오 파일 {0}개에서 무음을 제거하는 중
+
+< Finding the silence
+> 무음을 찾는 중
+
+< The whole file is silent at this sensitivity, so nothing was saved.
+> 이 민감도에서는 파일 전체가 무음이라 아무것도 저장하지 않았어요.
+
+< No silence to remove was found.
+> 제거할 무음을 찾지 못했어요.
+
+< {0} of silence removed ({1} → {2})
+> 무음 {0} 제거됨 ({1} → {2})
+
 < Vertical
 > 세로
 
@@ -5729,14 +6228,17 @@
 < Read documents; convert, merge and scan PDFs
 > 문서 읽기, PDF 변환·병합·스캔
 
+< Audio
+> 오디오
+
+< Trim, join, convert and tune sound files
+> 오디오 파일 자르기, 병합, 변환, 조정
+
 < Photos and documents on your Wi-Fi printer
 > Wi-Fi 프린터로 사진과 문서 인쇄
 
-< Privacy & audio
-> 개인정보 및 오디오
-
-< Clean metadata and extract sound
-> 메타데이터 정리와 소리 추출
+< See and clean what files say about you
+> 파일이 나에 대해 알려주는 정보를 확인하고 지워요
 
 < Tool stack
 > 도구 스택
@@ -6044,14 +6546,77 @@
 < Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
 > GPS 위치, 카메라 정보, 날짜, 코멘트, 숨겨진 썸네일이 없는 깨끗한 사진과 동영상 사본을 만들어요. 사진 픽셀과 동영상 스트림은 변경 없이 복사되며(화질 손실 없음), 방향과 색상 프로필은 유지돼요.
 
+< Trim audio
+> 오디오 자르기
+
+< Keep the part you want, with fades
+> 원하는 구간만 남기고 페이드를 넣어요
+
+< Choose the part of a song, recording or voice note to keep — or to cut out — on its waveform, listen to it, and add a fade in and out. Saves as MP3, M4A, Opus, FLAC or WAV.
+> 노래, 녹음, 음성 메모에서 남길(또는 잘라낼) 구간을 파형에서 고르고, 들어 본 뒤 페이드 인과 아웃을 넣어요. MP3, M4A, Opus, FLAC, WAV로 저장돼요.
+
+< Merge audio
+> 오디오 병합
+
+< Join sound files, with crossfades
+> 오디오 파일을 크로스페이드와 함께 이어 붙여요
+
+< Joins songs, recordings and voice notes into one file in your order, back to back, with a pause between, or crossfading from one into the next. Can even out their volume first.
+> 노래, 녹음, 음성 메모를 순서대로 한 파일로 이어 붙여요. 간격을 두고 차례로 붙이거나, 앞 곡에서 다음 곡으로 크로스페이드할 수 있어요. 먼저 볼륨을 맞출 수도 있어요.
+
+< Convert audio
+> 오디오 변환
+
+< MP3, M4A, Opus, FLAC or WAV
+> MP3, M4A, Opus, FLAC, WAV
+
+< Converts sound files — and the sound of videos — between MP3, M4A (AAC), Opus, FLAC and WAV, at the quality you choose, keeping the title, artist and cover.
+> 오디오 파일과 동영상의 소리를 MP3, M4A(AAC), Opus, FLAC, WAV 사이에서 원하는 품질로 변환해요. 제목, 아티스트, 커버는 유지돼요.
+
+< Volume & normalize
+> 볼륨 & 노멀라이즈
+
+< Even loudness, louder or quieter
+> 같은 라우드니스, 더 크게 또는 더 작게
+
+< Brings sound files to the same loudness (as streaming services and broadcasters measure it), to a peak level, or changes the volume by the amount you choose. A limiter keeps peaks from clipping. Album mode keeps the differences between the songs of an album.
+> 오디오 파일을 (스트리밍 서비스와 방송사가 측정하는 방식으로) 같은 라우드니스에 맞추거나, 피크 레벨에 맞추거나, 고른 만큼 볼륨을 바꿔요. 리미터가 피크가 찢어지지 않게 막아요. 앨범 모드는 앨범 곡들 사이의 차이를 유지해요.
+
+< Speed & pitch
+> 속도 & 피치
+
+< Faster or slower, higher or lower
+> 더 빠르게 또는 느리게, 더 높게 또는 낮게
+
+< Changes how fast a recording plays without making voices squeaky, or moves its pitch up or down without changing its speed — or both. Good for practising music, podcasts and lectures.
+> 목소리가 찌그러지지 않게 녹음의 재생 속도를 바꾸거나, 속도를 바꾸지 않고 피치를 올리거나 내려요. 둘 다 할 수도 있어요. 음악, 팟캐스트, 강의 연습에 좋아요.
+
+< Split audio
+> 오디오 분할
+
+< Into parts, by length or at silences
+> 길이 또는 무음 지점에 따라 구간으로 나누기
+
+< Cuts long recordings into parts of the length you choose, into a number of equal parts, or at the silences between tracks. Cuts can move to the nearest quiet moment so words aren't cut in half.
+> 긴 녹음을 고른 길이의 구간, 같은 크기의 여러 구간, 또는 트랙 사이의 무음 지점에서 나눠요. 컷은 가장 가까운 조용한 순간으로 옮길 수 있어 단어가 반으로 잘리지 않아요.
+
+< Remove silence
+> 무음 제거
+
+< Trim silent starts, ends and long pauses
+> 무음 시작·끝과 긴 일시정지 자르기
+
+< Removes the silence at the start and end of recordings and shortens long pauses in speech, so voice notes, lectures and podcasts get to the point. What counts as silence follows each recording's own background noise.
+> 녹음의 시작과 끝 무음을 제거하고 말하는 중의 긴 일시정지를 줄여서, 음성 메모, 강의, 팟캐스트가 핵심으로 바로 들어가게 해요. 무음 기준은 각 녹음의 배경 소음을 따라요.
+
 < Extract audio
 > 오디오 추출
 
-< Save a video's AAC sound as M4A
-> 동영상의 AAC 소리를 M4A로 저장
+< Save the sound of videos
+> 동영상 소리 저장
 
-< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
-> 각 동영상의 AAC 소리 트랙을 다시 인코딩하지 않고 M4A 오디오 파일로 복사해요.
+< Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
+> 각 동영상의 소리를 오디오 파일로 저장해요. AAC 소리는 다시 인코딩하지 않고 M4A 파일로 그대로 복사해요. 그 밖의 소리나 고른 형식(MP3, Opus, FLAC, WAV)은 변환해요.
 
 < Merging {0} video
 < Merging {0} videos
@@ -6077,9 +6642,6 @@
 
 < The converted clips still can't be joined on this device ({0}).
 > 변환한 클립도 이 기기에서는 병합할 수 없어요({0}).
-
-< Joining
-> 병합하는 중
 
 < Finishing
 > 마무리하는 중
@@ -6118,10 +6680,6 @@
 
 < Some parts are longer than {0} because the video has few keyframes (longest {1}).
 > 동영상에 키프레임이 적어서 일부 파트가 {0}보다 길어요(가장 긴 파트 {1}).
-
-< {0} part
-< {0} parts
-> 파트 {0}개
 
 < cuts at keyframes
 > 키프레임에서 자름
@@ -6170,8 +6728,8 @@
 < This video has no audio track.
 > 이 동영상에는 오디오 트랙이 없어요.
 
-< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
-> 호환되는 AAC 오디오 트랙이 없어요(이 동영상의 오디오 형식: {0}). 아무것도 추출하지 않았어요.
+< This video's sound is {0}, so it was converted to AAC (M4A).
+> 이 동영상의 소리는 {0}이라서 AAC(M4A)로 변환했어요.
 
 < {0} non-AAC audio track was not extracted.
 < {0} non-AAC audio tracks were not extracted.
@@ -6878,9 +7436,6 @@
 
 < Read/write error: {0}
 > 읽기/쓰기 오류: {0}
-
-< Audio
-> 오디오
 
 < Unknown
 > 알 수 없음

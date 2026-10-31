@@ -36,7 +36,9 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
     PDFS(arrayOf("application/pdf"), null),
     MEDIA(arrayOf("image/*", "video/*"), "*/*"),
     ANY(arrayOf("image/*", "video/*", "application/pdf"), "*/*"),
-    PRINTABLE(arrayOf("image/*", "application/pdf", *Documents.MIMES), "image/*");
+    PRINTABLE(arrayOf("image/*", "application/pdf", *Documents.MIMES), "image/*"),
+    /** Sound files, and videos for their sound. */
+    AUDIO(arrayOf("audio/*", "video/*", "application/ogg"), null);
 
     /** The empty selection card's title ([one]: a tool that works on one file). */
     fun choose(one: Boolean): String = when (this) {
@@ -47,6 +49,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         MEDIA -> if (one) tr("Choose a photo or video") else tr("Choose photos or videos")
         ANY -> if (one) tr("Choose a file") else tr("Choose files")
         PRINTABLE -> if (one) tr("Choose a photo, PDF or document") else tr("Choose photos, PDFs or documents")
+        AUDIO -> if (one) tr("Choose a sound file") else tr("Choose sound files")
     }
 
     /** The selection card's heading. */
@@ -58,6 +61,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         MEDIA -> tr("Select photos or videos")
         ANY -> tr("Select files")
         PRINTABLE -> tr("Select photos, PDFs or documents")
+        AUDIO -> tr("Select sound files")
     }
 
     fun selectToContinue(): String = when (this) {
@@ -68,6 +72,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         MEDIA -> tr("Select photos or videos to continue")
         ANY -> tr("Select files to continue")
         PRINTABLE -> tr("Select photos, PDFs or documents to continue")
+        AUDIO -> tr("Select sound files to continue")
     }
 
     fun selectAtLeast(min: Int): String = when (this) {
@@ -78,6 +83,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         MEDIA -> trn(min, "Select at least {0} photo or video", "Select at least {0} photos or videos")
         ANY -> trn(min, "Select at least {0} file", "Select at least {0} files")
         PRINTABLE -> trn(min, "Select at least {0} photo, PDF or document", "Select at least {0} photos, PDFs or documents")
+        AUDIO -> trn(min, "Select at least {0} sound file", "Select at least {0} sound files")
     }
 
     fun selected(n: Int): String = when (this) {
@@ -88,6 +94,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         MEDIA -> trn(n, "{0} photo or video selected", "{0} photos and videos selected")
         ANY -> trn(n, "{0} file selected", "{0} files selected")
         PRINTABLE -> trn(n, "{0} file selected", "{0} files selected")
+        AUDIO -> trn(n, "{0} sound file selected", "{0} sound files selected")
     }
 
     fun noneInFolder(): String = when (this) {
@@ -98,6 +105,7 @@ enum class PickKind(val mimes: Array<String>, val galleryType: String?) {
         MEDIA -> tr("No photos or videos found in that folder.")
         ANY -> tr("No files found in that folder.")
         PRINTABLE -> tr("No photos, PDFs or documents found in that folder.")
+        AUDIO -> tr("No sound files found in that folder.")
     }
 }
 
@@ -124,6 +132,7 @@ object ToolRules {
         ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.HIGHLIGHT_VIDEO, ToolId.DENOISE -> PickKind.MEDIA
         ToolId.TOOL_STACK -> PickKind.ANY
         ToolId.PRINT -> PickKind.PRINTABLE
+        ToolId.TRIM_AUDIO, ToolId.MERGE_AUDIO, ToolId.CONVERT_AUDIO, ToolId.AUDIO_VOLUME, ToolId.AUDIO_SPEED, ToolId.SPLIT_AUDIO, ToolId.REMOVE_SILENCE -> PickKind.AUDIO
         else -> PickKind.IMAGES
     }
 
@@ -132,11 +141,11 @@ object ToolRules {
         item.name.substringAfterLast('.', "").uppercase(java.util.Locale.ROOT).takeIf { it.length in 2..4 && it.all { c -> c.isLetterOrDigit() } } ?: "RAW"
 
     /** Tools that work on one file at a time. */
-    fun single(t: ToolId) = t == ToolId.TRIM_VIDEO
+    fun single(t: ToolId) = t == ToolId.TRIM_VIDEO || t == ToolId.TRIM_AUDIO
 
-    fun minItems(t: ToolId) = when (t) { ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.MERGE_PDFS, ToolId.MERGE_VIDEOS, ToolId.HIGHLIGHT_VIDEO -> 2; else -> 1 }
+    fun minItems(t: ToolId) = when (t) { ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.MERGE_PDFS, ToolId.MERGE_VIDEOS, ToolId.HIGHLIGHT_VIDEO, ToolId.MERGE_AUDIO -> 2; else -> 1 }
 
-    fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS)
+    fun orderMatters(t: ToolId) = t in setOf(ToolId.MERGE_IMAGES, ToolId.STITCH, ToolId.IMAGES_TO_PDF, ToolId.MERGE_PDFS, ToolId.PDF_SCANNER, ToolId.MERGE_VIDEOS, ToolId.MERGE_AUDIO)
 
     /**
      * What to tell the user before [t] runs on [items] when RAW photos among them can't stay RAW: in
@@ -185,6 +194,7 @@ object ToolRules {
             PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO && t != ToolId.DENOISE)) null else tr("Not a photo or video")
             PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else tr("Not a photo, video, GIF or PDF")
             PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF || item.kind == MediaKind.DOCUMENT) null else tr("Not a photo, PDF or document")
+            PickKind.AUDIO -> if (item.kind == MediaKind.AUDIO || item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("audio/") == true)) null else tr("Not a sound file")
             PickKind.IMAGES -> when {
                 item.kind == MediaKind.IMAGE -> null
                 item.kind == MediaKind.GIF -> if (t == ToolId.OPTIMIZE_IMAGES) tr("Use the GIF optimizer for GIFs") else null
@@ -270,7 +280,7 @@ class SelectionPanel(
             gravity = Gravity.CENTER
             background = Shapes.clickable(context, Palette.SURFACE_2, 16f, Palette.STROKE)
             setPadding(dp(16), dp(22), dp(16), dp(22))
-            addView(UI.iconView(context, when (kind) { PickKind.VIDEOS -> R.drawable.ic_video; PickKind.PDFS -> R.drawable.ic_file; else -> R.drawable.ic_gallery }, Palette.ACCENT, 30))
+            addView(UI.iconView(context, when (kind) { PickKind.VIDEOS -> R.drawable.ic_video; PickKind.PDFS -> R.drawable.ic_file; PickKind.AUDIO -> R.drawable.ic_tool_audio; else -> R.drawable.ic_gallery }, Palette.ACCENT, 30))
             val one = ToolRules.single(selection.tool)
             addView(UI.text(context, kind.choose(one), TextStyle.SUBTITLE).apply { gravity = Gravity.CENTER; setPadding(0, dp(10), 0, dp(2)) })
             addView(UI.text(context, when {
@@ -375,6 +385,7 @@ class SelectionPanel(
         fun iconFor(item: MediaItem) = when (item.kind) {
             MediaKind.VIDEO -> R.drawable.ic_video
             MediaKind.PDF, MediaKind.DOCUMENT -> R.drawable.ic_file
+            MediaKind.AUDIO -> R.drawable.ic_tool_audio
             else -> R.drawable.ic_image
         }
     }

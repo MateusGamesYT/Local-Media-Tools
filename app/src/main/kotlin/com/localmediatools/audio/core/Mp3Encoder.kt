@@ -294,7 +294,9 @@ class Mp3Encoder(private val out: OutputStream, val rate: Int, val channels: Int
             val remainingGc = (2 - gr) * channels - c
             val fair = (frameBits - used) / remainingGc
             val want = (pe * BITS_PER_PE).toInt()
-            var target = if (want > meanBits) meanBits + min(want - meanBits, (resLeft * 0.6).toInt())
+            // Short blocks (attacks) get at least half a share more, and may draw deeper on the reservoir.
+            var target = if (s.type == SHORT) meanBits + min(max(want - meanBits, meanBits / 2), (resLeft * 0.8).toInt())
+                else if (want > meanBits) meanBits + min(want - meanBits, (resLeft * 0.6).toInt())
                 else (want + (meanBits - want) * max(fill, 0.25)).toInt()
             target = min(target, min(4095, fair + resLeft / 2))
             // Leave the granules still to come at least half their share.

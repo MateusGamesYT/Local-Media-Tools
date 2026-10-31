@@ -3,6 +3,9 @@ package com.localmediatools.audio
 import com.localmediatools.audio.core.AudioPlan
 import com.localmediatools.audio.core.AudioTags
 import com.localmediatools.audio.core.FadeCurve
+import com.localmediatools.audio.core.FadeShaper
+import com.localmediatools.audio.core.Joiner
+import com.localmediatools.audio.core.SpanFilter
 import com.localmediatools.audio.core.FlacEncoder
 import com.localmediatools.audio.core.Id3
 import com.localmediatools.audio.core.LevelMeter
@@ -390,4 +393,34 @@ class AudioCoreTest {
         assertNotNull(AudioTags(cover = byteArrayOf(0x89.toByte(), 'P'.code.toByte())).flacPicture())
         assertEquals("image/png", AudioTags(cover = byteArrayOf(0x89.toByte(), 'P'.code.toByte(), 'N'.code.toByte(), 'G'.code.toByte())).coverMime)
     }
+
+    @Test
+    fun joinsFadesAndCutsKeepTheRightFrames() {
+        // Two constant "sounds" (1 and 2), crossfaded over 100 frames: 300 + 300 − 100 frames, constant power through the join.
+        val j = Joiner(1, 100)
+        val out = ArrayList<FloatArray>()
+        for (k in 0 until 3) out.add(j.add(FloatArray(100) { 1f }))
+        out.add(j.next(100, 0))
+        for (k in 0 until 6) out.add(j.add(FloatArray(50) { 2f }))
+        out.add(j.finish())
+        val y = Pcm.concat(out)
+        assertEquals(500, y.size)
+        assertEquals(1f, y[150], 0f); assertEquals(2f, y[450], 0f)
+        for (i in 200 until 300) { val t = (i - 200 + 0.5) / 100; val a = FadeCurve.EQUAL_POWER.gain(1 - t); val b = FadeCurve.EQUAL_POWER.gain(t); assertEquals(a + 2 * b, y[i].toDouble(), 1e-5) }
+        // A gap instead: silence between.
+        val g = Joiner(1, 0)
+        val z = Pcm.concat(listOf(g.add(FloatArray(10) { 1f }), g.next(0, 5), g.add(FloatArray(10) { 1f }), g.finish()))
+        assertEquals(25, z.size); assertTrue(z.copyOfRange(10, 15).all { it == 0f })
+        // Fades on a stream whose end isn't known in advance.
+        val f = FadeShaper(1, 10, 10, FadeCurve.LINEAR)
+        val w = Pcm.concat(listOf(f.process(FloatArray(25) { 1f }), f.process(FloatArray(25) { 1f }), f.finish()))
+        assertEquals(50, w.size)
+        assertEquals(0.05f, w[0], 1e-6f); assertEquals(1f, w[25], 0f); assertEquals(0.05f, w[49], 1e-6f)
+        // Keeping spans: cut edges are faded, the file's own start and end are not.
+        val sf = SpanFilter(1, listOf(Span(0, 40), Span(60, 100)), 100, 5)
+        val k = Pcm.concat(listOf(sf.process(FloatArray(50) { 1f }), sf.process(FloatArray(50) { 1f })))
+        assertEquals(80, k.size); assertEquals(1f, k[0], 0f); assertEquals(1f, k[79], 0f)
+        assertTrue(k[39] < 0.2f && k[40] < 0.2f)
+    }
+
 }

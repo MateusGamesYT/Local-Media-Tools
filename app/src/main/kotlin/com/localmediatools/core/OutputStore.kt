@@ -39,7 +39,14 @@ enum class OutputArea(val collection: Collection, val relativePath: String) {
     GIFS(Collection.IMAGES, "Pictures/LocalMediaTools/GIFs"),
     PDF_IMAGES(Collection.IMAGES, "Pictures/LocalMediaTools/PDF Images"),
     PDF(Collection.DOCUMENTS, "Documents/LocalMediaTools/PDF"),
-    EXTRACTED_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Extracted Audio");
+    EXTRACTED_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Extracted Audio"),
+    TRIMMED_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Trimmed"),
+    MERGED_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Merged"),
+    CONVERTED_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Converted"),
+    VOLUME_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Volume"),
+    SPEED_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Speed and Pitch"),
+    SPLIT_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Split"),
+    NO_SILENCE_AUDIO(Collection.AUDIO, "Music/LocalMediaTools/Silence Removed");
 
     enum class Collection { IMAGES, VIDEO, AUDIO, DOCUMENTS }
 

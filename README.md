@@ -4,8 +4,9 @@
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
 photos and lets you search them in plain words, **highlight videos** cut to music the phone writes
-itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **35
-tools** for photos, video, GIF, documents, PDF and audio, among them a **file reader** for the PDF,
+itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **42
+tools** for photos, video, GIF, documents, PDF and audio, among them **audio tools** to trim, merge,
+convert, normalise, speed up and split sound files, a **file reader** for the PDF,
 Word, Excel and PowerPoint files Android can't open by itself, a **metadata viewer** that shows what
 any file reveals about you, and on-device AI for **face blurring in photos and
 videos**, **background removal**, **one-tap enhancement**, a **magic eraser**, a **duplicate finder** and
@@ -17,7 +18,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.12.0.apk`](release/LocalMediaTools-1.12.0.apk)
+**Install:** [`release/LocalMediaTools-1.13.0.apk`](release/LocalMediaTools-1.13.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -45,6 +46,12 @@ The reader screenshots show a NASA report, a USDA table and an EPA project summa
 
 The metadata screenshots show files made for the tests (a test pattern tagged with an invented place and owner) and the NASA report (public domain); credits in [`CREDITS.md`](app/src/test/resources/meta/CREDITS.md).
 
+| Trim audio | Remove silence | Volume & normalize |
+|---|---|---|
+| ![](docs/screenshots/trim-audio.png) | ![](docs/screenshots/remove-silence.png) | ![](docs/screenshots/volume.png) |
+
+The audio screenshots show *Vibe Ace* by Kevin MacLeod (CC BY 3.0) and a LibriSpeech reading of *Sense and Sensibility* by Heather Barnett (CC BY 4.0); credits in [`CREDITS.md`](app/src/test/resources/audio/CREDITS.md).
+
 | Print | Choosing the printer |
 |---|---|
 | ![](docs/screenshots/print.png) | ![](docs/screenshots/print-printers.png) |
@@ -67,9 +74,65 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.12.0: a metadata viewer, printing documents, and "Me" in the Gallery
+## What's new in 1.13.0: audio tools
 
-- **Metadata viewer** is a new tool in *Privacy & audio*. It shows everything a file says about itself,
+A new **Audio** section with eight tools. They take sound files — MP3, M4A/AAC, FLAC, Ogg Vorbis,
+Opus, WAV, AIFF, AMR — and the sound of videos, and save **MP3, M4A (AAC), Opus, FLAC or WAV** at the
+quality you choose, or the same kind of file as the original. Title, artist, album, track and cover
+are kept (in MP3, FLAC and Opus files). Everything runs on the phone.
+
+- **Trim audio**: drag the handles on the file's waveform (or type the times), listen to the part,
+  keep it or cut it out, and fade in and out (up to 10 s).
+- **Merge audio**: joins files in your order, back to back, with a pause between, or crossfading from
+  one into the next; *Even out the volume* brings them all to the same loudness first. Files with
+  different sample rates and channels are joined without trouble.
+- **Convert audio**: between the five formats, with bit rate (MP3 96–320 kbps, AAC 64–256, Opus
+  48–192), sample size for FLAC and WAV (16, 24, 32-bit float), mono or stereo, and sample rate.
+- **Volume & normalize**: to the same loudness as streaming services, podcasts or broadcasters
+  measure it (−14, −16, −18 or −23 LUFS, ITU-R BS.1770 / EBU R128), to a peak level, or louder or
+  quieter by up to 20 dB. A look-ahead limiter keeps true peaks under −1 dBTP without clipping;
+  *Album mode* measures all the files together and gives them one change, so the songs of an album
+  keep their differences.
+- **Speed & pitch**: 0.5× to 2× without making voices squeaky, and ±12 semitones without changing
+  the speed, or both.
+- **Split audio**: every so many minutes, into equal parts, or at the silences between tracks; cuts
+  can move to the nearest quiet moment so words and notes aren't cut in half.
+- **Remove silence**: the silence at the start and end, and long pauses in speech cut down to the
+  length you choose. What counts as silence follows each recording's own background noise (pauses
+  in a real voice recording sit around −45 dBFS, not at digital silence); the waveform shows what
+  will go before you save.
+- **Extract audio** (moved here from *Privacy*) now saves the sound of any video: AAC is still copied
+  as it is into an .m4a, other sound (Opus, AC-3…) is converted, and any format can be chosen.
+
+How it's made, and measured (scripts in [`buildtools/audio/`](buildtools/audio/README.md)):
+
+- **MP3** is written by the app's own encoder (MPEG-1 Layer III, the phone has none): the standard's
+  filter bank with short blocks at sudden attacks, a psychoacoustic model, and noise shaped to what
+  the ear can't hear. Compared with LAME at the same bit rate on eight CC-licensed recordings (music,
+  orchestra, birdsong, whale song, trumpet, drums), with a noise-to-mask measure: at 128 kbps it
+  leaves less audible noise on seven of eight and the same on the birdsong (for example 0.7 vs
+  2.8 dB on a string orchestra), at 192 kbps on seven of eight (LAME is ahead on the birdsong), at
+  64 kbps on six of eight; noise before drum hits (pre-echo) is lower than LAME's (90 % of hits
+  under −16.5 dB vs −14.1 dB on a snare). Every file decodes cleanly in
+  FFmpeg's strict mode. These are measurements, not listening tests.
+- **FLAC** and **WAV** are written by the app too (FLAC files decode bit-exactly and come out a
+  little smaller than `flac -5`); **M4A (AAC)** and **Opus** use the phone's own encoders (the app
+  packs Opus into an Ogg file with the right start and end, so players drop the encoder's padding).
+- Loudness matches FFmpeg's EBU R128 meter within 0.1 LU; resampling between rates keeps the sound
+  clean to about −110 dB.
+- **Tested** with the JVM and Android test runtimes on real recordings (CC BY music, speech and a
+  snare drum): every tool from start to finish (lengths, fades, pauses, crossfades, loudness and peak
+  targets, album mode, speed and pitch, cuts in pauses), and the MP3, FLAC, Ogg and WAV files'
+  structure. Android's own decoders and encoders (reading MP3 and AAC, writing M4A and Opus) don't run
+  in these tests. Not tried on a phone.
+- **Limits**: MP3 is written at a constant bit rate; M4A files don't carry tags or covers; MP3 and
+  M4A are always re-encoded (no frame-exact copying yet); 22.05 and 16 kHz sound is written to MP3 at
+  44.1 or 32 kHz, the rates MPEG-1 has.
+- **Translated** into all ten languages.
+
+## What was new in 1.12.0: a metadata viewer, printing documents, and "Me" in the Gallery
+
+- **Metadata viewer** is a new tool in *Privacy & audio* (now *Privacy*). It shows everything a file says about itself,
   for photos (JPEG, PNG, WebP, GIF, HEIC, AVIF, TIFF, Photoshop), camera RAW files (DNG, CR2, CR3, NEF,
   ARW, ORF, RW2, RAF and more), videos (MP4, MOV, MKV, WebM, AVI, 3GP), sound (MP3, M4A, FLAC, Ogg,
   Opus, WAV), PDFs, Word, Excel and PowerPoint files (new and 97–2003), OpenDocument, EPUB, RTF, HTML
@@ -802,9 +865,16 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Extract PDF pages | `1-3, 5, 8-` into one PDF or one per page | `Documents/LocalMediaTools/PDF` |
 | | PDF scanner | Camera and gallery pages, A4 | `Documents/LocalMediaTools/PDF` |
 | Print | Print | Photos, PDFs and documents (Word, Excel, PowerPoint, OpenDocument, RTF, EPUB, text) on AirPrint / Mopria / IPP Everywhere printers on the Wi-Fi: paper size (A4 first) and type, borderless, 1–9 per sheet, colour, quality, two-sided, last page first, copies, preview | — (prints) |
-| Privacy & audio | Metadata viewer | Every field a photo, RAW file, video, song, PDF or document keeps, with a summary of what it reveals about you (place, people, device, dates, programs, hidden pictures) | — (only shows files) |
+| Audio | Trim audio | Keep or cut out a part on the waveform, listen, fades | `Music/LocalMediaTools/Trimmed` |
+| | Merge audio | Join in your order: back to back, pauses or crossfades; even out the volume | `Music/LocalMediaTools/Merged` |
+| | Convert audio | MP3, M4A (AAC), Opus, FLAC, WAV; bit rate, bits, channels, sample rate; tags and cover kept | `Music/LocalMediaTools/Converted` |
+| | Volume & normalize | Loudness (LUFS), peak level or gain; limiter; album mode | `Music/LocalMediaTools/Volume` |
+| | Speed & pitch | 0.5×–2× keeping the pitch, ±12 semitones keeping the speed | `Music/LocalMediaTools/Speed and Pitch` |
+| | Split audio | By length, into equal parts, or at silences; cuts in quiet moments | `Music/LocalMediaTools/Split` |
+| | Remove silence | Silent start and end, long pauses shortened; follows each file's background noise | `Music/LocalMediaTools/Silence Removed` |
+| | Extract audio | A video's sound: AAC copied to M4A without re-encoding, other sound or any format converted | `Music/LocalMediaTools/Extracted Audio` |
+| Privacy | Metadata viewer | Every field a photo, RAW file, video, song, PDF or document keeps, with a summary of what it reveals about you (place, people, device, dates, programs, hidden pictures) | — (only shows files) |
 | | Remove metadata | Lossless clean copies of JPEG/PNG/WebP/GIF and videos; RAW photos as clean full-quality copies like the other files | `Pictures/…/Clean`, `Movies/…/Clean` |
-| | Extract audio | AAC track to M4A without re-encoding | `Music/LocalMediaTools/Extracted Audio` |
 
 Exports run in a foreground service with progress notifications and one queue for the whole app.
 The **Export workload** setting (10–100 %, Efficient / Balanced / Fast) controls parallelism,

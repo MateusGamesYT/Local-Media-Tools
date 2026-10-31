@@ -850,6 +850,12 @@
 < Choose photos, PDFs or documents
 > 选择照片、PDF 或文档
 
+< Choose a sound file
+> 选择一个音频文件
+
+< Choose sound files
+> 选择音频文件
+
 < Select images
 > 选择图片
 
@@ -871,6 +877,9 @@
 < Select photos, PDFs or documents
 > 选择照片、PDF 或文档
 
+< Select sound files
+> 选择音频文件
+
 < Select images to continue
 > 选择图片以继续
 
@@ -891,6 +900,9 @@
 
 < Select photos, PDFs or documents to continue
 > 选择照片、PDF 或文档以继续
+
+< Select sound files to continue
+> 选择音频文件以继续
 
 < Select at least {0} image
 < Select at least {0} images
@@ -920,6 +932,10 @@
 < Select at least {0} photos, PDFs or documents
 > 至少选择 {0} 项照片、PDF 或文档
 
+< Select at least {0} sound file
+< Select at least {0} sound files
+> 至少选择{0}个音频文件
+
 < {0} image selected
 < {0} images selected
 > 已选择{0}张图片
@@ -944,6 +960,10 @@
 < {0} files selected
 > 已选择{0}个文件
 
+< {0} sound file selected
+< {0} sound files selected
+> 已选择{0}个音频文件
+
 < No images found in that folder.
 > 在该文件夹中未找到图片。
 
@@ -964,6 +984,9 @@
 
 < No photos, PDFs or documents found in that folder.
 > 在该文件夹中未找到照片、PDF 或文档。
+
+< No sound files found in that folder.
+> 在该文件夹中未找到音频文件。
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -987,6 +1010,9 @@
 
 < Not a photo, PDF or document
 > 不是照片、PDF 或文档
+
+< Not a sound file
+> 不是音频文件
 
 < Use the GIF optimizer for GIFs
 > GIF 请使用 GIF 优化器
@@ -1124,8 +1150,29 @@
 < exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
 > exif xmp iptc id3 标签 属性 详情 信息 查看 检查 gps 位置 相机 作者 隐私
 
-< mp3 m4a sound music
-> mp3 m4a 声音 音乐 音频
+< mp3 m4a aac sound music video soundtrack rip
+> mp3 m4a aac 声音 音乐 音频 视频 原声 提取
+
+< cut shorten ringtone clip song mp3 fade in out sound music voice
+> 剪辑 缩短 铃声 片段 歌曲 mp3 淡入 淡出 声音 音乐 人声
+
+< join combine concatenate songs mp3 crossfade mix playlist sound music
+> 合并 拼接 连接 歌曲 mp3 交叉淡化 混音 播放列表 声音 音乐
+
+< mp3 m4a aac opus ogg flac wav format bitrate sound music
+> mp3 m4a aac opus ogg flac wav 格式 比特率 声音 音乐 音频
+
+< normalize normalise loudness louder quieter gain lufs replaygain level boost sound music
+> 标准化 归一化 响度 更响 更轻 增益 lufs replaygain 电平 提升 声音 音乐
+
+< tempo faster slower pitch key semitone transpose practice sound music voice
+> 节奏 速度 更快 更慢 音调 调性 半音 移调 练习 声音 音乐 人声
+
+< cut parts tracks chapters album recording sound music
+> 剪辑 部分 曲目 章节 专辑 录音 声音 音乐
+
+< silent pauses gaps trim voice note podcast lecture recording sound
+> 静音 安静 停顿 空白 剪辑 语音备忘 播客 讲座 录音 声音
 
 < mute silent sound
 > 静音 无声 消音
@@ -3358,6 +3405,318 @@
 < The chosen people don't appear in these files
 > 所选人物没有出现在这些文件中
 
+< Waveform: drag the handles to choose the part
+> 波形：拖动手柄以选择片段
+
+< Waveform
+> 波形
+
+< Same as the original
+> 与原文件相同
+
+< Save as
+> 另存为
+
+< The kind of file and its quality
+> 文件类型及其质量
+
+< Keep channels
+> 保留声道
+
+< Stereo
+> 立体声
+
+< The same kind of file as each original, at a quality no lower than its own. MP3, M4A and Opus are compressed again, which loses a little; choose FLAC or WAV to lose nothing more.
+> 与每个原始文件相同的文件类型，质量不低于原文件。MP3、M4A 和 Opus 会再次压缩，会有少量损失；选择 FLAC 或 WAV 则不会再有任何损失。
+
+< Lossless: keeps every detail of the sound as it is now. Files are large (FLAC about half the size of WAV).
+> 无损：保留声音的每个细节，与现在一样。文件较大（FLAC 约为 WAV 的一半大小）。
+
+< Opus sounds the best for its size, but older devices and car stereos may not play it.
+> 同等大小下 Opus 音质最好，但旧设备和车载音响可能无法播放。
+
+< Higher bit rates sound better and make larger files. 192 kbps and up is hard to tell from the original.
+> 比特率越高，音质越好，文件也越大。192 kbps 及以上与原文件很难区分。
+
+< 32-bit float
+> 32 位浮点
+
+< {0}-bit
+> {0} 位
+
+< Drawing the waveform…
+> 正在绘制波形…
+
+< {0} (the same type as the original)
+> {0}（与原文件类型相同）
+
+< {0} couldn't be read: {1}
+> 无法读取 {0}：{1}
+
+< Select a sound file to choose the part to keep.
+> 选择一个音频文件，以选取要保留的片段。
+
+< Start
+> 起点
+
+< End
+> 终点
+
+< Listen to the part
+> 试听该片段
+
+< What to keep
+> 保留哪部分
+
+< Keep the part
+> 保留该片段
+
+< Cut the part out
+> 移除该片段
+
+< None
+> 无
+
+< Fade in
+> 淡入
+
+< From silence to full volume at the start
+> 开头从静音逐渐升至最大音量
+
+< Fade out
+> 淡出
+
+< Down to silence at the end
+> 结尾逐渐降至静音
+
+< Start {0} · End {1} · keeps {2}
+> 起点 {0} · 终点 {1} · 保留 {2}
+
+< This file can't be played here.
+> 此文件无法在此播放。
+
+< The part to keep is too short
+> 要保留的片段太短
+
+< Nothing would be left
+> 将不会剩下任何内容
+
+< Select two or more sound files. They're joined in the order shown above (tap Review to reorder).
+> 选择两个或更多音频文件。它们将按上方所示顺序连接（点按“查看”可调整顺序）。
+
+< Between the files
+> 文件之间
+
+< Back to back
+> 首尾相接
+
+< A pause
+> 停顿
+
+< Crossfade
+> 交叉淡化
+
+< Even out the volume
+> 统一音量
+
+< Brings every file to the same loudness first
+> 先将所有文件调整为相同响度
+
+< Like the first file
+> 与第一个文件相同
+
+< Checking the files…
+> 正在检查文件…
+
+< One of the files couldn't be read as sound.
+> 有一个文件无法作为音频读取。
+
+< {0} file · {1} in total
+< {0} files · {1} in total
+> {0}个文件 · 总计 {1}
+
+< Opus is always 48 kHz; MP3 and M4A use the nearest rate they support
+> Opus 始终为 48 kHz；MP3 和 M4A 使用它们支持的最接近的采样率
+
+< Keep
+> 保留
+
+< Videos can be chosen too: their sound is converted. Title, artist, album and cover are kept (M4A files keep the sound only).
+> 也可以选择视频：会转换其声音。标题、艺术家、专辑和封面会保留（M4A 文件仅保留声音）。
+
+< How
+> 方式
+
+< Same loudness
+> 相同响度
+
+< Peak level
+> 峰值电平
+
+< Louder or quieter
+> 更响或更轻
+
+< Limit peaks to −1 dB
+> 将峰值限制在 −1 dB
+
+< A limiter keeps louder parts from clipping
+> 限幅器可防止较响的部分失真
+
+< Album mode
+> 专辑模式
+
+< One change for all the files, measured together: the songs of an album keep their differences
+> 对所有文件进行统一调整，并一起测量：专辑中的歌曲会保留彼此的差异
+
+< −14 LUFS · streaming (Spotify, YouTube)
+> −14 LUFS · 流媒体（Spotify、YouTube）
+
+< −16 LUFS · podcasts, Apple Music
+> −16 LUFS · 播客、Apple Music
+
+< −18 LUFS · quieter
+> −18 LUFS · 更轻
+
+< −23 LUFS · TV and radio (EBU R128)
+> −23 LUFS · 电视和广播（EBU R128）
+
+< Loudness is measured as people hear it (ITU-R BS.1770), so files sound equally loud however their peaks look.
+> 响度按人耳的感知测量（ITU-R BS.1770），因此无论峰值看起来如何，文件听起来的响度都相同。
+
+< The loudest moment (including peaks between samples) is set to this level.
+> 最响的时刻（包括采样点之间的峰值）会被调整到此电平。
+
+< Change
+> 更改
+
+< +6 dB is about twice as loud in level, −6 dB half
+> +6 dB 的电平约为两倍，−6 dB 约为一半
+
+< Choose a change other than 0 dB
+> 请选择非 0 dB 的调整
+
+< Pitch stays the same
+> 音调保持不变
+
+< Pitch
+> 音调
+
+< In semitones; speed stays the same (12 = an octave)
+> 以半音为单位；速度保持不变（12 = 一个八度）
+
+< 0 = unchanged
+> 0 = 不变
+
+< Voices stay natural from about 0.75× to 1.5×; further than that, and more than a few semitones, the sound starts to show the change. For videos, use Speed & timelapse.
+> 人声在约 0.75× 至 1.5× 之间听起来自然；超出此范围，或变化超过几个半音，声音就会露出变化的痕迹。视频请使用“变速和延时摄影”。
+
+< {0} becomes {1}
+> {0} 变为 {1}
+
+< pitch {1} {0} semitone
+< pitch {1} {0} semitones
+> 音调 {1} {0} 个半音
+
+< up
+> 升高
+
+< down
+> 降低
+
+< Unchanged
+> 不变
+
+< Change the speed or the pitch
+> 更改速度或音调
+
+< Split
+> 分割
+
+< Every…
+> 每隔…
+
+< Into equal parts
+> 等分
+
+< At silences
+> 按静音处
+
+< Custom length (minutes)
+> 自定义长度（分钟）
+
+< e.g. 2.5
+> 例如 2.5
+
+< {0} part
+< {0} parts
+> {0}个部分
+
+< Silences at least this long separate the parts:
+> 不短于此时长的静音会将各部分分开：
+
+< For recordings of several songs or tracks: each part starts where the sound comes back, and the silence between is left out.
+> 适用于包含多首歌曲或曲目的录音：每个部分从声音恢复处开始，并去掉中间的静音。
+
+< Cut at quiet moments
+> 在安静处切分
+
+< Moves each cut up to 3 seconds to a pause, so words and notes aren't cut in half
+> 将每个切点移动至最多 3 秒内的停顿处，避免切断字词或音符
+
+< Enter a length between 0.1 and 600 minutes
+> 请输入 0.1 到 600 分钟之间的时长
+
+< One file per part: {0}, {1} …
+> 每个部分一个文件：{0}、{1} …
+
+< At the start and end
+> 开头和结尾
+
+< Removes the silence before the sound starts and after it ends
+> 去除声音开始前和结束后的静音
+
+< Shorten pauses
+> 缩短停顿
+
+< Long pauses inside are cut down to the length below
+> 内部的长停顿会缩短至下方设定的长度
+
+< keep {0}
+> 保留 {0}
+
+< What counts as silence
+> 何为静音
+
+< Only silence
+> 仅静音
+
+< Pauses in speech
+> 语音中的停顿
+
+< Also very soft parts
+> 也包括非常轻的部分
+
+< Select a sound file to see what would be removed.
+> 选择一个音频文件，查看将被移除的内容。
+
+< Silence is judged against each recording's own background noise, so pauses with room noise or breathing are found too. The shaded parts above will be removed (shown for the first file).
+> 静音以每段录音自身的背景噪声为依据，因此带有环境噪声或呼吸声的停顿也能被找到。上方的阴影部分将被移除（以第一个文件为例显示）。
+
+< Choose what to remove
+> 选择要移除的内容
+
+< No silence to remove at this setting.
+> 当前设置下没有可移除的静音。
+
+< Removes {0}: {1} becomes {2}
+> 移除 {0}：{1} 变为 {2}
+
+< Original (no re-encoding)
+> 原始（不重新编码）
+
+< Original: AAC sound (most phone videos) is copied into an .m4a file exactly as it is — no quality loss. Other sound (Opus, AC-3…) is converted to M4A.
+> 原始：AAC 音频（大多数手机视频）会原样复制到 .m4a 文件中，不损失质量。其他音频（Opus、AC-3…）会转换为 M4A。
+
 < Preview at 100 %
 > 以 100% 比例预览
 
@@ -3919,9 +4278,6 @@
 < Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
 > 页码之间用逗号分隔；范围如 4-9；“8-”表示从第 8 页到末尾。页面会按你写的顺序保存。
 
-< Save as
-> 另存为
-
 < name_pages.pdf
 > 文件名_pages.pdf
 
@@ -4035,9 +4391,6 @@
 < Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
 > 无声且最高 120 fps 时，视频只会重新调整时间：无需重新编码，没有画质损失。否则会重新编码为 H.264 MP4；延时摄影保持每秒 30 帧。
 
-< {0} becomes {1}
-> {0} 变为 {1}
-
 < only {0} frame per second, so it will look choppy
 < only {0} frames per second, so it will look choppy
 > 每秒仅{0}帧，因此画面会显得卡顿
@@ -4143,9 +4496,6 @@
 
 < Start and length can't be negative
 > 起点和时长不能为负数
-
-< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
-> AAC 音轨会原样复制到 .m4a 文件中——不重新编码，没有音质损失。音频不是 AAC（例如 Opus 或 AC-3）或没有声音的视频会在结果中明确列出。
 
 < Watermark preview
 > 水印预览
@@ -4304,9 +4654,6 @@
 
 < encrypted
 > 已加密
-
-< Change
-> 更改
 
 < unknown
 > 未知
@@ -4487,6 +4834,51 @@
 
 < This action isn't available on this phone.
 > 这部手机上无法使用此操作。
+
+< No sound could be read from this file.
+> 无法从此文件中读取任何声音。
+
+< There was no sound to save.
+> 没有可保存的声音。
+
+< The written file failed verification, so it was discarded.
+> 写入的文件未通过校验，因此已被丢弃。
+
+< This file couldn't be read as audio.
+> 无法将此文件作为音频读取。
+
+< This video has no sound.
+> 此视频没有声音。
+
+< This file has no sound that can be read.
+> 此文件中没有可读取的声音。
+
+< WAV/AIFF ({0}-bit)
+> WAV/AIFF（{0} 位）
+
+< This phone can't decode {0} sound.
+> 此手机无法解码 {0} 音频。
+
+< The sound decoder stopped responding.
+> 音频解码器已停止响应。
+
+< WAV files can't be larger than 4 GB. Choose FLAC for very long recordings.
+> WAV 文件不能超过 4 GB。对于超长录音，请选择 FLAC。
+
+< The sound encoder stopped responding.
+> 音频编码器已停止响应。
+
+< This phone's AAC encoder can't write {0} Hz, {1} channels.
+> 此手机的 AAC 编码器无法写入 {0} Hz、{1} 声道。
+
+< The AAC encoder gave no sound.
+> AAC 编码器没有输出声音。
+
+< This phone has no Opus encoder. Choose M4A (AAC) or MP3 instead.
+> 此手机没有 Opus 编码器。请改选 M4A（AAC）或 MP3。
+
+< The Opus encoder gave no sound.
+> Opus 编码器没有输出声音。
 
 < Nothing was produced.
 > 没有生成任何内容。
@@ -5130,6 +5522,113 @@
 < H.264 from {0}
 > 来自 {0} 的 H.264
 
+< Trimming {0} sound file
+< Trimming {0} sound files
+> 正在剪辑 {0} 个音频文件
+
+< The length of this file couldn't be read.
+> 无法读取此文件的时长。
+
+< The part to keep is too short.
+> 要保留的片段太短。
+
+< Nothing would be left.
+> 将不会剩下任何内容。
+
+< Merging {0} sound file
+< Merging {0} sound files
+> 正在合并 {0} 个音频文件
+
+< {0} sound file
+< {0} sound files
+> {0} 个音频文件
+
+< Select at least two sound files to merge.
+> 请至少选择两个音频文件进行合并。
+
+< Reading the files
+> 正在读取文件
+
+< Measuring loudness
+> 正在测量响度
+
+< Joining
+> 正在连接
+
+< crossfaded over {0}
+> 交叉淡化 {0}
+
+< {0} of silence between
+> 之间有 {0} 静音
+
+< one after another
+> 依次衔接
+
+< Volume evened out to the same loudness.
+> 音量已统一为相同响度。
+
+< Converting {0} sound file to {1}
+< Converting {0} sound files to {1}
+> 正在将 {0} 个音频文件转换为 {1}
+
+< A lossless copy of {0} sound keeps exactly what it had, but can't bring back what {0} left out.
+> {0} 音频的无损副本会完整保留原有内容，但无法找回 {0} 丢失的部分。
+
+< Adjusting the volume of {0} sound file
+< Adjusting the volume of {0} sound files
+> 正在调整 {0} 个音频文件的音量
+
+< This file is silent, so its volume can't be set.
+> 此文件为静音，因此无法设置其音量。
+
+< Already at that volume ({0}), so nothing was changed.
+> 已处于该音量（{0}），因此未做更改。
+
+< peak {0} → {1}
+> 峰值 {0} → {1}
+
+< Peaks were held under −1 dBTP by the limiter (by up to {0}).
+> 限幅器已将峰值控制在 −1 dBTP 以下（最多降低 {0}）。
+
+< Reached {0} instead: louder would have clipped its peaks. Turn on the limiter to go all the way.
+> 改为达到 {0}：再调高会使峰值失真。开启限幅器即可一直调到目标值。
+
+< Changing the speed and pitch of {0} sound file
+< Changing the speed and pitch of {0} sound files
+> 正在更改 {0} 个音频文件的速度和音调
+
+< Speed and pitch are unchanged, so there is nothing to do.
+> 速度和音调均未改变，无需处理。
+
+< Splitting {0} sound file
+< Splitting {0} sound files
+> 正在分割 {0} 个音频文件
+
+< Finding the quiet moments
+> 正在查找安静处
+
+< No silence long enough to split at was found.
+> 未找到足够长的静音可用于分割。
+
+< {0} long — already within one part, nothing to split.
+> 时长 {0} —— 已在一个部分内，无需分割。
+
+< Removing silence from {0} sound file
+< Removing silence from {0} sound files
+> 正在从 {0} 个音频文件中移除静音
+
+< Finding the silence
+> 正在查找静音
+
+< The whole file is silent at this sensitivity, so nothing was saved.
+> 以此灵敏度判断，整个文件都是静音，因此未保存任何内容。
+
+< No silence to remove was found.
+> 未找到可移除的静音。
+
+< {0} of silence removed ({1} → {2})
+> 已移除 {0} 静音（{1} → {2}）
+
 < Vertical
 > 垂直
 
@@ -5729,14 +6228,17 @@
 < Read documents; convert, merge and scan PDFs
 > 阅读文档；转换、合并和扫描 PDF
 
+< Audio
+> 音频
+
+< Trim, join, convert and tune sound files
+> 剪辑、合并、转换和调整音频文件
+
 < Photos and documents on your Wi-Fi printer
 > 在你的 Wi-Fi 打印机上打印照片和文档
 
-< Privacy & audio
-> 隐私和音频
-
-< Clean metadata and extract sound
-> 清除元数据并提取声音
+< See and clean what files say about you
+> 查看并清理文件透露的关于你的信息
 
 < Tool stack
 > 工具组合
@@ -6044,14 +6546,77 @@
 < Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
 > 生成不含 GPS 位置、相机详情、日期、注释或隐藏缩略图的干净照片和视频副本。照片像素和视频流原样复制（无画质损失）；方向和颜色配置文件会保留。
 
+< Trim audio
+> 剪辑音频
+
+< Keep the part you want, with fades
+> 保留想要的片段，并添加淡入淡出
+
+< Choose the part of a song, recording or voice note to keep — or to cut out — on its waveform, listen to it, and add a fade in and out. Saves as MP3, M4A, Opus, FLAC or WAV.
+> 在波形上选择要保留（或移除）的歌曲、录音或语音备忘的片段，试听后添加淡入和淡出。可保存为 MP3、M4A、Opus、FLAC 或 WAV。
+
+< Merge audio
+> 合并音频
+
+< Join sound files, with crossfades
+> 连接音频文件，可添加交叉淡化
+
+< Joins songs, recordings and voice notes into one file in your order, back to back, with a pause between, or crossfading from one into the next. Can even out their volume first.
+> 按你的顺序，将歌曲、录音和语音备忘连接成一个文件：首尾相接、中间加入停顿，或从一首交叉淡化到下一首。还可以先统一音量。
+
+< Convert audio
+> 转换音频
+
+< MP3, M4A, Opus, FLAC or WAV
+> MP3、M4A、Opus、FLAC 或 WAV
+
+< Converts sound files — and the sound of videos — between MP3, M4A (AAC), Opus, FLAC and WAV, at the quality you choose, keeping the title, artist and cover.
+> 在 MP3、M4A（AAC）、Opus、FLAC 和 WAV 之间转换音频文件及视频中的声音，按你选择的质量输出，并保留标题、艺术家和封面。
+
+< Volume & normalize
+> 音量与标准化
+
+< Even loudness, louder or quieter
+> 统一响度，更响或更轻
+
+< Brings sound files to the same loudness (as streaming services and broadcasters measure it), to a peak level, or changes the volume by the amount you choose. A limiter keeps peaks from clipping. Album mode keeps the differences between the songs of an album.
+> 将音频文件统一到相同响度（按流媒体服务和广播机构的测量方式），统一到某个峰值电平，或按你选择的幅度调整音量。限幅器可防止峰值失真。专辑模式会保留专辑中各首歌曲之间的差异。
+
+< Speed & pitch
+> 变速与变调
+
+< Faster or slower, higher or lower
+> 更快或更慢，更高或更低
+
+< Changes how fast a recording plays without making voices squeaky, or moves its pitch up or down without changing its speed — or both. Good for practising music, podcasts and lectures.
+> 改变录音的播放速度且不让人声变尖；或在不改变速度的情况下升高或降低音调；也可以两者同时调整。适合练习音乐、播客和讲座。
+
+< Split audio
+> 分割音频
+
+< Into parts, by length or at silences
+> 按时长或静音处分割成若干部分
+
+< Cuts long recordings into parts of the length you choose, into a number of equal parts, or at the silences between tracks. Cuts can move to the nearest quiet moment so words aren't cut in half.
+> 将长录音切分为你选择时长的部分，或等分为若干份，或在曲目之间的静音处切分。切点可以移动到最近的安静处，避免切断字词。
+
+< Remove silence
+> 移除静音
+
+< Trim silent starts, ends and long pauses
+> 剪去开头、结尾的静音和长停顿
+
+< Removes the silence at the start and end of recordings and shortens long pauses in speech, so voice notes, lectures and podcasts get to the point. What counts as silence follows each recording's own background noise.
+> 去除录音开头和结尾的静音，并缩短语音中的长停顿，让语音备忘、讲座和播客更加紧凑。静音的判定依据每段录音自身的背景噪声。
+
 < Extract audio
 > 提取音频
 
-< Save a video's AAC sound as M4A
-> 将视频的 AAC 声音保存为 M4A
+< Save the sound of videos
+> 保存视频中的声音
 
-< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
-> 不重新编码，将每个视频的 AAC 音轨复制到 M4A 音频文件中。
+< Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
+> 将每个视频的声音保存为音频文件。AAC 音频会原样复制到 M4A 文件中，不重新编码；其他音频或你选择的任何格式（MP3、Opus、FLAC、WAV）则会进行转换。
 
 < Merging {0} video
 < Merging {0} videos
@@ -6077,9 +6642,6 @@
 
 < The converted clips still can't be joined on this device ({0}).
 > 转换后的片段在此设备上仍然无法连接（{0}）。
-
-< Joining
-> 正在连接
 
 < Finishing
 > 正在完成
@@ -6118,10 +6680,6 @@
 
 < Some parts are longer than {0} because the video has few keyframes (longest {1}).
 > 有些部分比 {0} 更长，因为视频的关键帧很少（最长 {1}）。
-
-< {0} part
-< {0} parts
-> {0}个部分
 
 < cuts at keyframes
 > 在关键帧处切割
@@ -6170,8 +6728,8 @@
 < This video has no audio track.
 > 此视频没有音轨。
 
-< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
-> 没有兼容的 AAC 音轨（此视频的音频是 {0}）。没有提取任何内容。
+< This video's sound is {0}, so it was converted to AAC (M4A).
+> 此视频的声音为 {0}，因此已转换为 AAC（M4A）。
 
 < {0} non-AAC audio track was not extracted.
 < {0} non-AAC audio tracks were not extracted.
@@ -6878,9 +7436,6 @@
 
 < Read/write error: {0}
 > 读写错误：{0}
-
-< Audio
-> 音频
 
 < Unknown
 > 未知

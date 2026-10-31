@@ -125,6 +125,8 @@ object GalleryActions {
                 PickKind.ANY -> true
                 PickKind.PDFS -> false
                 PickKind.PRINTABLE -> !anyVideo
+                // The audio tools take videos for their sound (picked from the gallery: only videos here).
+                PickKind.AUDIO -> anyVideo && !anyPhoto && !anyGif && t != ToolId.TRIM_AUDIO
             }
         }.sortedBy { if (it.section == ToolSection.EDIT) 0 else 1 }
     }

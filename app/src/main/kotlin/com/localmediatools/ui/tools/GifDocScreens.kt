@@ -314,6 +314,13 @@ object ToolScreens {
         ToolId.PDF_SCANNER -> ScannerScreen(a)
         ToolId.CONVERT_IMAGES -> ConvertScreen(a)
         ToolId.EXTRACT_AUDIO -> ExtractAudioScreen(a)
+        ToolId.TRIM_AUDIO -> TrimAudioScreen(a)
+        ToolId.MERGE_AUDIO -> MergeAudioScreen(a)
+        ToolId.CONVERT_AUDIO -> ConvertAudioScreen(a)
+        ToolId.AUDIO_VOLUME -> VolumeScreen(a)
+        ToolId.AUDIO_SPEED -> AudioSpeedScreen(a)
+        ToolId.SPLIT_AUDIO -> SplitAudioScreen(a)
+        ToolId.REMOVE_SILENCE -> RemoveSilenceScreen(a)
         ToolId.PRINT -> com.localmediatools.ui.print.PrintScreen(a)
     }
 }

@@ -23,10 +23,11 @@ its licence file): CC BY / CC0 music, speech, birdsong, whale song and drums.
 - Loudness (EBU R128): integrated loudness within 0.1 LU of FFmpeg's `ebur128` filter.
 - Resampler: 109–116 dB SNR on test tones, 123 dB alias rejection.
 - FLAC: decodes bit-identically (`flac -t` passes); files a little smaller than `flac -5`.
-- MP3 at 128 kbps, mean NMR in dB (lower is better), app / LAME: Lets Go Fishin' 5.9 / 6.4,
-  Hungarian Dance No. 5 1.0 / 2.8, robin −2.9 / −2.8, Vibe Ace −6.1 / −1.6, Sugar Plum Fairy
-  −1.4 / 3.3, humpback −6.6 / −3.0, trumpet −9.8 / −5.1, drum loop −15.1 / −7.4. At 192 kbps the app
-  is ahead on 7 of 8 (behind on the robin), at 64 kbps about even.
+- MP3, mean NMR in dB (lower is better), app / LAME at 128 kbps: Lets Go Fishin' 5.5 / 6.4,
+  Hungarian Dance No. 5 0.7 / 2.8, robin −2.8 / −2.8, Vibe Ace −6.2 / −1.6, Sugar Plum Fairy
+  −1.7 / 3.3, humpback −6.6 / −3.0, trumpet −9.9 / −5.1, drum loop −15.1 / −7.4. At 192 kbps the
+  app is ahead on 7 of 8 (LAME on the robin, −6.9 / −8.7), at 64 kbps on 6 of 8 (LAME slightly on
+  the orchestra, 9.1 / 8.7, and level on Lets Go Fishin', 12.1 / 12.0).
 - MP3 pre-echo (noise before attacks, 90th percentile; lower is better), app / LAME: accelerating
   snare −16.5 / −14.1 dB, drum loop −26.3 / −15.1 dB.
 

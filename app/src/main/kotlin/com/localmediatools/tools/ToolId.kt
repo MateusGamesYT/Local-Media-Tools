@@ -11,8 +11,9 @@ enum class ToolSection(private val titleEn: String, private val subtitleEn: Stri
     VIDEO(N_("Video"), N_("Trim, cut, repackage and shrink videos")),
     GIF(N_("GIF"), N_("Create and slim down animations")),
     DOCUMENTS(N_("Documents & PDF"), N_("Read documents; convert, merge and scan PDFs")),
+    AUDIO(N_("Audio"), N_("Trim, join, convert and tune sound files")),
     PRINT(N_("Print"), N_("Photos and documents on your Wi-Fi printer")),
-    PRIVACY(N_("Privacy & audio"), N_("Clean metadata and extract sound"));
+    PRIVACY(N_("Privacy"), N_("See and clean what files say about you"));
 
     val title: String get() = tr(titleEn)
     val subtitle: String get() = tr(subtitleEn)
@@ -139,8 +140,30 @@ enum class ToolId(
     REMOVE_METADATA(ToolSection.PRIVACY, N_("Remove metadata"), N_("Strip location, camera and date info"),
         N_("Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept."),
         OutputArea.CLEAN_IMAGES, OutputArea.CLEAN_VIDEO),
-    EXTRACT_AUDIO(ToolSection.PRIVACY, N_("Extract audio"), N_("Save a video's AAC sound as M4A"),
-        N_("Copies the AAC sound track of each video into an M4A audio file without re-encoding."),
+
+    TRIM_AUDIO(ToolSection.AUDIO, N_("Trim audio"), N_("Keep the part you want, with fades"),
+        N_("Choose the part of a song, recording or voice note to keep — or to cut out — on its waveform, listen to it, and add a fade in and out. Saves as MP3, M4A, Opus, FLAC or WAV."),
+        OutputArea.TRIMMED_AUDIO),
+    MERGE_AUDIO(ToolSection.AUDIO, N_("Merge audio"), N_("Join sound files, with crossfades"),
+        N_("Joins songs, recordings and voice notes into one file in your order, back to back, with a pause between, or crossfading from one into the next. Can even out their volume first."),
+        OutputArea.MERGED_AUDIO),
+    CONVERT_AUDIO(ToolSection.AUDIO, N_("Convert audio"), N_("MP3, M4A, Opus, FLAC or WAV"),
+        N_("Converts sound files — and the sound of videos — between MP3, M4A (AAC), Opus, FLAC and WAV, at the quality you choose, keeping the title, artist and cover."),
+        OutputArea.CONVERTED_AUDIO),
+    AUDIO_VOLUME(ToolSection.AUDIO, N_("Volume & normalize"), N_("Even loudness, louder or quieter"),
+        N_("Brings sound files to the same loudness (as streaming services and broadcasters measure it), to a peak level, or changes the volume by the amount you choose. A limiter keeps peaks from clipping. Album mode keeps the differences between the songs of an album."),
+        OutputArea.VOLUME_AUDIO),
+    AUDIO_SPEED(ToolSection.AUDIO, N_("Speed & pitch"), N_("Faster or slower, higher or lower"),
+        N_("Changes how fast a recording plays without making voices squeaky, or moves its pitch up or down without changing its speed — or both. Good for practising music, podcasts and lectures."),
+        OutputArea.SPEED_AUDIO),
+    SPLIT_AUDIO(ToolSection.AUDIO, N_("Split audio"), N_("Into parts, by length or at silences"),
+        N_("Cuts long recordings into parts of the length you choose, into a number of equal parts, or at the silences between tracks. Cuts can move to the nearest quiet moment so words aren't cut in half."),
+        OutputArea.SPLIT_AUDIO),
+    REMOVE_SILENCE(ToolSection.AUDIO, N_("Remove silence"), N_("Trim silent starts, ends and long pauses"),
+        N_("Removes the silence at the start and end of recordings and shortens long pauses in speech, so voice notes, lectures and podcasts get to the point. What counts as silence follows each recording's own background noise."),
+        OutputArea.NO_SILENCE_AUDIO),
+    EXTRACT_AUDIO(ToolSection.AUDIO, N_("Extract audio"), N_("Save the sound of videos"),
+        N_("Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted."),
         OutputArea.EXTRACTED_AUDIO);
 
     val title: String get() = tr(englishTitle)

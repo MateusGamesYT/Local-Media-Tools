@@ -9,7 +9,6 @@ import com.localmediatools.export.ExportJob
 import com.localmediatools.i18n.I18n
 import com.localmediatools.i18n.tr
 import com.localmediatools.tools.CompressVideoJob
-import com.localmediatools.tools.ExtractAudioJob
 import com.localmediatools.tools.OptimizeVideoJob
 import com.localmediatools.tools.RemoveAudioJob
 import com.localmediatools.tools.SplitVideoJob
@@ -179,15 +178,6 @@ class VideoToGifScreen(a: MainActivity) : ToolScreen(a, ToolId.VIDEO_TO_GIF) {
         if (ToolPrefs.gifSourceMode) null else ToolPrefs.gifFps.toDouble(),
         if (ToolPrefs.gifSourceMode) null else ToolPrefs.gifWidth,
         ToolPrefs.gifStart, ToolPrefs.gifLength, ToolPrefs.gifDither)
-}
-
-// =========================================================================== Extract audio
-class ExtractAudioScreen(a: MainActivity) : ToolScreen(a, ToolId.EXTRACT_AUDIO) {
-    override fun buildOptions(container: LinearLayout) {
-        container.addView(UI.note(ctx, tr("The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results."), UI.NoteKind.INFO))
-    }
-    override fun outputNaming() = "name_audio.m4a"
-    override fun createJob(items: List<MediaItem>): ExportJob = ExtractAudioJob(items)
 }
 
 @Suppress("unused")

@@ -47,6 +47,7 @@ object Palette {
         ToolSection.VIDEO -> 0xFFFB923C.toInt()
         ToolSection.GIF -> 0xFFFACC15.toInt()
         ToolSection.DOCUMENTS -> 0xFF60A5FA.toInt()
+        ToolSection.AUDIO -> 0xFFA78BFA.toInt()
         ToolSection.PRINT -> 0xFFF472B6.toInt()
         ToolSection.PRIVACY -> 0xFF34D399.toInt()
     }
@@ -59,6 +60,7 @@ object Palette {
         ToolSection.VIDEO -> intArrayOf(0xFFFFA65C.toInt(), 0xFFF0592C.toInt())
         ToolSection.GIF -> intArrayOf(0xFFFFD84A.toInt(), 0xFFF29A0C.toInt())
         ToolSection.DOCUMENTS -> intArrayOf(0xFF7DB8FF.toInt(), 0xFF3D6BFF.toInt())
+        ToolSection.AUDIO -> intArrayOf(0xFFC4B5FD.toInt(), 0xFF7C3AED.toInt())
         ToolSection.PRINT -> intArrayOf(0xFFF9A8D4.toInt(), 0xFFDB2777.toInt())
         ToolSection.PRIVACY -> intArrayOf(0xFF4BE3A6.toInt(), 0xFF119E6E.toInt())
     }
@@ -109,6 +111,13 @@ object Icons {
         ToolId.REMOVE_METADATA -> R.drawable.ic_tool_metadata
         ToolId.METADATA -> R.drawable.ic_tool_inspect
         ToolId.EXTRACT_AUDIO -> R.drawable.ic_tool_audio
+        ToolId.TRIM_AUDIO -> R.drawable.ic_tool_audio_trim
+        ToolId.MERGE_AUDIO -> R.drawable.ic_tool_audio_merge
+        ToolId.CONVERT_AUDIO -> R.drawable.ic_tool_audio_convert
+        ToolId.AUDIO_VOLUME -> R.drawable.ic_tool_volume
+        ToolId.AUDIO_SPEED -> R.drawable.ic_tool_audio_speed
+        ToolId.SPLIT_AUDIO -> R.drawable.ic_tool_audio_split
+        ToolId.REMOVE_SILENCE -> R.drawable.ic_tool_silence
         ToolId.PRINT -> R.drawable.ic_tool_print
     }
 }

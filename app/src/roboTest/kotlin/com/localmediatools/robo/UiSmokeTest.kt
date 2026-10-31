@@ -103,6 +103,9 @@ class UiSmokeTest {
             PickKind.PDFS -> listOf(Robo.item(app, Robo.write(inDir, "${t.name}_1.pdf", "%PDF-1.4\n%%EOF\n".toByteArray())),
                 Robo.item(app, Robo.write(inDir, "${t.name}_2.pdf", "%PDF-1.4\n%%EOF\n".toByteArray())))
             PickKind.MEDIA -> listOf(img("${t.name}_a.png", 120, 80, Color.RED), Robo.item(app, Robo.write(inDir, "${t.name}.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))))
+            PickKind.AUDIO -> listOf("speech.wav", "music.wav").take(maxOf(1, ToolRules.minItems(t))).map { n ->
+                Robo.item(app, Robo.write(inDir, "${t.name}_$n", javaClass.getResourceAsStream("/audio/$n")!!.readBytes()))
+            }
             else -> (1..ToolRules.minItems(t)).map { k -> Robo.item(app, Robo.write(inDir, "${t.name}_$k.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64))) }
         }
     }

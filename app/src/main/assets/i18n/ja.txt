@@ -850,6 +850,12 @@
 < Choose photos, PDFs or documents
 > 写真、PDF、書類を選ぶ
 
+< Choose a sound file
+> 音声ファイルを選ぶ
+
+< Choose sound files
+> 音声ファイルを選ぶ
+
 < Select images
 > 画像を選択
 
@@ -871,6 +877,9 @@
 < Select photos, PDFs or documents
 > 写真、PDF、書類を選択
 
+< Select sound files
+> 音声ファイルを選択
+
 < Select images to continue
 > 続けるには画像を選択してください
 
@@ -891,6 +900,9 @@
 
 < Select photos, PDFs or documents to continue
 > 続けるには、写真、PDF、書類を選択
+
+< Select sound files to continue
+> 続けるには音声ファイルを選択してください
 
 < Select at least {0} image
 < Select at least {0} images
@@ -920,6 +932,10 @@
 < Select at least {0} photos, PDFs or documents
 > 写真、PDF、書類を{0}件以上選んでください
 
+< Select at least {0} sound file
+< Select at least {0} sound files
+> 音声ファイルを{0}個以上選択してください
+
 < {0} image selected
 < {0} images selected
 > 画像を{0}枚選択中
@@ -944,6 +960,10 @@
 < {0} files selected
 > ファイルを{0}個選択中
 
+< {0} sound file selected
+< {0} sound files selected
+> 音声ファイルを{0}個選択中
+
 < No images found in that folder.
 > そのフォルダに画像が見つかりません。
 
@@ -964,6 +984,9 @@
 
 < No photos, PDFs or documents found in that folder.
 > そのフォルダに写真、PDF、書類は見つかりませんでした。
+
+< No sound files found in that folder.
+> このフォルダーに音声ファイルは見つかりませんでした。
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -987,6 +1010,9 @@
 
 < Not a photo, PDF or document
 > 写真、PDF、書類ではありません
+
+< Not a sound file
+> 音声ファイルではありません
 
 < Use the GIF optimizer for GIFs
 > GIFには「GIF最適化」を使ってください
@@ -1124,8 +1150,29 @@
 < exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
 > exif xmp iptc id3 タグ プロパティ 詳細 info 情報 確認 点検 gps 場所 カメラ 作者 プライバシー
 
-< mp3 m4a sound music
-> mp3 m4a 音声 音楽 サウンド オーディオ
+< mp3 m4a aac sound music video soundtrack rip
+> mp3 m4a aac 音声 サウンド 音楽 動画 サウンドトラック 抽出
+
+< cut shorten ringtone clip song mp3 fade in out sound music voice
+> カット 短縮 着信音 クリップ 曲 mp3 フェード イン アウト 音声 音楽 声
+
+< join combine concatenate songs mp3 crossfade mix playlist sound music
+> 結合 連結 つなげる 曲 mp3 クロスフェード ミックス プレイリスト 音声 音楽
+
+< mp3 m4a aac opus ogg flac wav format bitrate sound music
+> mp3 m4a aac opus ogg flac wav 形式 ビットレート 音声 サウンド 音楽
+
+< normalize normalise loudness louder quieter gain lufs replaygain level boost sound music
+> 正規化 ノーマライズ ラウドネス 大きく 小さく ゲイン lufs replaygain レベル ブースト 音声 音楽
+
+< tempo faster slower pitch key semitone transpose practice sound music voice
+> テンポ 速く 遅く ピッチ キー 半音 トランスポーズ 練習 音声 音楽 声
+
+< cut parts tracks chapters album recording sound music
+> カット 部分 トラック チャプター アルバム 録音 音声 音楽
+
+< silent pauses gaps trim voice note podcast lecture recording sound
+> 無音 無音部分 間 すき間 トリミング ボイスメモ ポッドキャスト 講義 録音 音声
 
 < mute silent sound
 > ミュート 無音 消音 音
@@ -3358,6 +3405,318 @@
 < The chosen people don't appear in these files
 > 選んだ人物はこれらのファイルに写っていません
 
+< Waveform: drag the handles to choose the part
+> 波形：ハンドルをドラッグして部分を選択
+
+< Waveform
+> 波形
+
+< Same as the original
+> オリジナルと同じ
+
+< Save as
+> 保存形式
+
+< The kind of file and its quality
+> ファイルの形式と品質
+
+< Keep channels
+> チャンネルを維持
+
+< Stereo
+> ステレオ
+
+< The same kind of file as each original, at a quality no lower than its own. MP3, M4A and Opus are compressed again, which loses a little; choose FLAC or WAV to lose nothing more.
+> 元のファイルと同じ形式で、元より低くならない品質で保存します。MP3、M4A、Opusは再圧縮されるため、わずかに劣化します。これ以上何も失いたくない場合はFLACかWAVを選んでください。
+
+< Lossless: keeps every detail of the sound as it is now. Files are large (FLAC about half the size of WAV).
+> 可逆：今の音の細部まで、そのまま保持します。ファイルは大きくなります（FLACはWAVのおよそ半分の大きさです）。
+
+< Opus sounds the best for its size, but older devices and car stereos may not play it.
+> Opusはサイズの割に音質が最も良いですが、古い機器やカーオーディオでは再生できない場合があります。
+
+< Higher bit rates sound better and make larger files. 192 kbps and up is hard to tell from the original.
+> ビットレートが高いほど音質は良くなり、ファイルも大きくなります。192 kbps以上であれば元の音との違いはほとんど分かりません。
+
+< 32-bit float
+> 32ビット浮動小数点
+
+< {0}-bit
+> {0}ビット
+
+< Drawing the waveform…
+> 波形を描画中…
+
+< {0} (the same type as the original)
+> {0}（元のファイルと同じ形式）
+
+< {0} couldn't be read: {1}
+> {0}を読み込めませんでした：{1}
+
+< Select a sound file to choose the part to keep.
+> 残す部分を選ぶには、音声ファイルを選択してください。
+
+< Start
+> 開始
+
+< End
+> 終了
+
+< Listen to the part
+> この部分を再生
+
+< What to keep
+> 残す部分
+
+< Keep the part
+> 部分を残す
+
+< Cut the part out
+> 部分を切り取る
+
+< None
+> なし
+
+< Fade in
+> フェードイン
+
+< From silence to full volume at the start
+> 最初は無音から最大音量まで
+
+< Fade out
+> フェードアウト
+
+< Down to silence at the end
+> 最後は無音まで下がる
+
+< Start {0} · End {1} · keeps {2}
+> 開始 {0} · 終了 {1} · 残る長さ {2}
+
+< This file can't be played here.
+> このファイルはここでは再生できません。
+
+< The part to keep is too short
+> 残す部分が短すぎます
+
+< Nothing would be left
+> 何も残りません
+
+< Select two or more sound files. They're joined in the order shown above (tap Review to reorder).
+> 音声ファイルを2つ以上選択してください。上に表示された順に連結されます（並べ替えるには「確認」をタップしてください）。
+
+< Between the files
+> ファイルの間
+
+< Back to back
+> 隙間なし
+
+< A pause
+> 無音の間
+
+< Crossfade
+> クロスフェード
+
+< Even out the volume
+> 音量をそろえる
+
+< Brings every file to the same loudness first
+> 先にすべてのファイルのラウドネスをそろえます
+
+< Like the first file
+> 最初のファイルと同じ
+
+< Checking the files…
+> ファイルを確認中…
+
+< One of the files couldn't be read as sound.
+> 音声として読み込めないファイルがあります。
+
+< {0} file · {1} in total
+< {0} files · {1} in total
+> {0}件 · 合計 {1}
+
+< Opus is always 48 kHz; MP3 and M4A use the nearest rate they support
+> Opusは常に48 kHzです。MP3とM4Aは対応している最も近いサンプルレートを使います
+
+< Keep
+> 残す
+
+< Videos can be chosen too: their sound is converted. Title, artist, album and cover are kept (M4A files keep the sound only).
+> 動画も選択できます。その音声は変換されます。タイトル、アーティスト、アルバム、カバーは保持されます（M4Aファイルは音声のみ保持されます）。
+
+< How
+> 方法
+
+< Same loudness
+> 同じラウドネス
+
+< Peak level
+> ピークレベル
+
+< Louder or quieter
+> 大きく／小さく
+
+< Limit peaks to −1 dB
+> ピークを−1 dBに制限
+
+< A limiter keeps louder parts from clipping
+> リミッターで大きな部分のクリッピングを防ぎます
+
+< Album mode
+> アルバムモード
+
+< One change for all the files, measured together: the songs of an album keep their differences
+> すべてのファイルに同じ変更を適用し、まとめて測定します。アルバムの曲どうしの差は保たれます
+
+< −14 LUFS · streaming (Spotify, YouTube)
+> −14 LUFS · ストリーミング（Spotify、YouTube）
+
+< −16 LUFS · podcasts, Apple Music
+> −16 LUFS · ポッドキャスト、Apple Music
+
+< −18 LUFS · quieter
+> −18 LUFS · 小さめ
+
+< −23 LUFS · TV and radio (EBU R128)
+> −23 LUFS · テレビとラジオ（EBU R128）
+
+< Loudness is measured as people hear it (ITU-R BS.1770), so files sound equally loud however their peaks look.
+> ラウドネスは人の耳の聞こえ方に近い形で測定されます（ITU-R BS.1770）。そのため、ピークの見た目にかかわらず、ファイルの音量は同じに聞こえます。
+
+< The loudest moment (including peaks between samples) is set to this level.
+> 最も大きい瞬間（サンプル間のピークを含む）がこのレベルに設定されます。
+
+< Change
+> 変更
+
+< +6 dB is about twice as loud in level, −6 dB half
+> +6 dBはレベルで約2倍、−6 dBは半分
+
+< Choose a change other than 0 dB
+> 0 dB以外の変更を選んでください
+
+< Pitch stays the same
+> ピッチは変わりません
+
+< Pitch
+> ピッチ
+
+< In semitones; speed stays the same (12 = an octave)
+> 半音単位；速度は変わりません（12＝1オクターブ）
+
+< 0 = unchanged
+> 0＝変更なし
+
+< Voices stay natural from about 0.75× to 1.5×; further than that, and more than a few semitones, the sound starts to show the change. For videos, use Speed & timelapse.
+> 声は約0.75×〜1.5×の範囲なら自然に聞こえます。それ以上、また半音がいくつも離れると、変化が不自然に聞こえ始めます。動画の場合は「速度とタイムラプス」を使ってください。
+
+< {0} becomes {1}
+> {0}が{1}になります
+
+< pitch {1} {0} semitone
+< pitch {1} {0} semitones
+> ピッチ {0}半音{1}
+
+< up
+> 上げ
+
+< down
+> 下げ
+
+< Unchanged
+> 変更なし
+
+< Change the speed or the pitch
+> 速度またはピッチを変更
+
+< Split
+> 分割
+
+< Every…
+> 一定時間ごと…
+
+< Into equal parts
+> 等分に分ける
+
+< At silences
+> 無音の箇所で
+
+< Custom length (minutes)
+> 長さを指定（分）
+
+< e.g. 2.5
+> 例：2.5
+
+< {0} part
+< {0} parts
+> {0}パート
+
+< Silences at least this long separate the parts:
+> この長さ以上の無音で部分を区切ります：
+
+< For recordings of several songs or tracks: each part starts where the sound comes back, and the silence between is left out.
+> 複数の曲やトラックを録音したものに向いています。各部分は音が戻ったところから始まり、その間の無音は除かれます。
+
+< Cut at quiet moments
+> 静かな箇所で切る
+
+< Moves each cut up to 3 seconds to a pause, so words and notes aren't cut in half
+> 各カットを3秒以内で間に移動し、言葉や音符が途切れないようにします
+
+< Enter a length between 0.1 and 600 minutes
+> 0.1〜600分の長さを入力してください
+
+< One file per part: {0}, {1} …
+> パートごとに1ファイル：{0}、{1} …
+
+< At the start and end
+> 最初と最後
+
+< Removes the silence before the sound starts and after it ends
+> 音が始まる前と終わった後の無音を取り除きます
+
+< Shorten pauses
+> 間を短くする
+
+< Long pauses inside are cut down to the length below
+> 途中の長い間を、下の長さまで短くします
+
+< keep {0}
+> {0}残す
+
+< What counts as silence
+> 無音とみなす基準
+
+< Only silence
+> 無音のみ
+
+< Pauses in speech
+> 話し声の間
+
+< Also very soft parts
+> とても小さな部分も
+
+< Select a sound file to see what would be removed.
+> 音声ファイルを選択すると、削除される部分を確認できます。
+
+< Silence is judged against each recording's own background noise, so pauses with room noise or breathing are found too. The shaded parts above will be removed (shown for the first file).
+> 無音は各録音の背景ノイズを基準に判定するため、部屋の雑音や呼吸を含む間も見つかります。上の網掛け部分が削除されます（最初のファイルで表示）。
+
+< Choose what to remove
+> 削除する内容を選ぶ
+
+< No silence to remove at this setting.
+> この設定では削除する無音はありません。
+
+< Removes {0}: {1} becomes {2}
+> {0}を削除：{1}→{2}
+
+< Original (no re-encoding)
+> オリジナル（再エンコードなし）
+
+< Original: AAC sound (most phone videos) is copied into an .m4a file exactly as it is — no quality loss. Other sound (Opus, AC-3…) is converted to M4A.
+> オリジナル：AAC音声（ほとんどのスマホ動画）は、画質を損なわずにそのまま.m4aファイルにコピーされます。その他の音声（Opus、AC-3…）はM4Aに変換されます。
+
 < Preview at 100 %
 > 100%でプレビュー
 
@@ -3919,9 +4278,6 @@
 < Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
 > ページはカンマで区切ります。範囲は4-9のように指定でき、「8-」は8ページ目から最後までを意味します。ページは書いた順に保存されます。
 
-< Save as
-> 保存形式
-
 < name_pages.pdf
 > name_pages.pdf
 
@@ -4035,9 +4391,6 @@
 < Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
 > 音声なしで最大120 fpsの場合、動画はタイミングを変更するだけで、再エンコードも画質劣化もありません。それ以外はH.264 MP4として再エンコードされ、タイムラプスは30 fpsになります。
 
-< {0} becomes {1}
-> {0}が{1}になります
-
 < only {0} frame per second, so it will look choppy
 < only {0} frames per second, so it will look choppy
 > 1秒あたり{0}フレームしかないため、カクカクして見えます
@@ -4143,9 +4496,6 @@
 
 < Start and length can't be negative
 > 開始と長さはマイナスにできません
-
-< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
-> AAC音声トラックは、再エンコードや音質の劣化なしで、そのまま.m4aファイルにコピーされます。音声がAACでない動画（OpusやAC-3など）や、音声のない動画は、結果に明記されます。
 
 < Watermark preview
 > 透かしのプレビュー
@@ -4304,9 +4654,6 @@
 
 < encrypted
 > 暗号化
-
-< Change
-> 変更
 
 < unknown
 > 不明
@@ -4487,6 +4834,51 @@
 
 < This action isn't available on this phone.
 > この操作はこの端末では利用できません。
+
+< No sound could be read from this file.
+> このファイルから音声を読み取れませんでした。
+
+< There was no sound to save.
+> 保存する音声がありませんでした。
+
+< The written file failed verification, so it was discarded.
+> 書き出したファイルが検証に失敗したため、破棄しました。
+
+< This file couldn't be read as audio.
+> このファイルは音声として読み込めませんでした。
+
+< This video has no sound.
+> この動画には音声がありません。
+
+< This file has no sound that can be read.
+> このファイルには読み取れる音声がありません。
+
+< WAV/AIFF ({0}-bit)
+> WAV/AIFF（{0}ビット）
+
+< This phone can't decode {0} sound.
+> この端末では{0}音声をデコードできません。
+
+< The sound decoder stopped responding.
+> 音声デコーダーが応答しなくなりました。
+
+< WAV files can't be larger than 4 GB. Choose FLAC for very long recordings.
+> WAVファイルは4 GBを超えられません。非常に長い録音にはFLACを選んでください。
+
+< The sound encoder stopped responding.
+> 音声エンコーダーが応答しなくなりました。
+
+< This phone's AAC encoder can't write {0} Hz, {1} channels.
+> この端末のAACエンコーダーは{0} Hz、{1}チャンネルを書き出せません。
+
+< The AAC encoder gave no sound.
+> AACエンコーダーから音声が出力されませんでした。
+
+< This phone has no Opus encoder. Choose M4A (AAC) or MP3 instead.
+> この端末にはOpusエンコーダーがありません。代わりにM4A（AAC）またはMP3を選んでください。
+
+< The Opus encoder gave no sound.
+> Opusエンコーダーから音声が出力されませんでした。
 
 < Nothing was produced.
 > 何も作成されませんでした。
@@ -5130,6 +5522,113 @@
 < H.264 from {0}
 > H.264（元：{0}）
 
+< Trimming {0} sound file
+< Trimming {0} sound files
+> {0}個の音声ファイルをトリミング中
+
+< The length of this file couldn't be read.
+> このファイルの長さを読み取れませんでした。
+
+< The part to keep is too short.
+> 残す部分が短すぎます。
+
+< Nothing would be left.
+> 何も残りません。
+
+< Merging {0} sound file
+< Merging {0} sound files
+> {0}個の音声ファイルを結合中
+
+< {0} sound file
+< {0} sound files
+> 音声ファイル{0}個
+
+< Select at least two sound files to merge.
+> 結合するには音声ファイルを2つ以上選択してください。
+
+< Reading the files
+> ファイルを読み込み中
+
+< Measuring loudness
+> ラウドネスを測定中
+
+< Joining
+> 結合中
+
+< crossfaded over {0}
+> {0}のクロスフェード
+
+< {0} of silence between
+> 間に{0}の無音
+
+< one after another
+> 順番に
+
+< Volume evened out to the same loudness.
+> 音量を同じラウドネスにそろえました。
+
+< Converting {0} sound file to {1}
+< Converting {0} sound files to {1}
+> {0}個の音声ファイルを{1}に変換中
+
+< A lossless copy of {0} sound keeps exactly what it had, but can't bring back what {0} left out.
+> {0}の音声を可逆でコピーすると元の内容はそのまま残りますが、{0}で失われた部分は元に戻せません。
+
+< Adjusting the volume of {0} sound file
+< Adjusting the volume of {0} sound files
+> {0}個の音声ファイルの音量を調整中
+
+< This file is silent, so its volume can't be set.
+> このファイルは無音のため、音量を設定できません。
+
+< Already at that volume ({0}), so nothing was changed.
+> すでにその音量（{0}）のため、変更はありませんでした。
+
+< peak {0} → {1}
+> ピーク {0} → {1}
+
+< Peaks were held under −1 dBTP by the limiter (by up to {0}).
+> リミッターにより、ピークは−1 dBTP以下に抑えられました（最大{0}）。
+
+< Reached {0} instead: louder would have clipped its peaks. Turn on the limiter to go all the way.
+> 代わりに{0}に到達しました。これ以上大きくするとピークがクリッピングするためです。リミッターをオンにすると、目標まで上げられます。
+
+< Changing the speed and pitch of {0} sound file
+< Changing the speed and pitch of {0} sound files
+> {0}個の音声ファイルの速度とピッチを変更中
+
+< Speed and pitch are unchanged, so there is nothing to do.
+> 速度もピッチも変わらないため、処理は不要です。
+
+< Splitting {0} sound file
+< Splitting {0} sound files
+> {0}個の音声ファイルを分割中
+
+< Finding the quiet moments
+> 静かな箇所を探しています
+
+< No silence long enough to split at was found.
+> 分割できるほどの長さの無音は見つかりませんでした。
+
+< {0} long — already within one part, nothing to split.
+> 長さ{0}：すでに1つの部分に収まっているため、分割する必要はありません。
+
+< Removing silence from {0} sound file
+< Removing silence from {0} sound files
+> {0}個の音声ファイルから無音を削除中
+
+< Finding the silence
+> 無音を探しています
+
+< The whole file is silent at this sensitivity, so nothing was saved.
+> この感度ではファイル全体が無音のため、何も保存されませんでした。
+
+< No silence to remove was found.
+> 削除できる無音は見つかりませんでした。
+
+< {0} of silence removed ({1} → {2})
+> {0}の無音を削除（{1} → {2}）
+
 < Vertical
 > 縦
 
@@ -5729,14 +6228,17 @@
 < Read documents; convert, merge and scan PDFs
 > ドキュメントを読み込み、PDFを変換・結合・スキャン
 
+< Audio
+> 音声
+
+< Trim, join, convert and tune sound files
+> 音声ファイルのトリミング、結合、変換、調整
+
 < Photos and documents on your Wi-Fi printer
 > Wi-Fiプリンターで写真やドキュメントを印刷
 
-< Privacy & audio
-> プライバシーと音声
-
-< Clean metadata and extract sound
-> メタデータの削除と音声の抽出
+< See and clean what files say about you
+> ファイルからわかる個人情報を確認して消去
 
 < Tool stack
 > ツールスタック
@@ -6044,14 +6546,77 @@
 < Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
 > GPS位置情報、カメラの詳細、日付、コメント、隠れたサムネイルを含まない、写真と動画のクリーンなコピーを作成します。写真のピクセルと動画のストリームは変更せずにコピーされ（画質の劣化なし）、向きとカラープロファイルは保持されます。
 
+< Trim audio
+> 音声をトリミング
+
+< Keep the part you want, with fades
+> 必要な部分を残して、フェードも追加
+
+< Choose the part of a song, recording or voice note to keep — or to cut out — on its waveform, listen to it, and add a fade in and out. Saves as MP3, M4A, Opus, FLAC or WAV.
+> 曲、録音、ボイスメモの残したい（または切り取りたい）部分を波形上で選び、再生して確認し、フェードイン・フェードアウトを追加できます。MP3、M4A、Opus、FLAC、WAVで保存されます。
+
+< Merge audio
+> 音声を結合
+
+< Join sound files, with crossfades
+> 音声ファイルを結合（クロスフェード付き）
+
+< Joins songs, recordings and voice notes into one file in your order, back to back, with a pause between, or crossfading from one into the next. Can even out their volume first.
+> 曲、録音、ボイスメモを指定した順に1つのファイルへ連結します。間を空けて順に並べるか、前の曲から次の曲へクロスフェードでつなげられます。音量をそろえてから連結することもできます。
+
+< Convert audio
+> 音声を変換
+
+< MP3, M4A, Opus, FLAC or WAV
+> MP3、M4A、Opus、FLAC、WAV
+
+< Converts sound files — and the sound of videos — between MP3, M4A (AAC), Opus, FLAC and WAV, at the quality you choose, keeping the title, artist and cover.
+> 音声ファイル（動画の音声も含む）を、MP3、M4A（AAC）、Opus、FLAC、WAVの間で、選んだ画質に変換します。タイトル、アーティスト、カバーは保持されます。
+
+< Volume & normalize
+> 音量とノーマライズ
+
+< Even loudness, louder or quieter
+> ラウドネスをそろえる、大きく・小さく
+
+< Brings sound files to the same loudness (as streaming services and broadcasters measure it), to a peak level, or changes the volume by the amount you choose. A limiter keeps peaks from clipping. Album mode keeps the differences between the songs of an album.
+> 音声ファイルを（配信サービスや放送局が測定する方法で）同じラウドネスに、ピークレベルに、または選んだ量だけ音量を変えます。リミッターでピークのクリッピングを防ぎます。アルバムモードでは、アルバム内の曲どうしの差を保ちます。
+
+< Speed & pitch
+> 速度とピッチ
+
+< Faster or slower, higher or lower
+> 速く・遅く、高く・低く
+
+< Changes how fast a recording plays without making voices squeaky, or moves its pitch up or down without changing its speed — or both. Good for practising music, podcasts and lectures.
+> 声が高くなりすぎずに録音の再生速度を変えたり、速度を変えずにピッチを上げ下げしたり、その両方ができます。音楽、ポッドキャスト、講義の練習に便利です。
+
+< Split audio
+> 音声を分割
+
+< Into parts, by length or at silences
+> 長さ指定・無音の箇所で部分に分割
+
+< Cuts long recordings into parts of the length you choose, into a number of equal parts, or at the silences between tracks. Cuts can move to the nearest quiet moment so words aren't cut in half.
+> 長い録音を、指定した長さの部分、同じ数の等分、またはトラックの間の無音で分割します。カットは最も近い静かな箇所に移動できるため、言葉が途切れにくくなります。
+
+< Remove silence
+> 無音を削除
+
+< Trim silent starts, ends and long pauses
+> 無音の開始・終了と長い間をトリミング
+
+< Removes the silence at the start and end of recordings and shortens long pauses in speech, so voice notes, lectures and podcasts get to the point. What counts as silence follows each recording's own background noise.
+> 録音の最初と最後の無音を削除し、話し声の長い間を短くするので、ボイスメモ、講義、ポッドキャストが要点に集中できます。無音かどうかは、各録音の背景ノイズを基準に判定されます。
+
 < Extract audio
 > 音声抽出
 
-< Save a video's AAC sound as M4A
-> 動画のAAC音声をM4Aで保存
+< Save the sound of videos
+> 動画の音声を保存
 
-< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
-> 各動画のAAC音声トラックを、再エンコードせずにM4A音声ファイルにコピーします。
+< Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
+> 各動画の音声を音声ファイルとして保存します。AAC音声は再エンコードせずにM4Aファイルへそのままコピーされます。それ以外の音声や、選んだ形式（MP3、Opus、FLAC、WAV）は変換されます。
 
 < Merging {0} video
 < Merging {0} videos
@@ -6077,9 +6642,6 @@
 
 < The converted clips still can't be joined on this device ({0}).
 > 変換後のクリップも、この端末では結合できません（{0}）。
-
-< Joining
-> 結合中
 
 < Finishing
 > 仕上げ中
@@ -6118,10 +6680,6 @@
 
 < Some parts are longer than {0} because the video has few keyframes (longest {1}).
 > 動画のキーフレームが少ないため、{0}より長いパートがあります（最長{1}）。
-
-< {0} part
-< {0} parts
-> {0}パート
 
 < cuts at keyframes
 > キーフレームでカット
@@ -6170,8 +6728,8 @@
 < This video has no audio track.
 > この動画には音声トラックがありません。
 
-< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
-> 対応するAAC音声トラックがありません（この動画の音声は{0}です）。何も抽出されませんでした。
+< This video's sound is {0}, so it was converted to AAC (M4A).
+> この動画の音声は{0}のため、AAC（M4A）に変換されました。
 
 < {0} non-AAC audio track was not extracted.
 < {0} non-AAC audio tracks were not extracted.
@@ -6878,9 +7436,6 @@
 
 < Read/write error: {0}
 > 読み書きエラー：{0}
-
-< Audio
-> 音声
 
 < Unknown
 > 不明

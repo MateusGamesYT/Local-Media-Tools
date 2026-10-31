@@ -884,6 +884,12 @@
 < Choose photos, PDFs or documents
 > Выберите фото, PDF или документы
 
+< Choose a sound file
+> Выберите аудиофайл
+
+< Choose sound files
+> Выберите аудиофайлы
+
 < Select images
 > Выбрать изображения
 
@@ -905,6 +911,9 @@
 < Select photos, PDFs or documents
 > Выбрать фото, PDF или документы
 
+< Select sound files
+> Выбрать аудиофайлы
+
 < Select images to continue
 > Выберите изображения, чтобы продолжить
 
@@ -925,6 +934,9 @@
 
 < Select photos, PDFs or documents to continue
 > Выберите фото, PDF или документы, чтобы продолжить
+
+< Select sound files to continue
+> Выберите аудиофайлы, чтобы продолжить
 
 < Select at least {0} image
 < Select at least {0} images
@@ -968,6 +980,12 @@
 > Выберите не меньше {0} фото, PDF или документа
 > Выберите не меньше {0} фото, PDF или документов
 
+< Select at least {0} sound file
+< Select at least {0} sound files
+> Выберите хотя бы {0} аудиофайл
+> Выберите хотя бы {0} аудиофайла
+> Выберите хотя бы {0} аудиофайлов
+
 < {0} image selected
 < {0} images selected
 > Выбрано изображений: {0}
@@ -1004,6 +1022,12 @@
 > Выбрано файлов: {0}
 > Выбрано файлов: {0}
 
+< {0} sound file selected
+< {0} sound files selected
+> Выбран {0} аудиофайл
+> Выбрано {0} аудиофайла
+> Выбрано {0} аудиофайлов
+
 < No images found in that folder.
 > В этой папке нет изображений.
 
@@ -1024,6 +1048,9 @@
 
 < No photos, PDFs or documents found in that folder.
 > В этой папке не найдено ни фото, ни PDF, ни документов.
+
+< No sound files found in that folder.
+> В этой папке аудиофайлы не найдены.
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -1051,6 +1078,9 @@
 
 < Not a photo, PDF or document
 > Это не фото, не PDF и не документ
+
+< Not a sound file
+> Это не аудиофайл
 
 < Use the GIF optimizer for GIFs
 > Для GIF используйте оптимизатор GIF
@@ -1196,8 +1226,29 @@
 < exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
 > exif xmp iptc id3 теги свойства подробности info информация осмотреть проверить gps местоположение камера автор конфиденциальность
 
-< mp3 m4a sound music
-> mp3 m4a звук музыка аудио
+< mp3 m4a aac sound music video soundtrack rip
+> mp3 m4a aac звук музыка аудио видео саундтрек извлечь
+
+< cut shorten ringtone clip song mp3 fade in out sound music voice
+> обрезать сократить рингтон клип песня mp3 нарастание затухание звук музыка голос
+
+< join combine concatenate songs mp3 crossfade mix playlist sound music
+> соединить объединить склеить песни mp3 кроссфейд микс плейлист звук музыка
+
+< mp3 m4a aac opus ogg flac wav format bitrate sound music
+> mp3 m4a aac opus ogg flac wav формат битрейт звук музыка
+
+< normalize normalise loudness louder quieter gain lufs replaygain level boost sound music
+> нормализация нормализовать громкость громче тише усиление lufs replaygain уровень усилить звук музыка
+
+< tempo faster slower pitch key semitone transpose practice sound music voice
+> темп быстрее медленнее высота тон тональность полутон транспонировать тренировка звук музыка голос
+
+< cut parts tracks chapters album recording sound music
+> обрезать части треки главы альбом запись звук музыка
+
+< silent pauses gaps trim voice note podcast lecture recording sound
+> тишина тихий паузы пробелы обрезать голосовая заметка подкаст лекция запись звук
 
 < mute silent sound
 > без звука тихий беззвучный отключить звук
@@ -3524,6 +3575,324 @@
 < The chosen people don't appear in these files
 > Выбранные люди не встречаются в этих файлах
 
+< Waveform: drag the handles to choose the part
+> Звуковая волна: перетащите маркеры, чтобы выбрать фрагмент
+
+< Waveform
+> Звуковая волна
+
+< Same as the original
+> Как у оригинала
+
+< Save as
+> Сохранить как
+
+< The kind of file and its quality
+> Тип файла и его качество
+
+< Keep channels
+> Сохранить каналы
+
+< Stereo
+> Стерео
+
+< The same kind of file as each original, at a quality no lower than its own. MP3, M4A and Opus are compressed again, which loses a little; choose FLAC or WAV to lose nothing more.
+> Тот же тип файла, что у каждого оригинала, с качеством не ниже его собственного. MP3, M4A и Opus сжимаются повторно, поэтому немного теряется качество; выберите FLAC или WAV, чтобы ничего больше не терять.
+
+< Lossless: keeps every detail of the sound as it is now. Files are large (FLAC about half the size of WAV).
+> Без потерь: сохраняет каждую деталь звука в том виде, в каком он есть сейчас. Файлы большие (FLAC примерно вдвое меньше WAV).
+
+< Opus sounds the best for its size, but older devices and car stereos may not play it.
+> Opus звучит лучше всего для своего размера, но старые устройства и автомагнитолы могут его не воспроизводить.
+
+< Higher bit rates sound better and make larger files. 192 kbps and up is hard to tell from the original.
+> Более высокий битрейт звучит лучше и даёт файлы большего размера. Начиная с 192 kbps отличить от оригинала трудно.
+
+< 32-bit float
+> 32-битный с плавающей точкой
+
+< {0}-bit
+> {0}-бит
+
+< Drawing the waveform…
+> Рисуем звуковую волну…
+
+< {0} (the same type as the original)
+> {0} (такой же тип, как у оригинала)
+
+< {0} couldn't be read: {1}
+> Не удалось прочитать {0}: {1}
+
+< Select a sound file to choose the part to keep.
+> Выберите аудиофайл, чтобы выбрать фрагмент для сохранения.
+
+< Start
+> Начало
+
+< End
+> Конец
+
+< Listen to the part
+> Прослушать фрагмент
+
+< What to keep
+> Что сохранить
+
+< Keep the part
+> Сохранить фрагмент
+
+< Cut the part out
+> Вырезать фрагмент
+
+< None
+> Нет
+
+< Fade in
+> Нарастание
+
+< From silence to full volume at the start
+> От тишины до полной громкости в начале
+
+< Fade out
+> Затухание
+
+< Down to silence at the end
+> До тишины в конце
+
+< Start {0} · End {1} · keeps {2}
+> Начало {0} · Конец {1} · остаётся {2}
+
+< This file can't be played here.
+> Этот файл здесь нельзя воспроизвести.
+
+< The part to keep is too short
+> Фрагмент для сохранения слишком короткий
+
+< Nothing would be left
+> Ничего не останется
+
+< Select two or more sound files. They're joined in the order shown above (tap Review to reorder).
+> Выберите два или больше аудиофайлов. Они будут соединены в порядке, показанном выше (нажмите «Проверка», чтобы изменить порядок).
+
+< Between the files
+> Между файлами
+
+< Back to back
+> Встык
+
+< A pause
+> Пауза
+
+< Crossfade
+> Кроссфейд
+
+< Even out the volume
+> Выровнять громкость
+
+< Brings every file to the same loudness first
+> Сначала приводит все файлы к одинаковой громкости
+
+< Like the first file
+> Как у первого файла
+
+< Checking the files…
+> Проверяем файлы…
+
+< One of the files couldn't be read as sound.
+> Один из файлов не удалось прочитать как звук.
+
+< {0} file · {1} in total
+< {0} files · {1} in total
+> {0} файл · {1} всего
+> {0} файла · {1} всего
+> {0} файлов · {1} всего
+
+< Opus is always 48 kHz; MP3 and M4A use the nearest rate they support
+> Opus всегда 48 kHz; MP3 и M4A используют ближайшую поддерживаемую частоту
+
+< Keep
+> Оставить
+
+< Videos can be chosen too: their sound is converted. Title, artist, album and cover are kept (M4A files keep the sound only).
+> Можно выбрать и видео: их звук будет сконвертирован. Название, исполнитель, альбом и обложка сохраняются (файлы M4A сохраняют только звук).
+
+< How
+> Способ
+
+< Same loudness
+> Одинаковая громкость
+
+< Peak level
+> Уровень пиков
+
+< Louder or quieter
+> Громче или тише
+
+< Limit peaks to −1 dB
+> Ограничить пики до −1 dB
+
+< A limiter keeps louder parts from clipping
+> Лимитер не даёт громким фрагментам искажаться
+
+< Album mode
+> Режим альбома
+
+< One change for all the files, measured together: the songs of an album keep their differences
+> Одно изменение для всех файлов, измеренное вместе: песни альбома сохраняют свои различия
+
+< −14 LUFS · streaming (Spotify, YouTube)
+> −14 LUFS · стриминг (Spotify, YouTube)
+
+< −16 LUFS · podcasts, Apple Music
+> −16 LUFS · подкасты, Apple Music
+
+< −18 LUFS · quieter
+> −18 LUFS · тише
+
+< −23 LUFS · TV and radio (EBU R128)
+> −23 LUFS · ТВ и радио (EBU R128)
+
+< Loudness is measured as people hear it (ITU-R BS.1770), so files sound equally loud however their peaks look.
+> Громкость измеряется так, как её слышит человек (ITU-R BS.1770), поэтому файлы звучат одинаково громко, как бы ни выглядели их пики.
+
+< The loudest moment (including peaks between samples) is set to this level.
+> Самый громкий момент (включая пики между отсчётами) приводится к этому уровню.
+
+< Change
+> Изменить
+
+< +6 dB is about twice as loud in level, −6 dB half
+> +6 dB — примерно вдвое по амплитуде, −6 dB — вдвое меньше
+
+< Choose a change other than 0 dB
+> Выберите изменение, отличное от 0 dB
+
+< Pitch stays the same
+> Высота тона не меняется
+
+< Pitch
+> Высота тона
+
+< In semitones; speed stays the same (12 = an octave)
+> В полутонах; скорость не меняется (12 = октава)
+
+< 0 = unchanged
+> 0 = без изменений
+
+< Voices stay natural from about 0.75× to 1.5×; further than that, and more than a few semitones, the sound starts to show the change. For videos, use Speed & timelapse.
+> Голоса звучат естественно примерно от 0,75× до 1,5×; дальше, а также при более чем нескольких полутонах звук начинает выдавать изменение. Для видео используйте «Скорость и таймлапс».
+
+< {0} becomes {1}
+> {0} становится {1}
+
+< pitch {1} {0} semitone
+< pitch {1} {0} semitones
+> высота тона {1} на {0} полутон
+> высота тона {1} на {0} полутона
+> высота тона {1} на {0} полутонов
+
+< up
+> вверх
+
+< down
+> вниз
+
+< Unchanged
+> Без изменений
+
+< Change the speed or the pitch
+> Изменить скорость или высоту тона
+
+< Split
+> Разделить
+
+< Every…
+> Каждые…
+
+< Into equal parts
+> На равные части
+
+< At silences
+> По паузам
+
+< Custom length (minutes)
+> Своя длительность (минуты)
+
+< e.g. 2.5
+> напр. 2,5
+
+< {0} part
+< {0} parts
+> {0} часть
+> {0} части
+> {0} частей
+
+< Silences at least this long separate the parts:
+> Паузы не короче этой длительности разделяют части:
+
+< For recordings of several songs or tracks: each part starts where the sound comes back, and the silence between is left out.
+> Для записей нескольких песен или треков: каждая часть начинается там, где снова звучит звук, а тишина между ними не включается.
+
+< Cut at quiet moments
+> Резать в тихих местах
+
+< Moves each cut up to 3 seconds to a pause, so words and notes aren't cut in half
+> Сдвигает каждый разрез до 3 секунд к паузе, чтобы слова и ноты не разрезались пополам
+
+< Enter a length between 0.1 and 600 minutes
+> Введите длительность от 0,1 до 600 минут
+
+< One file per part: {0}, {1} …
+> Один файл на часть: {0}, {1} …
+
+< At the start and end
+> В начале и в конце
+
+< Removes the silence before the sound starts and after it ends
+> Удаляет тишину до начала звука и после его окончания
+
+< Shorten pauses
+> Сократить паузы
+
+< Long pauses inside are cut down to the length below
+> Длинные паузы внутри сокращаются до длительности ниже
+
+< keep {0}
+> оставить {0}
+
+< What counts as silence
+> Что считать тишиной
+
+< Only silence
+> Только тишина
+
+< Pauses in speech
+> Паузы в речи
+
+< Also very soft parts
+> Также очень тихие участки
+
+< Select a sound file to see what would be removed.
+> Выберите аудиофайл, чтобы увидеть, что будет удалено.
+
+< Silence is judged against each recording's own background noise, so pauses with room noise or breathing are found too. The shaded parts above will be removed (shown for the first file).
+> Тишина определяется по фоновому шуму каждой записи, поэтому находятся и паузы с фоновым шумом или дыханием. Затенённые участки выше будут удалены (показаны для первого файла).
+
+< Choose what to remove
+> Выберите, что удалить
+
+< No silence to remove at this setting.
+> При этой настройке тишины для удаления нет.
+
+< Removes {0}: {1} becomes {2}
+> Удаляет {0}: {1} → {2}
+
+< Original (no re-encoding)
+> Оригинал (без перекодирования)
+
+< Original: AAC sound (most phone videos) is copied into an .m4a file exactly as it is — no quality loss. Other sound (Opus, AC-3…) is converted to M4A.
+> Оригинал: звук AAC (большинства видео с телефона) копируется в файл .m4a как есть, без потери качества. Другой звук (Opus, AC-3…) конвертируется в M4A.
+
 < Preview at 100 %
 > Предпросмотр в масштабе 100%
 
@@ -4097,9 +4466,6 @@
 < Use commas between pages; ranges like 4-9; "8-" means page 8 to the end. Pages are saved in the order you write them.
 > Разделяйте страницы запятыми; диапазоны вида 4-9; «8-» означает с 8-й страницы до конца. Страницы сохраняются в том порядке, в котором вы их напишете.
 
-< Save as
-> Сохранить как
-
 < name_pages.pdf
 > имя_pages.pdf
 
@@ -4215,9 +4581,6 @@
 < Without sound and at up to 120 fps, the video is only re-timed: no re-encoding, no quality loss. Otherwise it's re-encoded as H.264 MP4; timelapses keep 30 frames per second.
 > Без звука и до 120 кадр/с видео только перетайминговывается: без перекодирования, без потери качества. Иначе оно перекодируется в H.264 MP4; таймлапсы сохраняют 30 кадров в секунду.
 
-< {0} becomes {1}
-> {0} становится {1}
-
 < only {0} frame per second, so it will look choppy
 < only {0} frames per second, so it will look choppy
 > всего {0} кадр в секунду, поэтому будет казаться дёрганым
@@ -4325,9 +4688,6 @@
 
 < Start and length can't be negative
 > Начало и длительность не могут быть отрицательными
-
-< The AAC sound track is copied into an .m4a file exactly as it is — no re-encoding, no quality loss. Videos whose audio isn't AAC (for example Opus or AC-3) or that have no sound are listed clearly in the results.
-> Звуковая дорожка AAC копируется в файл .m4a как есть — без перекодирования, без потери качества. Видео, у которых звук не AAC (например, Opus или AC-3) или нет звука, чётко перечисляются в результатах.
 
 < Watermark preview
 > Предпросмотр водяного знака
@@ -4490,9 +4850,6 @@
 
 < encrypted
 > зашифровано
-
-< Change
-> Изменить
 
 < unknown
 > неизвестно
@@ -4681,6 +5038,51 @@
 
 < This action isn't available on this phone.
 > Это действие недоступно на этом телефоне.
+
+< No sound could be read from this file.
+> Из этого файла не удалось прочитать звук.
+
+< There was no sound to save.
+> Сохранять нечего: звука не было.
+
+< The written file failed verification, so it was discarded.
+> Записанный файл не прошёл проверку и был удалён.
+
+< This file couldn't be read as audio.
+> Этот файл не удалось прочитать как аудио.
+
+< This video has no sound.
+> В этом видео нет звука.
+
+< This file has no sound that can be read.
+> В этом файле нет читаемого звука.
+
+< WAV/AIFF ({0}-bit)
+> WAV/AIFF ({0}-бит)
+
+< This phone can't decode {0} sound.
+> Этот телефон не может декодировать звук {0}.
+
+< The sound decoder stopped responding.
+> Декодер звука перестал отвечать.
+
+< WAV files can't be larger than 4 GB. Choose FLAC for very long recordings.
+> Файлы WAV не могут быть больше 4 ГБ. Для очень длинных записей выберите FLAC.
+
+< The sound encoder stopped responding.
+> Кодировщик звука перестал отвечать.
+
+< This phone's AAC encoder can't write {0} Hz, {1} channels.
+> Кодировщик AAC на этом телефоне не может записать {0} Гц, {1} каналов.
+
+< The AAC encoder gave no sound.
+> Кодировщик AAC не выдал звука.
+
+< This phone has no Opus encoder. Choose M4A (AAC) or MP3 instead.
+> На этом телефоне нет кодировщика Opus. Выберите M4A (AAC) или MP3.
+
+< The Opus encoder gave no sound.
+> Кодировщик Opus не выдал звука.
 
 < Nothing was produced.
 > Ничего не создано.
@@ -5352,6 +5754,129 @@
 < H.264 from {0}
 > H.264 из {0}
 
+< Trimming {0} sound file
+< Trimming {0} sound files
+> Обрезка аудио: {0}
+> Обрезка аудио: {0}
+> Обрезка аудио: {0}
+
+< The length of this file couldn't be read.
+> Не удалось прочитать длительность этого файла.
+
+< The part to keep is too short.
+> Фрагмент для сохранения слишком короткий.
+
+< Nothing would be left.
+> Ничего не останется.
+
+< Merging {0} sound file
+< Merging {0} sound files
+> Объединение аудио: {0}
+> Объединение аудио: {0}
+> Объединение аудио: {0}
+
+< {0} sound file
+< {0} sound files
+> {0} аудиофайл
+> {0} аудиофайла
+> {0} аудиофайлов
+
+< Select at least two sound files to merge.
+> Выберите хотя бы два аудиофайла для объединения.
+
+< Reading the files
+> Чтение файлов
+
+< Measuring loudness
+> Измерение громкости
+
+< Joining
+> Соединение
+
+< crossfaded over {0}
+> с кроссфейдом {0}
+
+< {0} of silence between
+> {0} тишины между ними
+
+< one after another
+> один за другим
+
+< Volume evened out to the same loudness.
+> Громкость выровнена до одинаковой.
+
+< Converting {0} sound file to {1}
+< Converting {0} sound files to {1}
+> Конвертация аудио в {1}: {0}
+> Конвертация аудио в {1}: {0}
+> Конвертация аудио в {1}: {0}
+
+< A lossless copy of {0} sound keeps exactly what it had, but can't bring back what {0} left out.
+> Копия без потерь звука {0} сохраняет всё, что было, но не может вернуть то, что отбросил {0}.
+
+< Adjusting the volume of {0} sound file
+< Adjusting the volume of {0} sound files
+> Регулировка громкости: {0}
+> Регулировка громкости: {0}
+> Регулировка громкости: {0}
+
+< This file is silent, so its volume can't be set.
+> Этот файл беззвучный, поэтому громкость не может быть изменена.
+
+< Already at that volume ({0}), so nothing was changed.
+> Уже такая громкость ({0}), поэтому ничего не изменено.
+
+< peak {0} → {1}
+> пик {0} → {1}
+
+< Peaks were held under −1 dBTP by the limiter (by up to {0}).
+> Лимитер удержал пики ниже −1 dBTP (максимум на {0}).
+
+< Reached {0} instead: louder would have clipped its peaks. Turn on the limiter to go all the way.
+> Достигнуто {0}: более громкий звук исказил бы пики. Включите лимитер, чтобы довести дело до конца.
+
+< Changing the speed and pitch of {0} sound file
+< Changing the speed and pitch of {0} sound files
+> Изменение скорости и высоты тона: {0}
+> Изменение скорости и высоты тона: {0}
+> Изменение скорости и высоты тона: {0}
+
+< Speed and pitch are unchanged, so there is nothing to do.
+> Скорость и высота тона не изменились, поэтому делать нечего.
+
+< Splitting {0} sound file
+< Splitting {0} sound files
+> Разделение аудио: {0}
+> Разделение аудио: {0}
+> Разделение аудио: {0}
+
+< Finding the quiet moments
+> Поиск тихих моментов
+
+< No silence long enough to split at was found.
+> Не найдено тишины достаточной длины для разделения.
+
+< {0} long — already within one part, nothing to split.
+> {0} — уже укладывается в одну часть, делить нечего.
+
+< Removing silence from {0} sound file
+< Removing silence from {0} sound files
+> Удаление тишины: {0}
+> Удаление тишины: {0}
+> Удаление тишины: {0}
+
+< Finding the silence
+> Поиск тишины
+
+< The whole file is silent at this sensitivity, so nothing was saved.
+> При такой чувствительности весь файл беззвучен, поэтому ничего не сохранено.
+
+< No silence to remove was found.
+> Тишина для удаления не найдена.
+
+< {0} of silence removed ({1} → {2})
+> Удалено тишины: {0} ({1} → {2})
+
 < Vertical
 > Вертикально
 
@@ -6019,14 +6544,17 @@
 < Read documents; convert, merge and scan PDFs
 > Читайте документы; конвертируйте, объединяйте и сканируйте PDF
 
+< Audio
+> Аудио
+
+< Trim, join, convert and tune sound files
+> Обрезка, объединение, конвертация и настройка аудиофайлов
+
 < Photos and documents on your Wi-Fi printer
 > Фото и документы на принтере в вашей сети Wi-Fi
 
-< Privacy & audio
-> Конфиденциальность и звук
-
-< Clean metadata and extract sound
-> Очистка метаданных и извлечение звука
+< See and clean what files say about you
+> Посмотрите и очистите то, что файлы рассказывают о вас
 
 < Tool stack
 > Цепочка инструментов
@@ -6334,14 +6862,77 @@
 < Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept.
 > Создаёт чистые копии фото и видео без местоположения GPS, сведений о камере, дат, комментариев и скрытых миниатюр. Пиксели фото и видеопотоки копируются без изменений (без потери качества); ориентация и цветовой профиль сохраняются.
 
+< Trim audio
+> Обрезка аудио
+
+< Keep the part you want, with fades
+> Сохраните нужный фрагмент, с плавным нарастанием и затуханием
+
+< Choose the part of a song, recording or voice note to keep — or to cut out — on its waveform, listen to it, and add a fade in and out. Saves as MP3, M4A, Opus, FLAC or WAV.
+> Выберите на звуковой волне фрагмент песни, записи или голосовой заметки, который нужно сохранить (или вырезать), прослушайте его и добавьте нарастание и затухание. Сохраняется в MP3, M4A, Opus, FLAC или WAV.
+
+< Merge audio
+> Объединение аудио
+
+< Join sound files, with crossfades
+> Соедините аудиофайлы, с кроссфейдами
+
+< Joins songs, recordings and voice notes into one file in your order, back to back, with a pause between, or crossfading from one into the next. Can even out their volume first.
+> Соединяет песни, записи и голосовые заметки в один файл в нужном вам порядке: встык, с паузой между ними или с кроссфейдом от одного к следующему. Может сначала выровнять громкость.
+
+< Convert audio
+> Конвертация аудио
+
+< MP3, M4A, Opus, FLAC or WAV
+> MP3, M4A, Opus, FLAC или WAV
+
+< Converts sound files — and the sound of videos — between MP3, M4A (AAC), Opus, FLAC and WAV, at the quality you choose, keeping the title, artist and cover.
+> Конвертирует аудиофайлы и звук видео между MP3, M4A (AAC), Opus, FLAC и WAV с выбранным качеством, сохраняя название, исполнителя и обложку.
+
+< Volume & normalize
+> Громкость и нормализация
+
+< Even loudness, louder or quieter
+> Одинаковая громкость, громче или тише
+
+< Brings sound files to the same loudness (as streaming services and broadcasters measure it), to a peak level, or changes the volume by the amount you choose. A limiter keeps peaks from clipping. Album mode keeps the differences between the songs of an album.
+> Приводит аудиофайлы к одинаковой громкости (так её измеряют стриминговые сервисы и вещатели), к уровню пиков или меняет громкость на выбранную величину. Лимитер не даёт пикам искажаться. Режим альбома сохраняет различия между песнями альбома.
+
+< Speed & pitch
+> Скорость и высота тона
+
+< Faster or slower, higher or lower
+> Быстрее или медленнее, выше или ниже
+
+< Changes how fast a recording plays without making voices squeaky, or moves its pitch up or down without changing its speed — or both. Good for practising music, podcasts and lectures.
+> Меняет скорость воспроизведения записи, не делая голоса писклявыми, или сдвигает высоту тона вверх или вниз без изменения скорости — либо и то и другое. Подходит для тренировки музыки, подкастов и лекций.
+
+< Split audio
+> Разделение аудио
+
+< Into parts, by length or at silences
+> На части: по длительности или по паузам
+
+< Cuts long recordings into parts of the length you choose, into a number of equal parts, or at the silences between tracks. Cuts can move to the nearest quiet moment so words aren't cut in half.
+> Разрезает длинные записи на части выбранной длительности, на равное количество частей или по паузам между треками. Разрезы могут сдвигаться к ближайшему тихому месту, чтобы слова не разрезались пополам.
+
+< Remove silence
+> Удаление тишины
+
+< Trim silent starts, ends and long pauses
+> Обрезка тихого начала и конца и длинных пауз
+
+< Removes the silence at the start and end of recordings and shortens long pauses in speech, so voice notes, lectures and podcasts get to the point. What counts as silence follows each recording's own background noise.
+> Убирает тишину в начале и в конце записей и сокращает длинные паузы в речи, чтобы голосовые заметки, лекции и подкасты сразу переходили к сути. Что считать тишиной, определяется фоновым шумом каждой записи.
+
 < Extract audio
 > Извлечение звука
 
-< Save a video's AAC sound as M4A
-> Сохраняйте звук AAC из видео как M4A
+< Save the sound of videos
+> Сохранение звука из видео
 
-< Copies the AAC sound track of each video into an M4A audio file without re-encoding.
-> Копирует звуковую дорожку AAC каждого видео в аудиофайл M4A без перекодирования.
+< Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
+> Сохраняет звук каждого видео как аудиофайл. Звук AAC копируется в файл M4A как есть, без перекодирования; другой звук или любой выбранный формат (MP3, Opus, FLAC, WAV) конвертируется.
 
 < Merging {0} video
 < Merging {0} videos
@@ -6369,9 +6960,6 @@
 
 < The converted clips still can't be joined on this device ({0}).
 > Конвертированные клипы всё равно нельзя соединить на этом устройстве ({0}).
-
-< Joining
-> Соединение
 
 < Finishing
 > Завершение
@@ -6414,12 +7002,6 @@
 
 < Some parts are longer than {0} because the video has few keyframes (longest {1}).
 > Некоторые части длиннее {0}, потому что в видео мало ключевых кадров (самая длинная — {1}).
-
-< {0} part
-< {0} parts
-> {0} часть
-> {0} части
-> {0} частей
 
 < cuts at keyframes
 > режет по ключевым кадрам
@@ -6478,8 +7060,8 @@
 < This video has no audio track.
 > В этом видео нет звуковой дорожки.
 
-< No compatible AAC audio track (this video's audio is {0}). Nothing was extracted.
-> Нет совместимой звуковой дорожки AAC (звук этого видео — {0}). Ничего не извлечено.
+< This video's sound is {0}, so it was converted to AAC (M4A).
+> Звук этого видео — {0}, поэтому он сконвертирован в AAC (M4A).
 
 < {0} non-AAC audio track was not extracted.
 < {0} non-AAC audio tracks were not extracted.
@@ -7212,9 +7794,6 @@
 
 < Read/write error: {0}
 > Ошибка чтения/записи: {0}
-
-< Audio
-> Аудио
 
 < Unknown
 > Неизвестно
