@@ -51,7 +51,7 @@ enum class FlowKind(private val nounEn: String) {
 /** Which tools can be stacked, what they accept and what they make. */
 object StackRules {
     /** Tools that work on one photo interactively, scan the library or use the camera. */
-    private val notStackable = setOf(ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT, ToolId.DUPLICATES, ToolId.PDF_SCANNER, ToolId.TOOL_STACK, ToolId.PRINT, ToolId.HIGHLIGHT_VIDEO, ToolId.READER)
+    private val notStackable = setOf(ToolId.PHOTO_EDITOR, ToolId.MAGIC_ERASER, ToolId.BLUR_REDACT, ToolId.DUPLICATES, ToolId.PDF_SCANNER, ToolId.TOOL_STACK, ToolId.PRINT, ToolId.HIGHLIGHT_VIDEO, ToolId.READER, ToolId.METADATA)
 
     fun stackable(t: ToolId) = t !in notStackable
 
@@ -62,6 +62,7 @@ object StackRules {
         ToolId.PRINT -> tr("Prints instead of saving files, so it can't be a step of a stack")
         ToolId.HIGHLIGHT_VIDEO -> tr("Makes one film from the moments you review, so it can't run in a stack")
         ToolId.READER -> tr("Shows documents instead of saving files, so it can't be a step of a stack")
+        ToolId.METADATA -> tr("Shows a file's details instead of saving files, so it can't be a step of a stack")
         else -> tr("Can't be part of a stack")
     }
 

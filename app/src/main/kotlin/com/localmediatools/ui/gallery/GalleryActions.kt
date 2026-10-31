@@ -112,6 +112,7 @@ object GalleryActions {
         val anyGif = items.any { it.gif }
         return ToolId.entries.filter { t ->
             if (t == ToolId.DUPLICATES || t == ToolId.PDF_SCANNER) return@filter false
+            if (t == ToolId.METADATA) return@filter items.size == 1
             val editor = t == ToolId.PHOTO_EDITOR || t == ToolId.MAGIC_ERASER || t == ToolId.BLUR_REDACT
             if (editor) return@filter items.size == 1 && anyPhoto
             if (ToolRules.single(t) && items.size != 1) return@filter false
@@ -152,6 +153,7 @@ object GalleryActions {
             ToolId.PHOTO_EDITOR -> ToolLauncher.openEditor(activity, uris[0], t, EditorMode.ADJUST)
             ToolId.MAGIC_ERASER -> ToolLauncher.openEditor(activity, uris[0], t, EditorMode.ERASE)
             ToolId.BLUR_REDACT -> ToolLauncher.openEditor(activity, uris[0], t, EditorMode.BLUR)
+            ToolId.METADATA -> activity.navigator.push(com.localmediatools.ui.meta.MetadataScreen(activity, com.localmediatools.ui.meta.MetadataScreen.Source(uris[0], null, items[0].name)))
             ToolId.TOOL_STACK -> {
                 val sel = Selection.of(t); sel.clear(); sel.addUris(activity, uris)
                 activity.navigator.push(StackScreen(activity))

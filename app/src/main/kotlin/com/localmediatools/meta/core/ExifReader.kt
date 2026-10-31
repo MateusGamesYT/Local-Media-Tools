@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.roundToLong
@@ -108,9 +110,9 @@ object ExifReader {
                     e.tag == 0x02BC && group != "GPS" -> found.xmp = block(e)
                     e.tag == 0x83BB && group != "GPS" -> found.iptc = block(e)
                     e.tag == 0x8773 && group != "GPS" -> found.icc = block(e)
-                    panasonic && group == "IFD0" && e.tag == 0x002E -> { found.embeddedJpeg = block(e); found.embeddedJpegAt = base + e.valueAt; out.add(group, "JpgFromRaw", "(${e.count} bytes, a full-size JPEG copy of the picture)", "${e.count}", Privacy.HIDDEN_IMAGE) }
+                    panasonic && group == "IFD0" && e.tag == 0x002E -> { found.embeddedJpeg = block(e); found.embeddedJpegAt = base + e.valueAt; out.add(group, "JpgFromRaw", tr("({0} bytes, a full-size JPEG copy of the picture)", e.count), "${e.count}", Privacy.HIDDEN_IMAGE) }
                     e.tag == 0xC4A5 && group == "IFD0" -> block(e)?.let { p -> if (B.starts(p, 0, "PrintIM")) out.add("PrintIM", "PrintIMVersion", B.ascii(p, 8, 4)) }
-                    e.tag == 0x927C && group == "ExifIFD" -> { found.makerNote = e.count.toInt(); out.add(group, "MakerNote", "(${e.count} bytes, the camera maker's own data)", "${e.count}") }
+                    e.tag == 0x927C && group == "ExifIFD" -> { found.makerNote = e.count.toInt(); out.add(group, "MakerNote", tr("({0} bytes, the camera maker's own data)", e.count), "${e.count}") }
                     e.tag == 0x0201 && group.startsWith("IFD") && group != "IFD0" -> { found.thumbOffset = numbers(e, 1).firstOrNull()?.toLong() ?: -1; out.add(group, "ThumbnailOffset", "${found.thumbOffset + base}") }
                     e.tag == 0x0202 && group.startsWith("IFD") && group != "IFD0" -> { found.thumbLength = numbers(e, 1).firstOrNull()?.toLong() ?: -1; out.add(group, "ThumbnailLength", "${found.thumbLength}") }
                     name == null -> {}
@@ -134,7 +136,7 @@ object ExifReader {
                 out.add("Composite", "GPSPosition", "${dms(la, true)}, ${dms(lo, false)}", "${num(la)} ${num(lo)}")
             }
             if (group.startsWith("IFD") && group != "IFD0" && found.thumbOffset >= 0 && found.thumbLength > 0)
-                out.add(group, "ThumbnailImage", "(${found.thumbLength} bytes, a smaller copy of the picture)", "${found.thumbLength}")
+                out.add(group, "ThumbnailImage", tr("({0} bytes, a smaller copy of the picture)", found.thumbLength), "${found.thumbLength}")
             return next
         }
 
@@ -251,7 +253,7 @@ object ExifReader {
                     // Short text kept as bytes ("0300"), or a few numbers.
                     d.size <= 64 && d.all { it in 32..126 || it == 0.toByte() } && d.any { it != 0.toByte() } -> B.cstring(d, 0, d.size).let { it to it }
                     d.size <= 32 -> d.joinToString(" ") { "${it.toInt() and 0xFF}" }.let { it to it }
-                    else -> "(${e.count} bytes)" to "(Binary data ${e.count} bytes)"
+                    else -> tr("({0} bytes)", e.count) to "(Binary data ${e.count} bytes)"
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -192,11 +194,11 @@ object AvMeta {
                 val (desc, text) = text(b, 4, b[0].toInt(), splitFirst = true)
                 out.add(g, if (id.startsWith("U")) "Lyrics" else "Comment", if (desc.isNotEmpty() && !desc.startsWith("iTun")) "($desc) $text" else text)
             }
-            id == "APIC" || id == "PIC" -> out.add(g, "Picture", "(${b.size} bytes of picture)", "${b.size}", Privacy.HIDDEN_IMAGE)
+            id == "APIC" || id == "PIC" -> out.add(g, "Picture", tr("({0} bytes of picture)", b.size), "${b.size}", Privacy.HIDDEN_IMAGE)
             id == "PRIV" -> out.add(g, "Private", "(" + B.cstring(b, 0, b.size) + ", ${b.size} bytes)")
             id == "WXXX" -> out.add(g, "UserDefinedURL", text(b, 1, b[0].toInt(), splitFirst = true).second)
             id.startsWith("W") && id.length == 4 -> out.add(g, "URL", B.cstring(b, 0, b.size))
-            id == "GEOB" -> out.add(g, "GeneralEncapsulatedObject", "(${b.size} bytes)")
+            id == "GEOB" -> out.add(g, "GeneralEncapsulatedObject", tr("({0} bytes)", b.size))
             id == "POPM" -> out.add(g, "Popularimeter", B.cstring(b, 0, b.size))
             id == "UFID" -> out.add(g, "UniqueFileID", B.cstring(b, 0, b.size), privacy = Privacy.IDENTIFIER)
         }
@@ -308,7 +310,7 @@ object AvMeta {
                 val frames = if (flags and 1L != 0L) B.u32be(x, 8) else 0L
                 if (frames > 0 && B.starts(x, 0, "Xing")) {
                     val avg = bytes * 8.0 / (frames.toDouble() * samplesPerFrame / rate)
-                    out.add("Composite", "AudioBitrate", "about ${Math.round(avg / 1000)} kbps (variable)", ExifReader.num(avg))
+                    out.add("Composite", "AudioBitrate", tr("about {0} kbps (variable)", Math.round(avg / 1000)), ExifReader.num(avg))
                 }
             }
         } else {
@@ -355,7 +357,7 @@ object AvMeta {
         out.add(g, "PictureWidth", "${B.u32be(b, p)}"); out.add(g, "PictureHeight", "${B.u32be(b, p + 4)}")
         out.add(g, "PictureBitsPerPixel", "${B.u32be(b, p + 8)}"); out.add(g, "PictureIndexedColors", "${B.u32be(b, p + 12)}")
         val len = B.u32be(b, p + 16)
-        out.add(g, "PictureLength", "$len"); out.add(g, "Picture", "($len bytes of picture)", "$len", Privacy.HIDDEN_IMAGE)
+        out.add(g, "PictureLength", "$len"); out.add(g, "Picture", tr("({0} bytes of picture)", len), "$len", Privacy.HIDDEN_IMAGE)
     }
 
     private val PICTURE_TYPES = listOf("Other", "32x32 PNG Icon", "Other Icon", "Front Cover", "Back Cover", "Leaflet", "Media", "Lead Artist",
@@ -390,10 +392,10 @@ object AvMeta {
             val value = c.substringAfter('=', "")
             if (key.equals("METADATA_BLOCK_PICTURE", true)) {
                 val b = try { java.util.Base64.getMimeDecoder().decode(value) } catch (_: Exception) { null }
-                if (b != null) picture(b, out) else out.add(g, "Picture", "(${value.length * 3 / 4} bytes of picture)", "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE)
+                if (b != null) picture(b, out) else out.add(g, "Picture", tr("({0} bytes of picture)", value.length * 3 / 4), "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE)
                 continue
             }
-            if (key.equals("COVERART", true)) { out.add(g, "CoverArt", "(${value.length * 3 / 4} bytes of picture)", "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE); continue }
+            if (key.equals("COVERART", true)) { out.add(g, "CoverArt", tr("({0} bytes of picture)", value.length * 3 / 4), "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE); continue }
             out.add(g, VORBIS[key.uppercase()] ?: key.lowercase().split('_', ' ').joinToString("") { it.replaceFirstChar { ch -> ch.uppercaseChar() } }, value)
         }
     }
@@ -533,7 +535,7 @@ object AvMeta {
                         val scale = f.u32le(body + 20); val rate = f.u32le(body + 24); val length = f.u32le(body + 32)
                         if (scale > 0 && type == "vids") { out.add("RIFF", "VideoFrameRate", ExifReader.num(rate.toDouble() / scale, 3), ExifReader.num(rate.toDouble() / scale)); out.add("RIFF", "VideoFrameCount", "$length") }
                         if (scale > 0 && type == "auds") { out.add("RIFF", "AudioSampleRate", ExifReader.num(rate.toDouble() / scale, 3), ExifReader.num(rate.toDouble() / scale)); out.add("RIFF", "AudioSampleCount", "$length") }
-                        f.u32le(body + 40).let { q -> out.add("RIFF", "Quality", if (q == 0xFFFFFFFFL) "(default)" else "$q", "$q") }
+                        f.u32le(body + 40).let { q -> out.add("RIFF", "Quality", if (q == 0xFFFFFFFFL) tr("(default)") else "$q", "$q") }
                         out.add("RIFF", "SampleSize", "${f.u32le(body + 44)}")
                     }
                     else -> INFO[id]?.let { name -> out.add("RIFF", name, String(f.bytes(body, len.toInt().coerceAtMost(1 shl 16)), Charsets.UTF_8).trimEnd('\u0000')) }

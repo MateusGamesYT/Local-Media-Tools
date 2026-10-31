@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import com.localmediatools.docs.core.Ole2
 import com.localmediatools.docs.core.Parts
 import com.localmediatools.docs.core.XmlReader
@@ -80,7 +82,7 @@ object OfficeMeta {
         "application/vnd.oasis.opendocument.chart" to "ODC", "application/vnd.oasis.opendocument.text-master" to "ODM")
 
     fun zipDocument(f: MetaInput, out: Fields) {
-        val parts = try { Parts(f.file) } catch (_: Exception) { out.add("File", "FileType", "ZIP"); zip(f, out); out.note("The archive is damaged: only its first file's details were read."); return }
+        val parts = try { Parts(f.file!!) } catch (_: Exception) { out.add("File", "FileType", "ZIP"); zip(f, out); out.note(tr("The archive is damaged: only its first file's details were read.")); return }
         parts.use {
             val kind = zipKind(it)
             out.add("File", "FileType", kind)
@@ -115,10 +117,10 @@ object OfficeMeta {
                     val shown = if (Regex("""^\d{4}-\d\d-\d\dT""").containsMatchIn(t)) XmpReader.exifDate(t) else t
                     out.add("XML", tagName(name), shown, shown, privacy = Privacies.of(tagName(name)) ?: Privacy.TEXT)
                 }
-            } catch (_: Exception) { out.note("The document's own properties are damaged: only part of them was read.") }
+            } catch (_: Exception) { out.note(tr("The document's own properties are damaged: only part of them was read.")) }
         }
         if (parts.has("docProps/thumbnail.jpeg") || parts.has("docProps/thumbnail.wmf") || parts.has("docProps/thumbnail.emf"))
-            out.add("XML", "ThumbnailImage", "(a picture of the first page)", "1", Privacy.HIDDEN_IMAGE)
+            out.add("XML", "ThumbnailImage", tr("(a picture of the first page)"), "1", Privacy.HIDDEN_IMAGE)
         if (parts.has("word/comments.xml")) out.add("XML", "HasComments", "Yes", privacy = Privacy.TEXT)
         if (parts.has("word/people.xml")) out.add("XML", "HasReviewers", "Yes", privacy = Privacy.PERSON)
     }
@@ -146,7 +148,7 @@ object OfficeMeta {
                     else -> out.add("XML", name, v)
                 }
             }
-        } catch (_: Exception) { out.note("The document's properties are damaged: only part of them was read.") }
+        } catch (_: Exception) { out.note(tr("The document's properties are damaged: only part of them was read.")) }
     }
 
     private fun minutes(s: Long): String = when {
@@ -187,8 +189,8 @@ object OfficeMeta {
                     }
                 }
             }
-        } catch (_: Exception) { out.note("The document's properties are damaged: only part of them was read.") }
-        if (parts.has("Thumbnails/thumbnail.png")) out.add("XMP-meta", "ThumbnailImage", "(a picture of the first page)", "1", Privacy.HIDDEN_IMAGE)
+        } catch (_: Exception) { out.note(tr("The document's properties are damaged: only part of them was read.")) }
+        if (parts.has("Thumbnails/thumbnail.png")) out.add("XMP-meta", "ThumbnailImage", tr("(a picture of the first page)"), "1", Privacy.HIDDEN_IMAGE)
     }
 
     /** "PT1H2M3S" → "1 h 2 min". */
@@ -231,7 +233,7 @@ object OfficeMeta {
                     }
                 }
             }
-        } catch (_: Exception) { out.note("The book's details are damaged: only part of them was read.") }
+        } catch (_: Exception) { out.note(tr("The book's details are damaged: only part of them was read.")) }
     }
 
     // ------------------------------------------------------------------ Office 97–2003 (OLE2 property sets)
@@ -248,7 +250,7 @@ object OfficeMeta {
     /** [ext]: the name's extension, which says which Office file a damaged or protected one is. */
     fun ole2(f: MetaInput, out: Fields, ext: String = "") {
         val byName = if (ext in OFFICE_EXT) ext.uppercase() else null
-        val ole = try { Ole2(f.file) } catch (_: Exception) { out.add("File", "FileType", byName ?: "FPX"); out.note("The file is damaged: its contents can't be unpacked."); return }
+        val ole = try { Ole2(f.file!!) } catch (_: Exception) { out.add("File", "FileType", byName ?: "FPX"); out.note(tr("The file is damaged: its contents can't be unpacked.")); return }
         ole.use { o ->
             val kind = when {
                 o.has("EncryptedPackage") -> byName ?: "Protected Office file"
@@ -269,9 +271,9 @@ object OfficeMeta {
                     val n = B.u16le(cu, 20)
                     if (n in 1..255 && 28 + n <= cu.size) out.add("FlashPix", "CurrentUser", String(cu, 28, n, Charset.forName("windows-1252")).trimEnd('\u0000'), privacy = Privacy.PERSON)
                 }
-            } catch (_: Exception) { out.note("The document's properties are damaged: only part of them was read.") }
-            if (kind == "DOC") try { wordDocument(o, out) } catch (_: Exception) { out.note("The Word document's own details are damaged: only part of them was read.") }
-            if (o.has("EncryptedPackage")) out.note("This Office file is protected with a password: only the outer details can be read.")
+            } catch (_: Exception) { out.note(tr("The document's properties are damaged: only part of them was read.")) }
+            if (kind == "DOC") try { wordDocument(o, out) } catch (_: Exception) { out.note(tr("The Word document's own details are damaged: only part of them was read.")) }
+            if (o.has("EncryptedPackage")) out.note(tr("This Office file is protected with a password: only the outer details can be read."))
         }
     }
 
@@ -286,7 +288,7 @@ object OfficeMeta {
         val flags = B.u16le(wd, 10)
         out.add(g, "Identification", "Word 8.0", "${0xA5EC}")
         B.u16le(wd, 6).let { lid -> out.add(g, "LanguageCode", java.util.Locale.forLanguageTag(LCID[lid] ?: "").displayName.ifEmpty { "0x%04x".format(lid) }, "$lid") }
-        out.add(g, "DocFlags", DOC_FLAGS.filter { (bit, _) -> flags and (1 shl bit) != 0 }.joinToString(", ") { it.second }.ifEmpty { "(none)" }, "${flags and 0xFF0F}")
+        out.add(g, "DocFlags", DOC_FLAGS.filter { (bit, _) -> flags and (1 shl bit) != 0 }.joinToString(", ") { it.second }.ifEmpty { tr("(none)") }, "${flags and 0xFF0F}")
         out.add(g, "System", if (B.u16le(wd, 18) and 1 != 0) "Macintosh" else "Windows", "${B.u16le(wd, 18) and 1}")
         out.add(g, "Word97", if (B.u16le(wd, 18) and 0x10 != 0) "Yes" else "No", "${(B.u16le(wd, 18) shr 4) and 1}")
         var pos = 32
@@ -411,7 +413,7 @@ object OfficeMeta {
                 v is FileTime -> fileTime(v.t)?.let { out.add("FlashPix", name, it, it, Privacy.TIME) }
                 name == "AppVersion" && v is Long -> "${v shr 16}.${"%04d".format(v and 0xFFFF)}".let { out.add("FlashPix", name, it, it) }
                 v is Boolean -> out.add("FlashPix", name, if (v) "Yes" else "No", if (v) "1" else "0")
-                name == "ThumbnailClip" -> out.add("FlashPix", name, "(a picture of the first page)", "1", Privacy.HIDDEN_IMAGE)
+                name == "ThumbnailClip" -> out.add("FlashPix", name, tr("(a picture of the first page)"), "1", Privacy.HIDDEN_IMAGE)
                 name == "Security" -> out.add("FlashPix", name, when (v.toString()) { "0" -> "None"; "1" -> "Password protected"; "2" -> "Read-only recommended"; "4" -> "Read-only enforced"; "8" -> "Locked for annotations"; else -> v.toString() }, v.toString())
                 else -> out.add("FlashPix", name, v.toString(), privacy = if (custom) Privacies.of(name) ?: Privacy.TEXT else null)
             }
@@ -465,7 +467,7 @@ object OfficeMeta {
                 stamp(ms)
             }
             12 -> if (depth < 2) value(b, d, cs, depth + 1) else null
-            71 -> "(clipboard data)"
+            71 -> tr("(clipboard data)")
             65 -> { val n = B.u32le(b, d).toInt(); if (n <= 0 || d + 4 + n > b.size) null else b.copyOfRange(d + 4, d + 4 + n) }
             else -> null
         }
@@ -722,7 +724,7 @@ object OfficeMeta {
         out.add("File", "MIMEEncoding", enc ?: if (!high) "us-ascii" else if (validUtf8) "utf-8" else "iso-8859-1")
         if (enc?.startsWith("utf-16") != true) {
             out.add("File", "Newlines", when {
-                crlf >= lf && crlf >= cr && crlf > 0 -> "Windows CRLF"; lf >= cr && lf > 0 -> "Unix LF"; cr > 0 -> "Macintosh CR"; else -> "(none)"
+                crlf >= lf && crlf >= cr && crlf > 0 -> "Windows CRLF"; lf >= cr && lf > 0 -> "Unix LF"; cr > 0 -> "Macintosh CR"; else -> tr("(none)")
             })
             out.add("File", "LineCount", "$lines"); out.add("File", "WordCount", "$words")
         }

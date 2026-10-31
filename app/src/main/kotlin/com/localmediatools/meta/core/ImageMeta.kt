@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import java.util.zip.Inflater
 
 /** Photos and pictures: JPEG, PNG, WebP, GIF, BMP, Photoshop, TIFF and camera RAW files. */
@@ -10,7 +12,7 @@ object ImageMeta {
         found.xmp?.let { XmpReader.read(it, out) }
         found.iptc?.let { IptcReader.read(it, out) }
         found.icc?.let { IccReader.read(it, out) }
-        if (found.makerNote > 0) out.note("The camera maker's own notes (${found.makerNote} bytes) are listed but not read: each maker writes them its own way.")
+        if (found.makerNote > 0) out.note(tr("The camera maker's own notes ({0} bytes) are listed but not read: each maker writes them its own way.", found.makerNote))
         return found
     }
 
@@ -36,7 +38,7 @@ object ImageMeta {
         var segments = 0
         while (at + 4 <= f.size && segments < 4000) {
             segments++
-            if (f.u8(at) != 0xFF) { out.note("The JPEG file is damaged after ${at} bytes."); break }
+            if (f.u8(at) != 0xFF) { out.note(tr("The JPEG file is damaged after {0} bytes.", at)); break }
             val m = f.u8(at + 1)
             if (m == 0xFF) { at++; continue }
             if (m == 0xD8 || m == 0x01 || m in 0xD0..0xD7) { at += 2; continue }
@@ -75,7 +77,7 @@ object ImageMeta {
                     out.add("Adobe", "APP14Flags0", "${B.u16be(data, 7)}"); out.add("Adobe", "APP14Flags1", "${B.u16be(data, 9)}")
                     out.add("Adobe", "ColorTransform", when (data[11].toInt()) { 0 -> "Unknown (RGB or CMYK)"; 1 -> "YCbCr"; 2 -> "YCCK"; else -> "${data[11]}" }, "${data[11]}")
                 }
-                m == 0xEB && (B.starts(data, 0, "JP") || data.size > 16) -> out.note("This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.")
+                m == 0xEB && (B.starts(data, 0, "JP") || data.size > 16) -> out.note(tr("This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here."))
                 m == 0xFE -> out.add("File", "Comment", String(data, Charsets.UTF_8).trimEnd('\u0000'))
                 m in 0xC0..0xCF && m != 0xC4 && m != 0xC8 && m != 0xCC && !sof && data.size >= 6 -> {
                     sof = true
@@ -100,7 +102,7 @@ object ImageMeta {
                         f.u16be(end) == 0xFFD8 -> "another picture"
                         else -> null
                     }
-                    if (kind != null) { out.add("File", "TrailerData", "($rest bytes: $kind)", "$rest", Privacy.HIDDEN_IMAGE) }
+                    if (kind != null) { out.add("File", "TrailerData", tr("({0} bytes: {1})", rest, kind), "$rest", Privacy.HIDDEN_IMAGE) }
                 }
                 break
             }
@@ -146,7 +148,7 @@ object ImageMeta {
                 0xB000 -> out.add("MPF0", "MPFVersion", B.ascii(d, e + 8, 4))
                 0xB001 -> {
                     out.add("MPF0", "NumberOfImages", "${u32(e + 8)}")
-                    if (u32(e + 8) > 1) out.add("MPF0", "MPImage", "(${u32(e + 8) - 1} more pictures inside: a preview, an HDR gain map, a depth map or the like)", "${u32(e + 8) - 1}", Privacy.HIDDEN_IMAGE)
+                    if (u32(e + 8) > 1) out.add("MPF0", "MPImage", tr("({0} more pictures inside: a preview, an HDR gain map, a depth map or the like)", u32(e + 8) - 1), "${u32(e + 8) - 1}", Privacy.HIDDEN_IMAGE)
                 }
                 0xB002 -> {
                     val at = u32(e + 8).toInt() + 4
@@ -156,7 +158,7 @@ object ImageMeta {
                         val attr = u32(p); val g = "MPImage${i + 1}"
                         val flags = (attr shr 27) and 0x1F
                         out.add(g, "MPImageFlags", listOfNotNull(if (flags and 4L != 0L) "Representative image" else null, if (flags and 8L != 0L) "Dependent child image" else null,
-                            if (flags and 16L != 0L) "Dependent parent image" else null).joinToString(", ").ifEmpty { "(none)" }, "$flags")
+                            if (flags and 16L != 0L) "Dependent parent image" else null).joinToString(", ").ifEmpty { tr("(none)") }, "$flags")
                         out.add(g, "MPImageFormat", if ((attr shr 24) and 7 == 0L) "JPEG" else "${(attr shr 24) and 7}", "${(attr shr 24) and 7}")
                         val type = (attr and 0xFFFFFF).toInt()
                         out.add(g, "MPImageType", MP_TYPES[type] ?: "0x%06x".format(type), "$type", Privacy.HIDDEN_IMAGE)
@@ -184,7 +186,7 @@ object ImageMeta {
         while (at + 12 <= f.size && n < 100_000) {
             n++
             val len = f.u32be(at); val type = f.ascii(at + 4, 4)
-            if (len < 0 || at + 12 + len > f.size + 4) { out.note("The PNG file is damaged."); break }
+            if (len < 0 || at + 12 + len > f.size + 4) { out.note(tr("The PNG file is damaged.")); break }
             val read = type != "IDAT" && type != "fdAT" && len <= (16 shl 20)
             val d = if (read) f.bytes(at + 8, len.toInt()) else ByteArray(0)
             when (type) {

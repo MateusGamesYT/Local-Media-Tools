@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import java.io.File
 import java.util.Calendar
 import java.util.TimeZone
@@ -12,46 +14,67 @@ object MetaReader {
     fun read(file: File, name: String = file.name, modifiedMs: Long = file.lastModified()): MetaReport =
         MetaInput(file).use { read(it, name, modifiedMs) }
 
-    fun read(f: MetaInput, name: String, modifiedMs: Long): MetaReport {
+    /**
+     * [localCopy]: when [f] has no file of its own, makes one for the readers that need a real file
+     * (ZIP-based and Office 97–2003 documents); its result is deleted after reading.
+     */
+    fun read(f: MetaInput, name: String, modifiedMs: Long, localCopy: (() -> File)? = null): MetaReport {
         val out = Fields()
         out.add("File", "FileName", name, privacy = Privacy.TEXT)
         out.add("File", "FileSize", size(f.size), "${f.size}")
         if (modifiedMs > 0) stamp(modifiedMs).let { out.add("File", "FileModifyDate", it, it, Privacy.TIME) }
         val ext = name.substringAfterLast('.', "").lowercase()
         val kind = detect(f, ext)
+        var copy: File? = null
+        var input = f
         try {
-            when (kind) {
-                "JPEG" -> ImageMeta.jpeg(f, out)
-                "PNG" -> ImageMeta.png(f, out)
-                "WEBP" -> ImageMeta.webp(f, out)
-                "GIF" -> ImageMeta.gif(f, out)
-                "BMP" -> ImageMeta.bmp(f, out)
-                "PSD" -> ImageMeta.psd(f, out)
-                "RAF" -> ImageMeta.raf(f, out)
-                "TIFF", "DNG", "CR2", "NEF", "NRW", "ARW", "SR2", "SRF", "PEF", "ORF", "RW2", "SRW", "ERF", "3FR", "IIQ", "MOS", "MEF", "KDC", "DCR", "X3F" -> ImageMeta.tiff(f, out, kind)
-                "BMFF" -> { BmffMeta.read(f, out); if (out.list.none { it.name == "FileType" }) out.add("File", "FileType", bmffType(f)) }
-                "MKV" -> AvMeta.matroska(f, out)
-                "MP3" -> AvMeta.mp3(f, out)
-                "FLAC" -> AvMeta.flac(f, out)
-                "OGG" -> AvMeta.ogg(f, out)
-                "RIFF" -> AvMeta.riff(f, out)
-                "PDF" -> PdfMeta.read(f, out)
-                "ZIP" -> OfficeMeta.zipDocument(f, out)
-                "OLE2" -> OfficeMeta.ole2(f, out, ext)
-                "RTF" -> OfficeMeta.rtf(f, out)
-                "HTML" -> OfficeMeta.html(f, out)
-                "XML", "SVG" -> { OfficeMeta.text(f, out, kind); if (kind == "SVG") OfficeMeta.svg(f, out); XmpReader.read(f.bytes(0, 16 shl 20), out) }
-                "TXT" -> OfficeMeta.text(f, out, if (ext in TEXT_KINDS) ext.uppercase() else "TXT")
-                else -> {}
+            if (f.file == null && (kind == "ZIP" || kind == "OLE2")) {
+                copy = localCopy?.invoke()
+                if (copy != null) input = MetaInput(copy) else { out.note(tr("This document couldn't be read here: open it from the Files app instead.")); return finish(out, kind) }
             }
+            readKind(input, kind, ext, out)
         } catch (e: Exception) {
-            out.note("Part of the file couldn't be read: it may be damaged.")
+            out.note(tr("Part of the file couldn't be read: it may be damaged."))
         } catch (e: StackOverflowError) {
-            out.note("Part of the file couldn't be read: it may be damaged.")
+            out.note(tr("Part of the file couldn't be read: it may be damaged."))
         } catch (e: OutOfMemoryError) {
-            out.note("Part of the file is too big to read on this phone.")
+            out.note(tr("Part of the file is too big to read on this phone."))
+        } finally {
+            if (input !== f) input.close()
+            copy?.delete()
         }
-        if (out.list.none { it.group == "File" && it.name == "FileType" }) out.add("File", "FileType", if (kind == "Unknown") "(not recognised)" else kind)
+        return finish(out, kind)
+    }
+
+    private fun readKind(f: MetaInput, kind: String, ext: String, out: Fields) {
+        when (kind) {
+            "JPEG" -> ImageMeta.jpeg(f, out)
+            "PNG" -> ImageMeta.png(f, out)
+            "WEBP" -> ImageMeta.webp(f, out)
+            "GIF" -> ImageMeta.gif(f, out)
+            "BMP" -> ImageMeta.bmp(f, out)
+            "PSD" -> ImageMeta.psd(f, out)
+            "RAF" -> ImageMeta.raf(f, out)
+            "TIFF", "DNG", "CR2", "NEF", "NRW", "ARW", "SR2", "SRF", "PEF", "ORF", "RW2", "SRW", "ERF", "3FR", "IIQ", "MOS", "MEF", "KDC", "DCR", "X3F" -> ImageMeta.tiff(f, out, kind)
+            "BMFF" -> { BmffMeta.read(f, out); if (out.list.none { it.name == "FileType" }) out.add("File", "FileType", bmffType(f)) }
+            "MKV" -> AvMeta.matroska(f, out)
+            "MP3" -> AvMeta.mp3(f, out)
+            "FLAC" -> AvMeta.flac(f, out)
+            "OGG" -> AvMeta.ogg(f, out)
+            "RIFF" -> AvMeta.riff(f, out)
+            "PDF" -> PdfMeta.read(f, out)
+            "ZIP" -> OfficeMeta.zipDocument(f, out)
+            "OLE2" -> OfficeMeta.ole2(f, out, ext)
+            "RTF" -> OfficeMeta.rtf(f, out)
+            "HTML" -> OfficeMeta.html(f, out)
+            "XML", "SVG" -> { OfficeMeta.text(f, out, kind); if (kind == "SVG") OfficeMeta.svg(f, out); XmpReader.read(f.bytes(0, 16 shl 20), out) }
+            "TXT" -> OfficeMeta.text(f, out, if (ext in TEXT_KINDS) ext.uppercase() else "TXT")
+            else -> {}
+        }
+    }
+
+    private fun finish(out: Fields, kind: String): MetaReport {
+        if (out.list.none { it.group == "File" && it.name == "FileType" }) out.add("File", "FileType", if (kind == "Unknown") tr("(not recognised)") else kind)
         val type = out.list.first { it.group == "File" && it.name == "FileType" }.value
         MIME[type]?.let { out.add("File", "MIMEType", it) }
         imageSize(out)

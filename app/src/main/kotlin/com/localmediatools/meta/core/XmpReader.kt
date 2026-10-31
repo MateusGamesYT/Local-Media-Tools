@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import com.localmediatools.docs.core.XmlReader
 import com.localmediatools.docs.core.XmlReader.Event
 
@@ -46,7 +48,7 @@ object XmpReader {
                 }
             }
         } catch (e: Exception) {
-            out.note("The XMP metadata is damaged: only part of it was read.")
+            out.note(tr("The XMP metadata is damaged: only part of it was read."))
         }
     }
 

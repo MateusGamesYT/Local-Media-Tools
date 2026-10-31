@@ -166,6 +166,25 @@ class MetaCoreTest {
         } finally { copy.delete() }
     }
 
+    /** A file shared by another app is read through its open channel; documents that need a real file ask for a copy. */
+    @Test
+    fun aSharedFileIsReadWithoutCopyingUnlessADocumentNeedsIt() {
+        fun throughChannel(path: String, copies: MutableList<File>): MetaReport {
+            val f = res(path)
+            val stream = java.io.FileInputStream(f)
+            return com.localmediatools.meta.core.MetaInput(stream.channel, f.length(), null, stream).use { input ->
+                MetaReader.read(input, f.name, 0) { File.createTempFile("copy", ".bin").also { f.copyTo(it, overwrite = true); copies.add(it) } }
+            }
+        }
+        val copies = ArrayList<File>()
+        assertEquals(-22.9519, throughChannel("meta/clip.mp4", copies).location!!.first, 1e-4)
+        assertTrue("a video is read in place", copies.isEmpty())
+        assertEquals("Bruno Lima", throughChannel("meta/props.docx", copies).f("LastModifiedBy").value)
+        assertEquals("Teresa G. Yow", throughChannel("docs/boreas.doc", copies).f("LastModifiedBy").value)
+        assertEquals(2, copies.size)
+        assertTrue("the copies are deleted after reading", copies.none { it.exists() })
+    }
+
     /** Cut-off and damaged copies of every test file: the reader must finish quickly, never throw, and still say what it can. */
     @Test
     fun damagedFilesNeverStopTheReader() {

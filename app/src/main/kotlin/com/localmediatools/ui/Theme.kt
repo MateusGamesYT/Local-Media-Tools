@@ -107,6 +107,7 @@ object Icons {
         ToolId.PDF_SCANNER -> R.drawable.ic_tool_scanner
         ToolId.CONVERT_IMAGES -> R.drawable.ic_tool_convert
         ToolId.REMOVE_METADATA -> R.drawable.ic_tool_metadata
+        ToolId.METADATA -> R.drawable.ic_tool_inspect
         ToolId.EXTRACT_AUDIO -> R.drawable.ic_tool_audio
         ToolId.PRINT -> R.drawable.ic_tool_print
     }

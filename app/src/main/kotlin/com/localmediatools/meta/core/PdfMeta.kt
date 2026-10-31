@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import java.security.MessageDigest
 import java.util.zip.Inflater
 import javax.crypto.Cipher
@@ -519,7 +521,7 @@ object PdfMeta {
     private fun permissions(p: Int): String {
         val names = listOf(3 to "Print", 4 to "Modify", 5 to "Copy", 6 to "Annotate", 9 to "Fill forms", 10 to "Extract", 11 to "Assemble", 12 to "Print high-res")
         val allowed = names.filter { (bit, _) -> p and (1 shl (bit - 1)) != 0 }.map { it.second }
-        return if (allowed.size == names.size) "Print, Modify, Copy, Annotate, Fill forms, Extract, Assemble, Print high-res" else allowed.joinToString(", ").ifEmpty { "(none)" }
+        return if (allowed.size == names.size) "Print, Modify, Copy, Annotate, Fill forms, Extract, Assemble, Print high-res" else allowed.joinToString(", ").ifEmpty { tr("(none)") }
     }
 
     // ------------------------------------------------------------------ text and dates
@@ -559,12 +561,12 @@ object PdfMeta {
         v?.let { out.add("PDF", "PDFVersion", it) }
         val d = Doc(f)
         if (!readXref(d)) { d.xref.clear(); d.trailer = null; scan(d) }
-        val trailer = d.trailer ?: run { out.note("This PDF is damaged: its document information couldn't be found."); return }
+        val trailer = d.trailer ?: run { out.note(tr("This PDF is damaged: its document information couldn't be found.")); return }
         // A linearized ("fast web view") file says so in its first object.
         if (Regex("""obj\s*<<[^>]*?/Linearized""").containsMatchIn(head)) out.add("PDF", "Linearized", "Yes", "true") else out.add("PDF", "Linearized", "No", "false")
         d.dict(trailer["Encrypt"])?.let { enc ->
             d.crypt = crypt(d, enc, out)
-            if (d.crypt == null) { out.note("This PDF needs a password to open, so what's inside it can't be read."); return }
+            if (d.crypt == null) { out.note(tr("This PDF needs a password to open, so what's inside it can't be read.")); return }
         }
         val root = d.dict(trailer["Root"])
         // The catalog can say the file was updated to a newer version than its header says.

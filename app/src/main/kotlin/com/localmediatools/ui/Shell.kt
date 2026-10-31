@@ -49,6 +49,7 @@ object ToolLauncher {
         if (t == ToolId.DUPLICATES) { activity.navigator.push(DuplicatesScreen(activity)); return }
         if (t == ToolId.TOOL_STACK) { activity.navigator.push(StackScreen(activity)); return }
         if (t == ToolId.READER) { activity.navigator.push(com.localmediatools.ui.reader.ReaderHomeScreen(activity)); return }
+        if (t == ToolId.METADATA) { activity.navigator.push(com.localmediatools.ui.meta.MetadataScreen(activity)); return }
         if (mode == null) { activity.navigator.push(ToolScreens.create(activity, t)); return }
         activity.pickMedia(PickKind.IMAGES, multiple = false) { uris -> uris.firstOrNull()?.let { openEditor(activity, it, t, mode) } }
     }
@@ -85,6 +86,7 @@ object ToolLauncher {
         ToolId.STITCH to N_("panorama join overlap screenshots"),
         ToolId.WATERMARK to N_("logo brand copyright text"),
         ToolId.REMOVE_METADATA to N_("exif gps location privacy clean strip"),
+        ToolId.METADATA to N_("exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy"),
         ToolId.EXTRACT_AUDIO to N_("mp3 m4a sound music"),
         ToolId.REMOVE_AUDIO to N_("mute silent sound"),
         ToolId.PDF_SCANNER to N_("scan document camera paper"),

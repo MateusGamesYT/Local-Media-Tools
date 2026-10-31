@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 /**
  * IPTC (the news agencies' captions, keywords, places and credits), Photoshop's resource blocks that
  * carry it, and ICC colour profiles.
@@ -97,7 +99,7 @@ object PhotoshopReader {
                 0x040B -> out.add("Photoshop", "URL", B.cstring(data, 0, data.size, Charsets.UTF_8))
                 0x040D -> if (data.size >= 4) out.add("Photoshop", "GlobalAngle", "${B.u32be(data, 0).toInt()}")
                 0x0419 -> if (data.size >= 4) out.add("Photoshop", "GlobalAltitude", "${B.u32be(data, 0).toInt()}")
-                0x0409, 0x040C -> out.add("Photoshop", "PhotoshopThumbnail", "(${maxOf(0, size - 28)} bytes, a smaller copy of the picture)", "${maxOf(0, size - 28)}")
+                0x0409, 0x040C -> out.add("Photoshop", "PhotoshopThumbnail", tr("({0} bytes, a smaller copy of the picture)", maxOf(0, size - 28)), "${maxOf(0, size - 28)}")
                 0x0425 -> out.add("Photoshop", "IPTCDigest", data.joinToString("") { "%02x".format(it) })
                 0x041A -> if (data.size >= 24) {
                     // Slices: version, bounds, then the group's name (counted UTF-16) and the number of slices.
@@ -132,7 +134,7 @@ object IccReader {
     private val INTENT = mapOf(0 to "Perceptual", 1 to "Media-Relative Colorimetric", 2 to "Saturation", 3 to "ICC-Absolute Colorimetric")
 
     fun read(b: ByteArray, out: Fields) {
-        if (b.size < 132 || !B.starts(b, 36, "acsp")) { if (b.isNotEmpty()) out.note("The colour profile is damaged."); return }
+        if (b.size < 132 || !B.starts(b, 36, "acsp")) { if (b.isNotEmpty()) out.note(tr("The colour profile is damaged.")); return }
         val g = "ICC-header"
         fun cc(o: Int) = B.ascii(b, o, 4)
         out.add(g, "ProfileCMMType", cc(4).trim())

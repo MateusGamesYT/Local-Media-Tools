@@ -133,6 +133,9 @@ enum class ToolId(
         N_("Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network."),
         OutputArea.PDF),
 
+    METADATA(ToolSection.PRIVACY, N_("Metadata viewer"), N_("See everything a file says about you"),
+        N_("Shows every detail a file keeps about itself — where and when a photo was taken, the camera or phone, who wrote a document and who saved it, the programs used, hidden pictures inside — for photos, camera RAW files, videos, music, PDFs, Office files and more. A summary first tells you what the file reveals about you. Files are only read, on this phone."),
+        OutputArea.CLEAN_IMAGES),
     REMOVE_METADATA(ToolSection.PRIVACY, N_("Remove metadata"), N_("Strip location, camera and date info"),
         N_("Makes clean copies of photos and videos without GPS location, camera details, dates, comments or hidden thumbnails. Photo pixels and video streams are copied unchanged (no quality loss); orientation and colour profile are kept."),
         OutputArea.CLEAN_IMAGES, OutputArea.CLEAN_VIDEO),

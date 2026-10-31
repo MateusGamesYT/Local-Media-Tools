@@ -1,5 +1,7 @@
 package com.localmediatools.meta.core
 
+import com.localmediatools.i18n.tr
+
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -236,7 +238,7 @@ object BmffMeta {
                 b.type == "auth" -> out.add(g, "Author", String(f.bytes(b.body + 6, (b.end - b.body - 6).coerceIn(0, 4096).toInt()), Charsets.UTF_8).trimEnd('\u0000'))
                 b.type == "cprt" -> out.add(g, "Copyright", String(f.bytes(b.body + 6, (b.end - b.body - 6).coerceIn(0, 4096).toInt()), Charsets.UTF_8).trimEnd('\u0000'))
                 b.type == "loci" -> loci(f, b, g, out)
-                b.type == "SDLN" || b.type == "smta" -> out.add(g, "SamsungModel", "(Samsung's own data)")
+                b.type == "SDLN" || b.type == "smta" -> out.add(g, "SamsungModel", tr("(Samsung's own data)"))
             }
         }
     }
@@ -267,7 +269,7 @@ object BmffMeta {
         val lon = fixed(p); val lat = fixed(p + 4); val alt = fixed(p + 8); p += 12
         val body = str(); val notes = str()
         val roleName = when (role) { 0 -> "shooting"; 1 -> "real"; 2 -> "fictional"; else -> "$role" }
-        out.add(g, "LocationInformation", "${name.ifEmpty { "(none)" }} Role=$roleName Lat=${"%.5f".format(java.util.Locale.ROOT, lat)} Lon=${"%.5f".format(java.util.Locale.ROOT, lon)} Alt=${"%.2f".format(java.util.Locale.ROOT, alt)} Body=$body Notes=$notes", privacy = Privacy.LOCATION)
+        out.add(g, "LocationInformation", "${name.ifEmpty { tr("(none)") }} Role=$roleName Lat=${"%.5f".format(java.util.Locale.ROOT, lat)} Lon=${"%.5f".format(java.util.Locale.ROOT, lon)} Alt=${"%.2f".format(java.util.Locale.ROOT, alt)} Body=$body Notes=$notes", privacy = Privacy.LOCATION)
         if (lat != 0.0 || lon != 0.0) {
             out.add("Composite", "GPSLatitude", ExifReader.dms(lat, true), ExifReader.num(lat))
             out.add("Composite", "GPSLongitude", ExifReader.dms(lon, false), ExifReader.num(lon))
@@ -331,7 +333,7 @@ object BmffMeta {
             val t = item.type
             val name = ITUNES[t] ?: continue
             when {
-                t == "covr" -> out.add(g, "CoverArt", "(${bytes.size} bytes of picture)", "${bytes.size}")
+                t == "covr" -> out.add(g, "CoverArt", tr("({0} bytes of picture)", bytes.size), "${bytes.size}")
                 t == "trkn" || t == "disk" -> if (bytes.size >= 6) out.add(g, name, "${B.u16be(bytes, 2)} of ${B.u16be(bytes, 4)}", "${B.u16be(bytes, 2)} ${B.u16be(bytes, 4)}")
                 type == 21 || type == 0 && bytes.size in 1..8 && t in setOf("tmpo", "cpil", "pgap", "rtng", "stik") -> out.add(g, name, number(bytes).toString())
                 else -> out.add(g, name, String(bytes, Charsets.UTF_8))
@@ -364,7 +366,7 @@ object BmffMeta {
                 // CR3: CMT1 is IFD0, CMT2 the EXIF directory, CMT4 GPS (each a TIFF block of its own).
                 "CMT1" -> ExifReader.read(InputBytes(f, c.body, c.end - c.body), out, "IFD0")
                 "CMT2" -> ExifReader.read(InputBytes(f, c.body, c.end - c.body), out, "ExifIFD")
-                "CMT3" -> out.add("MakerNotes", "MakerNote", "(${c.end - c.body} bytes, the camera maker's own data)", "${c.end - c.body}")
+                "CMT3" -> out.add("MakerNotes", "MakerNote", tr("({0} bytes, the camera maker's own data)", c.end - c.body), "${c.end - c.body}")
                 "CMT4" -> ExifReader.read(InputBytes(f, c.body, c.end - c.body), out, "GPS")
             }
         }

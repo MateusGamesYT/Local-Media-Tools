@@ -317,6 +317,7 @@ class ReaderScreen(activity: MainActivity, private val source: ReaderSource, pri
         }
         if (source.uri?.scheme == "content") add(tr("Open in another app")) { openElsewhere() }
         add(tr("File information")) { info() }
+        add(tr("All metadata")) { push(com.localmediatools.ui.meta.MetadataScreen(activity, com.localmediatools.ui.meta.MetadataScreen.Source(source.uri, copy ?: source.kept, source.name))) }
         m.setOnMenuItemClickListener { item -> actions.getOrNull(item.itemId)?.invoke(); true }
         m.show()
     }

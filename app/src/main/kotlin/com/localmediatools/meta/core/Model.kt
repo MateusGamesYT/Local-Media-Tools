@@ -3,6 +3,8 @@ package com.localmediatools.meta.core
 import java.io.Closeable
 import java.io.File
 import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 
 /**
  * What a file says about itself. Plain Kotlin (no Android), so it runs and is measured on the JVM
@@ -56,17 +58,22 @@ class MetaReport(val format: String, val fields: List<MetaField>, val notes: Lis
     }
 }
 
-/** Random access to the file being read, with the little helpers every reader needs. */
-class MetaInput(val file: File) : Closeable {
-    private val raf = RandomAccessFile(file, "r")
-    val size: Long = raf.length()
+/**
+ * Random access to the file being read, with the little helpers every reader needs. [file] is the
+ * file itself when there is one: the ZIP and Office readers need it (a file shared by another app may
+ * be only an open channel; [MetaReader] then asks for a copy).
+ */
+class MetaInput(private val channel: FileChannel, val size: Long, val file: File? = null, private val onClose: Closeable? = null) : Closeable {
+    constructor(file: File) : this(RandomAccessFile(file, "r"), file)
+    private constructor(raf: RandomAccessFile, file: File) : this(raf.channel, raf.length(), file, raf)
 
     fun bytes(at: Long, len: Int): ByteArray {
         if (at < 0 || len <= 0 || at >= size) return ByteArray(0)
         val n = minOf(len.toLong(), size - at).toInt()
-        val b = ByteArray(n)
-        synchronized(raf) { raf.seek(at); raf.readFully(b) }
-        return b
+        val buf = ByteBuffer.allocate(n)
+        var pos = at
+        while (buf.hasRemaining()) { val r = channel.read(buf, pos); if (r <= 0) break; pos += r }
+        return if (buf.position() == n) buf.array() else buf.array().copyOf(buf.position())
     }
 
     fun u8(at: Long): Int = bytes(at, 1).let { if (it.isEmpty()) -1 else it[0].toInt() and 0xFF }
@@ -78,7 +85,7 @@ class MetaInput(val file: File) : Closeable {
     fun ascii(at: Long, len: Int): String = String(bytes(at, len), Charsets.ISO_8859_1)
     fun startsWith(at: Long, s: String) = ascii(at, s.length) == s
 
-    override fun close() = raf.close()
+    override fun close() { onClose?.close() ?: channel.close() }
 }
 
 /** Byte helpers on arrays. */
