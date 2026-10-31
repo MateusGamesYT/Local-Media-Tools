@@ -55,9 +55,9 @@ object MetaReader {
         val type = out.list.first { it.group == "File" && it.name == "FileType" }.value
         MIME[type]?.let { out.add("File", "MIMEType", it) }
         imageSize(out)
-        // The same field read twice (a reader and a fallback) shows once.
+        // The same field read twice (a reader and a fallback) shows once; a derived value (Composite) once per name.
         val seen = HashSet<String>()
-        val fields = out.list.filter { seen.add("${it.group}\u0000${it.name}\u0000${it.value}") }
+        val fields = out.list.filter { seen.add(if (it.group == "Composite") "Composite\u0000${it.name}" else "${it.group}\u0000${it.name}\u0000${it.value}") }
         return MetaReport(type, fields, out.notes)
     }
 
@@ -153,7 +153,8 @@ object MetaReader {
         val h = out.list.firstOrNull { it.name == "ImageHeight" || it.name == "ExifImageHeight" || it.name == "PixelYDimension" }?.raw?.toLongOrNull() ?: return
         if (w <= 0 || h <= 0) return
         out.add("Composite", "ImageSize", "$w × $h", "$w $h")
-        out.add("Composite", "Megapixels", ExifReader.num(w * h / 1e6, 1), (w * h / 1e6).toString())
+        val mp = w * h / 1e6
+        out.add("Composite", "Megapixels", ExifReader.num(mp, if (mp < 1) 3 else 1), mp.toString())
     }
 
     fun size(bytes: Long): String = when {

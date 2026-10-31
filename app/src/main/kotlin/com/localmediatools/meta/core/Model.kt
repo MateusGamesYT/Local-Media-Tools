@@ -46,8 +46,11 @@ class MetaReport(val format: String, val fields: List<MetaField>, val notes: Lis
 
     /** Decimal latitude and longitude, when the file says where it was made. */
     val location: Pair<Double, Double>? get() {
-        val lat = (get("GPSLatitude") ?: get("Latitude"))?.raw?.toDoubleOrNull() ?: return null
-        val lon = (get("GPSLongitude") ?: get("Longitude"))?.raw?.toDoubleOrNull() ?: return null
+        // The signed position (Composite: south and west negative); EXIF's own fields are unsigned, with a separate side.
+        fun signed(name: String) = fields.firstOrNull { it.group == "Composite" && it.name == name }
+            ?: fields.firstOrNull { it.group.startsWith("XMP") && it.name == name }
+        val lat = signed("GPSLatitude")?.raw?.toDoubleOrNull() ?: return null
+        val lon = signed("GPSLongitude")?.raw?.toDoubleOrNull() ?: return null
         if (lat !in -90.0..90.0 || lon !in -180.0..180.0 || (lat == 0.0 && lon == 0.0)) return null
         return lat to lon
     }
@@ -106,7 +109,9 @@ class Fields {
     fun add(group: String, name: String, value: String, raw: String = value, privacy: Privacy? = null) {
         val v = clean(value)
         if (v.isEmpty()) return
-        list.add(MetaField(group, name, v, clean(raw).ifEmpty { v }, privacy ?: Privacies.of(name)))
+        // A count named like a text ("Notes": how many slides have notes) says nothing written.
+        val p = privacy ?: Privacies.of(name)?.takeUnless { it == Privacy.TEXT && v.all { c -> c.isDigit() } }
+        list.add(MetaField(group, name, v, clean(raw).ifEmpty { v }, p))
     }
 
     fun note(text: String) { if (text !in notes) notes.add(text) }
@@ -130,7 +135,7 @@ object Privacies {
         "Country-PrimaryLocationName", "LocationCreated", "LocationShown", "GPSCoordinates", "Altitude")
     private val person = setOf("Artist", "Author", "Creator", "By-line", "Copyright", "CopyrightNotice", "Rights", "OwnerName", "CameraOwnerName",
         "LastModifiedBy", "LastAuthor", "Company", "Manager", "Writer", "Composer", "Lyricist", "Publisher", "Contact", "Email", "Credit",
-        "CreatorContactInfo", "Owner", "InitialCreator", "UserName", "Photographer", "Copyrights", "Director", "Producer", "Encoder", "EncodedBy",
+        "CreatorContactInfo", "Owner", "InitialCreator", "UserName", "Photographer", "Copyrights", "Director", "Producer", "EncodedBy",
         "Signature", "Contributor", "Band", "AlbumArtist", "Performer", "Owner-Name", "XPAuthor", "Uploader", "AuthorEmail",
         "AuthorEmailDisplayName", "LastSavedBy", "CommentBy", "CurrentUser", "InitialCreator", "PrintedBy", "Originator", "Narrator", "Engineer", "Technician")
     private val device = setOf("Make", "Model", "LensMake", "LensModel", "LensSerialNumber", "SerialNumber", "BodySerialNumber", "InternalSerialNumber",
@@ -138,7 +143,7 @@ object Privacies {
         "CameraModelName", "DeviceManufacturer", "DeviceModel", "LensInfo", "ComAppleQuicktimeMake", "ComAppleQuicktimeModel")
     private val identifier = setOf("ImageUniqueID", "DocumentID", "InstanceID", "OriginalDocumentID", "DerivedFromDocumentID", "DerivedFromInstanceID",
         "UniqueID", "GUID", "ContentIdentifier", "MediaUID", "SegmentUID", "Identifier", "PreservedFileName", "RawFileName", "OriginalRawFileName",
-        "ImageNumber", "ShutterCount", "FileNumber", "UserComment-ID", "RevisionNumber")
+        "ImageNumber", "ShutterCount", "FileNumber", "UserComment-ID", "TrackUID", "RawDataUniqueID")
     private val software = setOf("Software", "CreatorTool", "Producer", "Creator-Tool", "Application", "AppVersion", "Encoder", "WritingApp", "MuxingApp",
         "HistorySoftwareAgent", "ProcessingSoftware", "Generator", "Template", "AndroidVersion")
     private val time = setOf("DateTimeOriginal", "CreateDate", "ModifyDate", "DateTime", "DateTimeDigitized", "MetadataDate", "DateCreated", "TimeCreated",
