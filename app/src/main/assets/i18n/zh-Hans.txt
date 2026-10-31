@@ -844,11 +844,11 @@
 < Choose files
 > 选择文件
 
-< Choose a photo or PDF
-> 选择照片或 PDF
+< Choose a photo, PDF or document
+> 选择一张照片、一个 PDF 或一份文档
 
-< Choose photos or PDFs
-> 选择照片或 PDF
+< Choose photos, PDFs or documents
+> 选择照片、PDF 或文档
 
 < Select images
 > 选择图片
@@ -868,8 +868,8 @@
 < Select files
 > 选择文件
 
-< Select photos or PDFs
-> 选择照片或 PDF
+< Select photos, PDFs or documents
+> 选择照片、PDF 或文档
 
 < Select images to continue
 > 选择图片以继续
@@ -889,8 +889,8 @@
 < Select files to continue
 > 选择文件以继续
 
-< Select photos or PDFs to continue
-> 选择照片或 PDF 以继续
+< Select photos, PDFs or documents to continue
+> 选择照片、PDF 或文档以继续
 
 < Select at least {0} image
 < Select at least {0} images
@@ -916,9 +916,9 @@
 < Select at least {0} files
 > 至少选择{0}个文件
 
-< Select at least {0} photo or PDF
-< Select at least {0} photos or PDFs
-> 至少选择{0}张照片或 PDF
+< Select at least {0} photo, PDF or document
+< Select at least {0} photos, PDFs or documents
+> 至少选择 {0} 项照片、PDF 或文档
 
 < {0} image selected
 < {0} images selected
@@ -944,10 +944,6 @@
 < {0} files selected
 > 已选择{0}个文件
 
-< {0} photo or PDF selected
-< {0} photos and PDFs selected
-> 已选择{0}张照片和 PDF
-
 < No images found in that folder.
 > 在该文件夹中未找到图片。
 
@@ -966,8 +962,8 @@
 < No files found in that folder.
 > 在该文件夹中未找到文件。
 
-< No photos or PDFs found in that folder.
-> 在该文件夹中未找到照片或 PDF。
+< No photos, PDFs or documents found in that folder.
+> 在该文件夹中未找到照片、PDF 或文档。
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -989,8 +985,8 @@
 < Not a photo, video, GIF or PDF
 > 不是照片、视频、GIF 或 PDF
 
-< Not a photo or PDF
-> 不是照片或 PDF
+< Not a photo, PDF or document
+> 不是照片、PDF 或文档
 
 < Use the GIF optimizer for GIFs
 > GIF 请使用 GIF 优化器
@@ -1124,6 +1120,9 @@
 
 < exif gps location privacy clean strip
 > exif gps 位置 定位 隐私 清除 清理 删除
+
+< exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
+> exif xmp iptc id3 标签 属性 详情 信息 查看 检查 gps 位置 相机 作者 隐私
 
 < mp3 m4a sound music
 > mp3 m4a 声音 音乐 音频
@@ -1339,6 +1338,9 @@
 
 < App typography.
 > 应用字体。
+
+< Showing and printing documents with the widths of Calibri, Cambria, Arial, Times New Roman and Courier New, so lines break as on a computer.
+> 按 Calibri、Cambria、Arial、Times New Roman 和 Courier New 的宽度显示和打印文档，使换行方式与电脑上一致。
 
 < {0}: original
 > {0}：原始
@@ -1806,6 +1808,28 @@
 < Clear the list
 > 清空列表
 
+< Just now
+> 刚刚
+
+< {0} minute ago
+< {0} minutes ago
+> {0}分钟前
+
+< {0} hour ago
+< {0} hours ago
+> {0}小时前
+
+< Yesterday
+> 昨天
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> M月d日 EEE
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> yyyy年M月d日
+
 < Remove {0} from the list
 > 从列表中移除{0}
 
@@ -1889,6 +1913,9 @@
 
 < File information
 > 文件信息
+
+< All metadata
+> 所有元数据
 
 < This slide has no speaker notes.
 > 这张幻灯片没有演讲者备注。
@@ -2197,6 +2224,15 @@
 < {0} faces found · named, unnamed and on their own
 > 找到{0}张人脸 · 已命名、未命名和单独的
 
+< Which one is you?
+> 哪一个是你？
+
+< You're listed first, and searching for "me" finds your photos
+> 你排在最前面，搜索“我”即可找到你的照片
+
+< Not now
+> 暂不
+
 < Name people
 > 为人物命名
 
@@ -2219,6 +2255,9 @@
 
 < When the same person appears in several photos, they show up here so you can name them.
 > 当同一个人出现在多张照片中时，他们会显示在这里，方便你为其命名。
+
+< You and favourites
+> 你和收藏
 
 < Add names
 > 添加名称
@@ -2331,12 +2370,27 @@
 < {1}, {0} items
 > {1}，{0}项
 
+< Me
+> 我
+
+< Favourite
+> 收藏
+
 < Add name
 > 添加名称
+
+< Me · {0}
+> 我 · {0}
 
 < {1}, {0} photo
 < {1}, {0} photos
 > {1}，{0}张照片
+
+< this is you
+> 这是你
+
+< favourite
+> 收藏
 
 @ date pattern: a short month and its year
 < MMM yyyy
@@ -2352,17 +2406,6 @@
 
 < Today
 > 今天
-
-< Yesterday
-> 昨天
-
-@ date pattern: a day this year, with its weekday
-< EEE, d MMM
-> M月d日 EEE
-
-@ date pattern: a day in another year
-< d MMM yyyy
-> yyyy年M月d日
 
 < Video
 > 视频
@@ -2414,11 +2457,17 @@
 < Face
 > 人脸
 
+< This is me
+> 这是我
+
 < Type a name, or tap Skip.
 > 输入名称，或点按“跳过”。
 
 < Added to {0}
 > 已添加到 {0}
+
+< Marked as you. Type your name too, or tap Skip.
+> 已标记为你。也可以输入你的名字，或点按“跳过”。
 
 < Everyone is named
 > 所有人都已命名
@@ -2440,6 +2489,12 @@
 < Back to People
 > 返回“人物”
 
+< Remove from favourites
+> 从收藏中移除
+
+< Add to favourites
+> 添加到收藏
+
 < {0} photo or video
 < {0} photos and videos
 > {0}张照片和视频
@@ -2447,6 +2502,9 @@
 < {0} face
 < {0} faces
 > {0}张人脸
+
+< This is you
+> 这是你
 
 < Also {0}?
 > 也是 {0}？
@@ -2463,6 +2521,18 @@
 < Yes, {0}
 > 是的，是 {0}
 
+< Removed from favourites
+> 已从收藏中移除
+
+< Added to favourites
+> 已添加到收藏
+
+< Marked as you. Search for "me" to find your photos.
+> 已标记为你。搜索“我”即可找到你的照片。
+
+< No longer marked as you
+> 已取消标记为你
+
 < Merge with {0}?
 > 与 {0} 合并？
 
@@ -2474,6 +2544,9 @@
 
 < Rename
 > 重命名
+
+< This isn't me
+> 这不是我
 
 < Merge with…
 > 合并到…
@@ -2575,6 +2648,535 @@
 
 < Play video
 > 播放视频
+
+< Where it was made
+> 制作地点
+
+< Who made it or owns it
+> 制作者或所有者
+
+< The camera, phone or computer
+> 相机、手机或电脑
+
+< When it was made or changed
+> 制作或修改时间
+
+< The programs used
+> 所用的程序
+
+< Numbers that link it to other files
+> 用于关联其他文件的编号
+
+< Pictures hidden inside
+> 内嵌的隐藏图片
+
+< Written descriptions, comments and keywords
+> 文字描述、注释和关键词
+
+< {0} picture
+> {0} 张图片
+
+< {0} camera RAW photo
+> {0} 张相机 RAW 照片
+
+< {0} video
+> {0} 个视频
+
+< {0} audio
+> {0} 段音频
+
+< PDF document
+> PDF 文档
+
+< Word document
+> Word 文档
+
+< Excel workbook
+> Excel 工作簿
+
+< PowerPoint presentation
+> PowerPoint 演示文稿
+
+< OpenDocument file
+> OpenDocument 文件
+
+< E-book
+> 电子书
+
+< ZIP archive
+> ZIP 压缩包
+
+< Photoshop file
+> Photoshop 文件
+
+< File
+> 文件
+
+< Worked out from the fields above
+> 根据上方字段计算得出
+
+< Main picture (EXIF)
+> 主图片 (EXIF)
+
+< Camera settings (EXIF)
+> 相机设置 (EXIF)
+
+< Location (GPS)
+> 位置 (GPS)
+
+< Compatibility (EXIF)
+> 兼容性 (EXIF)
+
+< Thumbnail (EXIF)
+> 缩略图 (EXIF)
+
+< Other pictures inside (EXIF)
+> 内嵌的其他图片 (EXIF)
+
+< Captions and credits (IPTC)
+> 说明文字和版权信息 (IPTC)
+
+< Colour profile
+> 色彩配置文件
+
+< Pictures inside (MPF)
+> 内嵌图片 (MPF)
+
+< Video file
+> 视频文件
+
+< Track {0}
+> 音轨 {0}
+
+< Tags
+> 标签
+
+< Song tags (ID3)
+> 歌曲标签 (ID3)
+
+< Song tags
+> 歌曲标签
+
+< Sound
+> 声音
+
+< Document properties
+> 文档属性
+
+< Yes
+> 是
+
+< No
+> 否
+
+< (UTC)
+> (UTC)
+
+< File name
+> 文件名
+
+< File size
+> 文件大小
+
+< Changed on this phone
+> 在此手机上修改
+
+< Kind of file
+> 文件类型
+
+< Media type
+> 媒体类型
+
+< Picture size
+> 图片尺寸
+
+< Megapixels
+> 百万像素
+
+< Width
+> 宽度
+
+< Height
+> 高度
+
+< Camera maker
+> 相机制造商
+
+< Camera model
+> 相机型号
+
+< Lens maker
+> 镜头制造商
+
+< Lens
+> 镜头
+
+< Serial number
+> 序列号
+
+< Camera serial number
+> 相机序列号
+
+< Lens serial number
+> 镜头序列号
+
+< Owner
+> 所有者
+
+< Artist
+> 艺术家
+
+< Copyright
+> 版权
+
+< Software
+> 软件
+
+< Taken
+> 拍摄时间
+
+< Created
+> 创建时间
+
+< Changed
+> 修改时间
+
+< Time zone when taken
+> 拍摄时的时区
+
+< Time zone
+> 时区
+
+< Latitude
+> 纬度
+
+< Longitude
+> 经度
+
+< Position
+> 位置
+
+< Altitude
+> 海拔
+
+< GPS date
+> GPS 日期
+
+< GPS time (UTC)
+> GPS 时间 (UTC)
+
+< Facing direction
+> 拍摄方向
+
+< Speed
+> 速度
+
+< Location
+> 位置
+
+< Shutter speed
+> 快门速度
+
+< Aperture
+> 光圈
+
+< ISO
+> ISO
+
+< Focal length
+> 焦距
+
+< Focal length (35 mm equivalent)
+> 焦距（35 mm 等效）
+
+< Flash
+> 闪光灯
+
+< White balance
+> 白平衡
+
+< Orientation
+> 方向
+
+< Description
+> 描述
+
+< Comment
+> 注释
+
+< Comments
+> 注释
+
+< Picture ID
+> 图片 ID
+
+< Title
+> 标题
+
+< Author
+> 作者
+
+< Creator
+> 创建者
+
+< Last saved by
+> 最后保存者
+
+< Company
+> 公司
+
+< Manager
+> 管理者
+
+< Keywords
+> 关键词
+
+< Subject
+> 主题
+
+< Length
+> 时长
+
+< Frame rate
+> 帧率
+
+< Average bit rate
+> 平均比特率
+
+< Bit rate
+> 比特率
+
+< Sample rate
+> 采样率
+
+< Channels
+> 声道
+
+< Album
+> 专辑
+
+< Album artist
+> 专辑艺术家
+
+< Genre
+> 流派
+
+< Year
+> 年份
+
+< Track
+> 音轨
+
+< Composer
+> 作曲
+
+< Pages
+> 页面
+
+< Words
+> 作词
+
+< Made by (program)
+> 制作程序
+
+< Made with
+> 制作工具
+
+< Protection
+> 保护
+
+< Allowed
+> 允许
+
+< Rotation
+> 旋转
+
+< City
+> 城市
+
+< Country
+> 国家
+
+< State or province
+> 省/州
+
+< Place
+> 地点
+
+< Headline
+> 标题
+
+< Caption
+> 说明
+
+< By
+> 作者
+
+< Credit
+> 署名
+
+< Small copy of the picture
+> 图片的小副本
+
+< Preview picture
+> 预览图片
+
+< Full-size JPEG copy
+> 全尺寸 JPEG 副本
+
+< Cover picture
+> 封面图片
+
+< Editing time
+> 编辑时长
+
+< Revisions
+> 修订次数
+
+< Template
+> 模板
+
+< Application
+> 应用程序
+
+< Last printed
+> 最后打印时间
+
+< Saved by (with the file's folder)
+> 保存者（含文件所在文件夹）
+
+< Comments written by
+> 注释撰写者
+
+< Last opened by
+> 最后打开者
+
+< Author's e-mail
+> 作者电子邮件
+
+< Author's name (e-mail)
+> 作者姓名（电子邮件）
+
+< E-mail subject
+> 电子邮件主题
+
+< Computer
+> 电脑
+
+< Phone model
+> 手机型号
+
+< Phone maker
+> 手机制造商
+
+< Android version
+> Android 版本
+
+< XMP written by
+> XMP 写入者
+
+< Document ID
+> 文档 ID
+
+< Instance ID
+> 实例 ID
+
+< Original document ID
+> 原始文档 ID
+
+< Rating
+> 评分
+
+< Colour space
+> 色彩空间
+
+< First author
+> 首位作者
+
+< Encoder
+> 编码器
+
+< Encoded by
+> 编码者
+
+< Links
+> 链接
+
+< Link base
+> 链接基准
+
+< Pictures inside
+> 内嵌图片
+
+< Kind of picture
+> 图片类型
+
+< Camera maker's notes
+> 相机制造商备注
+
+< Also from the gallery (Open in a tool) and from the file reader's menu.
+> 也可从图库（在工具中打开）和文件阅读器的菜单中查看。
+
+< Files are read on this phone and never uploaded. The viewer only reads them: nothing is changed.
+> 文件仅在此手机上读取，从不上传。查看器只读取文件，不会更改任何内容。
+
+< Reading {0}…
+> 正在读取 {0}…
+
+< This file can't be read: {0}
+> 无法读取此文件：{0}
+
+< Choose another file
+> 选择其他文件
+
+< Search the fields
+> 搜索字段
+
+< What this file tells others
+> 此文件会向他人透露的信息
+
+< Nothing personal: no place, names, device, dates or hidden pictures were found, only technical details.
+> 没有隐私信息：未发现地点、姓名、设备、日期或隐藏图片，只有技术细节。
+
+< {0} kind of personal detail. Anyone you send this file to can read it.
+< {0} kinds of personal details. Anyone you send this file to can read them.
+> {0} 项个人隐私信息。你发送此文件的对象都能读取。
+
+< and {0} more
+> 以及另外 {0} 项
+
+< Open in a maps app
+> 在地图应用中打开
+
+< Make a copy without them
+> 制作一份不含这些信息的副本
+
+< No field matches “{0}”.
+> 没有与“{0}”匹配的字段。
+
+< Only the first {0} fields are listed: search to find the others.
+> 仅列出前 {0} 个字段：请搜索以查找其他字段。
+
+< Stored as {0}
+> 存储为 {0}
+
+< Bare value: {0}
+> 原始值：{0}
+
+< Copied.
+> 已复制。
+
+< Where this file was made
+> 此文件的制作地点
+
+< Opening it starts your maps app; this app itself never connects to the internet.
+> 打开时会启动你的地图应用；本应用本身从不连接互联网。
+
+< Copy all fields
+> 复制所有字段
+
+< Share as text
+> 以文本形式分享
 
 < Preview
 > 预览
@@ -2792,9 +3394,6 @@
 < 0 keeps the original width
 > 0 表示保持原始宽度
 
-< Frame rate
-> 帧率
-
 < 0 keeps the original timing; lower drops frames
 > 0 表示保持原始时间；调低会丢帧
 
@@ -2893,9 +3492,6 @@
 < Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
 > “原始”会按字节原样嵌入 JPEG 照片，其他图片则无损嵌入。“紧凑”会将图片缩放到打印分辨率（A4 为 300 DPI）并存为 JPEG。
 
-< File name
-> 文件名
-
 @ default file name
 < Images
 > 图片
@@ -2918,9 +3514,6 @@
 
 < Save PDF
 > 保存 PDF
-
-< Pages
-> 页面
 
 < Capture page
 > 拍摄页面
@@ -2996,9 +3589,6 @@
 < Another tune
 > 换一首
 
-< Length
-> 时长
-
 < {0} s
 > {0} 秒
 
@@ -3019,9 +3609,6 @@
 
 < The music gets quieter while they play
 > 视频播放时音乐会变小
-
-< Title
-> 标题
 
 < Moments
 > 瞬间
@@ -3360,9 +3947,6 @@
 < Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
 > 无损：直接复制数据流，不重新编码。起点会移到最近的前一个关键帧（通常相差不到一两秒）；终点是精确的。
 
-< Reading {0}…
-> 正在读取 {0}…
-
 < {0}: the duration couldn't be read.
 > {0}：无法读取时长。
 
@@ -3520,9 +4104,6 @@
 
 < Fewer frames = much smaller GIF
 > 帧数越少 = GIF 小得多
-
-< Width
-> 宽度
 
 < Height follows the video's shape
 > 高度跟随视频的形状
@@ -3777,6 +4358,12 @@
 < Paper size
 > 纸张尺寸
 
+< The printer says it has {0} paper loaded. Load {1} paper, or print on {0}.
+> 打印机显示已装入 {0} 纸张。请装入 {1} 纸张，或在 {0} 上打印。
+
+< Print on {0}
+> 在 {0} 上打印
+
 < Paper type
 > 纸张类型
 
@@ -3839,8 +4426,29 @@
 < Print on both sides of the paper
 > 在纸张两面打印
 
-< Select photos or PDFs to see the sheets
-> 选择照片或 PDF 以查看纸张
+< Flip on short edge
+> 沿短边翻转
+
+< Flip on long edge
+> 沿长边翻转
+
+< calendars
+> 日历
+
+< books
+> 书籍
+
+< Last page first
+> 先打印最后一页
+
+< This printer puts sheets face down, so they already stack in order
+> 此打印机将纸张正面朝下放出，因此纸张已按顺序叠放
+
+< Sheets come out face up: printed last page first, the stack ends in order with page 1 on top
+> 纸张正面朝上输出：先打印最后一页，叠放后第 1 页在最上面，顺序正确
+
+< Select photos, PDFs or documents to see the sheets
+> 选择照片、PDF 或文档以查看纸张
 
 < Couldn't prepare the preview
 > 无法准备预览
@@ -4161,6 +4769,10 @@
 < a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
 > 的,和,与,及,或,在,于,从,到,给,把,我,你,他,她,们,找,搜,看,查,有,是,个,些,所,哪,里,一,全,部,显,示,起,拍,摄,附,近,以,者
 
+@ search words meaning yourself (the phone's owner), separated by commas
+< me,myself
+> 我,自己,me
+
 < Upbeat
 > 活泼
 
@@ -4187,6 +4799,102 @@
 
 < Cinematic music
 > 电影感音乐
+
+< ({0} bytes of picture)
+> （{0} 字节的图片）
+
+< ({0} bytes)
+> （{0} 字节）
+
+< about {0} kbps (variable)
+> 约 {0} kbps（可变）
+
+< (default)
+> （默认）
+
+< (Samsung's own data)
+> （三星自有数据）
+
+< (none)
+> （无）
+
+< ({0} bytes, the camera maker's own data)
+> （{0} 字节，相机制造商自有数据）
+
+< ({0} bytes, a full-size JPEG copy of the picture)
+> （{0} 字节，图片的全尺寸 JPEG 副本）
+
+< ({0} bytes, a smaller copy of the picture)
+> （{0} 字节，图片的小副本）
+
+< The camera maker's own notes ({0} bytes) are listed but not read: each maker writes them its own way.
+> 相机制造商的备注（{0} 字节）已列出但未读取：各厂商的写法各不相同。
+
+< The JPEG file is damaged after {0} bytes.
+> JPEG 文件在 {0} 字节后已损坏。
+
+< This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.
+> 此图片带有内容凭证（C2PA），即记录其制作方式的签名记录，此处不读取。
+
+< ({0} bytes: {1})
+> （{0} 字节：{1}）
+
+< ({0} more pictures inside: a preview, an HDR gain map, a depth map or the like)
+> 内嵌的另外 {0} 张图片：预览图、HDR 增益图、深度图等
+
+< The PNG file is damaged.
+> PNG 文件已损坏。
+
+< The colour profile is damaged.
+> 色彩配置文件已损坏。
+
+< This document couldn't be read here: open it from the Files app instead.
+> 此文档无法在此读取：请改用“文件”应用打开。
+
+< Part of the file couldn't be read: it may be damaged.
+> 文件的一部分无法读取：可能已损坏。
+
+< Part of the file is too big to read on this phone.
+> 文件的一部分太大，无法在此手机上读取。
+
+< (not recognised)
+> （未识别）
+
+< The archive is damaged: only its first file's details were read.
+> 压缩包已损坏：仅读取了第一个文件的详细信息。
+
+< The document's own properties are damaged: only part of them was read.
+> 文档自身的属性已损坏：仅读取了部分属性。
+
+< (a picture of the first page)
+> （首页图片）
+
+< The document's properties are damaged: only part of them was read.
+> 文档属性已损坏：仅读取了部分属性。
+
+< The book's details are damaged: only part of them was read.
+> 书籍信息已损坏：仅读取了部分信息。
+
+< The file is damaged: its contents can't be unpacked.
+> 文件已损坏：无法解压其内容。
+
+< The Word document's own details are damaged: only part of them was read.
+> Word 文档自身的详细信息已损坏：仅读取了部分信息。
+
+< This Office file is protected with a password: only the outer details can be read.
+> 此 Office 文件受密码保护：只能读取外部信息。
+
+< (clipboard data)
+> （剪贴板数据）
+
+< This PDF is damaged: its document information couldn't be found.
+> 此 PDF 已损坏：找不到文档信息。
+
+< This PDF needs a password to open, so what's inside it can't be read.
+> 此 PDF 需要密码才能打开，因此无法读取其内容。
+
+< The XMP metadata is damaged: only part of it was read.
+> XMP 元数据已损坏：仅读取了部分内容。
 
 < Reading your photo library
 > 正在读取你的图库
@@ -4324,9 +5032,6 @@
 
 < keeps the smallest copy
 > 保留最小的副本
-
-< Favourite
-> 收藏
 
 < Person you keep
 > 你保留的人物
@@ -4942,6 +5647,9 @@
 < Shows documents instead of saving files, so it can't be a step of a stack
 > 显示文档而不是保存文件，因此不能作为组合的一个步骤
 
+< Shows a file's details instead of saving files, so it can't be a step of a stack
+> 显示文件的详细信息而不保存文件，因此不能作为堆栈中的一个步骤
+
 < Can't be part of a stack
 > 无法作为组合的一部分
 
@@ -5317,6 +6025,15 @@
 
 < Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
 > 直接将照片和 PDF 打印到你 Wi-Fi 上的打印机——Epson、HP、Canon、Brother 以及其他支持 AirPrint、Mopria 或 IPP Everywhere 的打印机——无需打印机厂商的应用。可选择纸张尺寸和类型、无边距、每张纸多张照片、彩色或黑白、质量和份数，并可预览每一张纸。应用只与你自己网络中的打印机通信。
+
+< Metadata viewer
+> 元数据查看器
+
+< See everything a file says about you
+> 查看文件透露的关于你的所有信息
+
+< Shows every detail a file keeps about itself — where and when a photo was taken, the camera or phone, who wrote a document and who saved it, the programs used, hidden pictures inside — for photos, camera RAW files, videos, music, PDFs, Office files and more. A summary first tells you what the file reveals about you. Files are only read, on this phone.
+> 显示文件自身保存的每项细节：照片的拍摄地点和时间、相机或手机、文档的作者和保存者、所用程序、内嵌的隐藏图片，适用于照片、相机 RAW 文件、视频、音乐、PDF、Office 文件等。摘要会先告诉你该文件透露了哪些关于你的信息。文件仅在此手机上读取。
 
 < Remove metadata
 > 移除元数据
@@ -5786,9 +6503,6 @@
 < This file was made by a very old PowerPoint version, which this app can't read.
 > 此文件由非常旧的 PowerPoint 版本生成，本应用无法读取。
 
-< The file is damaged: its contents can't be unpacked.
-> 文件已损坏：无法解压其内容。
-
 < The file unpacks to far more data than it holds, so it wasn't opened.
 > 该文件解压后的数据量远超其自身大小，因此未打开。
 
@@ -5847,6 +6561,9 @@
 < This workbook is very large: only its first {0} cells are shown.
 > 此工作簿很大：仅显示前{0}个单元格。
 
+< {0} has nothing to print.
+> {0} 没有可打印的内容。
+
 < Printing {0} file on {1}
 < Printing {0} files on {1}
 > 正在 {1} 上打印{0}个文件
@@ -5862,6 +6579,12 @@
 
 < The printer couldn't be reached
 > 无法连接到打印机
+
+< {0} isn't a document this app can print
+> {0} 不是本应用可以打印的文档
+
+< {0} can't be printed: {1}
+> {0} 无法打印：{1}
 
 < Not a printer address
 > 不是打印机地址
@@ -6773,9 +7496,6 @@
 < rock,rocks,cliff,cliffs,canyon,cave
 > 岩石,石头,石,悬崖,峭壁,峡谷,山洞,洞穴,礁石
 
-< City
-> 城市
-
 < Places
 > 地点
 
@@ -6974,14 +7694,3 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > 音乐,乐器,鼓,架子鼓,小提琴,大提琴,萨克斯,长笛,乐队
-
-< Just now
-> 刚刚
-
-< {0} minute ago
-< {0} minutes ago
-> {0}分钟前
-
-< {0} hour ago
-< {0} hours ago
-> {0}小时前

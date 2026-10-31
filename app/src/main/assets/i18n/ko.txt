@@ -844,11 +844,11 @@
 < Choose files
 > 파일 선택
 
-< Choose a photo or PDF
-> 사진 또는 PDF 선택
+< Choose a photo, PDF or document
+> 사진, PDF 또는 문서 선택
 
-< Choose photos or PDFs
-> 사진 또는 PDF 선택
+< Choose photos, PDFs or documents
+> 사진, PDF 또는 문서 선택
 
 < Select images
 > 이미지 선택
@@ -868,8 +868,8 @@
 < Select files
 > 파일 선택
 
-< Select photos or PDFs
-> 사진 또는 PDF 선택
+< Select photos, PDFs or documents
+> 사진, PDF 또는 문서 선택
 
 < Select images to continue
 > 계속하려면 이미지를 선택해 주세요
@@ -889,8 +889,8 @@
 < Select files to continue
 > 계속하려면 파일을 선택해 주세요
 
-< Select photos or PDFs to continue
-> 계속하려면 사진 또는 PDF를 선택해 주세요
+< Select photos, PDFs or documents to continue
+> 계속하려면 사진, PDF 또는 문서를 선택하세요
 
 < Select at least {0} image
 < Select at least {0} images
@@ -916,9 +916,9 @@
 < Select at least {0} files
 > 파일을 {0}개 이상 선택해 주세요
 
-< Select at least {0} photo or PDF
-< Select at least {0} photos or PDFs
-> 사진 또는 PDF를 {0}개 이상 선택해 주세요
+< Select at least {0} photo, PDF or document
+< Select at least {0} photos, PDFs or documents
+> 사진, PDF 또는 문서를 {0}개 이상 선택하세요
 
 < {0} image selected
 < {0} images selected
@@ -944,10 +944,6 @@
 < {0} files selected
 > 파일 {0}개 선택됨
 
-< {0} photo or PDF selected
-< {0} photos and PDFs selected
-> 사진 및 PDF {0}개 선택됨
-
 < No images found in that folder.
 > 해당 폴더에 이미지가 없어요.
 
@@ -966,8 +962,8 @@
 < No files found in that folder.
 > 해당 폴더에 파일이 없어요.
 
-< No photos or PDFs found in that folder.
-> 해당 폴더에 사진이나 PDF가 없어요.
+< No photos, PDFs or documents found in that folder.
+> 이 폴더에서 사진, PDF 또는 문서를 찾지 못했어요.
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -989,8 +985,8 @@
 < Not a photo, video, GIF or PDF
 > 사진, 동영상, GIF, PDF 중 어느 것도 아니에요
 
-< Not a photo or PDF
-> 사진이나 PDF가 아니에요
+< Not a photo, PDF or document
+> 사진, PDF 또는 문서가 아니에요
 
 < Use the GIF optimizer for GIFs
 > GIF는 'GIF 최적화'를 사용해 주세요
@@ -1124,6 +1120,9 @@
 
 < exif gps location privacy clean strip
 > 위치 정보 개인정보 프라이버시 메타데이터 삭제 제거 정리
+
+< exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
+> exif xmp iptc id3 태그 속성 상세 info 정보 검사 확인 gps 위치 카메라 작성자 개인정보
 
 < mp3 m4a sound music
 > 소리 음악 음원 오디오 추출
@@ -1339,6 +1338,9 @@
 
 < App typography.
 > 앱 글꼴.
+
+< Showing and printing documents with the widths of Calibri, Cambria, Arial, Times New Roman and Courier New, so lines break as on a computer.
+> Calibri, Cambria, Arial, Times New Roman, Courier New 글꼴 너비로 문서를 표시하고 인쇄해서, 컴퓨터에서처럼 줄이 바뀌도록 해요.
 
 < {0}: original
 > {0}: 원본
@@ -1806,6 +1808,28 @@
 < Clear the list
 > 목록 비우기
 
+< Just now
+> 방금
+
+< {0} minute ago
+< {0} minutes ago
+> {0}분 전
+
+< {0} hour ago
+< {0} hours ago
+> {0}시간 전
+
+< Yesterday
+> 어제
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> M월 d일 EEEE
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> yyyy년 M월 d일
+
 < Remove {0} from the list
 > 목록에서 {0} 제거
 
@@ -1889,6 +1913,9 @@
 
 < File information
 > 파일 정보
+
+< All metadata
+> 모든 메타데이터
 
 < This slide has no speaker notes.
 > 이 슬라이드에는 발표자 노트가 없어요.
@@ -2197,6 +2224,15 @@
 < {0} faces found · named, unnamed and on their own
 > 얼굴 {0}개 발견 · 이름 있음, 이름 없음, 단독
 
+< Which one is you?
+> 어느 쪽이 나인가요?
+
+< You're listed first, and searching for "me" finds your photos
+> 목록 맨 위에 표시되고, '나'를 검색하면 내 사진을 찾을 수 있어요
+
+< Not now
+> 나중에
+
 < Name people
 > 인물 이름 지정
 
@@ -2219,6 +2255,9 @@
 
 < When the same person appears in several photos, they show up here so you can name them.
 > 같은 사람이 여러 사진에 나타나면 여기에 표시되어 이름을 지정할 수 있어요.
+
+< You and favourites
+> 본인과 즐겨찾기
 
 < Add names
 > 이름 추가
@@ -2331,12 +2370,27 @@
 < {1}, {0} items
 > {1}, {0}개
 
+< Me
+> 나
+
+< Favourite
+> 즐겨찾기
+
 < Add name
 > 이름 추가
+
+< Me · {0}
+> 나 · {0}
 
 < {1}, {0} photo
 < {1}, {0} photos
 > {1}, 사진 {0}장
+
+< this is you
+> 본인이에요
+
+< favourite
+> 즐겨찾기
 
 @ date pattern: a short month and its year
 < MMM yyyy
@@ -2352,17 +2406,6 @@
 
 < Today
 > 오늘
-
-< Yesterday
-> 어제
-
-@ date pattern: a day this year, with its weekday
-< EEE, d MMM
-> M월 d일 EEEE
-
-@ date pattern: a day in another year
-< d MMM yyyy
-> yyyy년 M월 d일
 
 < Video
 > 동영상
@@ -2414,11 +2457,17 @@
 < Face
 > 얼굴
 
+< This is me
+> 나예요
+
 < Type a name, or tap Skip.
 > 이름을 입력하거나 '건너뛰기'를 탭하세요.
 
 < Added to {0}
 > {0}에 추가했어요
+
+< Marked as you. Type your name too, or tap Skip.
+> 본인으로 표시했어요. 이름도 입력하거나 건너뛰기를 누르세요.
 
 < Everyone is named
 > 모두 이름이 지정되었어요
@@ -2440,6 +2489,12 @@
 < Back to People
 > 인물로 돌아가기
 
+< Remove from favourites
+> 즐겨찾기에서 제거
+
+< Add to favourites
+> 즐겨찾기에 추가
+
 < {0} photo or video
 < {0} photos and videos
 > 사진 및 동영상 {0}개
@@ -2447,6 +2502,9 @@
 < {0} face
 < {0} faces
 > 얼굴 {0}개
+
+< This is you
+> 본인이에요
 
 < Also {0}?
 > {0}도 맞나요?
@@ -2463,6 +2521,18 @@
 < Yes, {0}
 > 맞아요, {0}
 
+< Removed from favourites
+> 즐겨찾기에서 제거했어요
+
+< Added to favourites
+> 즐겨찾기에 추가했어요
+
+< Marked as you. Search for "me" to find your photos.
+> 본인으로 표시했어요. '나'를 검색하면 내 사진을 찾을 수 있어요.
+
+< No longer marked as you
+> 더 이상 본인으로 표시되지 않아요
+
 < Merge with {0}?
 > {0}에 병합할까요?
 
@@ -2474,6 +2544,9 @@
 
 < Rename
 > 이름 바꾸기
+
+< This isn't me
+> 내가 아니에요
 
 < Merge with…
 > 병합할 인물 선택…
@@ -2575,6 +2648,535 @@
 
 < Play video
 > 동영상 재생
+
+< Where it was made
+> 만든 장소
+
+< Who made it or owns it
+> 만든 사람이나 소유자
+
+< The camera, phone or computer
+> 카메라, 휴대전화 또는 컴퓨터
+
+< When it was made or changed
+> 만들어지거나 변경된 시기
+
+< The programs used
+> 사용된 프로그램
+
+< Numbers that link it to other files
+> 다른 파일과 연결하는 번호
+
+< Pictures hidden inside
+> 안에 숨겨진 그림
+
+< Written descriptions, comments and keywords
+> 글 설명, 댓글, 키워드
+
+< {0} picture
+> 그림 {0}개
+
+< {0} camera RAW photo
+> 카메라 RAW 사진 {0}개
+
+< {0} video
+> 동영상 {0}개
+
+< {0} audio
+> 오디오 {0}개
+
+< PDF document
+> PDF 문서
+
+< Word document
+> Word 문서
+
+< Excel workbook
+> Excel 통합 문서
+
+< PowerPoint presentation
+> PowerPoint 프레젠테이션
+
+< OpenDocument file
+> OpenDocument 파일
+
+< E-book
+> 전자책
+
+< ZIP archive
+> ZIP 압축 파일
+
+< Photoshop file
+> Photoshop 파일
+
+< File
+> 파일
+
+< Worked out from the fields above
+> 위 항목을 바탕으로 계산됨
+
+< Main picture (EXIF)
+> 기본 사진 (EXIF)
+
+< Camera settings (EXIF)
+> 카메라 설정 (EXIF)
+
+< Location (GPS)
+> 위치 (GPS)
+
+< Compatibility (EXIF)
+> 호환성 (EXIF)
+
+< Thumbnail (EXIF)
+> 미리 보기 이미지 (EXIF)
+
+< Other pictures inside (EXIF)
+> 안의 다른 그림 (EXIF)
+
+< Captions and credits (IPTC)
+> 설명과 저작 정보 (IPTC)
+
+< Colour profile
+> 색상 프로필
+
+< Pictures inside (MPF)
+> 안의 그림 (MPF)
+
+< Video file
+> 동영상 파일
+
+< Track {0}
+> 트랙 {0}
+
+< Tags
+> 태그
+
+< Song tags (ID3)
+> 노래 태그 (ID3)
+
+< Song tags
+> 노래 태그
+
+< Sound
+> 소리
+
+< Document properties
+> 문서 속성
+
+< Yes
+> 예
+
+< No
+> 아니요
+
+< (UTC)
+> (UTC)
+
+< File name
+> 파일 이름
+
+< File size
+> 파일 크기
+
+< Changed on this phone
+> 이 휴대전화에서 변경됨
+
+< Kind of file
+> 파일 종류
+
+< Media type
+> 미디어 종류
+
+< Picture size
+> 그림 크기
+
+< Megapixels
+> 메가픽셀
+
+< Width
+> 너비
+
+< Height
+> 높이
+
+< Camera maker
+> 카메라 제조사
+
+< Camera model
+> 카메라 모델
+
+< Lens maker
+> 렌즈 제조사
+
+< Lens
+> 렌즈
+
+< Serial number
+> 일련번호
+
+< Camera serial number
+> 카메라 일련번호
+
+< Lens serial number
+> 렌즈 일련번호
+
+< Owner
+> 소유자
+
+< Artist
+> 작가
+
+< Copyright
+> 저작권
+
+< Software
+> 소프트웨어
+
+< Taken
+> 촬영
+
+< Created
+> 생성됨
+
+< Changed
+> 변경됨
+
+< Time zone when taken
+> 촬영 시 시간대
+
+< Time zone
+> 시간대
+
+< Latitude
+> 위도
+
+< Longitude
+> 경도
+
+< Position
+> 위치
+
+< Altitude
+> 고도
+
+< GPS date
+> GPS 날짜
+
+< GPS time (UTC)
+> GPS 시간 (UTC)
+
+< Facing direction
+> 촬영 방향
+
+< Speed
+> 속도
+
+< Location
+> 위치
+
+< Shutter speed
+> 셔터 속도
+
+< Aperture
+> 조리개
+
+< ISO
+> ISO
+
+< Focal length
+> 초점 거리
+
+< Focal length (35 mm equivalent)
+> 초점 거리 (35mm 환산)
+
+< Flash
+> 플래시
+
+< White balance
+> 화이트 밸런스
+
+< Orientation
+> 방향
+
+< Description
+> 설명
+
+< Comment
+> 댓글
+
+< Comments
+> 댓글
+
+< Picture ID
+> 그림 ID
+
+< Title
+> 제목
+
+< Author
+> 작성자
+
+< Creator
+> 작성자
+
+< Last saved by
+> 마지막으로 저장한 사람
+
+< Company
+> 회사
+
+< Manager
+> 관리자
+
+< Keywords
+> 키워드
+
+< Subject
+> 제목
+
+< Length
+> 길이
+
+< Frame rate
+> 프레임 속도
+
+< Average bit rate
+> 평균 비트 전송률
+
+< Bit rate
+> 비트 전송률
+
+< Sample rate
+> 샘플링 빈도
+
+< Channels
+> 채널
+
+< Album
+> 앨범
+
+< Album artist
+> 앨범 아티스트
+
+< Genre
+> 장르
+
+< Year
+> 연도
+
+< Track
+> 트랙
+
+< Composer
+> 작곡가
+
+< Pages
+> 페이지
+
+< Words
+> 작사가
+
+< Made by (program)
+> 만든 프로그램
+
+< Made with
+> 만든 도구
+
+< Protection
+> 보호
+
+< Allowed
+> 허용됨
+
+< Rotation
+> 회전
+
+< City
+> 도시
+
+< Country
+> 국가
+
+< State or province
+> 주 또는 도
+
+< Place
+> 장소
+
+< Headline
+> 제목
+
+< Caption
+> 캡션
+
+< By
+> 작성
+
+< Credit
+> 크레딧
+
+< Small copy of the picture
+> 그림의 작은 사본
+
+< Preview picture
+> 미리 보기 그림
+
+< Full-size JPEG copy
+> 원본 크기 JPEG 사본
+
+< Cover picture
+> 표지 그림
+
+< Editing time
+> 편집 시간
+
+< Revisions
+> 수정 횟수
+
+< Template
+> 템플릿
+
+< Application
+> 응용 프로그램
+
+< Last printed
+> 마지막 인쇄
+
+< Saved by (with the file's folder)
+> 저장한 사람 (파일의 폴더 포함)
+
+< Comments written by
+> 댓글 작성자
+
+< Last opened by
+> 마지막으로 연 사람
+
+< Author's e-mail
+> 작성자 이메일
+
+< Author's name (e-mail)
+> 작성자 이름 (이메일)
+
+< E-mail subject
+> 이메일 제목
+
+< Computer
+> 컴퓨터
+
+< Phone model
+> 휴대전화 모델
+
+< Phone maker
+> 휴대전화 제조사
+
+< Android version
+> Android 버전
+
+< XMP written by
+> XMP 작성자
+
+< Document ID
+> 문서 ID
+
+< Instance ID
+> 인스턴스 ID
+
+< Original document ID
+> 원본 문서 ID
+
+< Rating
+> 평점
+
+< Colour space
+> 색 공간
+
+< First author
+> 첫 작성자
+
+< Encoder
+> 인코더
+
+< Encoded by
+> 인코딩한 사람
+
+< Links
+> 링크
+
+< Link base
+> 링크 기준
+
+< Pictures inside
+> 안의 그림
+
+< Kind of picture
+> 그림 종류
+
+< Camera maker's notes
+> 카메라 제조사 메모
+
+< Also from the gallery (Open in a tool) and from the file reader's menu.
+> 갤러리(도구에서 열기)와 파일 리더 메뉴에서도 볼 수 있어요.
+
+< Files are read on this phone and never uploaded. The viewer only reads them: nothing is changed.
+> 파일은 이 휴대전화에서만 읽고 업로드하지 않아요. 뷰어는 읽기만 하고 아무것도 변경하지 않아요.
+
+< Reading {0}…
+> {0} 읽는 중…
+
+< This file can't be read: {0}
+> 이 파일을 읽을 수 없어요: {0}
+
+< Choose another file
+> 다른 파일 선택
+
+< Search the fields
+> 항목 검색
+
+< What this file tells others
+> 이 파일이 다른 사람에게 알려 주는 정보
+
+< Nothing personal: no place, names, device, dates or hidden pictures were found, only technical details.
+> 개인 정보는 없어요: 장소, 이름, 기기, 날짜, 숨겨진 그림이 없고 기술적인 정보만 있어요.
+
+< {0} kind of personal detail. Anyone you send this file to can read it.
+< {0} kinds of personal details. Anyone you send this file to can read them.
+> 개인 정보 {0}종. 이 파일을 보낸 사람은 누구나 읽을 수 있어요.
+
+< and {0} more
+> 외 {0}개
+
+< Open in a maps app
+> 지도 앱에서 열기
+
+< Make a copy without them
+> 이것들을 뺀 사본 만들기
+
+< No field matches “{0}”.
+> “{0}”과(와) 일치하는 항목이 없어요.
+
+< Only the first {0} fields are listed: search to find the others.
+> 처음 {0}개 항목만 표시돼요. 나머지는 검색해 보세요.
+
+< Stored as {0}
+> {0}(으)로 저장됨
+
+< Bare value: {0}
+> 원시 값: {0}
+
+< Copied.
+> 복사했어요.
+
+< Where this file was made
+> 이 파일을 만든 장소
+
+< Opening it starts your maps app; this app itself never connects to the internet.
+> 열면 지도 앱이 실행돼요. 이 앱 자체는 인터넷에 연결하지 않아요.
+
+< Copy all fields
+> 모든 항목 복사
+
+< Share as text
+> 텍스트로 공유
 
 < Preview
 > 미리보기
@@ -2792,9 +3394,6 @@
 < 0 keeps the original width
 > 0이면 원래 너비를 유지해요
 
-< Frame rate
-> 프레임 속도
-
 < 0 keeps the original timing; lower drops frames
 > 0이면 원래 타이밍을 유지하고, 낮추면 프레임이 줄어요
 
@@ -2893,9 +3492,6 @@
 < Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
 > '원본'은 JPEG 사진을 바이트 그대로, 나머지 이미지는 무손실로 삽입해요. '컴팩트'는 인쇄 해상도(A4 기준 300 DPI)로 크기를 조정해 JPEG로 삽입해요.
 
-< File name
-> 파일 이름
-
 @ default file name
 < Images
 > 이미지
@@ -2918,9 +3514,6 @@
 
 < Save PDF
 > PDF 저장
-
-< Pages
-> 페이지
 
 < Capture page
 > 페이지 촬영
@@ -2996,9 +3589,6 @@
 < Another tune
 > 다른 곡
 
-< Length
-> 길이
-
 < {0} s
 > {0}초
 
@@ -3019,9 +3609,6 @@
 
 < The music gets quieter while they play
 > 재생되는 동안 음악 소리가 작아져요
-
-< Title
-> 제목
 
 < Moments
 > 장면
@@ -3360,9 +3947,6 @@
 < Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
 > 무손실: 스트림을 다시 인코딩하지 않고 복사해요. 시작 지점은 바로 앞의 가장 가까운 키프레임으로 이동하고(보통 1~2초 이내), 끝 지점은 정확해요.
 
-< Reading {0}…
-> {0} 읽는 중…
-
 < {0}: the duration couldn't be read.
 > {0}: 길이를 읽을 수 없어요.
 
@@ -3520,9 +4104,6 @@
 
 < Fewer frames = much smaller GIF
 > 프레임이 적을수록 GIF가 훨씬 작아져요
-
-< Width
-> 너비
 
 < Height follows the video's shape
 > 높이는 동영상의 비율에 맞춰져요
@@ -3777,6 +4358,12 @@
 < Paper size
 > 용지 크기
 
+< The printer says it has {0} paper loaded. Load {1} paper, or print on {0}.
+> 프린터에 {0} 용지가 들어 있다고 나와요. {1} 용지를 넣거나 {0}에 인쇄하세요.
+
+< Print on {0}
+> {0}에 인쇄
+
 < Paper type
 > 용지 종류
 
@@ -3839,8 +4426,29 @@
 < Print on both sides of the paper
 > 용지 양면에 인쇄
 
-< Select photos or PDFs to see the sheets
-> 사진이나 PDF를 선택하면 인쇄될 용지를 볼 수 있어요
+< Flip on short edge
+> 짧은 쪽 기준으로 뒤집기
+
+< Flip on long edge
+> 긴 쪽 기준으로 뒤집기
+
+< calendars
+> 달력
+
+< books
+> 책
+
+< Last page first
+> 마지막 페이지부터
+
+< This printer puts sheets face down, so they already stack in order
+> 이 프린터는 용지를 인쇄면이 아래로 가게 내보내므로, 이미 순서대로 쌓여요.
+
+< Sheets come out face up: printed last page first, the stack ends in order with page 1 on top
+> 용지가 인쇄면이 위로 나와요. 마지막 페이지부터 인쇄되어, 1페이지가 맨 위에 오고 순서대로 쌓여요.
+
+< Select photos, PDFs or documents to see the sheets
+> 사진, PDF 또는 문서를 선택하면 용지를 볼 수 있어요
 
 < Couldn't prepare the preview
 > 미리보기를 준비하지 못했어요
@@ -4161,6 +4769,10 @@
 < a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
 > 나,나의,나는,내,내가,저,저의,저는,제,제가,우리,우리의,우리가,우리는,보여,보여줘,보여줘요,보여주세요,보여줄래,찾아,찾아줘,찾아줘요,찾아주세요,찾아봐,줘,주세요,검색,검색해,검색해줘,모든,전부,모두,같이,함께,그리고,또는,및,근처,주변,찍은,찍힌,찍었던,촬영한,촬영된,포함된,포함한,있는,나온,나오는,어디,누구
 
+@ search words meaning yourself (the phone's owner), separated by commas
+< me,myself
+> 나,자신,me
+
 < Upbeat
 > 경쾌한
 
@@ -4187,6 +4799,102 @@
 
 < Cinematic music
 > 시네마틱 음악
+
+< ({0} bytes of picture)
+> ({0} 바이트 그림)
+
+< ({0} bytes)
+> ({0} 바이트)
+
+< about {0} kbps (variable)
+> 약 {0} kbps (가변)
+
+< (default)
+> (기본)
+
+< (Samsung's own data)
+> (삼성 자체 데이터)
+
+< (none)
+> (없음)
+
+< ({0} bytes, the camera maker's own data)
+> ({0} 바이트, 카메라 제조사 자체 데이터)
+
+< ({0} bytes, a full-size JPEG copy of the picture)
+> ({0} 바이트, 그림의 원본 크기 JPEG 사본)
+
+< ({0} bytes, a smaller copy of the picture)
+> ({0} 바이트, 그림의 더 작은 사본)
+
+< The camera maker's own notes ({0} bytes) are listed but not read: each maker writes them its own way.
+> 카메라 제조사의 자체 메모({0} 바이트)는 목록에 나오지만 읽지 않아요. 제조사마다 형식이 달라요.
+
+< The JPEG file is damaged after {0} bytes.
+> JPEG 파일은 {0} 바이트 이후가 손상됐어요.
+
+< This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.
+> 이 그림에는 Content Credentials(C2PA)가 들어 있어요. 어떻게 만들어졌는지 기록한 서명된 정보인데, 여기서는 읽지 않아요.
+
+< ({0} bytes: {1})
+> ({0} 바이트: {1})
+
+< ({0} more pictures inside: a preview, an HDR gain map, a depth map or the like)
+> 안의 그림 {0}개 더(미리 보기, HDR 게인 맵, 깊이 맵 등)
+
+< The PNG file is damaged.
+> PNG 파일이 손상됐어요.
+
+< The colour profile is damaged.
+> 색상 프로필이 손상됐어요.
+
+< This document couldn't be read here: open it from the Files app instead.
+> 이 문서는 여기서 읽을 수 없어요. 대신 파일 앱에서 열어 보세요.
+
+< Part of the file couldn't be read: it may be damaged.
+> 파일의 일부를 읽을 수 없어요. 손상됐을 수 있어요.
+
+< Part of the file is too big to read on this phone.
+> 파일의 일부가 너무 커서 이 휴대전화에서 읽을 수 없어요.
+
+< (not recognised)
+> (인식되지 않음)
+
+< The archive is damaged: only its first file's details were read.
+> 압축 파일이 손상됐어요. 첫 번째 파일의 정보만 읽었어요.
+
+< The document's own properties are damaged: only part of them was read.
+> 문서 자체의 속성이 손상됐어요. 일부만 읽었어요.
+
+< (a picture of the first page)
+> (첫 페이지 그림)
+
+< The document's properties are damaged: only part of them was read.
+> 문서 속성이 손상됐어요. 일부만 읽었어요.
+
+< The book's details are damaged: only part of them was read.
+> 책 정보가 손상됐어요. 일부만 읽었어요.
+
+< The file is damaged: its contents can't be unpacked.
+> 파일이 손상되어 내용을 풀 수 없어요.
+
+< The Word document's own details are damaged: only part of them was read.
+> Word 문서 자체의 정보가 손상됐어요. 일부만 읽었어요.
+
+< This Office file is protected with a password: only the outer details can be read.
+> 이 Office 파일은 암호로 보호돼 있어요. 바깥쪽 정보만 읽을 수 있어요.
+
+< (clipboard data)
+> (클립보드 데이터)
+
+< This PDF is damaged: its document information couldn't be found.
+> 이 PDF가 손상됐어요. 문서 정보를 찾을 수 없어요.
+
+< This PDF needs a password to open, so what's inside it can't be read.
+> 이 PDF는 열려면 암호가 필요해서 내용을 읽을 수 없어요.
+
+< The XMP metadata is damaged: only part of it was read.
+> XMP 메타데이터가 손상됐어요. 일부만 읽었어요.
 
 < Reading your photo library
 > 사진 라이브러리를 읽는 중
@@ -4324,9 +5032,6 @@
 
 < keeps the smallest copy
 > 가장 작은 복사본 유지
-
-< Favourite
-> 즐겨찾기
 
 < Person you keep
 > 유지할 인물
@@ -4942,6 +5647,9 @@
 < Shows documents instead of saving files, so it can't be a step of a stack
 > 파일을 저장하지 않고 문서를 보여 주므로 스택의 단계가 될 수 없어요.
 
+< Shows a file's details instead of saving files, so it can't be a step of a stack
+> 파일을 저장하지 않고 세부 정보를 보여 주므로 스택의 한 단계가 될 수 없어요
+
 < Can't be part of a stack
 > 스택에 포함할 수 없어요
 
@@ -5317,6 +6025,15 @@
 
 < Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
 > 프린터 제조사의 앱 없이, Wi-Fi에 연결된 프린터로 사진과 PDF를 바로 인쇄해요. AirPrint, Mopria, IPP Everywhere를 지원하는 Epson, HP, Canon, Brother 등의 프린터에서 사용할 수 있어요. 용지 크기와 종류, 테두리 없음, 한 장에 사진 여러 장, 컬러 또는 흑백, 품질, 매수를 선택할 수 있고 모든 용지의 미리보기도 볼 수 있어요. 앱은 같은 네트워크에 있는 프린터와만 통신해요.
+
+< Metadata viewer
+> 메타데이터 뷰어
+
+< See everything a file says about you
+> 파일이 나에 대해 알려 주는 모든 내용을 보세요
+
+< Shows every detail a file keeps about itself — where and when a photo was taken, the camera or phone, who wrote a document and who saved it, the programs used, hidden pictures inside — for photos, camera RAW files, videos, music, PDFs, Office files and more. A summary first tells you what the file reveals about you. Files are only read, on this phone.
+> 파일 자체가 보관하는 모든 세부 정보를 보여 줘요. 사진을 찍은 장소와 시간, 카메라나 휴대전화, 문서를 작성한 사람과 저장한 사람, 사용된 프로그램, 안에 숨겨진 그림 등을 사진, 카메라 RAW 파일, 동영상, 음악, PDF, Office 파일 등에서 보여 줘요. 먼저 요약에서 이 파일이 나에 대해 무엇을 드러내는지 알려 줘요. 파일은 이 휴대전화에서만 읽어요.
 
 < Remove metadata
 > 메타데이터 제거
@@ -5786,9 +6503,6 @@
 < This file was made by a very old PowerPoint version, which this app can't read.
 > 이 파일은 아주 오래된 PowerPoint 버전으로 만들어져서 이 앱에서 읽을 수 없어요.
 
-< The file is damaged: its contents can't be unpacked.
-> 파일이 손상되어 내용을 풀 수 없어요.
-
 < The file unpacks to far more data than it holds, so it wasn't opened.
 > 압축을 풀면 실제 크기보다 훨씬 많은 데이터가 나와서 열지 않았어요.
 
@@ -5847,6 +6561,9 @@
 < This workbook is very large: only its first {0} cells are shown.
 > 이 통합 문서는 아주 커서 처음 {0}개 셀만 표시돼요.
 
+< {0} has nothing to print.
+> {0}에는 인쇄할 것이 없어요.
+
 < Printing {0} file on {1}
 < Printing {0} files on {1}
 > 파일 {0}개 인쇄 중({1})
@@ -5862,6 +6579,12 @@
 
 < The printer couldn't be reached
 > 프린터에 연결할 수 없었어요
+
+< {0} isn't a document this app can print
+> {0}은(는) 이 앱에서 인쇄할 수 있는 문서가 아니에요
+
+< {0} can't be printed: {1}
+> {0}을(를) 인쇄할 수 없어요: {1}
 
 < Not a printer address
 > 프린터 주소가 아니에요
@@ -6773,9 +7496,6 @@
 < rock,rocks,cliff,cliffs,canyon,cave
 > 바위,바윗돌,암석,바위산,바위들,돌,절벽,낭떠러지,벼랑,암벽,협곡,캐니언,계곡,동굴
 
-< City
-> 도시
-
 < Places
 > 장소
 
@@ -6974,14 +7694,3 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > 음악,뮤직,악기,악기들,드럼,북,바이올린,기타,피아노,연주,관악기,타악기,현악기
-
-< Just now
-> 방금
-
-< {0} minute ago
-< {0} minutes ago
-> {0}분 전
-
-< {0} hour ago
-< {0} hours ago
-> {0}시간 전

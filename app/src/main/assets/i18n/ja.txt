@@ -844,11 +844,11 @@
 < Choose files
 > ファイルを選ぶ
 
-< Choose a photo or PDF
-> 写真またはPDFを選ぶ
+< Choose a photo, PDF or document
+> 写真、PDF、書類のいずれかを選ぶ
 
-< Choose photos or PDFs
-> 写真またはPDFを選ぶ
+< Choose photos, PDFs or documents
+> 写真、PDF、書類を選ぶ
 
 < Select images
 > 画像を選択
@@ -868,8 +868,8 @@
 < Select files
 > ファイルを選択
 
-< Select photos or PDFs
-> 写真またはPDFを選択
+< Select photos, PDFs or documents
+> 写真、PDF、書類を選択
 
 < Select images to continue
 > 続けるには画像を選択してください
@@ -889,8 +889,8 @@
 < Select files to continue
 > 続けるにはファイルを選択してください
 
-< Select photos or PDFs to continue
-> 続けるには写真またはPDFを選択してください
+< Select photos, PDFs or documents to continue
+> 続けるには、写真、PDF、書類を選択
 
 < Select at least {0} image
 < Select at least {0} images
@@ -916,9 +916,9 @@
 < Select at least {0} files
 > ファイルを{0}個以上選択してください
 
-< Select at least {0} photo or PDF
-< Select at least {0} photos or PDFs
-> 写真またはPDFを{0}件以上選択してください
+< Select at least {0} photo, PDF or document
+< Select at least {0} photos, PDFs or documents
+> 写真、PDF、書類を{0}件以上選んでください
 
 < {0} image selected
 < {0} images selected
@@ -944,10 +944,6 @@
 < {0} files selected
 > ファイルを{0}個選択中
 
-< {0} photo or PDF selected
-< {0} photos and PDFs selected
-> 写真とPDFを{0}件選択中
-
 < No images found in that folder.
 > そのフォルダに画像が見つかりません。
 
@@ -966,8 +962,8 @@
 < No files found in that folder.
 > そのフォルダにファイルが見つかりません。
 
-< No photos or PDFs found in that folder.
-> そのフォルダに写真やPDFが見つかりません。
+< No photos, PDFs or documents found in that folder.
+> そのフォルダに写真、PDF、書類は見つかりませんでした。
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -989,8 +985,8 @@
 < Not a photo, video, GIF or PDF
 > 写真、動画、GIF、PDFのいずれでもありません
 
-< Not a photo or PDF
-> 写真またはPDFではありません
+< Not a photo, PDF or document
+> 写真、PDF、書類ではありません
 
 < Use the GIF optimizer for GIFs
 > GIFには「GIF最適化」を使ってください
@@ -1124,6 +1120,9 @@
 
 < exif gps location privacy clean strip
 > exif gps 位置情報 プライバシー 削除 消去 メタデータ
+
+< exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
+> exif xmp iptc id3 タグ プロパティ 詳細 info 情報 確認 点検 gps 場所 カメラ 作者 プライバシー
 
 < mp3 m4a sound music
 > mp3 m4a 音声 音楽 サウンド オーディオ
@@ -1339,6 +1338,9 @@
 
 < App typography.
 > アプリの書体。
+
+< Showing and printing documents with the widths of Calibri, Cambria, Arial, Times New Roman and Courier New, so lines break as on a computer.
+> Calibri、Cambria、Arial、Times New Roman、Courier New の幅で書類を表示・印刷し、パソコンと同じように行が折り返されるようにします。
 
 < {0}: original
 > {0}：元のまま
@@ -1806,6 +1808,28 @@
 < Clear the list
 > リストをクリア
 
+< Just now
+> たった今
+
+< {0} minute ago
+< {0} minutes ago
+> {0}分前
+
+< {0} hour ago
+< {0} hours ago
+> {0}時間前
+
+< Yesterday
+> 昨日
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> M月d日(EEE)
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> yyyy年M月d日
+
 < Remove {0} from the list
 > リストから「{0}」を削除
 
@@ -1889,6 +1913,9 @@
 
 < File information
 > ファイル情報
+
+< All metadata
+> すべてのメタデータ
 
 < This slide has no speaker notes.
 > このスライドには発表者ノートがありません。
@@ -2197,6 +2224,15 @@
 < {0} faces found · named, unnamed and on their own
 > 顔が{0}個見つかりました · 名前あり、名前なし、単独
 
+< Which one is you?
+> どれがあなたですか？
+
+< You're listed first, and searching for "me" finds your photos
+> 一番上に表示され、「私」で検索すると自分の写真が見つかります
+
+< Not now
+> 今はしない
+
 < Name people
 > 人物に名前を付ける
 
@@ -2219,6 +2255,9 @@
 
 < When the same person appears in several photos, they show up here so you can name them.
 > 同じ人物が複数の写真に写っていると、ここに表示され、名前を付けられます。
+
+< You and favourites
+> あなたとお気に入り
 
 < Add names
 > 名前を追加
@@ -2331,12 +2370,27 @@
 < {1}, {0} items
 > {1}、{0}件
 
+< Me
+> 自分
+
+< Favourite
+> お気に入り
+
 < Add name
 > 名前を追加
+
+< Me · {0}
+> 自分 · {0}
 
 < {1}, {0} photo
 < {1}, {0} photos
 > {1}、{0}枚
+
+< this is you
+> あなたです
+
+< favourite
+> お気に入り
 
 @ date pattern: a short month and its year
 < MMM yyyy
@@ -2352,17 +2406,6 @@
 
 < Today
 > 今日
-
-< Yesterday
-> 昨日
-
-@ date pattern: a day this year, with its weekday
-< EEE, d MMM
-> M月d日(EEE)
-
-@ date pattern: a day in another year
-< d MMM yyyy
-> yyyy年M月d日
 
 < Video
 > 動画
@@ -2414,11 +2457,17 @@
 < Face
 > 顔
 
+< This is me
+> これは自分です
+
 < Type a name, or tap Skip.
 > 名前を入力するか、「スキップ」をタップしてください。
 
 < Added to {0}
 > {0}に追加しました
+
+< Marked as you. Type your name too, or tap Skip.
+> 自分としてマークしました。名前も入力するか、「スキップ」をタップしてください。
 
 < Everyone is named
 > 全員に名前が付いています
@@ -2440,6 +2489,12 @@
 < Back to People
 > 「人物」に戻る
 
+< Remove from favourites
+> お気に入りから削除
+
+< Add to favourites
+> お気に入りに追加
+
 < {0} photo or video
 < {0} photos and videos
 > {0}件の写真と動画
@@ -2447,6 +2502,9 @@
 < {0} face
 < {0} faces
 > {0}個の顔
+
+< This is you
+> あなたです
 
 < Also {0}?
 > こちらも{0}ですか？
@@ -2463,6 +2521,18 @@
 < Yes, {0}
 > はい、{0}です
 
+< Removed from favourites
+> お気に入りから削除しました
+
+< Added to favourites
+> お気に入りに追加しました
+
+< Marked as you. Search for "me" to find your photos.
+> 自分としてマークしました。「私」で検索すると自分の写真が見つかります。
+
+< No longer marked as you
+> 自分としてのマークを外しました
+
 < Merge with {0}?
 > {0}と統合しますか？
 
@@ -2474,6 +2544,9 @@
 
 < Rename
 > 名前を変更
+
+< This isn't me
+> これは自分ではありません
 
 < Merge with…
 > 統合先を選択…
@@ -2575,6 +2648,535 @@
 
 < Play video
 > 動画を再生
+
+< Where it was made
+> 作成された場所
+
+< Who made it or owns it
+> 作成者または所有者
+
+< The camera, phone or computer
+> カメラ、端末、またはパソコン
+
+< When it was made or changed
+> 作成または変更された日時
+
+< The programs used
+> 使用されたプログラム
+
+< Numbers that link it to other files
+> 他のファイルとの関連を示す番号
+
+< Pictures hidden inside
+> 内部に隠された画像
+
+< Written descriptions, comments and keywords
+> 文章による説明、コメント、キーワード
+
+< {0} picture
+> {0}件の画像
+
+< {0} camera RAW photo
+> {0}件のカメラRAW写真
+
+< {0} video
+> {0}件の動画
+
+< {0} audio
+> {0}件の音声
+
+< PDF document
+> PDF文書
+
+< Word document
+> Word文書
+
+< Excel workbook
+> Excelブック
+
+< PowerPoint presentation
+> PowerPointプレゼンテーション
+
+< OpenDocument file
+> OpenDocumentファイル
+
+< E-book
+> 電子書籍
+
+< ZIP archive
+> ZIPアーカイブ
+
+< Photoshop file
+> Photoshopファイル
+
+< File
+> ファイル
+
+< Worked out from the fields above
+> 上の項目から算出
+
+< Main picture (EXIF)
+> メイン画像 (EXIF)
+
+< Camera settings (EXIF)
+> カメラの設定 (EXIF)
+
+< Location (GPS)
+> 位置情報 (GPS)
+
+< Compatibility (EXIF)
+> 互換性 (EXIF)
+
+< Thumbnail (EXIF)
+> サムネイル (EXIF)
+
+< Other pictures inside (EXIF)
+> 内部のその他の画像 (EXIF)
+
+< Captions and credits (IPTC)
+> キャプションとクレジット (IPTC)
+
+< Colour profile
+> カラープロファイル
+
+< Pictures inside (MPF)
+> 内部の画像 (MPF)
+
+< Video file
+> 動画ファイル
+
+< Track {0}
+> トラック {0}
+
+< Tags
+> タグ
+
+< Song tags (ID3)
+> 曲のタグ (ID3)
+
+< Song tags
+> 曲のタグ
+
+< Sound
+> サウンド
+
+< Document properties
+> 書類のプロパティ
+
+< Yes
+> はい
+
+< No
+> いいえ
+
+< (UTC)
+> (UTC)
+
+< File name
+> ファイル名
+
+< File size
+> ファイルサイズ
+
+< Changed on this phone
+> この端末で変更
+
+< Kind of file
+> ファイルの種類
+
+< Media type
+> メディアの種類
+
+< Picture size
+> 画像サイズ
+
+< Megapixels
+> メガピクセル
+
+< Width
+> 幅
+
+< Height
+> 高さ
+
+< Camera maker
+> カメラメーカー
+
+< Camera model
+> カメラのモデル
+
+< Lens maker
+> レンズメーカー
+
+< Lens
+> レンズ
+
+< Serial number
+> シリアル番号
+
+< Camera serial number
+> カメラのシリアル番号
+
+< Lens serial number
+> レンズのシリアル番号
+
+< Owner
+> 所有者
+
+< Artist
+> アーティスト
+
+< Copyright
+> 著作権
+
+< Software
+> ソフトウェア
+
+< Taken
+> 撮影日時
+
+< Created
+> 作成日時
+
+< Changed
+> 変更日時
+
+< Time zone when taken
+> 撮影時のタイムゾーン
+
+< Time zone
+> タイムゾーン
+
+< Latitude
+> 緯度
+
+< Longitude
+> 経度
+
+< Position
+> 位置
+
+< Altitude
+> 高度
+
+< GPS date
+> GPSの日付
+
+< GPS time (UTC)
+> GPSの時刻 (UTC)
+
+< Facing direction
+> 撮影方向
+
+< Speed
+> 速度
+
+< Location
+> 位置情報
+
+< Shutter speed
+> シャッタースピード
+
+< Aperture
+> 絞り
+
+< ISO
+> ISO
+
+< Focal length
+> 焦点距離
+
+< Focal length (35 mm equivalent)
+> 焦点距離 (35mm判換算)
+
+< Flash
+> フラッシュ
+
+< White balance
+> ホワイトバランス
+
+< Orientation
+> 向き
+
+< Description
+> 説明
+
+< Comment
+> コメント
+
+< Comments
+> コメント
+
+< Picture ID
+> 画像ID
+
+< Title
+> タイトル
+
+< Author
+> 作成者
+
+< Creator
+> 作成者
+
+< Last saved by
+> 最後に保存したユーザー
+
+< Company
+> 会社
+
+< Manager
+> 管理者
+
+< Keywords
+> キーワード
+
+< Subject
+> 件名
+
+< Length
+> 長さ
+
+< Frame rate
+> フレームレート
+
+< Average bit rate
+> 平均ビットレート
+
+< Bit rate
+> ビットレート
+
+< Sample rate
+> サンプルレート
+
+< Channels
+> チャンネル
+
+< Album
+> アルバム
+
+< Album artist
+> アルバムアーティスト
+
+< Genre
+> ジャンル
+
+< Year
+> 年
+
+< Track
+> トラック
+
+< Composer
+> 作曲者
+
+< Pages
+> ページ
+
+< Words
+> 作詞者
+
+< Made by (program)
+> 作成プログラム
+
+< Made with
+> 作成に使用
+
+< Protection
+> 保護
+
+< Allowed
+> 許可
+
+< Rotation
+> 回転
+
+< City
+> 街
+
+< Country
+> 国
+
+< State or province
+> 都道府県・州
+
+< Place
+> 場所
+
+< Headline
+> 見出し
+
+< Caption
+> キャプション
+
+< By
+> 作成者
+
+< Credit
+> クレジット
+
+< Small copy of the picture
+> 画像の小さなコピー
+
+< Preview picture
+> プレビュー画像
+
+< Full-size JPEG copy
+> 原寸のJPEGコピー
+
+< Cover picture
+> カバー画像
+
+< Editing time
+> 編集時間
+
+< Revisions
+> 改訂回数
+
+< Template
+> テンプレート
+
+< Application
+> アプリケーション
+
+< Last printed
+> 最終印刷日時
+
+< Saved by (with the file's folder)
+> 保存者（ファイルのフォルダ名を含む）
+
+< Comments written by
+> コメントの作成者
+
+< Last opened by
+> 最後に開いたユーザー
+
+< Author's e-mail
+> 作成者のメール
+
+< Author's name (e-mail)
+> 作成者名（メール）
+
+< E-mail subject
+> メールの件名
+
+< Computer
+> パソコン
+
+< Phone model
+> 端末のモデル
+
+< Phone maker
+> 端末のメーカー
+
+< Android version
+> Androidのバージョン
+
+< XMP written by
+> XMP書き込み元
+
+< Document ID
+> 書類ID
+
+< Instance ID
+> インスタンスID
+
+< Original document ID
+> 元の書類ID
+
+< Rating
+> 評価
+
+< Colour space
+> 色空間
+
+< First author
+> 最初の作成者
+
+< Encoder
+> エンコーダー
+
+< Encoded by
+> エンコード者
+
+< Links
+> リンク
+
+< Link base
+> リンクの基準
+
+< Pictures inside
+> 内部の画像
+
+< Kind of picture
+> 画像の種類
+
+< Camera maker's notes
+> カメラメーカーのメモ
+
+< Also from the gallery (Open in a tool) and from the file reader's menu.
+> ギャラリー（ツールで開く）やファイルリーダーのメニューからも表示できます。
+
+< Files are read on this phone and never uploaded. The viewer only reads them: nothing is changed.
+> ファイルはこの端末内で読み取られ、アップロードされることはありません。ビューアーは読み取るだけで、何も変更しません。
+
+< Reading {0}…
+> {0}を読み込み中…
+
+< This file can't be read: {0}
+> このファイルは読み取れません: {0}
+
+< Choose another file
+> 別のファイルを選ぶ
+
+< Search the fields
+> 項目を検索
+
+< What this file tells others
+> このファイルが他人に知らせる情報
+
+< Nothing personal: no place, names, device, dates or hidden pictures were found, only technical details.
+> 個人情報はありません: 場所、名前、機器、日付、隠れた画像は見つからず、技術的な詳細のみです。
+
+< {0} kind of personal detail. Anyone you send this file to can read it.
+< {0} kinds of personal details. Anyone you send this file to can read them.
+> 個人情報 {0} 種類。このファイルの送信先は誰でも読めます。
+
+< and {0} more
+> ほか {0} 件
+
+< Open in a maps app
+> 地図アプリで開く
+
+< Make a copy without them
+> これらを除いたコピーを作成
+
+< No field matches “{0}”.
+> 「{0}」に一致する項目はありません。
+
+< Only the first {0} fields are listed: search to find the others.
+> 最初の {0} 項目のみ表示しています。残りは検索してください。
+
+< Stored as {0}
+> {0} として保存されています
+
+< Bare value: {0}
+> 生の値: {0}
+
+< Copied.
+> コピーしました。
+
+< Where this file was made
+> このファイルが作成された場所
+
+< Opening it starts your maps app; this app itself never connects to the internet.
+> 開くと地図アプリが起動します。このアプリ自体はインターネットに接続しません。
+
+< Copy all fields
+> すべての項目をコピー
+
+< Share as text
+> テキストとして共有
 
 < Preview
 > プレビュー
@@ -2792,9 +3394,6 @@
 < 0 keeps the original width
 > 0にすると元の幅を維持します
 
-< Frame rate
-> フレームレート
-
 < 0 keeps the original timing; lower drops frames
 > 0にすると元のタイミングを維持します。低くするとフレームが間引かれます
 
@@ -2893,9 +3492,6 @@
 < Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
 > 「オリジナル」はJPEG写真をバイト単位でそのまま、その他の画像を可逆圧縮で埋め込みます。「コンパクト」は印刷解像度（A4で300 DPI）にリサイズし、JPEGとして埋め込みます。
 
-< File name
-> ファイル名
-
 @ default file name
 < Images
 > 画像
@@ -2918,9 +3514,6 @@
 
 < Save PDF
 > PDFを保存
-
-< Pages
-> ページ
 
 < Capture page
 > ページを撮影
@@ -2996,9 +3589,6 @@
 < Another tune
 > 別の曲
 
-< Length
-> 長さ
-
 < {0} s
 > {0}秒
 
@@ -3019,9 +3609,6 @@
 
 < The music gets quieter while they play
 > 再生中は音楽の音量が下がります
-
-< Title
-> タイトル
 
 < Moments
 > 場面
@@ -3360,9 +3947,6 @@
 < Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
 > 劣化なし：ストリームはコピーされ、再エンコードされません。開始位置は直前のキーフレームに移動し（通常は1〜2秒未満）、終了位置は正確です。
 
-< Reading {0}…
-> {0}を読み込み中…
-
 < {0}: the duration couldn't be read.
 > {0}：長さを読み取れませんでした。
 
@@ -3520,9 +4104,6 @@
 
 < Fewer frames = much smaller GIF
 > フレームが少ないほど、GIFは大幅に小さくなります
-
-< Width
-> 幅
 
 < Height follows the video's shape
 > 高さは動画の縦横比に合わせて決まります
@@ -3777,6 +4358,12 @@
 < Paper size
 > 用紙サイズ
 
+< The printer says it has {0} paper loaded. Load {1} paper, or print on {0}.
+> プリンターには{0}用紙がセットされているようです。{1}用紙をセットするか、{0}に印刷してください。
+
+< Print on {0}
+> {0}に印刷
+
 < Paper type
 > 用紙の種類
 
@@ -3839,8 +4426,29 @@
 < Print on both sides of the paper
 > 用紙の両面に印刷
 
-< Select photos or PDFs to see the sheets
-> 写真またはPDFを選択すると、用紙の仕上がりが表示されます
+< Flip on short edge
+> 短辺で裏返す
+
+< Flip on long edge
+> 長辺で裏返す
+
+< calendars
+> カレンダー
+
+< books
+> 書籍
+
+< Last page first
+> 最終ページから印刷
+
+< This printer puts sheets face down, so they already stack in order
+> このプリンターは用紙を裏向きに排紙するため、すでに順番どおりに重なります
+
+< Sheets come out face up: printed last page first, the stack ends in order with page 1 on top
+> 用紙は表向きに排紙されます。最終ページから印刷されるため、1ページ目が一番上になり、順番どおりに重なります
+
+< Select photos, PDFs or documents to see the sheets
+> 写真、PDF、書類を選ぶと、用紙の並びを確認できます
 
 < Couldn't prepare the preview
 > プレビューを準備できませんでした
@@ -4161,6 +4769,10 @@
 < a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
 > の,と,で,に,を,は,が,や,も,へ,か,ら,て,た,し,い,る,っ,せ,す,べ,く,だ,さ,ね,よ,見,探,写,撮,表,示,検,索,全,部,一,緒,近,私,自,食
 
+@ search words meaning yourself (the phone's owner), separated by commas
+< me,myself
+> 私,自分,me
+
 < Upbeat
 > アップテンポ
 
@@ -4187,6 +4799,102 @@
 
 < Cinematic music
 > シネマティックな音楽
+
+< ({0} bytes of picture)
+> （{0}バイトの画像）
+
+< ({0} bytes)
+> （{0}バイト）
+
+< about {0} kbps (variable)
+> 約{0} kbps（可変）
+
+< (default)
+> （標準）
+
+< (Samsung's own data)
+> （Samsung独自のデータ）
+
+< (none)
+> （なし）
+
+< ({0} bytes, the camera maker's own data)
+> （{0}バイト、カメラメーカー独自のデータ）
+
+< ({0} bytes, a full-size JPEG copy of the picture)
+> （{0}バイト、画像の原寸JPEGコピー）
+
+< ({0} bytes, a smaller copy of the picture)
+> （{0}バイト、画像の小さなコピー）
+
+< The camera maker's own notes ({0} bytes) are listed but not read: each maker writes them its own way.
+> カメラメーカー独自のメモ（{0}バイト）は一覧表示されますが読み取られません。メーカーごとに書き方が異なるためです。
+
+< The JPEG file is damaged after {0} bytes.
+> JPEGファイルは{0}バイト以降が破損しています。
+
+< This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.
+> この画像には Content Credentials（C2PA）が含まれています。作成方法を記録した署名付きの記録で、ここでは読み取りません。
+
+< ({0} bytes: {1})
+> （{0}バイト: {1}）
+
+< ({0} more pictures inside: a preview, an HDR gain map, a depth map or the like)
+> 内部のほか {0} 枚の画像（プレビュー、HDRゲインマップ、深度マップなど）
+
+< The PNG file is damaged.
+> PNGファイルは破損しています。
+
+< The colour profile is damaged.
+> カラープロファイルが破損しています。
+
+< This document couldn't be read here: open it from the Files app instead.
+> この書類はここでは読み取れません。代わりに「ファイル」アプリから開いてください。
+
+< Part of the file couldn't be read: it may be damaged.
+> ファイルの一部を読み取れませんでした。破損している可能性があります。
+
+< Part of the file is too big to read on this phone.
+> ファイルの一部が大きすぎて、この端末では読み取れません。
+
+< (not recognised)
+> （認識できません）
+
+< The archive is damaged: only its first file's details were read.
+> アーカイブは破損しています。最初のファイルの詳細のみ読み取りました。
+
+< The document's own properties are damaged: only part of them was read.
+> 書類自体のプロパティが破損しています。一部のみ読み取りました。
+
+< (a picture of the first page)
+> （最初のページの画像）
+
+< The document's properties are damaged: only part of them was read.
+> 書類のプロパティが破損しています。一部のみ読み取りました。
+
+< The book's details are damaged: only part of them was read.
+> 書籍の詳細が破損しています。一部のみ読み取りました。
+
+< The file is damaged: its contents can't be unpacked.
+> ファイルが破損しているため、内容を展開できません。
+
+< The Word document's own details are damaged: only part of them was read.
+> Word文書自体の詳細が破損しています。一部のみ読み取りました。
+
+< This Office file is protected with a password: only the outer details can be read.
+> このOfficeファイルはパスワードで保護されています。外側の詳細のみ読み取れます。
+
+< (clipboard data)
+> （クリップボードのデータ）
+
+< This PDF is damaged: its document information couldn't be found.
+> このPDFは破損しています。文書情報が見つかりませんでした。
+
+< This PDF needs a password to open, so what's inside it can't be read.
+> このPDFを開くにはパスワードが必要なため、内容を読み取れません。
+
+< The XMP metadata is damaged: only part of it was read.
+> XMPメタデータが破損しています。一部のみ読み取りました。
 
 < Reading your photo library
 > 写真ライブラリを読み込み中
@@ -4324,9 +5032,6 @@
 
 < keeps the smallest copy
 > 最小のコピーを残す
-
-< Favourite
-> お気に入り
 
 < Person you keep
 > 残す人物
@@ -4942,6 +5647,9 @@
 < Shows documents instead of saving files, so it can't be a step of a stack
 > ファイルを保存せずにドキュメントを表示するため、スタックの1ステップにはできません
 
+< Shows a file's details instead of saving files, so it can't be a step of a stack
+> ファイルを保存せずに詳細を表示するため、スタックの一つの手順にはできません
+
 < Can't be part of a stack
 > スタックには含められません
 
@@ -5317,6 +6025,15 @@
 
 < Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
 > Wi-Fi上のプリンターに、写真やPDFを直接印刷します。Epson、HP、Canon、Brotherなど、AirPrint、Mopria、IPP Everywhereに対応したプリンターで、メーカーのアプリは不要です。用紙サイズと種類、フチなし、1枚に複数の写真、カラーまたは白黒、画質、部数を選べ、すべての用紙のプレビューも表示されます。アプリが通信するのは、同じネットワーク内のプリンターだけです。
+
+< Metadata viewer
+> メタデータビューアー
+
+< See everything a file says about you
+> ファイルがあなたについて示す情報をすべて見る
+
+< Shows every detail a file keeps about itself — where and when a photo was taken, the camera or phone, who wrote a document and who saved it, the programs used, hidden pictures inside — for photos, camera RAW files, videos, music, PDFs, Office files and more. A summary first tells you what the file reveals about you. Files are only read, on this phone.
+> ファイル自身が保持しているすべての詳細を表示します。写真の撮影場所と日時、カメラや端末、書類の作成者と保存者、使用されたプログラム、内部に隠された画像などを、写真、カメラRAWファイル、動画、音楽、PDF、Officeファイルなどについて表示します。まず概要で、このファイルがあなたについて明らかにする内容を示します。ファイルはこの端末内で読み取られるだけです。
 
 < Remove metadata
 > メタデータ削除
@@ -5786,9 +6503,6 @@
 < This file was made by a very old PowerPoint version, which this app can't read.
 > このファイルは非常に古いバージョンのPowerPointで作成されたもので、このアプリでは読み込めません。
 
-< The file is damaged: its contents can't be unpacked.
-> ファイルが破損しているため、内容を展開できません。
-
 < The file unpacks to far more data than it holds, so it wasn't opened.
 > このファイルは、格納されているデータよりはるかに大きなデータに展開されるため、開けませんでした。
 
@@ -5847,6 +6561,9 @@
 < This workbook is very large: only its first {0} cells are shown.
 > このブックは非常に大きいため、最初の{0}セルだけが表示されます。
 
+< {0} has nothing to print.
+> {0}には印刷するものがありません。
+
 < Printing {0} file on {1}
 < Printing {0} files on {1}
 > {1}で{0}個のファイルを印刷中
@@ -5862,6 +6579,12 @@
 
 < The printer couldn't be reached
 > プリンターに接続できませんでした
+
+< {0} isn't a document this app can print
+> {0}はこのアプリで印刷できる書類ではありません
+
+< {0} can't be printed: {1}
+> {0}は印刷できません: {1}
 
 < Not a printer address
 > プリンターのアドレスではありません
@@ -6773,9 +7496,6 @@
 < rock,rocks,cliff,cliffs,canyon,cave
 > 岩,いわ,岩場,岩山,岩石,石,崖,がけ,断崖,絶壁,渓谷,峡谷,キャニオン,洞窟,洞穴,ほら穴
 
-< City
-> 街
-
 < Places
 > 場所
 
@@ -6974,14 +7694,3 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > 音楽,ミュージック,楽器,がっき,楽器類,ドラム,ドラムス,太鼓,バイオリン,ヴァイオリン,ギター,ピアノ
-
-< Just now
-> たった今
-
-< {0} minute ago
-< {0} minutes ago
-> {0}分前
-
-< {0} hour ago
-< {0} hours ago
-> {0}時間前

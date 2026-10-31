@@ -844,7 +844,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 161 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 173 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -890,8 +890,18 @@ so updates install over each other; use your own key for a store release.
   samples) in every format they read — text, tables, pictures, notes, formulas, merged cells, slides,
   locked files saying so — and Excel's number formats as Excel shows them (rounding, General,
   sections and colours, dates and times, fractions, each language's separators and month names),
-  each case standing for a difference found against LibreOffice on 2.9 million real cells.
-* `app/src/roboTest` — 86 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+  each case standing for a difference found against LibreOffice on 2.9 million real cells. New in
+  1.12: the metadata readers on files made for the tests (a photo with a place south and west of
+  zero, an owner and a serial number; a PNG with XMP; videos with places in three different boxes;
+  songs with covers; PDFs protected with RC4 and AES-256, and one that needs a password; a Word file
+  with Office's hidden e-mail properties) and on the reader's real documents (the history of who
+  saved a Word 97 file and where, PowerPoint's last user, OpenDocument, EPUB and RTF properties), a
+  renamed file read by what it is, a shared file read through its channel with copies only for
+  documents, and 192 cut-off and damaged copies answering within 5 seconds; documents laid out on
+  their own page, fonts and spacing (the widths of Calibri, Cambria, Arial, Times New Roman and
+  Courier New), printing order (last page first, two-sided sheets kept together) and the paper
+  choice (remembered, else A4, else the printer's); and "me" in Gallery search.
+* `app/src/roboTest` — 95 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -929,7 +939,12 @@ so updates install over each other; use your own key for a store release.
   to end on real documents: opened from the tool, the system's file picker and another app's "Open
   with", Word text searched and zoomed, a spreadsheet's formula bar and cell search (.xlsx and .xls),
   slides from .pptx, .ppt and .odp drawn with their notes, PDF pages drawn and searched, the recent
-  list keeping a copy of a lent file, and locked and unknown files saying so.
+  list keeping a copy of a lent file, and locked and unknown files saying so; new in 1.12, the
+  metadata viewer end to end (picked with the system's picker, the summary of what a photo reveals,
+  every field, search, handing the photo to Remove metadata, a video's place, a Word file's e-mail
+  and save history, a locked PDF saying so), printing Word, Excel and PowerPoint files to the
+  simulated printer, and choosing "Me" and favourites in the Gallery (search, regrouping, merges,
+  and upgrading an older gallery).
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is

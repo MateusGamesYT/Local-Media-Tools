@@ -878,11 +878,11 @@
 < Choose files
 > Выберите файлы
 
-< Choose a photo or PDF
-> Выберите фото или PDF
+< Choose a photo, PDF or document
+> Выберите фото, PDF или документ
 
-< Choose photos or PDFs
-> Выберите фото или PDF
+< Choose photos, PDFs or documents
+> Выберите фото, PDF или документы
 
 < Select images
 > Выбрать изображения
@@ -902,8 +902,8 @@
 < Select files
 > Выбрать файлы
 
-< Select photos or PDFs
-> Выбрать фото или PDF
+< Select photos, PDFs or documents
+> Выбрать фото, PDF или документы
 
 < Select images to continue
 > Выберите изображения, чтобы продолжить
@@ -923,8 +923,8 @@
 < Select files to continue
 > Выберите файлы, чтобы продолжить
 
-< Select photos or PDFs to continue
-> Выберите фото или PDF, чтобы продолжить
+< Select photos, PDFs or documents to continue
+> Выберите фото, PDF или документы, чтобы продолжить
 
 < Select at least {0} image
 < Select at least {0} images
@@ -962,11 +962,11 @@
 > Выберите не менее {0} файлов
 > Выберите не менее {0} файлов
 
-< Select at least {0} photo or PDF
-< Select at least {0} photos or PDFs
-> Выберите не менее {0} фото или PDF
-> Выберите не менее {0} фото или PDF
-> Выберите не менее {0} фото или PDF
+< Select at least {0} photo, PDF or document
+< Select at least {0} photos, PDFs or documents
+> Выберите не меньше {0} фото, PDF или документ
+> Выберите не меньше {0} фото, PDF или документа
+> Выберите не меньше {0} фото, PDF или документов
 
 < {0} image selected
 < {0} images selected
@@ -1004,12 +1004,6 @@
 > Выбрано файлов: {0}
 > Выбрано файлов: {0}
 
-< {0} photo or PDF selected
-< {0} photos and PDFs selected
-> Выбрано фото и PDF: {0}
-> Выбрано фото и PDF: {0}
-> Выбрано фото и PDF: {0}
-
 < No images found in that folder.
 > В этой папке нет изображений.
 
@@ -1028,8 +1022,8 @@
 < No files found in that folder.
 > В этой папке нет файлов.
 
-< No photos or PDFs found in that folder.
-> В этой папке нет фото или PDF.
+< No photos, PDFs or documents found in that folder.
+> В этой папке не найдено ни фото, ни PDF, ни документов.
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -1055,8 +1049,8 @@
 < Not a photo, video, GIF or PDF
 > Это не фото, не видео, не GIF и не PDF
 
-< Not a photo or PDF
-> Это не фото и не PDF
+< Not a photo, PDF or document
+> Это не фото, не PDF и не документ
 
 < Use the GIF optimizer for GIFs
 > Для GIF используйте оптимизатор GIF
@@ -1198,6 +1192,9 @@
 
 < exif gps location privacy clean strip
 > exif gps местоположение приватность очистить удалить метаданные
+
+< exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
+> exif xmp iptc id3 теги свойства подробности info информация осмотреть проверить gps местоположение камера автор конфиденциальность
 
 < mp3 m4a sound music
 > mp3 m4a звук музыка аудио
@@ -1421,6 +1418,9 @@
 
 < App typography.
 > Шрифты приложения.
+
+< Showing and printing documents with the widths of Calibri, Cambria, Arial, Times New Roman and Courier New, so lines break as on a computer.
+> Показывает и печатает документы с шириной, как у шрифтов Calibri, Cambria, Arial, Times New Roman и Courier New, чтобы строки переносились, как на компьютере.
 
 < {0}: original
 > {0}: оригинал
@@ -1906,6 +1906,32 @@
 < Clear the list
 > Очистить список
 
+< Just now
+> Только что
+
+< {0} minute ago
+< {0} minutes ago
+> {0} минуту назад
+> {0} минуты назад
+> {0} минут назад
+
+< {0} hour ago
+< {0} hours ago
+> {0} час назад
+> {0} часа назад
+> {0} часов назад
+
+< Yesterday
+> Вчера
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> EEE, d MMM
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> d MMM yyyy
+
 < Remove {0} from the list
 > Убрать {0} из списка
 
@@ -1989,6 +2015,9 @@
 
 < File information
 > Сведения о файле
+
+< All metadata
+> Все метаданные
 
 < This slide has no speaker notes.
 > У этого слайда нет заметок докладчика.
@@ -2317,6 +2346,15 @@
 > Найдено лиц: {0} · с именами, без имён и отдельных
 > Найдено лиц: {0} · с именами, без имён и отдельных
 
+< Which one is you?
+> Кто из них вы?
+
+< You're listed first, and searching for "me" finds your photos
+> Вы в списке на первом месте, а поиск по слову «я» находит ваши фото
+
+< Not now
+> Не сейчас
+
 < Name people
 > Назвать людей
 
@@ -2343,6 +2381,9 @@
 
 < When the same person appears in several photos, they show up here so you can name them.
 > Когда один и тот же человек встречается на нескольких фото, он появляется здесь, и вы можете его назвать.
+
+< You and favourites
+> Вы и избранное
 
 < Add names
 > Добавить имена
@@ -2461,14 +2502,29 @@
 > {1}, {0} элемента
 > {1}, {0} элементов
 
+< Me
+> Я
+
+< Favourite
+> Избранное
+
 < Add name
 > Добавить имя
+
+< Me · {0}
+> Я · {0}
 
 < {1}, {0} photo
 < {1}, {0} photos
 > {1}, {0} фото
 > {1}, {0} фото
 > {1}, {0} фото
+
+< this is you
+> это вы
+
+< favourite
+> избранное
 
 @ date pattern: a short month and its year
 < MMM yyyy
@@ -2486,17 +2542,6 @@
 
 < Today
 > Сегодня
-
-< Yesterday
-> Вчера
-
-@ date pattern: a day this year, with its weekday
-< EEE, d MMM
-> EEE, d MMM
-
-@ date pattern: a day in another year
-< d MMM yyyy
-> d MMM yyyy
 
 < Video
 > Видео
@@ -2552,11 +2597,17 @@
 < Face
 > Лицо
 
+< This is me
+> Это я
+
 < Type a name, or tap Skip.
 > Введите имя или коснитесь «Пропустить».
 
 < Added to {0}
 > Добавлено к «{0}»
+
+< Marked as you. Type your name too, or tap Skip.
+> Отмечено как вы. Введите также своё имя или нажмите «Пропустить».
 
 < Everyone is named
 > У всех есть имена
@@ -2582,6 +2633,12 @@
 < Back to People
 > Назад к разделу «Люди»
 
+< Remove from favourites
+> Убрать из избранного
+
+< Add to favourites
+> Добавить в избранное
+
 < {0} photo or video
 < {0} photos and videos
 > Фото и видео: {0}
@@ -2593,6 +2650,9 @@
 > {0} лицо
 > {0} лица
 > {0} лиц
+
+< This is you
+> Это вы
 
 < Also {0}?
 > Это тоже {0}?
@@ -2609,6 +2669,18 @@
 < Yes, {0}
 > Да, это {0}
 
+< Removed from favourites
+> Убрано из избранного
+
+< Added to favourites
+> Добавлено в избранное
+
+< Marked as you. Search for "me" to find your photos.
+> Отмечено как вы. Выполните поиск по слову «я», чтобы найти ваши фото.
+
+< No longer marked as you
+> Больше не отмечено как вы
+
 < Merge with {0}?
 > Объединить с «{0}»?
 
@@ -2620,6 +2692,9 @@
 
 < Rename
 > Переименовать
+
+< This isn't me
+> Это не я
 
 < Merge with…
 > Объединить с…
@@ -2725,6 +2800,537 @@
 
 < Play video
 > Воспроизвести видео
+
+< Where it was made
+> Где это сделано
+
+< Who made it or owns it
+> Кто это сделал или кому это принадлежит
+
+< The camera, phone or computer
+> Камера, телефон или компьютер
+
+< When it was made or changed
+> Когда это было создано или изменено
+
+< The programs used
+> Использованные программы
+
+< Numbers that link it to other files
+> Номера, которые связывают его с другими файлами
+
+< Pictures hidden inside
+> Скрытые внутри изображения
+
+< Written descriptions, comments and keywords
+> Текстовые описания, комментарии и ключевые слова
+
+< {0} picture
+> {0} изобр.
+
+< {0} camera RAW photo
+> {0} RAW-фото с камеры
+
+< {0} video
+> {0} видео
+
+< {0} audio
+> {0} аудио
+
+< PDF document
+> Документ PDF
+
+< Word document
+> Документ Word
+
+< Excel workbook
+> Книга Excel
+
+< PowerPoint presentation
+> Презентация PowerPoint
+
+< OpenDocument file
+> Файл OpenDocument
+
+< E-book
+> Электронная книга
+
+< ZIP archive
+> Архив ZIP
+
+< Photoshop file
+> Файл Photoshop
+
+< File
+> Файл
+
+< Worked out from the fields above
+> Вычислено по полям выше
+
+< Main picture (EXIF)
+> Основное изображение (EXIF)
+
+< Camera settings (EXIF)
+> Настройки камеры (EXIF)
+
+< Location (GPS)
+> Местоположение (GPS)
+
+< Compatibility (EXIF)
+> Совместимость (EXIF)
+
+< Thumbnail (EXIF)
+> Миниатюра (EXIF)
+
+< Other pictures inside (EXIF)
+> Другие изображения внутри (EXIF)
+
+< Captions and credits (IPTC)
+> Подписи и авторство (IPTC)
+
+< Colour profile
+> Цветовой профиль
+
+< Pictures inside (MPF)
+> Изображения внутри (MPF)
+
+< Video file
+> Видеофайл
+
+< Track {0}
+> Дорожка {0}
+
+< Tags
+> Теги
+
+< Song tags (ID3)
+> Теги песни (ID3)
+
+< Song tags
+> Теги песни
+
+< Sound
+> Звук
+
+< Document properties
+> Свойства документа
+
+< Yes
+> Да
+
+< No
+> Нет
+
+< (UTC)
+> (UTC)
+
+< File name
+> Имя файла
+
+< File size
+> Размер файла
+
+< Changed on this phone
+> Изменён на этом телефоне
+
+< Kind of file
+> Тип файла
+
+< Media type
+> Тип медиа
+
+< Picture size
+> Размер изображения
+
+< Megapixels
+> Мегапиксели
+
+< Width
+> Ширина
+
+< Height
+> Высота
+
+< Camera maker
+> Производитель камеры
+
+< Camera model
+> Модель камеры
+
+< Lens maker
+> Производитель объектива
+
+< Lens
+> Объектив
+
+< Serial number
+> Серийный номер
+
+< Camera serial number
+> Серийный номер камеры
+
+< Lens serial number
+> Серийный номер объектива
+
+< Owner
+> Владелец
+
+< Artist
+> Художник
+
+< Copyright
+> Авторские права
+
+< Software
+> Программа
+
+< Taken
+> Снято
+
+< Created
+> Создано
+
+< Changed
+> Изменено
+
+< Time zone when taken
+> Часовой пояс при съёмке
+
+< Time zone
+> Часовой пояс
+
+< Latitude
+> Широта
+
+< Longitude
+> Долгота
+
+< Position
+> Положение
+
+< Altitude
+> Высота над уровнем моря
+
+< GPS date
+> Дата GPS
+
+< GPS time (UTC)
+> Время GPS (UTC)
+
+< Facing direction
+> Направление камеры
+
+< Speed
+> Скорость
+
+< Location
+> Местоположение
+
+< Shutter speed
+> Выдержка
+
+< Aperture
+> Диафрагма
+
+< ISO
+> ISO
+
+< Focal length
+> Фокусное расстояние
+
+< Focal length (35 mm equivalent)
+> Фокусное расстояние (эквивалент 35 мм)
+
+< Flash
+> Вспышка
+
+< White balance
+> Баланс белого
+
+< Orientation
+> Ориентация
+
+< Description
+> Описание
+
+< Comment
+> Комментарий
+
+< Comments
+> Комментарии
+
+< Picture ID
+> ID изображения
+
+< Title
+> Заголовок
+
+< Author
+> Автор
+
+< Creator
+> Создатель
+
+< Last saved by
+> Кто последний сохранил
+
+< Company
+> Компания
+
+< Manager
+> Руководитель
+
+< Keywords
+> Ключевые слова
+
+< Subject
+> Тема
+
+< Length
+> Длительность
+
+< Frame rate
+> Частота кадров
+
+< Average bit rate
+> Средний битрейт
+
+< Bit rate
+> Битрейт
+
+< Sample rate
+> Частота дискретизации
+
+< Channels
+> Каналы
+
+< Album
+> Альбом
+
+< Album artist
+> Исполнитель альбома
+
+< Genre
+> Жанр
+
+< Year
+> Год
+
+< Track
+> Дорожка
+
+< Composer
+> Композитор
+
+< Pages
+> Страницы
+
+< Words
+> Текст песни
+
+< Made by (program)
+> Создано (программой)
+
+< Made with
+> Создано в
+
+< Protection
+> Защита
+
+< Allowed
+> Разрешено
+
+< Rotation
+> Поворот
+
+< City
+> Город
+
+< Country
+> Страна
+
+< State or province
+> Регион или область
+
+< Place
+> Место
+
+< Headline
+> Заголовок
+
+< Caption
+> Подпись
+
+< By
+> Автор
+
+< Credit
+> Источник
+
+< Small copy of the picture
+> Уменьшенная копия изображения
+
+< Preview picture
+> Изображение для предпросмотра
+
+< Full-size JPEG copy
+> Полная копия JPEG
+
+< Cover picture
+> Обложка
+
+< Editing time
+> Время редактирования
+
+< Revisions
+> Правки
+
+< Template
+> Шаблон
+
+< Application
+> Приложение
+
+< Last printed
+> Последняя печать
+
+< Saved by (with the file's folder)
+> Сохранено (с папкой файла)
+
+< Comments written by
+> Комментарии, написанные
+
+< Last opened by
+> Последнее открытие
+
+< Author's e-mail
+> Эл. почта автора
+
+< Author's name (e-mail)
+> Имя автора (эл. почта)
+
+< E-mail subject
+> Тема письма
+
+< Computer
+> Компьютер
+
+< Phone model
+> Модель телефона
+
+< Phone maker
+> Производитель телефона
+
+< Android version
+> Версия Android
+
+< XMP written by
+> XMP записан
+
+< Document ID
+> ID документа
+
+< Instance ID
+> ID экземпляра
+
+< Original document ID
+> Исходный ID документа
+
+< Rating
+> Оценка
+
+< Colour space
+> Цветовое пространство
+
+< First author
+> Первый автор
+
+< Encoder
+> Кодировщик
+
+< Encoded by
+> Закодировано
+
+< Links
+> Ссылки
+
+< Link base
+> Базовый адрес ссылок
+
+< Pictures inside
+> Изображения внутри
+
+< Kind of picture
+> Тип изображения
+
+< Camera maker's notes
+> Заметки производителя камеры
+
+< Also from the gallery (Open in a tool) and from the file reader's menu.
+> Также из галереи (Открыть в инструменте) и из меню просмотра файлов.
+
+< Files are read on this phone and never uploaded. The viewer only reads them: nothing is changed.
+> Файлы читаются на этом телефоне и никогда не загружаются. Просмотрщик только читает их: ничего не меняется.
+
+< Reading {0}…
+> Чтение {0}…
+
+< This file can't be read: {0}
+> Не удаётся прочитать этот файл: {0}
+
+< Choose another file
+> Выберите другой файл
+
+< Search the fields
+> Поиск по полям
+
+< What this file tells others
+> Что этот файл рассказывает другим
+
+< Nothing personal: no place, names, device, dates or hidden pictures were found, only technical details.
+> Ничего личного: место, имена, устройство, даты и скрытые изображения не найдены, только технические сведения.
+
+< {0} kind of personal detail. Anyone you send this file to can read it.
+< {0} kinds of personal details. Anyone you send this file to can read them.
+> {0} вид личных данных. Любой, кому вы отправите этот файл, сможет их прочитать.
+> {0} вида личных данных. Любой, кому вы отправите этот файл, сможет их прочитать.
+> {0} видов личных данных. Любой, кому вы отправите этот файл, сможет их прочитать.
+
+< and {0} more
+> и ещё {0}
+
+< Open in a maps app
+> Открыть в приложении карт
+
+< Make a copy without them
+> Сделать копию без них
+
+< No field matches “{0}”.
+> Нет полей, совпадающих с «{0}».
+
+< Only the first {0} fields are listed: search to find the others.
+> Показаны только первые {0} полей: найдите остальные с помощью поиска.
+
+< Stored as {0}
+> Сохранено как {0}
+
+< Bare value: {0}
+> Необработанное значение: {0}
+
+< Copied.
+> Скопировано.
+
+< Where this file was made
+> Где был создан этот файл
+
+< Opening it starts your maps app; this app itself never connects to the internet.
+> При открытии запускается ваше приложение карт; сама эта программа никогда не подключается к интернету.
+
+< Copy all fields
+> Скопировать все поля
+
+< Share as text
+> Поделиться текстом
 
 < Preview
 > Предпросмотр
@@ -2954,9 +3560,6 @@
 < 0 keeps the original width
 > 0 сохраняет исходную ширину
 
-< Frame rate
-> Частота кадров
-
 < 0 keeps the original timing; lower drops frames
 > 0 сохраняет исходный тайминг; меньшее значение отбрасывает кадры
 
@@ -3057,9 +3660,6 @@
 < Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
 > «Оригинал» встраивает фото JPEG байт в байт, а остальные изображения — без потерь. «Компактно» уменьшает их до разрешения печати (300 DPI на A4) в формате JPEG.
 
-< File name
-> Имя файла
-
 @ default file name
 < Images
 > Изображения
@@ -3082,9 +3682,6 @@
 
 < Save PDF
 > Сохранить PDF
-
-< Pages
-> Страницы
 
 < Capture page
 > Снять страницу
@@ -3162,9 +3759,6 @@
 < Another tune
 > Другая мелодия
 
-< Length
-> Длительность
-
 < {0} s
 > {0} с
 
@@ -3185,9 +3779,6 @@
 
 < The music gets quieter while they play
 > Музыка становится тише, пока они воспроизводятся
-
-< Title
-> Заголовок
 
 < Moments
 > Моменты
@@ -3534,9 +4125,6 @@
 < Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
 > Без потерь: потоки копируются, а не перекодируются. Начало сдвигается на ближайший предыдущий ключевой кадр (обычно меньше секунды-двух); конец точный.
 
-< Reading {0}…
-> Чтение {0}…
-
 < {0}: the duration couldn't be read.
 > {0}: не удалось прочитать длительность.
 
@@ -3698,9 +4286,6 @@
 
 < Fewer frames = much smaller GIF
 > Меньше кадров = гораздо меньше GIF
-
-< Width
-> Ширина
 
 < Height follows the video's shape
 > Высота определяется формой видео
@@ -3961,6 +4546,12 @@
 < Paper size
 > Формат бумаги
 
+< The printer says it has {0} paper loaded. Load {1} paper, or print on {0}.
+> Принтер сообщает, что в нём загружена бумага {0}. Загрузите бумагу {1} или печатайте на {0}.
+
+< Print on {0}
+> Печать на {0}
+
 < Paper type
 > Тип бумаги
 
@@ -4025,8 +4616,29 @@
 < Print on both sides of the paper
 > Печать на обеих сторонах бумаги
 
-< Select photos or PDFs to see the sheets
-> Выберите фото или PDF, чтобы увидеть листы
+< Flip on short edge
+> Переворот по короткой стороне
+
+< Flip on long edge
+> Переворот по длинной стороне
+
+< calendars
+> календари
+
+< books
+> книги
+
+< Last page first
+> Сначала последняя страница
+
+< This printer puts sheets face down, so they already stack in order
+> Этот принтер выводит листы лицевой стороной вниз, поэтому они уже лежат по порядку
+
+< Sheets come out face up: printed last page first, the stack ends in order with page 1 on top
+> Листы выходят лицевой стороной вверх: сначала печатается последняя страница, и стопка заканчивается по порядку, со страницей 1 сверху
+
+< Select photos, PDFs or documents to see the sheets
+> Выберите фото, PDF или документы, чтобы увидеть листы
 
 < Couldn't prepare the preview
 > Не удалось подготовить предпросмотр
@@ -4363,6 +4975,10 @@
 < a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
 > и,а,но,в,во,на,с,со,от,до,из,у,к,ко,по,за,для,про,под,над,при,без,о,об,обо,около,вместе,мой,моя,моё,мои,моих,наш,наша,наши,покажи,покажите,показать,найди,найти,поиск,искать,все,всё,некоторые,где,есть,был,была,были,было,или,оба,кто,что,который,которая,которые,снятые,снятое,снятый,сделанные,рядом,возле
 
+@ search words meaning yourself (the phone's owner), separated by commas
+< me,myself
+> я,себя,сам,me
+
 < Upbeat
 > Бодрая
 
@@ -4389,6 +5005,102 @@
 
 < Cinematic music
 > Кинематографичная музыка
+
+< ({0} bytes of picture)
+> ({0} байт изображения)
+
+< ({0} bytes)
+> ({0} байт)
+
+< about {0} kbps (variable)
+> около {0} kbps (переменный)
+
+< (default)
+> (по умолчанию)
+
+< (Samsung's own data)
+> (собственные данные Samsung)
+
+< (none)
+> (нет)
+
+< ({0} bytes, the camera maker's own data)
+> ({0} байт, собственные данные производителя камеры)
+
+< ({0} bytes, a full-size JPEG copy of the picture)
+> ({0} байт, полная копия изображения в JPEG)
+
+< ({0} bytes, a smaller copy of the picture)
+> ({0} байт, уменьшенная копия изображения)
+
+< The camera maker's own notes ({0} bytes) are listed but not read: each maker writes them its own way.
+> Собственные заметки производителя камеры ({0} байт) перечислены, но не читаются: каждый производитель записывает их по-своему.
+
+< The JPEG file is damaged after {0} bytes.
+> Файл JPEG повреждён после {0} байт.
+
+< This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.
+> Это изображение содержит Content Credentials (C2PA), подписанную запись о том, как оно было создано; здесь она не читается.
+
+< ({0} bytes: {1})
+> ({0} байт: {1})
+
+< ({0} more pictures inside: a preview, an HDR gain map, a depth map or the like)
+> ({0} ещё изображений внутри: превью, карта усиления HDR, карта глубины или что-то подобное)
+
+< The PNG file is damaged.
+> Файл PNG повреждён.
+
+< The colour profile is damaged.
+> Цветовой профиль повреждён.
+
+< This document couldn't be read here: open it from the Files app instead.
+> Этот документ здесь не удаётся прочитать: откройте его в приложении «Файлы».
+
+< Part of the file couldn't be read: it may be damaged.
+> Часть файла не удалось прочитать: возможно, он повреждён.
+
+< Part of the file is too big to read on this phone.
+> Часть файла слишком большая для чтения на этом телефоне.
+
+< (not recognised)
+> (не распознано)
+
+< The archive is damaged: only its first file's details were read.
+> Архив повреждён: прочитаны только сведения о его первом файле.
+
+< The document's own properties are damaged: only part of them was read.
+> Собственные свойства документа повреждены: прочитана только их часть.
+
+< (a picture of the first page)
+> (изображение первой страницы)
+
+< The document's properties are damaged: only part of them was read.
+> Свойства документа повреждены: прочитана только их часть.
+
+< The book's details are damaged: only part of them was read.
+> Сведения о книге повреждены: прочитана только их часть.
+
+< The file is damaged: its contents can't be unpacked.
+> Файл повреждён: его содержимое не удаётся распаковать.
+
+< The Word document's own details are damaged: only part of them was read.
+> Собственные сведения документа Word повреждены: прочитана только их часть.
+
+< This Office file is protected with a password: only the outer details can be read.
+> Этот файл Office защищён паролем: можно прочитать только внешние сведения.
+
+< (clipboard data)
+> (данные буфера обмена)
+
+< This PDF is damaged: its document information couldn't be found.
+> Этот PDF повреждён: сведения о документе не найдены.
+
+< This PDF needs a password to open, so what's inside it can't be read.
+> Для открытия этого PDF нужен пароль, поэтому его содержимое не читается.
+
+< The XMP metadata is damaged: only part of it was read.
+> Метаданные XMP повреждены: прочитана только их часть.
 
 < Reading your photo library
 > Чтение вашей библиотеки фото
@@ -4526,9 +5238,6 @@
 
 < keeps the smallest copy
 > оставляет самую маленькую копию
-
-< Favourite
-> Избранное
 
 < Person you keep
 > Человек, которого вы оставляете
@@ -5226,6 +5935,9 @@
 < Shows documents instead of saving files, so it can't be a step of a stack
 > Показывает документы вместо сохранения файлов, поэтому не может быть шагом цепочки
 
+< Shows a file's details instead of saving files, so it can't be a step of a stack
+> Показывает сведения о файле вместо сохранения файлов, поэтому не может быть шагом в стопке
+
 < Can't be part of a stack
 > Не может быть частью цепочки
 
@@ -5603,6 +6315,15 @@
 
 < Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
 > Печатает фото и PDF прямо на принтере в вашей сети Wi-Fi — Epson, HP, Canon, Brother и другие, поддерживающие AirPrint, Mopria или IPP Everywhere, — без приложения производителя принтера. Выберите формат и тип бумаги, печать без полей, несколько фото на листе, цвет или чёрно-белое, качество и копии, с предпросмотром каждого листа. Приложение общается только с принтером в вашей собственной сети.
+
+< Metadata viewer
+> Просмотр метаданных
+
+< See everything a file says about you
+> Посмотрите, что файл рассказывает о вас
+
+< Shows every detail a file keeps about itself — where and when a photo was taken, the camera or phone, who wrote a document and who saved it, the programs used, hidden pictures inside — for photos, camera RAW files, videos, music, PDFs, Office files and more. A summary first tells you what the file reveals about you. Files are only read, on this phone.
+> Показывает каждую подробность, которую файл хранит о себе: где и когда было сделано фото, камеру или телефон, кто написал документ и кто его сохранил, использованные программы, скрытые внутри изображения — для фото, RAW-файлов с камер, видео, музыки, PDF, файлов Office и других. Сначала сводка показывает, что файл раскрывает о вас. Файлы только читаются, на этом телефоне.
 
 < Remove metadata
 > Удаление метаданных
@@ -6102,9 +6823,6 @@
 < This file was made by a very old PowerPoint version, which this app can't read.
 > Этот файл создан очень старой версией PowerPoint, которую это приложение не может прочитать.
 
-< The file is damaged: its contents can't be unpacked.
-> Файл повреждён: его содержимое не удаётся распаковать.
-
 < The file unpacks to far more data than it holds, so it wasn't opened.
 > Файл распаковывается в гораздо больший объём данных, поэтому он не открыт.
 
@@ -6173,6 +6891,9 @@
 < This workbook is very large: only its first {0} cells are shown.
 > Эта книга очень большая: показаны только первые {0} ячеек.
 
+< {0} has nothing to print.
+> {0}: нечего печатать.
+
 < Printing {0} file on {1}
 < Printing {0} files on {1}
 > Печать файлов: {0} на {1}
@@ -6190,6 +6911,12 @@
 
 < The printer couldn't be reached
 > Не удалось связаться с принтером
+
+< {0} isn't a document this app can print
+> {0} — не документ, который может напечатать это приложение
+
+< {0} can't be printed: {1}
+> {0} не удаётся напечатать: {1}
 
 < Not a printer address
 > Это не адрес принтера
@@ -7105,9 +7832,6 @@
 < rock,rocks,cliff,cliffs,canyon,cave
 > скала,скалы,скал,утёс,утесы,каньон,пещера,камни
 
-< City
-> Город
-
 < Places
 > Места
 
@@ -7306,18 +8030,3 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > музыка,музыкальный инструмент,инструменты,барабаны,скрипка,орган,оркестр
-
-< Just now
-> Только что
-
-< {0} minute ago
-< {0} minutes ago
-> {0} минуту назад
-> {0} минуты назад
-> {0} минут назад
-
-< {0} hour ago
-< {0} hours ago
-> {0} час назад
-> {0} часа назад
-> {0} часов назад

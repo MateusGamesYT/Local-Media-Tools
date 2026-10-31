@@ -154,6 +154,14 @@ class UiSmokeTest {
                 assertTrue("back to home after $t", visibleTop(a) is MainShell)
                 continue
             }
+            if (t == ToolId.METADATA) {
+                assertTrue(visibleTop(a) is com.localmediatools.ui.meta.MetadataScreen)
+                render(a)
+                assertTrue(texts(a).any { it == "Choose a file" })
+                @Suppress("DEPRECATION") a.onBackPressed(); idle()
+                assertTrue("back to home after $t", visibleTop(a) is MainShell)
+                continue
+            }
             if (t == ToolId.DUPLICATES) {
                 assertTrue(visibleTop(a) is com.localmediatools.ui.DuplicatesScreen)
                 render(a)

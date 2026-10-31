@@ -861,11 +861,11 @@
 < Choose files
 > Elige archivos
 
-< Choose a photo or PDF
-> Elige una foto o un PDF
+< Choose a photo, PDF or document
+> Elige una foto, un PDF o un documento
 
-< Choose photos or PDFs
-> Elige fotos o PDF
+< Choose photos, PDFs or documents
+> Elige fotos, PDF o documentos
 
 < Select images
 > Selecciona imágenes
@@ -885,8 +885,8 @@
 < Select files
 > Selecciona archivos
 
-< Select photos or PDFs
-> Selecciona fotos o PDF
+< Select photos, PDFs or documents
+> Selecciona fotos, PDF o documentos
 
 < Select images to continue
 > Selecciona imágenes para continuar
@@ -906,8 +906,8 @@
 < Select files to continue
 > Selecciona archivos para continuar
 
-< Select photos or PDFs to continue
-> Selecciona fotos o PDF para continuar
+< Select photos, PDFs or documents to continue
+> Selecciona fotos, PDF o documentos para continuar
 
 < Select at least {0} image
 < Select at least {0} images
@@ -939,10 +939,10 @@
 > Selecciona al menos {0} archivo
 > Selecciona al menos {0} archivos
 
-< Select at least {0} photo or PDF
-< Select at least {0} photos or PDFs
-> Selecciona al menos {0} foto o PDF
-> Selecciona al menos {0} fotos o PDF
+< Select at least {0} photo, PDF or document
+< Select at least {0} photos, PDFs or documents
+> Selecciona al menos {0} foto, PDF o documento
+> Selecciona al menos {0} fotos, PDF o documentos
 
 < {0} image selected
 < {0} images selected
@@ -974,11 +974,6 @@
 > {0} archivo seleccionado
 > {0} archivos seleccionados
 
-< {0} photo or PDF selected
-< {0} photos and PDFs selected
-> {0} foto o PDF seleccionado
-> {0} fotos y PDF seleccionados
-
 < No images found in that folder.
 > No se encontraron imágenes en esa carpeta.
 
@@ -997,8 +992,8 @@
 < No files found in that folder.
 > No se encontraron archivos en esa carpeta.
 
-< No photos or PDFs found in that folder.
-> No se encontraron fotos ni PDF en esa carpeta.
+< No photos, PDFs or documents found in that folder.
+> No se encontraron fotos, PDF ni documentos en esa carpeta.
 
 < {0} RAW file ({1}) can't be saved in its own format by {2}, so it will be saved as a lossless PNG, like the other files. The original stays as it is.
 < {0} RAW files ({1}) can't be saved in their own format by {2}, so they will be saved as lossless PNGs, like the other files. The originals stay as they are.
@@ -1022,8 +1017,8 @@
 < Not a photo, video, GIF or PDF
 > No es una foto, un vídeo, un GIF ni un PDF
 
-< Not a photo or PDF
-> No es una foto ni un PDF
+< Not a photo, PDF or document
+> No es una foto, un PDF ni un documento
 
 < Use the GIF optimizer for GIFs
 > Usa el optimizador de GIF para los GIF
@@ -1161,6 +1156,9 @@
 
 < exif gps location privacy clean strip
 > exif gps ubicación privacidad limpiar quitar metadatos
+
+< exif xmp iptc id3 tags properties details info information inspect check gps location camera author privacy
+> exif xmp iptc id3 etiquetas propiedades detalles info información inspeccionar comprobar gps ubicación cámara autor privacidad
 
 < mp3 m4a sound music
 > mp3 m4a sonido música audio
@@ -1380,6 +1378,9 @@
 
 < App typography.
 > Tipografía de la app.
+
+< Showing and printing documents with the widths of Calibri, Cambria, Arial, Times New Roman and Courier New, so lines break as on a computer.
+> Muestra e imprime documentos con los anchos de Calibri, Cambria, Arial, Times New Roman y Courier New, para que las líneas se corten igual que en un ordenador.
 
 < {0}: original
 > {0}: original
@@ -1856,6 +1857,30 @@
 < Clear the list
 > Vaciar la lista
 
+< Just now
+> Ahora mismo
+
+< {0} minute ago
+< {0} minutes ago
+> Hace {0} minuto
+> Hace {0} minutos
+
+< {0} hour ago
+< {0} hours ago
+> Hace {0} hora
+> Hace {0} horas
+
+< Yesterday
+> Ayer
+
+@ date pattern: a day this year, with its weekday
+< EEE, d MMM
+> EEE, d MMM
+
+@ date pattern: a day in another year
+< d MMM yyyy
+> d MMM yyyy
+
 < Remove {0} from the list
 > Quitar {0} de la lista
 
@@ -1939,6 +1964,9 @@
 
 < File information
 > Información del archivo
+
+< All metadata
+> Todos los metadatos
 
 < This slide has no speaker notes.
 > Esta diapositiva no tiene notas del orador.
@@ -2257,6 +2285,15 @@
 > {0} cara encontrada · con nombre, sin nombre y sin agrupar
 > {0} caras encontradas · con nombre, sin nombre y sin agrupar
 
+< Which one is you?
+> ¿Cuál de estos eres tú?
+
+< You're listed first, and searching for "me" finds your photos
+> Apareces primero, y buscar "yo" encuentra tus fotos
+
+< Not now
+> Ahora no
+
 < Name people
 > Poner nombre a las personas
 
@@ -2281,6 +2318,9 @@
 
 < When the same person appears in several photos, they show up here so you can name them.
 > Cuando la misma persona sale en varias fotos, aparece aquí para que le pongas nombre.
+
+< You and favourites
+> Tú y favoritas
 
 < Add names
 > Añadir nombres
@@ -2396,13 +2436,28 @@
 > {1}, {0} elemento
 > {1}, {0} elementos
 
+< Me
+> Yo
+
+< Favourite
+> Favorita
+
 < Add name
 > Añadir nombre
+
+< Me · {0}
+> Yo · {0}
 
 < {1}, {0} photo
 < {1}, {0} photos
 > {1}, {0} foto
 > {1}, {0} fotos
+
+< this is you
+> eres tú
+
+< favourite
+> favorita
 
 @ date pattern: a short month and its year
 < MMM yyyy
@@ -2419,17 +2474,6 @@
 
 < Today
 > Hoy
-
-< Yesterday
-> Ayer
-
-@ date pattern: a day this year, with its weekday
-< EEE, d MMM
-> EEE, d MMM
-
-@ date pattern: a day in another year
-< d MMM yyyy
-> d MMM yyyy
 
 < Video
 > Vídeo
@@ -2483,11 +2527,17 @@
 < Face
 > Cara
 
+< This is me
+> Soy yo
+
 < Type a name, or tap Skip.
 > Escribe un nombre o toca Omitir.
 
 < Added to {0}
 > Añadida a {0}
+
+< Marked as you. Type your name too, or tap Skip.
+> Marcado como tú. Escribe también tu nombre, o toca Omitir.
 
 < Everyone is named
 > Todas tienen nombre
@@ -2511,6 +2561,12 @@
 < Back to People
 > Volver a Personas
 
+< Remove from favourites
+> Quitar de favoritas
+
+< Add to favourites
+> Añadir a favoritas
+
 < {0} photo or video
 < {0} photos and videos
 > {0} foto o vídeo
@@ -2520,6 +2576,9 @@
 < {0} faces
 > {0} cara
 > {0} caras
+
+< This is you
+> Eres tú
 
 < Also {0}?
 > ¿Es también {0}?
@@ -2536,6 +2595,18 @@
 < Yes, {0}
 > Sí, es {0}
 
+< Removed from favourites
+> Quitado de favoritas
+
+< Added to favourites
+> Añadido a favoritas
+
+< Marked as you. Search for "me" to find your photos.
+> Marcado como tú. Busca "yo" para encontrar tus fotos.
+
+< No longer marked as you
+> Ya no está marcado como tú
+
 < Merge with {0}?
 > ¿Combinar con {0}?
 
@@ -2547,6 +2618,9 @@
 
 < Rename
 > Cambiar nombre
+
+< This isn't me
+> Esto no soy yo
 
 < Merge with…
 > Combinar con…
@@ -2650,6 +2724,536 @@
 
 < Play video
 > Reproducir vídeo
+
+< Where it was made
+> Dónde se hizo
+
+< Who made it or owns it
+> Quién lo hizo o quién es su propietario
+
+< The camera, phone or computer
+> La cámara, el teléfono o el ordenador
+
+< When it was made or changed
+> Cuándo se hizo o se cambió
+
+< The programs used
+> Los programas usados
+
+< Numbers that link it to other files
+> Números que lo vinculan a otros archivos
+
+< Pictures hidden inside
+> Imágenes ocultas dentro
+
+< Written descriptions, comments and keywords
+> Descripciones escritas, comentarios y palabras clave
+
+< {0} picture
+> {0} imagen
+
+< {0} camera RAW photo
+> {0} foto RAW de cámara
+
+< {0} video
+> {0} vídeo
+
+< {0} audio
+> {0} audio
+
+< PDF document
+> Documento PDF
+
+< Word document
+> Documento de Word
+
+< Excel workbook
+> Libro de Excel
+
+< PowerPoint presentation
+> Presentación de PowerPoint
+
+< OpenDocument file
+> Archivo OpenDocument
+
+< E-book
+> E-book
+
+< ZIP archive
+> Archivo ZIP
+
+< Photoshop file
+> Archivo de Photoshop
+
+< File
+> Archivo
+
+< Worked out from the fields above
+> Calculado a partir de los campos anteriores
+
+< Main picture (EXIF)
+> Imagen principal (EXIF)
+
+< Camera settings (EXIF)
+> Ajustes de la cámara (EXIF)
+
+< Location (GPS)
+> Ubicación (GPS)
+
+< Compatibility (EXIF)
+> Compatibilidad (EXIF)
+
+< Thumbnail (EXIF)
+> Miniatura (EXIF)
+
+< Other pictures inside (EXIF)
+> Otras imágenes internas (EXIF)
+
+< Captions and credits (IPTC)
+> Pies de foto y créditos (IPTC)
+
+< Colour profile
+> Perfil de color
+
+< Pictures inside (MPF)
+> Imágenes internas (MPF)
+
+< Video file
+> Archivo de vídeo
+
+< Track {0}
+> Pista {0}
+
+< Tags
+> Etiquetas
+
+< Song tags (ID3)
+> Etiquetas de la canción (ID3)
+
+< Song tags
+> Etiquetas de la canción
+
+< Sound
+> Sonido
+
+< Document properties
+> Propiedades del documento
+
+< Yes
+> Sí
+
+< No
+> No
+
+< (UTC)
+> (UTC)
+
+< File name
+> Nombre del archivo
+
+< File size
+> Tamaño del archivo
+
+< Changed on this phone
+> Cambiado en este teléfono
+
+< Kind of file
+> Tipo de archivo
+
+< Media type
+> Tipo de medio
+
+< Picture size
+> Tamaño de la imagen
+
+< Megapixels
+> Megapíxeles
+
+< Width
+> Ancho
+
+< Height
+> Altura
+
+< Camera maker
+> Fabricante de la cámara
+
+< Camera model
+> Modelo de la cámara
+
+< Lens maker
+> Fabricante del objetivo
+
+< Lens
+> Objetivo
+
+< Serial number
+> Número de serie
+
+< Camera serial number
+> Número de serie de la cámara
+
+< Lens serial number
+> Número de serie del objetivo
+
+< Owner
+> Propietario
+
+< Artist
+> Artista
+
+< Copyright
+> Copyright
+
+< Software
+> Software
+
+< Taken
+> Tomada
+
+< Created
+> Creado
+
+< Changed
+> Modificado
+
+< Time zone when taken
+> Zona horaria de la toma
+
+< Time zone
+> Zona horaria
+
+< Latitude
+> Latitud
+
+< Longitude
+> Longitud
+
+< Position
+> Posición
+
+< Altitude
+> Altitud
+
+< GPS date
+> Fecha GPS
+
+< GPS time (UTC)
+> Hora GPS (UTC)
+
+< Facing direction
+> Dirección de la cámara
+
+< Speed
+> Velocidad
+
+< Location
+> Ubicación
+
+< Shutter speed
+> Velocidad de obturación
+
+< Aperture
+> Apertura
+
+< ISO
+> ISO
+
+< Focal length
+> Distancia focal
+
+< Focal length (35 mm equivalent)
+> Distancia focal (equivalente a 35 mm)
+
+< Flash
+> Flash
+
+< White balance
+> Balance de blancos
+
+< Orientation
+> Orientación
+
+< Description
+> Descripción
+
+< Comment
+> Comentario
+
+< Comments
+> Comentarios
+
+< Picture ID
+> ID de la imagen
+
+< Title
+> Título
+
+< Author
+> Autor
+
+< Creator
+> Creador
+
+< Last saved by
+> Último guardado por
+
+< Company
+> Empresa
+
+< Manager
+> Responsable
+
+< Keywords
+> Palabras clave
+
+< Subject
+> Asunto
+
+< Length
+> Duración
+
+< Frame rate
+> Velocidad de fotogramas
+
+< Average bit rate
+> Tasa media de bits
+
+< Bit rate
+> Tasa de bits
+
+< Sample rate
+> Frecuencia de muestreo
+
+< Channels
+> Canales
+
+< Album
+> Álbum
+
+< Album artist
+> Artista del álbum
+
+< Genre
+> Género
+
+< Year
+> Año
+
+< Track
+> Pista
+
+< Composer
+> Compositor
+
+< Pages
+> Páginas
+
+< Words
+> Letra
+
+< Made by (program)
+> Hecho por (programa)
+
+< Made with
+> Hecho con
+
+< Protection
+> Protección
+
+< Allowed
+> Permitido
+
+< Rotation
+> Rotación
+
+< City
+> Ciudad
+
+< Country
+> País
+
+< State or province
+> Estado o provincia
+
+< Place
+> Lugar
+
+< Headline
+> Titular
+
+< Caption
+> Pie de foto
+
+< By
+> Por
+
+< Credit
+> Crédito
+
+< Small copy of the picture
+> Copia pequeña de la imagen
+
+< Preview picture
+> Imagen de vista previa
+
+< Full-size JPEG copy
+> Copia JPEG a tamaño completo
+
+< Cover picture
+> Imagen de portada
+
+< Editing time
+> Tiempo de edición
+
+< Revisions
+> Revisiones
+
+< Template
+> Plantilla
+
+< Application
+> Aplicación
+
+< Last printed
+> Última impresión
+
+< Saved by (with the file's folder)
+> Guardado por (con la carpeta del archivo)
+
+< Comments written by
+> Comentarios escritos por
+
+< Last opened by
+> Última apertura por
+
+< Author's e-mail
+> Correo del autor
+
+< Author's name (e-mail)
+> Nombre del autor (correo)
+
+< E-mail subject
+> Asunto del correo
+
+< Computer
+> Ordenador
+
+< Phone model
+> Modelo del teléfono
+
+< Phone maker
+> Fabricante del teléfono
+
+< Android version
+> Versión de Android
+
+< XMP written by
+> XMP escrito por
+
+< Document ID
+> ID del documento
+
+< Instance ID
+> ID de instancia
+
+< Original document ID
+> ID original del documento
+
+< Rating
+> Valoración
+
+< Colour space
+> Espacio de color
+
+< First author
+> Primer autor
+
+< Encoder
+> Codificador
+
+< Encoded by
+> Codificado por
+
+< Links
+> Enlaces
+
+< Link base
+> Base de los enlaces
+
+< Pictures inside
+> Imágenes internas
+
+< Kind of picture
+> Tipo de imagen
+
+< Camera maker's notes
+> Notas del fabricante de la cámara
+
+< Also from the gallery (Open in a tool) and from the file reader's menu.
+> También desde la galería (Abrir en una herramienta) y desde el menú del lector de archivos.
+
+< Files are read on this phone and never uploaded. The viewer only reads them: nothing is changed.
+> Los archivos se leen en este teléfono y nunca se suben. El visor solo los lee: no se cambia nada.
+
+< Reading {0}…
+> Leyendo {0}…
+
+< This file can't be read: {0}
+> No se puede leer este archivo: {0}
+
+< Choose another file
+> Elige otro archivo
+
+< Search the fields
+> Busca en los campos
+
+< What this file tells others
+> Lo que este archivo revela a los demás
+
+< Nothing personal: no place, names, device, dates or hidden pictures were found, only technical details.
+> Nada personal: no se encontró ningún lugar, nombre, dispositivo, fecha ni imagen oculta, solo detalles técnicos.
+
+< {0} kind of personal detail. Anyone you send this file to can read it.
+< {0} kinds of personal details. Anyone you send this file to can read them.
+> {0} tipo de dato personal. Cualquiera a quien envíes este archivo puede leerlo.
+> {0} tipos de datos personales. Cualquiera a quien envíes este archivo puede leerlos.
+
+< and {0} more
+> y {0} más
+
+< Open in a maps app
+> Abrir en una app de mapas
+
+< Make a copy without them
+> Haz una copia sin ellos
+
+< No field matches “{0}”.
+> Ningún campo coincide con “{0}”.
+
+< Only the first {0} fields are listed: search to find the others.
+> Solo se muestran los primeros {0} campos: busca para encontrar los demás.
+
+< Stored as {0}
+> Guardado como {0}
+
+< Bare value: {0}
+> Valor sin formato: {0}
+
+< Copied.
+> Copiado.
+
+< Where this file was made
+> Dónde se hizo este archivo
+
+< Opening it starts your maps app; this app itself never connects to the internet.
+> Al abrirlo se inicia tu app de mapas; esta app nunca se conecta a internet.
+
+< Copy all fields
+> Copiar todos los campos
+
+< Share as text
+> Compartir como texto
 
 < Preview
 > Vista previa
@@ -2873,9 +3477,6 @@
 < 0 keeps the original width
 > 0 conserva el ancho original
 
-< Frame rate
-> Velocidad de fotogramas
-
 < 0 keeps the original timing; lower drops frames
 > 0 conserva el ritmo original; un valor menor descarta fotogramas
 
@@ -2975,9 +3576,6 @@
 < Original embeds JPEG photos byte-for-byte and other images losslessly. Compact resizes to print resolution (300 DPI on A4) as JPEG.
 > «Original» incrusta las fotos JPEG byte a byte y las demás imágenes sin pérdida. «Compacto» las redimensiona a resolución de impresión (300 DPI en A4) como JPEG.
 
-< File name
-> Nombre del archivo
-
 @ default file name
 < Images
 > Imágenes
@@ -3000,9 +3598,6 @@
 
 < Save PDF
 > Guardar PDF
-
-< Pages
-> Páginas
 
 < Capture page
 > Capturar página
@@ -3079,9 +3674,6 @@
 < Another tune
 > Otra melodía
 
-< Length
-> Duración
-
 < {0} s
 > {0} s
 
@@ -3102,9 +3694,6 @@
 
 < The music gets quieter while they play
 > La música baja de volumen mientras suenan
-
-< Title
-> Título
 
 < Moments
 > Momentos
@@ -3447,9 +4036,6 @@
 < Lossless: streams are copied, not re-encoded. The start moves to the nearest earlier keyframe (usually less than a second or two); the end is exact.
 > Sin pérdida: los flujos se copian, no se recodifican. El inicio se mueve al fotograma clave anterior más cercano (normalmente menos de uno o dos segundos); el final es exacto.
 
-< Reading {0}…
-> Leyendo {0}…
-
 < {0}: the duration couldn't be read.
 > {0}: no se pudo leer la duración.
 
@@ -3609,9 +4195,6 @@
 
 < Fewer frames = much smaller GIF
 > Menos fotogramas = GIF mucho más pequeño
-
-< Width
-> Ancho
 
 < Height follows the video's shape
 > La altura sigue la proporción del vídeo
@@ -3869,6 +4452,12 @@
 < Paper size
 > Tamaño de papel
 
+< The printer says it has {0} paper loaded. Load {1} paper, or print on {0}.
+> La impresora indica que tiene papel {0} cargado. Carga papel {1}, o imprime en {0}.
+
+< Print on {0}
+> Imprimir en {0}
+
 < Paper type
 > Tipo de papel
 
@@ -3932,8 +4521,29 @@
 < Print on both sides of the paper
 > Imprime en ambas caras del papel
 
-< Select photos or PDFs to see the sheets
-> Selecciona fotos o PDF para ver las hojas
+< Flip on short edge
+> Voltear por el borde corto
+
+< Flip on long edge
+> Voltear por el borde largo
+
+< calendars
+> calendarios
+
+< books
+> libros
+
+< Last page first
+> Primero la última página
+
+< This printer puts sheets face down, so they already stack in order
+> Esta impresora deja las hojas boca abajo, así que ya se apilan en orden
+
+< Sheets come out face up: printed last page first, the stack ends in order with page 1 on top
+> Las hojas salen boca arriba: se imprime primero la última página y la pila queda en orden, con la página 1 arriba
+
+< Select photos, PDFs or documents to see the sheets
+> Selecciona fotos, PDF o documentos para ver las hojas
 
 < Couldn't prepare the preview
 > No se pudo preparar la vista previa
@@ -4262,6 +4872,10 @@
 < a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken
 > el,la,los,las,un,una,unos,unas,de,del,al,con,y,e,o,u,&,+,en,a,por,para,mi,mis,nuestro,nuestra,nuestros,nuestras,muestra,muéstrame,mostrar,buscar,busca,búscame,encuentra,encontrar,todo,todos,toda,todas,algunos,algunas,donde,dónde,es,son,fue,fueron,está,están,juntos,juntas,ambos,ambas,tiene,tienen,que,quien,quién,tomadas,tomada,tomado,cerca,desde,sobre,entre,me,tu,tus,su,sus,ver
 
+@ search words meaning yourself (the phone's owner), separated by commas
+< me,myself
+> yo,mí,mismo,me
+
 < Upbeat
 > Animada
 
@@ -4288,6 +4902,102 @@
 
 < Cinematic music
 > Música cinematográfica
+
+< ({0} bytes of picture)
+> ({0} bytes de imagen)
+
+< ({0} bytes)
+> ({0} bytes)
+
+< about {0} kbps (variable)
+> unos {0} kbps (variable)
+
+< (default)
+> (predeterminado)
+
+< (Samsung's own data)
+> (datos propios de Samsung)
+
+< (none)
+> (ninguno)
+
+< ({0} bytes, the camera maker's own data)
+> ({0} bytes, datos propios del fabricante de la cámara)
+
+< ({0} bytes, a full-size JPEG copy of the picture)
+> ({0} bytes, una copia JPEG a tamaño completo de la imagen)
+
+< ({0} bytes, a smaller copy of the picture)
+> ({0} bytes, una copia más pequeña de la imagen)
+
+< The camera maker's own notes ({0} bytes) are listed but not read: each maker writes them its own way.
+> Las notas propias del fabricante de la cámara ({0} bytes) se listan, pero no se leen: cada fabricante las escribe a su manera.
+
+< The JPEG file is damaged after {0} bytes.
+> El archivo JPEG está dañado después de {0} bytes.
+
+< This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.
+> Esta imagen lleva Credenciales de contenido (C2PA), un registro firmado de cómo se hizo, que aquí no se lee.
+
+< ({0} bytes: {1})
+> ({0} bytes: {1})
+
+< ({0} more pictures inside: a preview, an HDR gain map, a depth map or the like)
+> ({0} imágenes internas más: una vista previa, un mapa de ganancia HDR, un mapa de profundidad o similares)
+
+< The PNG file is damaged.
+> El archivo PNG está dañado.
+
+< The colour profile is damaged.
+> El perfil de color está dañado.
+
+< This document couldn't be read here: open it from the Files app instead.
+> Este documento no se puede leer aquí: ábrelo desde la app Archivos.
+
+< Part of the file couldn't be read: it may be damaged.
+> No se pudo leer una parte del archivo: puede que esté dañado.
+
+< Part of the file is too big to read on this phone.
+> Una parte del archivo es demasiado grande para leerla en este teléfono.
+
+< (not recognised)
+> (no reconocido)
+
+< The archive is damaged: only its first file's details were read.
+> El archivo comprimido está dañado: solo se leyeron los detalles de su primer archivo.
+
+< The document's own properties are damaged: only part of them was read.
+> Las propiedades propias del documento están dañadas: solo se leyó una parte.
+
+< (a picture of the first page)
+> (una imagen de la primera página)
+
+< The document's properties are damaged: only part of them was read.
+> Las propiedades del documento están dañadas: solo se leyó una parte.
+
+< The book's details are damaged: only part of them was read.
+> Los detalles del libro están dañados: solo se leyó una parte.
+
+< The file is damaged: its contents can't be unpacked.
+> El archivo está dañado: no se puede descomprimir su contenido.
+
+< The Word document's own details are damaged: only part of them was read.
+> Los detalles propios del documento de Word están dañados: solo se leyó una parte.
+
+< This Office file is protected with a password: only the outer details can be read.
+> Este archivo de Office está protegido con contraseña: solo se pueden leer los detalles externos.
+
+< (clipboard data)
+> (datos del portapapeles)
+
+< This PDF is damaged: its document information couldn't be found.
+> Este PDF está dañado: no se encontró su información de documento.
+
+< This PDF needs a password to open, so what's inside it can't be read.
+> Este PDF necesita contraseña para abrirse, así que no se puede leer lo que contiene.
+
+< The XMP metadata is damaged: only part of it was read.
+> Los metadatos XMP están dañados: solo se leyó una parte.
 
 < Reading your photo library
 > Leyendo tu biblioteca de fotos
@@ -4425,9 +5135,6 @@
 
 < keeps the smallest copy
 > conserva la copia más pequeña
-
-< Favourite
-> Favorita
 
 < Person you keep
 > Persona que conservas
@@ -5084,6 +5791,9 @@
 < Shows documents instead of saving files, so it can't be a step of a stack
 > Muestra documentos en lugar de guardar archivos, así que no puede ser un paso de una cadena
 
+< Shows a file's details instead of saving files, so it can't be a step of a stack
+> Muestra los detalles de un archivo en lugar de guardar archivos, así que no puede ser un paso de una pila
+
 < Can't be part of a stack
 > No puede formar parte de una cadena
 
@@ -5460,6 +6170,15 @@
 
 < Prints photos and PDFs straight to a printer on your Wi-Fi — Epson, HP, Canon, Brother and others that support AirPrint, Mopria or IPP Everywhere — without the printer maker's app. Pick the paper size and type, borderless, several photos per sheet, colour or black & white, quality and copies, with a preview of every sheet. The app talks only to the printer on your own network.
 > Imprime fotos y PDF directamente en una impresora de tu Wi-Fi (Epson, HP, Canon, Brother y otras compatibles con AirPrint, Mopria o IPP Everywhere) sin la app del fabricante. Elige el tamaño y el tipo de papel, sin bordes, varias fotos por hoja, color o blanco y negro, calidad y copias, con vista previa de cada hoja. La app solo habla con la impresora de tu propia red.
+
+< Metadata viewer
+> Visor de metadatos
+
+< See everything a file says about you
+> Mira todo lo que un archivo dice de ti
+
+< Shows every detail a file keeps about itself — where and when a photo was taken, the camera or phone, who wrote a document and who saved it, the programs used, hidden pictures inside — for photos, camera RAW files, videos, music, PDFs, Office files and more. A summary first tells you what the file reveals about you. Files are only read, on this phone.
+> Muestra cada detalle que un archivo guarda sobre sí mismo: dónde y cuándo se tomó una foto, la cámara o el teléfono, quién escribió un documento y quién lo guardó, los programas usados, imágenes ocultas dentro, para fotos, archivos RAW de cámara, vídeos, música, PDF, archivos de Office y más. Primero, un resumen te dice lo que el archivo revela sobre ti. Los archivos solo se leen, en este teléfono.
 
 < Remove metadata
 > Quitar metadatos
@@ -5944,9 +6663,6 @@
 < This file was made by a very old PowerPoint version, which this app can't read.
 > Este archivo se creó con una versión muy antigua de PowerPoint, que esta app no puede leer.
 
-< The file is damaged: its contents can't be unpacked.
-> El archivo está dañado: no se puede descomprimir su contenido.
-
 < The file unpacks to far more data than it holds, so it wasn't opened.
 > El archivo se descomprime en muchos más datos de los que contiene, así que no se ha abierto.
 
@@ -6010,6 +6726,9 @@
 < This workbook is very large: only its first {0} cells are shown.
 > Este libro es muy grande: solo se muestran las primeras {0} celdas.
 
+< {0} has nothing to print.
+> {0} no tiene nada que imprimir.
+
 < Printing {0} file on {1}
 < Printing {0} files on {1}
 > Imprimiendo {0} archivo en {1}
@@ -6026,6 +6745,12 @@
 
 < The printer couldn't be reached
 > No se pudo acceder a la impresora
+
+< {0} isn't a document this app can print
+> {0} no es un documento que esta app pueda imprimir
+
+< {0} can't be printed: {1}
+> {0} no se puede imprimir: {1}
 
 < Not a printer address
 > No es una dirección de impresora
@@ -6939,9 +7664,6 @@
 < rock,rocks,cliff,cliffs,canyon,cave
 > roca,rocas,piedra,piedras,acantilado,acantilados,cañón,cueva,gruta
 
-< City
-> Ciudad
-
 < Places
 > Lugares
 
@@ -7140,16 +7862,3 @@
 @ search words for “Music”, separated by commas
 < music,musical instrument,instruments,drums,violin,guitar,piano
 > música,instrumento musical,instrumentos,batería,tambor,violín,órgano
-
-< Just now
-> Ahora mismo
-
-< {0} minute ago
-< {0} minutes ago
-> Hace {0} minuto
-> Hace {0} minutos
-
-< {0} hour ago
-< {0} hours ago
-> Hace {0} hora
-> Hace {0} horas
