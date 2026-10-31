@@ -131,7 +131,8 @@ object Privacies {
     private val person = setOf("Artist", "Author", "Creator", "By-line", "Copyright", "CopyrightNotice", "Rights", "OwnerName", "CameraOwnerName",
         "LastModifiedBy", "LastAuthor", "Company", "Manager", "Writer", "Composer", "Lyricist", "Publisher", "Contact", "Email", "Credit",
         "CreatorContactInfo", "Owner", "InitialCreator", "UserName", "Photographer", "Copyrights", "Director", "Producer", "Encoder", "EncodedBy",
-        "Signature", "Contributor", "Band", "AlbumArtist", "Performer", "Owner-Name", "XPAuthor", "Uploader")
+        "Signature", "Contributor", "Band", "AlbumArtist", "Performer", "Owner-Name", "XPAuthor", "Uploader", "AuthorEmail",
+        "AuthorEmailDisplayName", "LastSavedBy", "CommentBy", "CurrentUser", "InitialCreator", "PrintedBy", "Originator", "Narrator", "Engineer", "Technician")
     private val device = setOf("Make", "Model", "LensMake", "LensModel", "LensSerialNumber", "SerialNumber", "BodySerialNumber", "InternalSerialNumber",
         "CameraSerialNumber", "UniqueCameraModel", "LocalizedCameraModel", "HostComputer", "AndroidModel", "AndroidMake", "AndroidManufacturer",
         "CameraModelName", "DeviceManufacturer", "DeviceModel", "LensInfo", "ComAppleQuicktimeMake", "ComAppleQuicktimeModel")

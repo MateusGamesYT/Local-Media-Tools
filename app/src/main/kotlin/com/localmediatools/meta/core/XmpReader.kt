@@ -130,6 +130,11 @@ object XmpReader {
                 if (d != null) out.add(group, name, ExifReader.dms(d, name.contains("Latitude")), ExifReader.num(d)) else out.add(group, name, joined)
             }
             looksLikeDate(joined) && vs.size == 1 -> out.add(group, name, joined, exifDate(joined))
+            // Rationals ("18/1", "0/0" for "not known") as numbers, as EXIF's are read.
+            vs.all { RATIONAL.matches(it) } -> vs.joinToString(" ") { r ->
+                val (a, b) = r.split('/').map { it.trim().toDouble() }
+                ExifReader.num(if (b == 0.0) (if (a == 0.0) Double.NaN else Double.POSITIVE_INFINITY) else a / b)
+            }.let { out.add(group, name, it, it) }
             else -> out.add(group, name, joined)
         }
     }
@@ -141,6 +146,7 @@ object XmpReader {
         return if (side == "S" || side == "W") -v else v
     }
 
+    private val RATIONAL = Regex("""^\s*-?\d+\s*/\s*\d+\s*$""")
     private val DATE = Regex("""^\d{4}-\d{2}(-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?)?$""")
     private fun looksLikeDate(s: String) = DATE.matches(s)
 

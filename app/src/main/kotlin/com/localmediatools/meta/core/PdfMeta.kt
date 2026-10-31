@@ -561,7 +561,7 @@ object PdfMeta {
         if (!readXref(d)) { d.xref.clear(); d.trailer = null; scan(d) }
         val trailer = d.trailer ?: run { out.note("This PDF is damaged: its document information couldn't be found."); return }
         // A linearized ("fast web view") file says so in its first object.
-        Regex("""obj\s*<<[^>]*?/Linearized""").find(head)?.let { out.add("PDF", "Linearized", "Yes") } ?: out.add("PDF", "Linearized", "No")
+        if (Regex("""obj\s*<<[^>]*?/Linearized""").containsMatchIn(head)) out.add("PDF", "Linearized", "Yes", "true") else out.add("PDF", "Linearized", "No", "false")
         d.dict(trailer["Encrypt"])?.let { enc ->
             d.crypt = crypt(d, enc, out)
             if (d.crypt == null) { out.note("This PDF needs a password to open, so what's inside it can't be read."); return }
@@ -574,7 +574,12 @@ object PdfMeta {
             (d.resolve(pages?.get("Count")) as? Long)?.let { out.add("PDF", "PageCount", "$it") }
             (d.resolve(r["Lang"]) as? Str)?.let { s -> out.add("PDF", "Language", decrypted(d, s, trailer["Root"])) }
             (d.resolve(r["PageMode"]) as? Name)?.let { out.add("PDF", "PageMode", it.s) }
-            if (d.dict(r["AcroForm"]) != null) out.add("PDF", "HasForm", "Yes")
+            (d.resolve(r["PageLayout"]) as? Name)?.let { out.add("PDF", "PageLayout", it.s) }
+            if (d.dict(r["MarkInfo"])?.let { d.resolve(it["Marked"]) } == true) out.add("PDF", "TaggedPDF", "Yes", "true")
+            d.dict(r["AcroForm"])?.let { form ->
+                out.add("PDF", "HasForm", "Yes")
+                out.add("PDF", "HasXFA", if (form["XFA"] != null) "Yes" else "No", if (form["XFA"] != null) "true" else "false")
+            }
             d.dict(r["Names"])?.let { names -> if (names["EmbeddedFiles"] != null) out.add("PDF", "HasAttachments", "Yes") }
             if (d.dict(r["Perms"])?.get("DocMDP") != null || d.dict(r["AcroForm"])?.get("SigFlags") != null) out.add("PDF", "Signed", "Yes")
         }

@@ -32,6 +32,12 @@ def norm(v):
     return str(v).strip()
 
 
+def nkey(name):
+    """Names compared without case, dashes or underscores ("Initial-creator" is "InitialCreator")."""
+    n = name[3:] if name.startswith("Tag_") else name  # ExifTool's name for a custom property beginning with "_"
+    return n.lower().replace("-", "").replace("_", "")
+
+
 def num(s):
     try:
         return float(s)
@@ -39,9 +45,18 @@ def num(s):
         return None
 
 
+DATE_ZONE = re.compile(r"^(\d{4}:\d\d:\d\d \d\d:\d\d:\d\d(?:\.\d+)?)(?:Z|[+-]00:00| UTC)$")
+
+
 def same(a, b):
     a, b = norm(a), norm(b)
     if a == b:
+        return True
+    # A UTC time with or without its zone; ExifTool's "false"/"true".
+    a2 = DATE_ZONE.sub(r"\1", a); b2 = DATE_ZONE.sub(r"\1", b)
+    if a2 == b2:
+        return True
+    if {a.lower(), b.lower()} in ({"false", "0"}, {"true", "1"}):
         return True
     x, y = num(a), num(b)
     if x is not None and y is not None:
@@ -87,8 +102,8 @@ def main():
             continue
         by_name = collections.defaultdict(list)
         for g, n, v, r, p in o["fields"]:
-            by_name[n].append(r)
-            by_name[n].append(v)
+            by_name[nkey(n)].append(r)
+            by_name[nkey(n)].append(v)
         for key, val in e.items():
             if key == "SourceFile" or ":" not in key:
                 continue
@@ -97,12 +112,14 @@ def main():
                 continue
             if only and g != only:
                 continue
-            if isinstance(val, str) and val.startswith("(Binary data") or norm(val) == "":
+            # Binary blocks, empty values and dates that are only zeros ("never printed") aren't listed by the app.
+            if isinstance(val, str) and (val.startswith("(Binary data") or val.startswith("0000:00:00")) or norm(val) == "" \
+                    or (n.endswith("Date") or n == "LastPrinted") and norm(val) == "0":
                 continue
             cat = "MakerNotes" if g in MAKERS else g
             s = stats[cat]
             s[0] += 1
-            vals = by_name.get(n)
+            vals = by_name.get(nkey(n))
             if one and cat != "MakerNotes":
                 print(("  " if vals and any(same(val, x) for x in vals) else "W " if vals else "M ") + f"{g}:{n} = {norm(val)[:100]!r}" + (f"  app={vals[0][:100]!r}" if vals and not any(same(val, x) for x in vals) else ""))
             if not vals:

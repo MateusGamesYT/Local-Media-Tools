@@ -50,7 +50,33 @@ internal object ExifTags {
         0xC630 to "DNGLensInfo", 0xC633 to "ShadowScale", 0xC634 to "DNGPrivateData", 0xC65A to "CalibrationIlluminant1",
         0xC65B to "CalibrationIlluminant2", 0xC68B to "OriginalRawFileName", 0xC6F8 to "ProfileName", 0xC71A to "PreviewColorSpace",
         0xC71B to "PreviewDateTime", 0xEA1C to "Padding", 0xEA1D to "OffsetSchema",
+        0xC616 to "CFAPlaneColor", 0xC617 to "CFALayout", 0xC618 to "LinearizationTable", 0xC619 to "BlackLevelRepeatDim", 0xC61B to "BlackLevelDeltaH", 0xC61C to "BlackLevelDeltaV",
+        0xC61E to "DefaultScale", 0xC61F to "DefaultCropOrigin", 0xC620 to "DefaultCropSize", 0xC623 to "CameraCalibration1", 0xC624 to "CameraCalibration2",
+        0xC625 to "ReductionMatrix1", 0xC626 to "ReductionMatrix2", 0xC629 to "AsShotWhiteXY", 0xC62B to "BaselineNoise", 0xC62C to "BaselineSharpness",
+        0xC62D to "BayerGreenSplit", 0xC62E to "LinearResponseLimit", 0xC631 to "ChromaBlurRadius", 0xC632 to "AntiAliasStrength",
+        0xC635 to "MakerNoteSafety", 0xC65C to "BestQualityScale", 0xC65D to "RawDataUniqueID", 0xC68C to "OriginalRawFileData",
+        0xC68D to "ActiveArea", 0xC68E to "MaskedAreas", 0xC68F to "AsShotICCProfile", 0xC690 to "AsShotPreProfileMatrix",
+        0xC691 to "CurrentICCProfile", 0xC692 to "CurrentPreProfileMatrix", 0xC6BF to "ColorimetricReference", 0xC6D2 to "PanasonicTitle",
+        0xC6D3 to "PanasonicTitle2", 0xC6F3 to "CameraCalibrationSig", 0xC6F4 to "ProfileCalibrationSig", 0xC6F6 to "AsShotProfileName",
+        0xC6F7 to "NoiseReductionApplied", 0xC6F9 to "ProfileHueSatMapDims", 0xC6FC to "ProfileToneCurve", 0xC6FD to "ProfileEmbedPolicy",
+        0xC6FE to "ProfileCopyright", 0xC714 to "ForwardMatrix1", 0xC715 to "ForwardMatrix2", 0xC716 to "PreviewApplicationName",
+        0xC717 to "PreviewApplicationVersion", 0xC718 to "PreviewSettingsName", 0xC719 to "PreviewSettingsDigest", 0xC71C to "RawImageDigest",
+        0xC71D to "OriginalRawFileDigest", 0xC741 to "OpcodeList1", 0xC74E to "OpcodeList3", 0xC761 to "NoiseProfile", 0xC791 to "OriginalDefaultFinalSize",
+        0xC7A1 to "CameraLabel", 0xC7A7 to "NewRawImageDigest", 0xA20C to "SpatialFrequencyResponse", 0xC5E0 to "CR2CFAPattern",
+        0xC640 to "RawImageSegmentation"
     )
+
+    /** Panasonic RW2 files' main directory: Panasonic's own numbers below 0x100, the usual ones above. */
+    val panasonicRaw: Map<Int, String> by lazy {
+        main.filterKeys { it >= 0x100 && it != 0x0118 && it != 0x0119 } + mapOf(
+            0x01 to "PanasonicRawVersion", 0x02 to "SensorWidth", 0x03 to "SensorHeight", 0x04 to "SensorTopBorder", 0x05 to "SensorLeftBorder",
+            0x06 to "SensorBottomBorder", 0x07 to "SensorRightBorder", 0x08 to "SamplesPerPixel", 0x09 to "CFAPattern", 0x0A to "BitsPerSample",
+            0x0B to "Compression", 0x0E to "LinearityLimitRed", 0x0F to "LinearityLimitGreen", 0x10 to "LinearityLimitBlue", 0x17 to "ISO",
+            0x18 to "HighISOMultiplierRed", 0x19 to "HighISOMultiplierGreen", 0x1A to "HighISOMultiplierBlue", 0x1B to "NoiseReductionParams",
+            0x1C to "BlackLevelRed", 0x1D to "BlackLevelGreen", 0x1E to "BlackLevelBlue", 0x24 to "WBRedLevel", 0x25 to "WBGreenLevel",
+            0x26 to "WBBlueLevel", 0x2D to "RawFormat", 0x2F to "CropTop", 0x30 to "CropLeft", 0x31 to "CropBottom", 0x32 to "CropRight",
+            0x0118 to "RawDataOffset", 0x0119 to "DistortionInfo")
+    }
 
     val gps: Map<Int, String> = mapOf(
         0x00 to "GPSVersionID", 0x01 to "GPSLatitudeRef", 0x02 to "GPSLatitude", 0x03 to "GPSLongitudeRef", 0x04 to "GPSLongitude",
@@ -67,7 +93,7 @@ internal object ExifTags {
 
     /** Tags whose value is a structure read elsewhere, or bulk data not worth listing. */
     val structural = setOf(0x8769, 0x8825, 0xA005, 0x014A, 0x0111, 0x0117, 0x0144, 0x0145, 0x015B, 0x02BC, 0x83BB, 0x8649, 0x8773,
-        0x927C, 0xC4A5, 0xC634, 0xEA1C, 0x0140, 0x012D, 0xA302, 0x828E, 0xA40B, 0x9214, 0xA214)
+        0x927C, 0xC4A5, 0xC634, 0xEA1C, 0x0140, 0x012D, 0xA302, 0xA40B)
 
     /** Words for the tags whose number stands for a choice (ExifTool's words). */
     fun choice(name: String, v: Long): String? = when (name) {

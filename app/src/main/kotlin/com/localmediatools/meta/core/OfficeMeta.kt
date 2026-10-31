@@ -16,21 +16,30 @@ object OfficeMeta {
     // ------------------------------------------------------------------ ZIP and the files built on it
     /** The ZIP's first entry, as ExifTool lists it, and how many files it holds. */
     fun zip(f: MetaInput, out: Fields) {
-        if (f.startsWith(0, "PK\u0003\u0004")) {
-            val g = "ZIP"
-            out.add(g, "ZipRequiredVersion", "${f.u16le(4)}")
-            out.add(g, "ZipBitFlag", "0x%04x".format(f.u16le(6)), "${f.u16le(6)}")
-            out.add(g, "ZipCompression", when (f.u16le(8)) { 0 -> "None"; 8 -> "Deflated"; 12 -> "BZip2"; 14 -> "LZMA"; 93 -> "Zstandard"; else -> "${f.u16le(8)}" }, "${f.u16le(8)}")
-            dosDate(f.u16le(12), f.u16le(10))?.let { out.add(g, "ZipModifyDate", it, it, Privacy.TIME) }
-            out.add(g, "ZipCRC", "0x%08x".format(f.u32le(14)), "${f.u32le(14)}")
-            out.add(g, "ZipCompressedSize", "${f.u32le(18)}"); out.add(g, "ZipUncompressedSize", "${f.u32le(22)}")
-            val nl = f.u16le(26)
-            out.add(g, "ZipFileName", String(f.bytes(30, nl), if (f.u16le(6) and 0x800 != 0) Charsets.UTF_8 else Charsets.ISO_8859_1))
-        }
-        // The central directory at the end: the number of files and the archive's comment.
+        // The central directory at the end: the number of files, the archive's comment, and its first file.
         val tail = f.bytes(maxOf(0, f.size - 65_557), 65_557)
         val s = String(tail, Charsets.ISO_8859_1)
         val e = s.lastIndexOf("PK\u0005\u0006")
+        val cd = if (e >= 0 && e + 20 <= tail.size) B.u32le(tail, e + 16) else -1L
+        // A local header leaves the sizes and CRC to a trailer when bit 3 is set; the directory always has them.
+        // (A directory record is a local header with two more bytes in front: "version made by".)
+        val (at, local) = if (cd in 0 until f.size && f.startsWith(cd, "PK\u0001\u0002")) cd to false else 0L to true
+        if (!local || f.startsWith(0, "PK\u0003\u0004")) {
+            val g = "ZIP"
+            val h = f.bytes(at, 46)
+            val o = if (local) 0 else 2
+            val flags = B.u16le(h, 6 + o)
+            out.add(g, "ZipRequiredVersion", "${B.u16le(h, 4 + o)}")
+            out.add(g, "ZipBitFlag", "0x%04x".format(B.u16le(h, 6 + o)), "${B.u16le(h, 6 + o)}")
+            val c = B.u16le(h, 8 + o)
+            out.add(g, "ZipCompression", when (c) { 0 -> "None"; 8 -> "Deflated"; 12 -> "BZip2"; 14 -> "LZMA"; 93 -> "Zstandard"; else -> "$c" }, "$c")
+            dosDate(B.u16le(h, 12 + o), B.u16le(h, 10 + o))?.let { out.add(g, "ZipModifyDate", it, it, Privacy.TIME) }
+            out.add(g, "ZipCRC", "0x%08x".format(B.u32le(h, 14 + o)), "${B.u32le(h, 14 + o)}")
+            out.add(g, "ZipCompressedSize", "${B.u32le(h, 18 + o)}"); out.add(g, "ZipUncompressedSize", "${B.u32le(h, 22 + o)}")
+            val nl = B.u16le(h, 26 + o)
+            val nameAt = if (local) 30L else cd + 46
+            out.add(g, "ZipFileName", String(f.bytes(nameAt, nl), if (flags and 0x800 != 0) Charsets.UTF_8 else Charsets.ISO_8859_1))
+        }
         if (e >= 0 && e + 22 <= tail.size) {
             out.add("ZIP", "ZipFileCount", "${B.u16le(tail, e + 10)}")
             val cl = B.u16le(tail, e + 20)
@@ -51,10 +60,13 @@ object OfficeMeta {
             if (mime == "application/epub+zip") return "EPUB"
         }
         val ct = parts.bytes("[Content_Types].xml", 1 shl 20)?.let { String(it, Charsets.UTF_8) } ?: ""
+        // Only the main part's type says whether the file holds macros.
+        val main = Regex("""PartName="/(?:word/document|xl/workbook|ppt/presentation)\.xml"\s+ContentType="([^"]+)"""").find(ct)?.groupValues?.get(1)
+        val macro = main?.contains("macroEnabled") ?: ct.contains("macroEnabled")
         return when {
-            ct.contains("wordprocessingml.document.main") || ct.contains("wordprocessingml.template.main") || parts.has("word/document.xml") -> if (ct.contains("macroEnabled")) "DOCM" else "DOCX"
-            ct.contains("spreadsheetml.sheet.main") || ct.contains("spreadsheetml.template.main") || ct.contains("ms-excel.sheet.macroEnabled") || parts.has("xl/workbook.xml") -> if (ct.contains("macroEnabled")) "XLSM" else "XLSX"
-            ct.contains("presentationml.presentation.main") || ct.contains("presentationml.slideshow.main") || ct.contains("presentationml.template.main") || parts.has("ppt/presentation.xml") -> if (ct.contains("macroEnabled")) "PPTM" else "PPTX"
+            ct.contains("wordprocessingml.document.main") || ct.contains("wordprocessingml.template.main") || parts.has("word/document.xml") -> if (macro) "DOCM" else "DOCX"
+            ct.contains("spreadsheetml.sheet.main") || ct.contains("spreadsheetml.template.main") || ct.contains("ms-excel.sheet.macroEnabled") || parts.has("xl/workbook.xml") -> if (macro) "XLSM" else "XLSX"
+            ct.contains("presentationml.presentation.main") || ct.contains("presentationml.slideshow.main") || ct.contains("presentationml.template.main") || parts.has("ppt/presentation.xml") -> if (macro) "PPTM" else "PPTX"
             parts.has("META-INF/container.xml") && parts.has("mimetype") -> "EPUB"
             parts.has("AndroidManifest.xml") && parts.has("classes.dex") -> "APK"
             parts.has("META-INF/MANIFEST.MF") -> "JAR"
@@ -99,7 +111,9 @@ object OfficeMeta {
                     val name = x.attr("name") ?: continue
                     val v = StringBuilder()
                     x.children { c -> if (c.event == Event.TEXT) v.append(c.text) }
-                    out.add("XML", tagName(name), v.toString().trim(), privacy = Privacies.of(tagName(name)) ?: Privacy.TEXT)
+                    val t = v.toString().trim()
+                    val shown = if (Regex("""^\d{4}-\d\d-\d\dT""").containsMatchIn(t)) XmpReader.exifDate(t) else t
+                    out.add("XML", tagName(name), shown, shown, privacy = Privacies.of(tagName(name)) ?: Privacy.TEXT)
                 }
             } catch (_: Exception) { out.note("The document's own properties are damaged: only part of them was read.") }
         }
@@ -229,11 +243,15 @@ object OfficeMeta {
         15 to "Company", 16 to "LinksUpToDate", 17 to "CharCountWithSpaces", 19 to "SharedDoc", 22 to "HyperlinksChanged", 23 to "AppVersion",
         26 to "ContentType", 27 to "ContentStatus", 28 to "Language", 29 to "DocVersion")
 
-    fun ole2(f: MetaInput, out: Fields) {
-        val ole = try { Ole2(f.file) } catch (_: Exception) { out.add("File", "FileType", "FPX"); out.note("The file is damaged: its contents can't be unpacked."); return }
+    private val OFFICE_EXT = setOf("doc", "dot", "xls", "xlt", "ppt", "pps", "pot", "docx", "docm", "xlsx", "xlsm", "pptx", "pptm", "msg", "vsd")
+
+    /** [ext]: the name's extension, which says which Office file a damaged or protected one is. */
+    fun ole2(f: MetaInput, out: Fields, ext: String = "") {
+        val byName = if (ext in OFFICE_EXT) ext.uppercase() else null
+        val ole = try { Ole2(f.file) } catch (_: Exception) { out.add("File", "FileType", byName ?: "FPX"); out.note("The file is damaged: its contents can't be unpacked."); return }
         ole.use { o ->
             val kind = when {
-                o.has("EncryptedPackage") -> "Protected Office file"
+                o.has("EncryptedPackage") -> byName ?: "Protected Office file"
                 o.has("WordDocument") -> "DOC"
                 o.has("Workbook") || o.has("Book") -> "XLS"
                 o.has("PowerPoint Document") -> "PPT"
@@ -246,10 +264,93 @@ object OfficeMeta {
                 o.stream("\u0005SummaryInformation")?.let { propertySet(it, SUMMARY, out) }
                 o.stream("\u0005DocumentSummaryInformation")?.let { propertySet(it, DOC_SUMMARY, out) }
                 o.stream("\u0001CompObj")?.let { compObj(it, out) }
+                // PowerPoint keeps the name of whoever last saved it in its own stream.
+                if (kind == "PPT") o.stream("Current User")?.let { cu ->
+                    val n = B.u16le(cu, 20)
+                    if (n in 1..255 && 28 + n <= cu.size) out.add("FlashPix", "CurrentUser", String(cu, 28, n, Charset.forName("windows-1252")).trimEnd('\u0000'), privacy = Privacy.PERSON)
+                }
             } catch (_: Exception) { out.note("The document's properties are damaged: only part of them was read.") }
-            if (kind == "Protected Office file") out.note("This Office file is protected with a password: only the outer details can be read.")
+            if (kind == "DOC") try { wordDocument(o, out) } catch (_: Exception) { out.note("The Word document's own details are damaged: only part of them was read.") }
+            if (o.has("EncryptedPackage")) out.note("This Office file is protected with a password: only the outer details can be read.")
         }
     }
+
+    /**
+     * What a Word 97–2003 file keeps in its own header and tables: who saved it and where (the last ten
+     * saves, with the folder of each), who wrote its comments, and its statistics and dates.
+     */
+    private fun wordDocument(o: Ole2, out: Fields) {
+        val wd = o.stream("WordDocument") ?: return
+        if (B.u16le(wd, 0) != 0xA5EC) return
+        val g = "MS-DOC"
+        val flags = B.u16le(wd, 10)
+        out.add(g, "Identification", "Word 8.0", "${0xA5EC}")
+        B.u16le(wd, 6).let { lid -> out.add(g, "LanguageCode", java.util.Locale.forLanguageTag(LCID[lid] ?: "").displayName.ifEmpty { "0x%04x".format(lid) }, "$lid") }
+        out.add(g, "DocFlags", DOC_FLAGS.filter { (bit, _) -> flags and (1 shl bit) != 0 }.joinToString(", ") { it.second }.ifEmpty { "(none)" }, "${flags and 0xFF0F}")
+        out.add(g, "System", if (B.u16le(wd, 18) and 1 != 0) "Macintosh" else "Windows", "${B.u16le(wd, 18) and 1}")
+        out.add(g, "Word97", if (B.u16le(wd, 18) and 0x10 != 0) "Yes" else "No", "${(B.u16le(wd, 18) shr 4) and 1}")
+        var pos = 32
+        pos += 2 + B.u16le(wd, pos) * 2
+        pos += 2 + B.u16le(wd, pos) * 4
+        val n = B.u16le(wd, pos); pos += 2
+        if (pos + n * 8 > wd.size) return
+        fun pair(off: Int): Pair<Int, Int>? = if (off + 8 > n * 8) null else B.u32le(wd, pos + off).toInt() to B.u32le(wd, pos + off + 4).toInt()
+        if (0x2B8 + 8 <= n * 8) {
+            val t = B.u32le(wd, pos + 0x2B8) or (B.u32le(wd, pos + 0x2BC) shl 32)
+            fileTime(t)?.let { out.add(g, "ModifyDate", it, it, Privacy.TIME) }
+        }
+        val table = o.stream(if (flags and 0x200 != 0) "1Table" else "0Table") ?: return
+        fun slice(p: Pair<Int, Int>?): ByteArray? = p?.takeIf { (off, len) -> len > 0 && off >= 0 && off + len <= table.size }?.let { (off, len) -> table.copyOfRange(off, off + len) }
+        slice(pair(0xF8))?.let { dop ->
+            fun dttm(o: Int): String? {
+                val v = B.u32le(dop, o)
+                if (v == 0L) return null
+                return "%04d:%02d:%02d %02d:%02d:00".format(((v shr 20) and 0x1FF) + 1900, (v shr 16) and 15, (v shr 11) and 31, (v shr 6) and 31, v and 63)
+            }
+            dttm(20)?.let { out.add(g, "CreateDate", it, it, Privacy.TIME) }
+            dttm(24)?.let { out.add(g, "ModifyDate", it, it, Privacy.TIME) }
+            dttm(28)?.let { out.add(g, "LastPrinted", it, it, Privacy.TIME) }
+            if (dop.size >= 60) {
+                out.add(g, "RevisionNumber", "${B.u16le(dop, 32)}")
+                B.u32le(dop, 34).let { out.add(g, "TotalEditTime", minutes(it * 60), "$it") }
+                out.add(g, "Words", "${B.u32le(dop, 38)}"); out.add(g, "Characters", "${B.u32le(dop, 42)}")
+                out.add(g, "Pages", "${B.u16le(dop, 46)}"); out.add(g, "Paragraphs", "${B.u32le(dop, 48)}"); out.add(g, "Lines", "${B.u32le(dop, 56)}")
+            }
+        }
+        // The comments' authors: counted UTF-16 names.
+        slice(pair(0x120))?.let { b ->
+            val names = LinkedHashSet<String>()
+            var p = 0
+            while (p + 2 <= b.size) { val len = B.u16le(b, p); p += 2; if (p + len * 2 > b.size) break; names.add(String(b, p, len * 2, Charsets.UTF_16LE)); p += len * 2 }
+            for (name in names) out.add(g, "CommentBy", name, privacy = Privacy.PERSON)
+        }
+        // The last saves: pairs of (who, which file).
+        slice(pair(0x238))?.let { b ->
+            if (b.size < 6) return@let
+            var num = B.u16le(b, 2); var p = 6
+            while (num >= 2 && p + 2 <= b.size) {
+                var len = B.u16le(b, p); p += 2
+                if (p + len * 2 > b.size) break
+                val who = String(b, p, len * 2, Charsets.UTF_16LE); p += len * 2
+                if (p + 2 > b.size) break
+                len = B.u16le(b, p); p += 2
+                if (p + len * 2 > b.size) break
+                val path = String(b, p, len * 2, Charsets.UTF_16LE); p += len * 2
+                out.add(g, "LastSavedBy", "$who ($path)", privacy = Privacy.PERSON)
+                num -= 2
+            }
+        }
+    }
+
+    private val DOC_FLAGS = listOf(0 to "Template", 1 to "AutoText only", 2 to "Complex", 3 to "Has picture", 8 to "Encrypted", 9 to "1Table",
+        10 to "Read only", 11 to "Passworded", 12 to "ExtChar", 13 to "Load override", 14 to "Far east", 15 to "Obfuscated")
+
+    /** Windows language numbers of the usual languages. */
+    private val LCID = mapOf(0x0409 to "en-US", 0x0809 to "en-GB", 0x0C09 to "en-AU", 0x1009 to "en-CA", 0x0407 to "de-DE", 0x040C to "fr-FR",
+        0x0C0C to "fr-CA", 0x0410 to "it-IT", 0x0C0A to "es-ES", 0x040A to "es-ES", 0x080A to "es-MX", 0x0416 to "pt-BR", 0x0816 to "pt-PT",
+        0x0413 to "nl-NL", 0x0419 to "ru-RU", 0x0411 to "ja-JP", 0x0412 to "ko-KR", 0x0804 to "zh-CN", 0x0404 to "zh-TW", 0x0415 to "pl-PL",
+        0x041D to "sv-SE", 0x0406 to "da-DK", 0x0414 to "nb-NO", 0x040B to "fi-FI", 0x0405 to "cs-CZ", 0x040E to "hu-HU", 0x0408 to "el-GR",
+        0x041F to "tr-TR", 0x0401 to "ar-SA", 0x040D to "he-IL", 0x0422 to "uk-UA")
 
     private fun compObj(b: ByteArray, out: Fields) {
         if (b.size < 32) return
@@ -291,14 +392,25 @@ object OfficeMeta {
             }
         }
         for ((id, o) in props) {
-            if (id == 0 || id == 1 || id == Int.MIN_VALUE) continue
-            val name = if (custom) dict[id]?.let { tagName(it) } ?: continue else names[id] ?: continue
+            if (id == Int.MIN_VALUE) { (value(b, at + o, cs) as? Long)?.let { lcid -> out.add("FlashPix", "LocaleIndicator", LCID[lcid.toInt()]?.let { java.util.Locale.forLanguageTag(it).displayName } ?: "$lcid", "$lcid") }; continue }
+            if (id == 0 || id == 1) continue
+            val raw = if (custom) dict[id] ?: continue else null
+            // Office's hidden custom properties: the links in the document and their base address.
+            if (raw == "_PID_LINKBASE" || raw == "_PID_HLINKS") {
+                val blob = value(b, at + o, cs) as? ByteArray ?: continue
+                if (raw == "_PID_LINKBASE") String(blob, Charsets.UTF_16LE).trimEnd('\u0000').let { out.add("FlashPix", "HyperlinkBase", it) }
+                else hyperlinks(blob, cs).takeIf { it.isNotEmpty() }?.let { out.add("FlashPix", "Hyperlinks", it.joinToString(", "), privacy = Privacy.TEXT) }
+                continue
+            }
+            val name = if (custom) tagName(raw!!) else names[id] ?: continue
             val p = at + o
             if (p + 4 > b.size) continue
             val v = value(b, p, cs) ?: continue
             when {
                 name == "TotalEditTime" && v is FileTime -> { val s = v.t / 10_000_000; out.add("FlashPix", name, minutes(s), "$s") }
                 v is FileTime -> fileTime(v.t)?.let { out.add("FlashPix", name, it, it, Privacy.TIME) }
+                name == "AppVersion" && v is Long -> "${v shr 16}.${"%04d".format(v and 0xFFFF)}".let { out.add("FlashPix", name, it, it) }
+                v is Boolean -> out.add("FlashPix", name, if (v) "Yes" else "No", if (v) "1" else "0")
                 name == "ThumbnailClip" -> out.add("FlashPix", name, "(a picture of the first page)", "1", Privacy.HIDDEN_IMAGE)
                 name == "Security" -> out.add("FlashPix", name, when (v.toString()) { "0" -> "None"; "1" -> "Password protected"; "2" -> "Read-only recommended"; "4" -> "Read-only enforced"; "8" -> "Locked for annotations"; else -> v.toString() }, v.toString())
                 else -> out.add("FlashPix", name, v.toString(), privacy = if (custom) Privacies.of(name) ?: Privacy.TEXT else null)
@@ -342,7 +454,7 @@ object OfficeMeta {
             20, 21 -> (B.u32le(b, d) or (B.u32le(b, d + 4) shl 32))
             4 -> java.lang.Float.intBitsToFloat(B.u32le(b, d).toInt()).toDouble().let { ExifReader.num(it) }
             5 -> java.lang.Double.longBitsToDouble(B.u32le(b, d) or (B.u32le(b, d + 4) shl 32)).let { ExifReader.num(it) }
-            11 -> if (B.u16le(b, d) != 0) "Yes" else "No"
+            11 -> B.u16le(b, d) != 0
             30 -> { val n = B.u32le(b, d).toInt(); if (n <= 0 || d + 4 + n > b.size) "" else String(b, d + 4, n, cs).trimEnd('\u0000') }
             31 -> { val n = B.u32le(b, d).toInt(); if (n <= 0 || d + 4 + n * 2 > b.size) "" else String(b, d + 4, n * 2, Charsets.UTF_16LE).trimEnd('\u0000') }
             64 -> FileTime(B.u32le(b, d) or (B.u32le(b, d + 4) shl 32))
@@ -354,14 +466,32 @@ object OfficeMeta {
             }
             12 -> if (depth < 2) value(b, d, cs, depth + 1) else null
             71 -> "(clipboard data)"
+            65 -> { val n = B.u32le(b, d).toInt(); if (n <= 0 || d + 4 + n > b.size) null else b.copyOfRange(d + 4, d + 4 + n) }
             else -> null
+        }
+    }
+
+    /** The links list: six values per link, the fifth its address and the sixth the place inside it. */
+    private fun hyperlinks(blob: ByteArray, cs: Charset): List<String> {
+        val n = B.u32le(blob, 0).toInt().coerceIn(0, 6000)
+        val values = ArrayList<Any?>()
+        var q = 4
+        for (i in 0 until n) {
+            if (q + 4 > blob.size) break
+            values.add(value(blob, q, cs, 1, B.u16le(blob, q)))
+            q += size(blob, q, cs)
+        }
+        return values.chunked(6).mapNotNull { l ->
+            val url = l.getOrNull(4)?.toString().orEmpty().trim(); val sub = l.getOrNull(5)?.toString().orEmpty().trim()
+            if (url.isEmpty() && sub.isEmpty()) null else if (sub.isEmpty()) url else "$url#$sub"
         }
     }
 
     private fun stringSize(b: ByteArray, q: Int, t: Int, cs: Charset): Int {
         val n = B.u32le(b, q).toInt().coerceAtLeast(0)
         val bytes = if (t == 31) n * 2 else n
-        return 4 + bytes + (4 - bytes % 4) % 4
+        // Office writes 8-bit strings of a list one after another, but pads UTF-16 ones to 4 bytes.
+        return 4 + bytes + if (t == 31) (4 - bytes % 4) % 4 else 0
     }
 
     /** The size of a variant (type + value) at [q], padded to 4 bytes. */
@@ -487,19 +617,69 @@ object OfficeMeta {
     // ------------------------------------------------------------------ HTML and plain text
     fun html(f: MetaInput, out: Fields) {
         out.add("File", "FileType", "HTML")
-        val head = String(f.bytes(0, 1 shl 20), Charsets.UTF_8).let { s -> s.substring(0, s.indexOf("</head", ignoreCase = true).takeIf { it > 0 } ?: s.length) }
+        // The page's own encoding (a meta charset), else UTF-8 when it is valid, else Windows' Latin.
+        val bytes = f.bytes(0, 1 shl 20)
+        val declared = Regex("""charset\s*=\s*["']?([A-Za-z0-9_.:-]+)""", RegexOption.IGNORE_CASE).find(String(bytes, 0, minOf(bytes.size, 4096), Charsets.ISO_8859_1))?.groupValues?.get(1)
+        val cs = declared?.let { runCatching { Charset.forName(it) }.getOrNull() } ?: if (validUtf8(bytes)) Charsets.UTF_8 else Charset.forName("windows-1252")
+        val head = String(bytes, cs).let { s -> s.substring(0, s.indexOf("</head", ignoreCase = true).takeIf { it > 0 } ?: s.length) }
         Regex("""<title[^>]*>(.*?)</title>""", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)).find(head)?.let { out.add("HTML", "Title", entities(it.groupValues[1]).trim()) }
+        // Repeated names (several authors) become one list.
+        val metas = LinkedHashMap<Pair<String, String>, MutableList<String>>()
         for (m in Regex("""<meta\s[^>]*>""", RegexOption.IGNORE_CASE).findAll(head)) {
             val tag = m.value
             fun a(n: String) = Regex("""\b$n\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))""", RegexOption.IGNORE_CASE).find(tag)?.let { it.groupValues[1] + it.groupValues[2] + it.groupValues[3] }
             val content = a("content") ?: continue
-            val name = a("name") ?: a("property") ?: a("http-equiv")?.let { "HTTP-equiv " + it } ?: continue
+            val equiv = a("http-equiv")
+            val name = a("name") ?: a("property") ?: equiv ?: continue
             if (name.equals("viewport", true)) continue
-            out.add("HTML", tagName(name), entities(content))
+            // "dc.creator" or "og:title": the part before the dot or colon is the group, as ExifTool groups them.
+            val split = Regex("""^([A-Za-z]+)[.:](.+)$""").find(name)
+            val key = when {
+                equiv != null && a("name") == null -> "HTTP-equiv" to tagName(name)
+                split != null -> "HTML-" + split.groupValues[1].lowercase() to tagName(split.groupValues[2])
+                else -> "HTML" to tagName(name)
+            }
+            metas.getOrPut(key) { ArrayList() }.add(entities(content))
+        }
+        for ((k, v) in metas) out.add(k.first, k.second, v.joinToString(", "))
+        // Word's own document properties, kept in pages it saves as HTML.
+        Regex("""<o:DocumentProperties>(.*?)</o:DocumentProperties>""", RegexOption.DOT_MATCHES_ALL).find(head)?.let { dp ->
+            for (p in Regex("""<o:(\w+)>([^<]*)</o:\1>""").findAll(dp.groupValues[1])) {
+                val n = OFFICE_HTML[p.groupValues[1]] ?: p.groupValues[1]
+                val v = entities(p.groupValues[2]).trim()
+                if (n.endsWith("Date") || n == "LastPrinted") out.add("HTML-office", n, XmpReader.exifDate(v), XmpReader.exifDate(v)) else out.add("HTML-office", n, v)
+            }
         }
     }
 
-    private fun entities(s: String) = s.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&#39;", "'").replace("&nbsp;", " ")
+    private val OFFICE_HTML = mapOf("Created" to "CreateDate", "LastSaved" to "ModifyDate", "LastPrinted" to "LastPrinted", "Revision" to "RevisionNumber")
+
+    private fun validUtf8(b: ByteArray): Boolean {
+        val d = Charsets.UTF_8.newDecoder()
+        return try { d.decode(java.nio.ByteBuffer.wrap(b, 0, maxOf(0, b.size - 4))); true } catch (_: Exception) { false }
+    }
+
+    /** An SVG drawing's size and version, from its root element. */
+    fun svg(f: MetaInput, out: Fields) {
+        val s = String(f.bytes(0, 1 shl 16), Charsets.UTF_8)
+        val tag = Regex("""<svg\b[^>]*>""", RegexOption.IGNORE_CASE).find(s)?.value ?: return
+        for ((attr, name) in listOf("width" to "ImageWidth", "height" to "ImageHeight", "version" to "SVGVersion", "xmlns" to "Xmlns")) {
+            Regex("""\s$attr\s*=\s*["']([^"']*)["']""").find(tag)?.let { out.add("SVG", name, it.groupValues[1]) }
+        }
+        Regex("""<title[^>]*>([^<]*)</title>""").find(s)?.let { out.add("SVG", "Title", entities(it.groupValues[1]).trim()) }
+        Regex("""<desc[^>]*>([^<]*)</desc>""").find(s)?.let { out.add("SVG", "Description", entities(it.groupValues[1]).trim()) }
+    }
+
+    /** Character references and named entities (HTML's own and the XML five). */
+    private fun entities(s: String) = Regex("""&(#[xX]?[0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);""").replace(s) { m ->
+        val e = m.groupValues[1]
+        val cp = when {
+            e.startsWith("#x") || e.startsWith("#X") -> e.substring(2).toIntOrNull(16)
+            e.startsWith("#") -> e.substring(1).toIntOrNull()
+            else -> when (e) { "amp" -> '&'.code; "lt" -> '<'.code; "gt" -> '>'.code; "quot" -> '"'.code; "apos" -> '\''.code; else -> XmlReader.HTML_ENTITIES[e] }
+        }
+        if (cp != null && cp in 1..0x10FFFF) String(Character.toChars(cp)) else m.value
+    }
 
     /** A text file: its encoding, line endings and counts. */
     fun text(f: MetaInput, out: Fields, kind: String) {

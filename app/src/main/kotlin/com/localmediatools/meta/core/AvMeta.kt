@@ -125,6 +125,7 @@ object AvMeta {
         val kids = elements(f, st.dataAt, st.end)
         val name = kids.firstOrNull { it.id == 0x45A3L }?.let { str(f, it) } ?: return
         val value = kids.firstOrNull { it.id == 0x4487L }?.let { str(f, it) } ?: return
+        if (name.uppercase() in setOf("LOCATION", "RECORDING_LOCATION") && BmffMeta.iso6709(value, "Matroska", out)) { for (k in kids) if (k.id == 0x67C8L) simpleTag(f, k, out); return }
         out.add("Matroska", name.lowercase().split('_', ' ').joinToString("") { it.replaceFirstChar { c -> c.uppercaseChar() } }, value)
         for (k in kids) if (k.id == 0x67C8L) simpleTag(f, k, out)
     }
@@ -281,7 +282,7 @@ object AvMeta {
         out.add(g, "AudioLayer", "${4 - layer}", "$layer")
         out.add(g, "SampleRate", "$rate", "$sr")
         out.add(g, "ChannelMode", when (mode) { 0 -> "Stereo"; 1 -> "Joint Stereo"; 2 -> "Dual Channel"; else -> "Single Channel" }, "$mode")
-        if (layer == 1 && mode == 1) {
+        if (layer == 1) {
             out.add(g, "MSStereo", if ((h shr 5) and 1 != 0) "On" else "Off", "${(h shr 5) and 1}")
             out.add(g, "IntensityStereo", if ((h shr 4) and 1 != 0) "On" else "Off", "${(h shr 4) and 1}")
         }
@@ -300,7 +301,16 @@ object AvMeta {
                 val s = frames.toDouble() * samplesPerFrame / rate
                 out.add("Composite", "Duration", ExifReader.num(s, 2) + " s", ExifReader.num(s))
             }
-            if (B.starts(x, 0, "Xing")) out.add(g, "AudioBitrate", "(variable)", "variable") else out.add(g, "AudioBitrate", "$kbps kbps", "${kbps * 1000}")
+            out.add(g, "AudioBitrate", "$kbps kbps", "${kbps * 1000}")
+            if (flags and 2L != 0L) {
+                val bytes = B.u32be(x, if (flags and 1L != 0L) 12 else 8)
+                out.add(g, "VBRBytes", "$bytes")
+                val frames = if (flags and 1L != 0L) B.u32be(x, 8) else 0L
+                if (frames > 0 && B.starts(x, 0, "Xing")) {
+                    val avg = bytes * 8.0 / (frames.toDouble() * samplesPerFrame / rate)
+                    out.add("Composite", "AudioBitrate", "about ${Math.round(avg / 1000)} kbps (variable)", ExifReader.num(avg))
+                }
+            }
         } else {
             out.add(g, "AudioBitrate", "$kbps kbps", "${kbps * 1000}")
             if (kbps > 0) { val s = audio * 8.0 / (kbps * 1000); out.add("Composite", "Duration", ExifReader.num(s, 2) + " s (approx)", ExifReader.num(s)) }
@@ -322,21 +332,47 @@ object AvMeta {
             val type = ((h shr 24) and 0x7F).toInt(); val len = (h and 0xFFFFFF).toInt()
             val d = if (type == 6) f.bytes(at + 4, minOf(len, 4096)) else f.bytes(at + 4, len)
             when (type) {
-                0 -> if (d.size >= 18) {
-                    val g = "FLAC"
-                    out.add(g, "BlockSizeMin", "${B.u16be(d, 0)}"); out.add(g, "BlockSizeMax", "${B.u16be(d, 2)}")
-                    out.add(g, "FrameSizeMin", "${B.u32be(d, 4) shr 8}"); out.add(g, "FrameSizeMax", "${B.u32be(d, 7) shr 8}")
-                    val v = B.u64be(d, 10)
-                    val rate = (v ushr 44).toInt(); val ch = ((v ushr 41) and 7).toInt() + 1; val bits = ((v ushr 36) and 31).toInt() + 1; val total = v and 0xFFFFFFFFFL
-                    out.add(g, "SampleRate", "$rate"); out.add(g, "Channels", "$ch"); out.add(g, "BitsPerSample", "$bits"); out.add(g, "TotalSamples", "$total")
-                    out.add(g, "MD5Signature", d.copyOfRange(18, minOf(34, d.size)).joinToString("") { "%02x".format(it) })
-                    if (rate > 0) { val s = total.toDouble() / rate; out.add("Composite", "Duration", ExifReader.num(s, 2) + " s", ExifReader.num(s)) }
-                }
+                0 -> streamInfo(d, out)
                 4 -> vorbisComments(d, 0, "Vorbis", out)
-                6 -> out.add("FLAC", "Picture", "(${len} bytes of picture)", "$len", Privacy.HIDDEN_IMAGE)
+                6 -> picture(f.bytes(at + 4, minOf(len, 1 shl 20)), out)
             }
             at += 4 + len
         }
+    }
+
+    /** A FLAC picture block (also base64 in Ogg files' comments): what the cover picture is. */
+    private fun picture(b: ByteArray, out: Fields) {
+        val g = "FLAC"
+        val type = B.u32be(b, 0).toInt()
+        out.add(g, "PictureType", PICTURE_TYPES.getOrNull(type) ?: "$type", "$type")
+        var p = 4
+        val ml = B.u32be(b, p).toInt(); p += 4
+        if (ml !in 0..256 || p + ml > b.size) return
+        out.add(g, "PictureMIMEType", String(b, p, ml, Charsets.US_ASCII)); p += ml
+        val dl = B.u32be(b, p).toInt(); p += 4
+        if (dl !in 0..(1 shl 16) || p + dl > b.size) return
+        out.add(g, "PictureDescription", String(b, p, dl, Charsets.UTF_8), privacy = Privacy.TEXT); p += dl
+        out.add(g, "PictureWidth", "${B.u32be(b, p)}"); out.add(g, "PictureHeight", "${B.u32be(b, p + 4)}")
+        out.add(g, "PictureBitsPerPixel", "${B.u32be(b, p + 8)}"); out.add(g, "PictureIndexedColors", "${B.u32be(b, p + 12)}")
+        val len = B.u32be(b, p + 16)
+        out.add(g, "PictureLength", "$len"); out.add(g, "Picture", "($len bytes of picture)", "$len", Privacy.HIDDEN_IMAGE)
+    }
+
+    private val PICTURE_TYPES = listOf("Other", "32x32 PNG Icon", "Other Icon", "Front Cover", "Back Cover", "Leaflet", "Media", "Lead Artist",
+        "Artist", "Conductor", "Band", "Composer", "Lyricist", "Recording Studio or Location", "Recording Session", "Performance", "Capture from Movie or Video",
+        "Bright(ly) Colored Fish", "Illustration", "Band Logo", "Publisher Logo")
+
+    /** FLAC's stream description (the STREAMINFO block's 34 bytes). */
+    private fun streamInfo(d: ByteArray, out: Fields) {
+        if (d.size < 18) return
+        val g = "FLAC"
+        out.add(g, "BlockSizeMin", "${B.u16be(d, 0)}"); out.add(g, "BlockSizeMax", "${B.u16be(d, 2)}")
+        out.add(g, "FrameSizeMin", "${B.u32be(d, 4) shr 8}"); out.add(g, "FrameSizeMax", "${B.u32be(d, 7) shr 8}")
+        val v = B.u64be(d, 10)
+        val rate = (v ushr 44).toInt(); val ch = ((v ushr 41) and 7).toInt() + 1; val bits = ((v ushr 36) and 31).toInt() + 1; val total = v and 0xFFFFFFFFFL
+        out.add(g, "SampleRate", "$rate"); out.add(g, "Channels", "$ch"); out.add(g, "BitsPerSample", "$bits"); out.add(g, "TotalSamples", "$total")
+        out.add(g, "MD5Signature", d.copyOfRange(18, minOf(34, d.size)).joinToString("") { "%02x".format(it) })
+        if (rate > 0 && total > 0) { val s = total.toDouble() / rate; out.add("Composite", "Duration", ExifReader.num(s, 2) + " s", ExifReader.num(s)) }
     }
 
     /** Vorbis comments: a vendor string and KEY=value pairs (FLAC, Ogg Vorbis, Opus). */
@@ -352,7 +388,12 @@ object AvMeta {
             val c = String(d, p, l, Charsets.UTF_8); p += l
             val key = c.substringBefore('=')
             val value = c.substringAfter('=', "")
-            if (key.equals("METADATA_BLOCK_PICTURE", true) || key.equals("COVERART", true)) { out.add(g, "Picture", "(${value.length * 3 / 4} bytes of picture)", "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE); continue }
+            if (key.equals("METADATA_BLOCK_PICTURE", true)) {
+                val b = try { java.util.Base64.getMimeDecoder().decode(value) } catch (_: Exception) { null }
+                if (b != null) picture(b, out) else out.add(g, "Picture", "(${value.length * 3 / 4} bytes of picture)", "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE)
+                continue
+            }
+            if (key.equals("COVERART", true)) { out.add(g, "CoverArt", "(${value.length * 3 / 4} bytes of picture)", "${value.length * 3 / 4}", Privacy.HIDDEN_IMAGE); continue }
             out.add(g, VORBIS[key.uppercase()] ?: key.lowercase().split('_', ' ').joinToString("") { it.replaceFirstChar { ch -> ch.uppercaseChar() } }, value)
         }
     }
@@ -395,7 +436,15 @@ object AvMeta {
                 out.add("File", "FileType", "OPUS")
                 out.add("Opus", "OpusVersion", "${id.getOrElse(8) { 0 }}"); out.add("Opus", "AudioChannels", "${id.getOrElse(9) { 0 }}")
                 preSkip = B.u16le(id, 10); rate = 48000; out.add("Opus", "SampleRate", "${B.u32le(id, 12)}")
+                val gain = B.u16le(id, 16).toShort().toInt()
+                out.add("Opus", "OutputGain", ExifReader.num(gain / 256.0, 2) + " dB", ExifReader.num(Math.pow(10.0, gain / 5120.0)))
                 packets.getOrNull(1)?.takeIf { B.starts(it, 0, "OpusTags") }?.let { vorbisComments(it, 8, "Vorbis", out) }
+            }
+            B.starts(id, 0, "\u007FFLAC") && B.starts(id, 9, "fLaC") -> {
+                // FLAC in Ogg: the stream description follows a short header; the comments are the next packet.
+                out.add("File", "FileType", "OGG")
+                streamInfo(id.copyOfRange(17, id.size), out)
+                packets.getOrNull(1)?.takeIf { it.isNotEmpty() && it[0].toInt() and 0x7F == 4 }?.let { vorbisComments(it, 4, "Vorbis", out) }
             }
             B.starts(id, 0, "\u0080theora") -> { out.add("File", "FileType", "OGV"); out.add("Theora", "ImageWidth", "${(B.u32be(id, 14) shr 8)}"); out.add("Theora", "ImageHeight", "${(B.u32be(id, 17) shr 8)}") }
             else -> out.add("File", "FileType", "OGG")
@@ -421,6 +470,13 @@ object AvMeta {
         val form = f.ascii(8, 4)
         out.add("File", "FileType", if (form == "WAVE") "WAV" else if (form == "AVI ") "AVI" else form.trim())
         var dataSize = 0L; var byteRate = 0L
+        var stream = ""
+        fun waveFormat(body: Long) {
+            val enc = f.u16le(body)
+            out.add("RIFF", "Encoding", when (enc) { 1 -> "Microsoft PCM"; 2 -> "Microsoft ADPCM"; 3 -> "IEEE Float"; 6 -> "A-Law"; 7 -> "u-Law"; 0x11 -> "IMA ADPCM"; 0x55 -> "MP3"; 0xFF -> "AAC"; 0x2000 -> "AC-3"; 0xFFFE -> "Extensible"; else -> "$enc" }, "$enc")
+            out.add("RIFF", "NumChannels", "${f.u16le(body + 2)}"); out.add("RIFF", "SampleRate", "${f.u32le(body + 4)}")
+            byteRate = f.u32le(body + 8); out.add("RIFF", "AvgBytesPerSec", "$byteRate"); out.add("RIFF", "BitsPerSample", "${f.u16le(body + 14)}")
+        }
         fun chunks(from: Long, to: Long, depth: Int) {
             var at = from; var n = 0
             while (at + 8 <= to && n++ < 10_000) {
@@ -428,12 +484,28 @@ object AvMeta {
                 if (len < 0) break
                 val body = at + 8
                 when (id) {
-                    "fmt " -> {
-                        val enc = f.u16le(body)
-                        out.add("RIFF", "Encoding", when (enc) { 1 -> "Microsoft PCM"; 3 -> "IEEE Float"; 6 -> "A-Law"; 7 -> "u-Law"; 0x55 -> "MP3"; 0xFFFE -> "Extensible"; else -> "$enc" }, "$enc")
-                        out.add("RIFF", "NumChannels", "${f.u16le(body + 2)}"); out.add("RIFF", "SampleRate", "${f.u32le(body + 4)}")
-                        byteRate = f.u32le(body + 8); out.add("RIFF", "AvgBytesPerSec", "$byteRate"); out.add("RIFF", "BitsPerSample", "${f.u16le(body + 14)}")
+                    "fmt " -> waveFormat(body)
+                    "strf" -> when (stream) {
+                        "auds" -> waveFormat(body)
+                        "vids" -> {
+                            // A bitmap header: the video frames' size and compression.
+                            out.add("RIFF", "BMPVersion", "${f.u32le(body)}"); out.add("RIFF", "Planes", "${f.u16le(body + 12)}")
+                            out.add("RIFF", "BitDepth", "${f.u16le(body + 14)}")
+                            f.ascii(body + 16, 4).let { c -> out.add("RIFF", "Compression", if (c.all { it in ' '..'~' }) c.trim() else "${f.u32le(body + 16)}") }
+                            out.add("RIFF", "ImageLength", "${f.u32le(body + 20)}")
+                            out.add("RIFF", "PixelsPerMeterX", "${f.u32le(body + 24)}"); out.add("RIFF", "PixelsPerMeterY", "${f.u32le(body + 28)}")
+                            out.add("RIFF", "NumColors", "${f.u32le(body + 32)}"); out.add("RIFF", "NumImportantColors", "${f.u32le(body + 36)}")
+                        }
                     }
+                    "IDIT" -> {
+                        // "Mon Mar 10 15:04:43 2003".
+                        val s = String(f.bytes(body, len.toInt().coerceAtMost(64)), Charsets.ISO_8859_1).trimEnd('\u0000', '\n').trim()
+                        val m = Regex("""\w+\s+(\w{3})\s+(\d+)\s+(\d+:\d+:\d+)\s+(\d{4})""").find(s)
+                        val mon = m?.let { listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec").indexOf(it.groupValues[1]) + 1 } ?: 0
+                        if (m != null && mon > 0) "%s:%02d:%02d %s".format(m.groupValues[4], mon, m.groupValues[2].toInt(), m.groupValues[3]).let { out.add("RIFF", "DateTimeOriginal", it, it) }
+                        else out.add("RIFF", "DateTimeOriginal", s)
+                    }
+                    "_PMX" -> XmpReader.read(f.bytes(body, len.toInt().coerceAtMost(16 shl 20)), out)
                     "data" -> dataSize = len
                     "LIST" -> {
                         val type = f.ascii(body, 4)
@@ -447,14 +519,22 @@ object AvMeta {
                     "id3 ", "ID3 " -> id3v2(f, body, out)
                     "avih" -> {
                         val us = f.u32le(body)
-                        if (us > 0) out.add("RIFF", "FrameRate", ExifReader.num(1e6 / us, 3))
+                        if (us > 0) out.add("RIFF", "FrameRate", ExifReader.num(1e6 / us, 3), ExifReader.num(1e6 / us))
+                        out.add("RIFF", "MaxDataRate", "${f.u32le(body + 4)}")
                         out.add("RIFF", "FrameCount", "${f.u32le(body + 16)}"); out.add("RIFF", "StreamCount", "${f.u32le(body + 24)}")
                         out.add("RIFF", "ImageWidth", "${f.u32le(body + 32)}"); out.add("RIFF", "ImageHeight", "${f.u32le(body + 36)}")
                         if (us > 0) { val s = f.u32le(body + 16) * us / 1e6; out.add("Composite", "Duration", ExifReader.num(s, 2) + " s", ExifReader.num(s)) }
                     }
                     "strh" -> {
                         val type = f.ascii(body, 4); val handler = f.ascii(body + 4, 4)
-                        out.add("RIFF", if (type == "vids") "VideoCodec" else if (type == "auds") "AudioCodec" else "StreamType", handler.trim().ifEmpty { type }, handler.trim().ifEmpty { type })
+                        stream = type
+                        out.add("RIFF", "StreamType", when (type) { "vids" -> "Video"; "auds" -> "Audio"; "txts" -> "Text"; "mids" -> "MIDI"; else -> type }, type)
+                        if (handler.isNotBlank() && handler[0] != '\u0000') out.add("RIFF", if (type == "vids") "VideoCodec" else if (type == "auds") "AudioCodec" else "Codec", handler.trim())
+                        val scale = f.u32le(body + 20); val rate = f.u32le(body + 24); val length = f.u32le(body + 32)
+                        if (scale > 0 && type == "vids") { out.add("RIFF", "VideoFrameRate", ExifReader.num(rate.toDouble() / scale, 3), ExifReader.num(rate.toDouble() / scale)); out.add("RIFF", "VideoFrameCount", "$length") }
+                        if (scale > 0 && type == "auds") { out.add("RIFF", "AudioSampleRate", ExifReader.num(rate.toDouble() / scale, 3), ExifReader.num(rate.toDouble() / scale)); out.add("RIFF", "AudioSampleCount", "$length") }
+                        f.u32le(body + 40).let { q -> out.add("RIFF", "Quality", if (q == 0xFFFFFFFFL) "(default)" else "$q", "$q") }
+                        out.add("RIFF", "SampleSize", "${f.u32le(body + 44)}")
                     }
                     else -> INFO[id]?.let { name -> out.add("RIFF", name, String(f.bytes(body, len.toInt().coerceAtMost(1 shl 16)), Charsets.UTF_8).trimEnd('\u0000')) }
                 }

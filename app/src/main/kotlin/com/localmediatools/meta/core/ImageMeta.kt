@@ -5,12 +5,24 @@ import java.util.zip.Inflater
 /** Photos and pictures: JPEG, PNG, WebP, GIF, BMP, Photoshop, TIFF and camera RAW files. */
 object ImageMeta {
     /** Reads EXIF ([exif], a TIFF block), and the XMP, IPTC and ICC it points to. */
-    fun exifBlock(exif: Bytes, out: Fields, base: Long = 0) {
+    fun exifBlock(exif: Bytes, out: Fields, base: Long = 0): ExifReader.Found {
         val found = ExifReader.read(exif, out, base = base)
         found.xmp?.let { XmpReader.read(it, out) }
         found.iptc?.let { IptcReader.read(it, out) }
         found.icc?.let { IccReader.read(it, out) }
         if (found.makerNote > 0) out.note("The camera maker's own notes (${found.makerNote} bytes) are listed but not read: each maker writes them its own way.")
+        return found
+    }
+
+    /** The EXIF of a JPEG held inside another file (a RAW's preview); [base]: where the JPEG starts in the file. */
+    private fun embeddedJpegExif(j: ByteArray, base: Long, out: Fields) {
+        var p = 2
+        while (p + 4 < j.size && j[p] == 0xFF.toByte()) {
+            val m = j[p + 1].toInt() and 0xFF; val len = B.u16be(j, p + 2)
+            if (m == 0xE1 && B.starts(j, p + 4, "Exif\u0000")) { exifBlock(ArrayBytes(j, p + 10, minOf(len - 8, j.size - p - 10)), out, base + p + 10); break }
+            if (m == 0xDA || len < 2) break
+            p += 2 + len
+        }
     }
 
     // ------------------------------------------------------------------ JPEG
@@ -60,6 +72,7 @@ object ImageMeta {
                 }
                 m == 0xEE && B.starts(data, 0, "Adobe") && data.size >= 12 -> {
                     out.add("Adobe", "DCTEncodeVersion", "${B.u16be(data, 5)}")
+                    out.add("Adobe", "APP14Flags0", "${B.u16be(data, 7)}"); out.add("Adobe", "APP14Flags1", "${B.u16be(data, 9)}")
                     out.add("Adobe", "ColorTransform", when (data[11].toInt()) { 0 -> "Unknown (RGB or CMYK)"; 1 -> "YCbCr"; 2 -> "YCCK"; else -> "${data[11]}" }, "${data[11]}")
                 }
                 m == 0xEB && (B.starts(data, 0, "JP") || data.size > 16) -> out.note("This picture carries Content Credentials (C2PA), a signed record of how it was made, which isn't read here.")
@@ -293,7 +306,7 @@ object ImageMeta {
                     if (label == 0xF9 && first >= 4) delay += f.u16le(p + 2) * 10L
                     if (label == 0xFF && first == 11) {
                         val app = f.ascii(p + 1, 11)
-                        if (app == "NETSCAPE2.0" && f.u8(p + 12) >= 3) out.add("GIF", "AnimationIterations", f.u16le(p + 14).let { if (it == 0) "Infinite" else "$it" })
+                        if (app == "NETSCAPE2.0" && f.u8(p + 12) >= 3) out.add("GIF", "AnimationIterations", f.u16le(p + 14).let { if (it == 0) "Infinite" else "$it" }, "${f.u16le(p + 14)}")
                         if (app == "XMP DataXMP") {
                             // XMP written as raw bytes up to its "magic trailer".
                             val raw = f.bytes(p + 12, 1 shl 20)
@@ -332,6 +345,12 @@ object ImageMeta {
         for (c in comments) out.add("GIF", "Comment", c)
     }
 
+    private val RAF_TAGS = mapOf(0x100 to "RawImageFullSize", 0x110 to "RawImageCropTopLeft", 0x111 to "RawImageCroppedSize", 0x121 to "RawImageSize",
+        0x130 to "FujiLayout", 0x2000 to "WB_GRGBLevelsAuto", 0x2100 to "WB_GRGBLevelsDaylight", 0x2200 to "WB_GRGBLevelsCloudy",
+        0x2300 to "WB_GRGBLevelsDaylightFluor", 0x2301 to "WB_GRGBLevelsDayWhiteFluor", 0x2302 to "WB_GRGBLevelsWhiteFluorescent",
+        0x2310 to "WB_GRGBLevelsWarmWhiteFluor", 0x2311 to "WB_GRGBLevelsLivingRoomWarmWhiteFluor", 0x2400 to "WB_GRGBLevelsTungsten",
+        0x2FF0 to "WB_GRGBLevels", 0x9200 to "RelativeExposure", 0x9650 to "RawExposureBias")
+
     // ------------------------------------------------------------------ BMP and Photoshop
     fun bmp(f: MetaInput, out: Fields) {
         out.add("File", "FileType", "BMP")
@@ -367,7 +386,8 @@ object ImageMeta {
     /** TIFF and the camera RAW files built like it (DNG, NEF, CR2, ARW, ORF, RW2, PEF…). */
     fun tiff(f: MetaInput, out: Fields, kind: String) {
         out.add("File", "FileType", kind)
-        exifBlock(InputBytes(f), out)
+        val found = exifBlock(InputBytes(f), out)
+        found.embeddedJpeg?.let { embeddedJpegExif(it, found.embeddedJpegAt, out) }
     }
 
     /** Fujifilm RAF: a header, then a JPEG preview holding the EXIF. */
@@ -377,14 +397,34 @@ object ImageMeta {
         out.add("RAF", "CameraModel", B.cstring(f.bytes(28, 32), 0, 32))
         val jpegAt = f.u32be(84); val jpegLen = f.u32be(88)
         if (jpegAt > 0 && jpegLen > 0 && jpegAt + jpegLen <= f.size) {
-            val j = f.bytes(jpegAt, minOf(jpegLen, 1L shl 20).toInt())
-            // The preview's EXIF segment.
-            var p = 2
-            while (p + 4 < j.size && j[p] == 0xFF.toByte()) {
-                val m = j[p + 1].toInt() and 0xFF; val len = B.u16be(j, p + 2)
-                if (m == 0xE1 && B.starts(j, p + 4, "Exif\u0000")) { exifBlock(ArrayBytes(j, p + 10, len - 8), out); break }
-                if (m == 0xDA) break
-                p += 2 + len
+            embeddedJpegExif(f.bytes(jpegAt, minOf(jpegLen, 1L shl 20).toInt()), jpegAt, out)
+        }
+        // The RAW's own directory: sizes, the sensor layout and white balance.
+        val dirAt = f.u32be(92); val dirLen = f.u32be(96)
+        if (dirAt > 0 && dirLen in 4..(1L shl 20) && dirAt + dirLen <= f.size) {
+            val d = f.bytes(dirAt, dirLen.toInt())
+            val n = B.u32be(d, 0).toInt()
+            var p = 4
+            for (k in 0 until minOf(n, 500)) {
+                if (p + 4 > d.size) break
+                val tag = B.u16be(d, p); val size = B.u16be(d, p + 2)
+                val v = d.copyOfRange(p + 4, minOf(d.size, p + 4 + size))
+                fun shorts(max: Int = 64) = (0 until minOf(v.size / 2, max)).joinToString(" ") { "${B.u16be(v, it * 2)}" }
+                RAF_TAGS[tag]?.let { name ->
+                    when {
+                        tag == 0x130 -> out.add("RAF", name, v.take(4).joinToString(" ") { "${it.toInt() and 0xFF}" })
+                        // Sizes are stored height first.
+                        tag in 0x100..0x121 && v.size >= 4 -> "${B.u16be(v, 2)} ${B.u16be(v, 0)}".let { out.add("RAF", name, it.replace(" ", " × "), it) }
+                        tag in 0x2000..0x2FF0 -> out.add("RAF", name, shorts(4))
+                        tag == 0x9200 || tag == 0x9650 -> if (v.size >= 4) {
+                            // Two signed 16-bit numbers: numerator and denominator.
+                            val num = B.u16be(v, 0).toShort().toDouble(); val den = B.u16be(v, 2).toShort().toDouble()
+                            out.add("RAF", name, ExifReader.num(if (den == 0.0) 0.0 else num / den, 3))
+                        }
+                        else -> out.add("RAF", name, shorts())
+                    }
+                }
+                p += 4 + size
             }
         }
     }

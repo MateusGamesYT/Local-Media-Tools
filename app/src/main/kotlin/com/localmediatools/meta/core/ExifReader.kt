@@ -32,7 +32,8 @@ object ExifReader {
     private class Entry(val tag: Int, val type: Int, val count: Long, val valueAt: Long)
 
     /** What the walk found beyond the fields: where the thumbnail is, in the TIFF block's offsets. */
-    class Found(var thumbOffset: Long = -1, var thumbLength: Long = -1, var makerNote: Int = 0, var xmp: ByteArray? = null, var iptc: ByteArray? = null, var icc: ByteArray? = null)
+    class Found(var thumbOffset: Long = -1, var thumbLength: Long = -1, var makerNote: Int = 0, var xmp: ByteArray? = null, var iptc: ByteArray? = null, var icc: ByteArray? = null,
+                var embeddedJpeg: ByteArray? = null, var embeddedJpegAt: Long = 0)
 
     /**
      * Reads the TIFF structure in [b] (starting with "II*" or "MM*"; BigTIFF too). The main
@@ -43,8 +44,8 @@ object ExifReader {
         val h = b.read(0, 16)
         if (h.size < 8) return found
         val le = when { B.starts(h, 0, "II") -> true; B.starts(h, 0, "MM") -> false; else -> return found }
-        val r = Reader(b, le, base)
-        val magic = r.u16(h, 2)
+        val magic = if (le) B.u16le(h, 2) else B.u16be(h, 2)
+        val r = Reader(b, le, base, panasonic = magic == 0x55)
         val big = magic == 43
         if (magic != 42 && !big && magic != 0x4F52 && magic != 0x5352 && magic != 0x55) {
             // Olympus ORF ("IIRO"/"IIRS"), Panasonic RW2 ("IIU") are TIFF with another number.
@@ -63,7 +64,7 @@ object ExifReader {
     }
 
     /** [base]: where the block starts in the file, so offsets are shown as positions in the file (as ExifTool shows them). */
-    private class Reader(val b: Bytes, val le: Boolean, val base: Long) {
+    private class Reader(val b: Bytes, val le: Boolean, val base: Long, val panasonic: Boolean = false) {
         fun u16(a: ByteArray, o: Int) = if (le) B.u16le(a, o) else B.u16be(a, o)
         fun u32(a: ByteArray, o: Int) = if (le) B.u32le(a, o) else B.u32be(a, o)
         fun u64(a: ByteArray, o: Int): Long = if (le) (B.u32le(a, o) or (B.u32le(a, o + 4) shl 32)) else ((B.u32be(a, o) shl 32) or B.u32be(a, o + 4))
@@ -90,7 +91,7 @@ object ExifReader {
                 entries.add(Entry(tag, type, n, valueAt))
             }
             val next = if (big) u64(raw, (count * esize).toInt()) else u32(raw, (count * esize).toInt())
-            val names = when { group == "GPS" -> ExifTags.gps; group == "InteropIFD" -> ExifTags.interop; else -> ExifTags.main }
+            val names = when { group == "GPS" -> ExifTags.gps; group == "InteropIFD" -> ExifTags.interop; panasonic && group == "IFD0" -> ExifTags.panasonicRaw; else -> ExifTags.main }
             var lat: Double? = null; var latRef: String? = null; var lon: Double? = null; var lonRef: String? = null
             for (e in entries) {
                 val name = names[e.tag]
@@ -107,6 +108,7 @@ object ExifReader {
                     e.tag == 0x02BC && group != "GPS" -> found.xmp = block(e)
                     e.tag == 0x83BB && group != "GPS" -> found.iptc = block(e)
                     e.tag == 0x8773 && group != "GPS" -> found.icc = block(e)
+                    panasonic && group == "IFD0" && e.tag == 0x002E -> { found.embeddedJpeg = block(e); found.embeddedJpegAt = base + e.valueAt; out.add(group, "JpgFromRaw", "(${e.count} bytes, a full-size JPEG copy of the picture)", "${e.count}", Privacy.HIDDEN_IMAGE) }
                     e.tag == 0xC4A5 && group == "IFD0" -> block(e)?.let { p -> if (B.starts(p, 0, "PrintIM")) out.add("PrintIM", "PrintIMVersion", B.ascii(p, 8, 4)) }
                     e.tag == 0x927C && group == "ExifIFD" -> { found.makerNote = e.count.toInt(); out.add(group, "MakerNote", "(${e.count} bytes, the camera maker's own data)", "${e.count}") }
                     e.tag == 0x0201 && group.startsWith("IFD") && group != "IFD0" -> { found.thumbOffset = numbers(e, 1).firstOrNull()?.toLong() ?: -1; out.add(group, "ThumbnailOffset", "${found.thumbOffset + base}") }
@@ -175,8 +177,8 @@ object ExifReader {
             val n = minOf(e.count, max.toLong()).toInt()
             return (0 until n).mapNotNull { i ->
                 when (e.type) {
-                    5 -> { val num = u32(d, i * 8); val den = u32(d, i * 8 + 4); if (den == 0L) (if (num == 0L) 0.0 else Double.POSITIVE_INFINITY) else num.toDouble() / den }
-                    10 -> { val num = u32(d, i * 8).toInt(); val den = u32(d, i * 8 + 4).toInt(); if (den == 0) (if (num == 0) 0.0 else Double.POSITIVE_INFINITY) else num.toDouble() / den }
+                    5 -> { val num = u32(d, i * 8); val den = u32(d, i * 8 + 4); if (den == 0L) (if (num == 0L) Double.NaN else Double.POSITIVE_INFINITY) else num.toDouble() / den }
+                    10 -> { val num = u32(d, i * 8).toInt(); val den = u32(d, i * 8 + 4).toInt(); if (den == 0) (if (num == 0) Double.NaN else if (num > 0) Double.POSITIVE_INFINITY else Double.NEGATIVE_INFINITY) else num.toDouble() / den }
                     11 -> java.lang.Float.intBitsToFloat(u32(d, i * 4).toInt()).toDouble()
                     12 -> java.lang.Double.longBitsToDouble(u64(d, i * 8))
                     else -> numbers(e, max).getOrNull(i)?.toDouble()
@@ -205,7 +207,8 @@ object ExifReader {
                         dms(deg, null) to num(deg)
                     }
                     "GPSTimeStamp" -> {
-                        val t = "%02d:%02d:%s".format(v.getOrElse(0) { 0.0 }.toInt(), v.getOrElse(1) { 0.0 }.toInt(), seconds(v.getOrElse(2) { 0.0 }))
+                        val w = v.map { if (it.isNaN()) 0.0 else it }
+                        val t = "%02d:%02d:%s".format(w.getOrElse(0) { 0.0 }.toInt(), w.getOrElse(1) { 0.0 }.toInt(), seconds(w.getOrElse(2) { 0.0 }))
                         t to t
                     }
                     "ExposureTime" -> exposure(v[0]) to num(v[0])
@@ -224,6 +227,7 @@ object ExifReader {
             val v = numbers(e)
             if (v.isEmpty()) return null
             if (v.size == 1) ExifTags.choice(name, v[0])?.let { return it to v[0].toString() }
+            if (name == "CR2CFAPattern" && v.size == 1) when (v[0].toInt()) { 1 -> "0 1 1 2"; 2 -> "1 0 2 1"; 3 -> "2 1 1 0"; 4 -> "1 2 0 1"; else -> null }?.let { return it to it }
             return when (name) {
                 "GPSVersionID", "DNGVersion", "DNGBackwardVersion" -> v.joinToString(".") to v.joinToString(" ")
                 "ISO" -> v.joinToString(", ") to v.joinToString(" ")
@@ -241,7 +245,14 @@ object ExifReader {
                 "UserComment", "GPSProcessingMethod", "GPSAreaInformation" -> comment(d).let { it to it }
                 "FileSource", "SceneType" -> { val v = d.firstOrNull()?.toLong()?.and(0xFF) ?: return null; (ExifTags.choice(name, v) ?: "$v") to "$v" }
                 "GPSVersionID" -> d.joinToString(".") { (it.toInt() and 0xFF).toString() } to d.joinToString(" ") { (it.toInt() and 0xFF).toString() }
-                else -> if (d.isEmpty()) null else "(${e.count} bytes)" to "(Binary data ${e.count} bytes)"
+                "RawDataUniqueID", "ImageUniqueID" -> d.joinToString("") { "%02X".format(it) }.let { it to it }
+                else -> when {
+                    d.isEmpty() -> null
+                    // Short text kept as bytes ("0300"), or a few numbers.
+                    d.size <= 64 && d.all { it in 32..126 || it == 0.toByte() } && d.any { it != 0.toByte() } -> B.cstring(d, 0, d.size).let { it to it }
+                    d.size <= 32 -> d.joinToString(" ") { "${it.toInt() and 0xFF}" }.let { it to it }
+                    else -> "(${e.count} bytes)" to "(Binary data ${e.count} bytes)"
+                }
             }
         }
     }
@@ -265,7 +276,8 @@ object ExifReader {
 
     /** A number as ExifTool prints it (-n): up to 10 significant digits, no trailing zeros. */
     fun num(v: Double, maxDecimals: Int = 10): String {
-        if (v.isNaN() || v.isInfinite()) return if (v.isNaN()) "nan" else if (v > 0) "inf" else "-inf"
+        // 0/0 is how cameras write "not known"; ExifTool says "undef".
+        if (v.isNaN() || v.isInfinite()) return if (v.isNaN()) "undef" else if (v > 0) "inf" else "-inf"
         if (v == v.roundToLong().toDouble() && abs(v) < 1e15) return v.roundToLong().toString()
         val s = java.math.BigDecimal(v).round(java.math.MathContext(10)).setScale(maxDecimals, java.math.RoundingMode.HALF_EVEN).stripTrailingZeros().toPlainString()
         return if (s == "-0") "0" else s
@@ -283,7 +295,8 @@ object ExifReader {
     private fun lens(v: List<Double>): String {
         if (v.size < 4) return v.joinToString(" ") { num(it) }
         val focal = if (v[0] == v[1]) num(v[0], 1) + " mm" else num(v[0], 1) + "–" + num(v[1], 1) + " mm"
-        val ap = if (v[2] == v[3] || v[3] == 0.0) "f/" + num(v[2], 1) else "f/" + num(v[2], 1) + "–" + num(v[3], 1)
+        if (v[2].isNaN() || v[2] == 0.0) return focal
+        val ap = if (v[2] == v[3] || v[3] == 0.0 || v[3].isNaN()) "f/" + num(v[2], 1) else "f/" + num(v[2], 1) + "–" + num(v[3], 1)
         return "$focal $ap"
     }
 

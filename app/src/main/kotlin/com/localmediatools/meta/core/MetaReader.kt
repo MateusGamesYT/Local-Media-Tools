@@ -37,10 +37,10 @@ object MetaReader {
                 "RIFF" -> AvMeta.riff(f, out)
                 "PDF" -> PdfMeta.read(f, out)
                 "ZIP" -> OfficeMeta.zipDocument(f, out)
-                "OLE2" -> OfficeMeta.ole2(f, out)
+                "OLE2" -> OfficeMeta.ole2(f, out, ext)
                 "RTF" -> OfficeMeta.rtf(f, out)
                 "HTML" -> OfficeMeta.html(f, out)
-                "XML", "SVG" -> { OfficeMeta.text(f, out, kind); XmpReader.read(f.bytes(0, 16 shl 20), out) }
+                "XML", "SVG" -> { OfficeMeta.text(f, out, kind); if (kind == "SVG") OfficeMeta.svg(f, out); XmpReader.read(f.bytes(0, 16 shl 20), out) }
                 "TXT" -> OfficeMeta.text(f, out, if (ext in TEXT_KINDS) ext.uppercase() else "TXT")
                 else -> {}
             }
@@ -66,12 +66,13 @@ object MetaReader {
     private val MIME = mapOf("JPEG" to "image/jpeg", "PNG" to "image/png", "WEBP" to "image/webp", "GIF" to "image/gif", "BMP" to "image/bmp",
         "PSD" to "application/vnd.adobe.photoshop", "TIFF" to "image/tiff", "DNG" to "image/x-adobe-dng", "CR2" to "image/x-canon-cr2",
         "CR3" to "image/x-canon-cr3", "NEF" to "image/x-nikon-nef", "ARW" to "image/x-sony-arw", "ORF" to "image/x-olympus-orf",
-        "RW2" to "image/x-panasonic-rw2", "RAF" to "image/x-fujifilm-raf", "PEF" to "image/x-pentax-pef", "HEIC" to "image/heic", "AVIF" to "image/avif",
+        "RW2" to "image/x-panasonic-rw2", "RAF" to "image/x-fujifilm-raf", "PEF" to "image/x-pentax-pef", "HEIC" to "image/heic", "HEIF" to "image/heif", "AVIF" to "image/avif",
         "MP4" to "video/mp4", "MOV" to "video/quicktime", "3GP" to "video/3gpp", "M4A" to "audio/mp4", "M4V" to "video/x-m4v", "MKV" to "video/x-matroska",
         "WEBM" to "video/webm", "MP3" to "audio/mpeg", "FLAC" to "audio/flac", "OGG" to "audio/ogg", "OPUS" to "audio/ogg", "WAV" to "audio/x-wav",
         "AVI" to "video/x-msvideo", "PDF" to "application/pdf", "DOCX" to "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "XLSX" to "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "PPTX" to "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "DOC" to "application/msword", "XLS" to "application/vnd.ms-excel", "PPT" to "application/vnd.ms-powerpoint", "ODT" to "application/vnd.oasis.opendocument.text",
+        "DOC" to "application/msword", "DOCM" to "application/vnd.ms-word.document.macroEnabled.12", "XLSM" to "application/vnd.ms-excel.sheet.macroEnabled.12",
+        "PPTM" to "application/vnd.ms-powerpoint.presentation.macroEnabled.12", "XLS" to "application/vnd.ms-excel", "PPT" to "application/vnd.ms-powerpoint", "ODT" to "application/vnd.oasis.opendocument.text",
         "ODS" to "application/vnd.oasis.opendocument.spreadsheet", "ODP" to "application/vnd.oasis.opendocument.presentation", "EPUB" to "application/epub+zip",
         "RTF" to "text/rtf", "HTML" to "text/html", "TXT" to "text/plain", "CSV" to "text/csv", "ZIP" to "application/zip", "XML" to "application/xml",
         "SVG" to "image/svg+xml", "APK" to "application/vnd.android.package-archive")
@@ -136,7 +137,8 @@ object MetaReader {
             major == "qt  " -> "MOV"
             major == "crx " -> "CR3"
             major == "avif" || major == "avis" || (major == "mif1" && "avif" in brands) -> "AVIF"
-            major in setOf("heic", "heix", "heim", "heis", "hevc", "hevx", "mif1", "msf1") -> "HEIC"
+            major in setOf("heic", "heix", "heim", "heis", "hevc", "hevx") -> "HEIC"
+            major == "mif1" || major == "msf1" -> "HEIF"
             major.startsWith("3g2") -> "3G2"
             major.startsWith("3gp") || major.startsWith("3ge") || major.startsWith("3gg") -> "3GP"
             major == "M4A " || major == "M4B " || major == "M4P " -> major.trim()
@@ -150,8 +152,8 @@ object MetaReader {
         val w = out.list.firstOrNull { it.name == "ImageWidth" || it.name == "ExifImageWidth" || it.name == "PixelXDimension" }?.raw?.toLongOrNull() ?: return
         val h = out.list.firstOrNull { it.name == "ImageHeight" || it.name == "ExifImageHeight" || it.name == "PixelYDimension" }?.raw?.toLongOrNull() ?: return
         if (w <= 0 || h <= 0) return
-        out.add("Composite", "ImageSize", "$w × $h", "${w}x$h")
-        out.add("Composite", "Megapixels", ExifReader.num(w * h / 1e6, 1), ExifReader.num(w * h / 1e6, 3))
+        out.add("Composite", "ImageSize", "$w × $h", "$w $h")
+        out.add("Composite", "Megapixels", ExifReader.num(w * h / 1e6, 1), (w * h / 1e6).toString())
     }
 
     fun size(bytes: Long): String = when {

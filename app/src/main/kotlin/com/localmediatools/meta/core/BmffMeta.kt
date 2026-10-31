@@ -22,9 +22,14 @@ object BmffMeta {
         top.firstOrNull { it.type == "ftyp" }?.let { ftyp(f, it, out) }
         for (b in top) when (b.type) {
             "moov" -> moov(f, b, out)
+            "mdat" -> { out.add("QuickTime", "MediaDataSize", "${b.end - b.body}"); out.add("QuickTime", "MediaDataOffset", "${b.body}") }
             "meta" -> heifMeta(f, b, out)
             "uuid" -> uuid(f, b, out)
         }
+        // The average bit rate: the media data over the length.
+        val size = out.list.firstOrNull { it.name == "MediaDataSize" }?.raw?.toDoubleOrNull()
+        val secs = out.list.firstOrNull { it.group == "QuickTime" && it.name == "Duration" }?.raw?.toDoubleOrNull()
+        if (size != null && size > 0 && secs != null && secs > 0) out.add("Composite", "AvgBitrate", "${Math.round(size * 8 / secs / 1000)} kbps", "${Math.round(size * 8 / secs)}")
     }
 
     /** The boxes between [from] and [to]; [anyType]: names needn't be letters (an item list's are numbers in phone files). */
@@ -48,7 +53,7 @@ object BmffMeta {
 
     private fun ftyp(f: MetaInput, b: Box, out: Fields) {
         out.add("QuickTime", "MajorBrand", f.ascii(b.body, 4).trim())
-        out.add("QuickTime", "MinorVersion", "${f.u32be(b.body + 4)}")
+        f.u32be(b.body + 4).let { v -> "%x.%x.%x".format(v shr 16, (v shr 8) and 0xFF, v and 0xFF).let { out.add("QuickTime", "MinorVersion", it, it) } }
         val n = ((b.size - b.headerSize - 8) / 4).coerceIn(0, 64).toInt()
         out.add("QuickTime", "CompatibleBrands", (0 until n).map { f.ascii(b.body + 8 + it * 4, 4).trim() }.filter { it.isNotEmpty() }.joinToString(", "))
     }
@@ -61,19 +66,43 @@ object BmffMeta {
         return "%04d:%02d:%02d %02d:%02d:%02d".format(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND))
     }
 
+    /** A 16.16 or 8.8 fixed-point number. */
+    private fun fixed(v: Long, bits: Int) = ExifReader.num(v.toInt().toDouble() / (1 shl bits))
+
+    /** The 3×3 display matrix: a, b, c, d, x, y as 16.16 and u, v, w as 2.30 numbers. */
+    private fun matrix(f: MetaInput, at: Long) = (0 until 9).joinToString(" ") { i ->
+        val v = f.u32be(at + i * 4).toInt().toDouble()
+        ExifReader.num(if (i % 3 == 2) v / (1 shl 30) else v / 65536, 8)
+    }
+
+    private fun stamp(s: Long, g: String, name: String, out: Fields) {
+        // QuickTime times are UTC (phones and cameras store them so).
+        date(s)?.let { out.add(g, name, "$it UTC", it) }
+    }
+
     private fun moov(f: MetaInput, moov: Box, out: Fields) {
         var track = 0
+        var movieScale = 0L
         for (b in children(f, moov)) when (b.type) {
             "mvhd" -> {
                 val v = f.u8(b.body)
                 val (c, m, ts, d) = if (v == 1) listOf(f.u64be(b.body + 4), f.u64be(b.body + 12), f.u32be(b.body + 20), f.u64be(b.body + 24))
                     else listOf(f.u32be(b.body + 4), f.u32be(b.body + 8), f.u32be(b.body + 12), f.u32be(b.body + 16))
-                date(c)?.let { out.add("QuickTime", "CreateDate", it) }
-                date(m)?.let { out.add("QuickTime", "ModifyDate", it) }
-                out.add("QuickTime", "TimeScale", "$ts")
-                if (ts > 0) out.add("QuickTime", "Duration", duration(d.toDouble() / ts), ExifReader.num(d.toDouble() / ts))
+                movieScale = ts
+                val g = "QuickTime"
+                out.add(g, "MovieHeaderVersion", "$v")
+                stamp(c, g, "CreateDate", out); stamp(m, g, "ModifyDate", out)
+                out.add(g, "TimeScale", "$ts")
+                if (ts > 0) out.add(g, "Duration", duration(d.toDouble() / ts), ExifReader.num(d.toDouble() / ts))
+                val p = b.body + if (v == 1) 32 else 20
+                out.add(g, "PreferredRate", fixed(f.u32be(p), 16)); out.add(g, "PreferredVolume", fixed(f.u16be(p + 4).toShort().toLong(), 8))
+                out.add(g, "MatrixStructure", matrix(f, p + 16))
+                if (ts > 0) listOf("PreviewTime", "PreviewDuration", "PosterTime", "SelectionTime", "SelectionDuration", "CurrentTime").forEachIndexed { i, n ->
+                    out.add(g, n, ExifReader.num(f.u32be(p + 52 + i * 4).toDouble() / ts))
+                }
+                out.add(g, "NextTrackID", "${f.u32be(p + 76)}")
             }
-            "trak" -> { track++; trak(f, b, "Track$track", out) }
+            "trak" -> { track++; trak(f, b, "Track$track", movieScale, out) }
             "udta" -> udta(f, b, "UserData", out)
             "meta" -> meta(f, b, "Keys", out)
             "uuid" -> uuid(f, b, out)
@@ -85,12 +114,21 @@ object BmffMeta {
         return if (t >= 3600) "%d:%02d:%02d".format(t / 3600, (t / 60) % 60, t % 60) else if (t >= 60) "%d:%02d".format(t / 60, t % 60) else ExifReader.num(s, 2) + " s"
     }
 
-    private fun trak(f: MetaInput, trak: Box, g: String, out: Fields) {
+    private fun trak(f: MetaInput, trak: Box, g: String, movieScale: Long, out: Fields) {
+        var mediaScale = 0L
         for (b in children(f, trak)) when (b.type) {
             "tkhd" -> {
                 val v = f.u8(b.body)
                 val base = b.body + if (v == 1) 32 else 20
-                date(if (v == 1) f.u64be(b.body + 4) else f.u32be(b.body + 4))?.let { out.add(g, "TrackCreateDate", it) }
+                out.add(g, "TrackHeaderVersion", "$v")
+                stamp(if (v == 1) f.u64be(b.body + 4) else f.u32be(b.body + 4), g, "TrackCreateDate", out)
+                stamp(if (v == 1) f.u64be(b.body + 12) else f.u32be(b.body + 8), g, "TrackModifyDate", out)
+                out.add(g, "TrackID", "${f.u32be(b.body + if (v == 1) 20 else 12)}")
+                val td = if (v == 1) f.u64be(b.body + 28) else f.u32be(b.body + 20)
+                if (movieScale > 0) out.add(g, "TrackDuration", duration(td.toDouble() / movieScale), ExifReader.num(td.toDouble() / movieScale))
+                out.add(g, "TrackLayer", "${f.u16be(base + 12).toShort()}")
+                out.add(g, "TrackVolume", fixed(f.u16be(base + 16).toShort().toLong(), 8))
+                out.add(g, "MatrixStructure", matrix(f, base + 20))
                 // The display matrix says how the picture is turned.
                 val ma = base + 20
                 val a = f.u32be(ma).toInt(); val bb = f.u32be(ma + 4).toInt()
@@ -106,21 +144,42 @@ object BmffMeta {
                     val v = f.u8(m.body)
                     val ts = if (v == 1) f.u32be(m.body + 20) else f.u32be(m.body + 12)
                     val d = if (v == 1) f.u64be(m.body + 24) else f.u32be(m.body + 16)
-                    date(if (v == 1) f.u64be(m.body + 4) else f.u32be(m.body + 4))?.let { out.add(g, "MediaCreateDate", it) }
+                    mediaScale = ts
+                    out.add(g, "MediaHeaderVersion", "$v")
+                    stamp(if (v == 1) f.u64be(m.body + 4) else f.u32be(m.body + 4), g, "MediaCreateDate", out)
+                    stamp(if (v == 1) f.u64be(m.body + 12) else f.u32be(m.body + 8), g, "MediaModifyDate", out)
+                    out.add(g, "MediaTimeScale", "$ts")
                     if (ts > 0) out.add(g, "MediaDuration", duration(d.toDouble() / ts), ExifReader.num(d.toDouble() / ts))
                     val lang = f.u16be(m.body + if (v == 1) 32 else 20)
                     if (lang in 1..0x7FFF) {
                         val code = String(charArrayOf((((lang shr 10) and 31) + 0x60).toChar(), (((lang shr 5) and 31) + 0x60).toChar(), ((lang and 31) + 0x60).toChar()))
-                        if (code != "und" && code.all { it in 'a'..'z' }) out.add(g, "MediaLanguageCode", code)
+                        if (code.all { it in 'a'..'z' }) out.add(g, "MediaLanguageCode", code)
                     }
                 }
                 "hdlr" -> {
                     val t = f.ascii(m.body + 8, 4)
+                    f.ascii(m.body + 4, 4).let { if (it.isNotBlank() && it.all { c -> c in ' '..'~' } && it != "\u0000\u0000\u0000\u0000") out.add(g, "HandlerClass", it) }
+                    f.ascii(m.body + 12, 4).let { if (it.isNotBlank() && it[0] != '\u0000') out.add(g, "HandlerVendorID", it) }
                     out.add(g, "HandlerType", when (t) { "vide" -> "Video Track"; "soun" -> "Audio Track"; "meta" -> "Metadata"; "text", "sbtl", "subt" -> "Subtitle"; "hint" -> "Hint Track"; else -> t }, t)
                     val name = B.cstring(f.bytes(m.body + 24, (m.end - m.body - 24).coerceIn(0, 256).toInt()), 0, 256, Charsets.UTF_8)
                     if (name.isNotEmpty()) out.add(g, "HandlerDescription", name)
                 }
-                "minf" -> children(f, m).firstOrNull { it.type == "stbl" }?.let { stbl -> children(f, stbl).firstOrNull { it.type == "stsd" }?.let { stsd(f, it, g, out) } }
+                "minf" -> for (x in children(f, m)) when (x.type) {
+                    "vmhd" -> { out.add(g, "GraphicsMode", "${f.u16be(x.body + 4)}"); out.add(g, "OpColor", "${f.u16be(x.body + 6)} ${f.u16be(x.body + 8)} ${f.u16be(x.body + 10)}") }
+                    "smhd" -> out.add(g, "Balance", fixed(f.u16be(x.body + 4).toShort().toLong(), 8))
+                    "stbl" -> for (s in children(f, x)) when (s.type) {
+                        "stsd" -> stsd(f, s, g, out)
+                        "stts" -> if (mediaScale > 0) {
+                            // Frames per second: the samples over their total duration.
+                            val n = f.u32be(s.body + 4).coerceIn(0, 100_000).toInt()
+                            var count = 0L; var total = 0L
+                            val t = f.bytes(s.body + 8, n * 8)
+                            for (i in 0 until t.size / 8) { val c = B.u32be(t, i * 8); count += c; total += c * B.u32be(t, i * 8 + 4) }
+                            val video = out.list.any { it.group == g && it.name == "HandlerType" && it.raw == "vide" }
+                            if (video && total > 0) out.add(g, "VideoFrameRate", ExifReader.num(count.toDouble() * mediaScale / total, 3), ExifReader.num(count.toDouble() * mediaScale / total))
+                        }
+                    }
+                }
             }
             "udta" -> udta(f, b, g, out)
             "meta" -> meta(f, b, g, out)
@@ -132,19 +191,32 @@ object BmffMeta {
         val e = entries.firstOrNull() ?: return
         val fourcc = e.type
         when {
-            fourcc in setOf("avc1", "avc3", "hvc1", "hev1", "av01", "vp08", "vp09", "mp4v", "apcn", "apch", "apcs", "apco", "ap4h", "jpeg", "mjpa", "dvh1", "dvhe", "s263", "H263") -> {
+            fourcc in setOf("avc1", "avc3", "hvc1", "hev1", "av01", "vp08", "vp09", "mp4v", "apcn", "apch", "apcs", "apco", "ap4h", "jpeg", "mjpa", "dvh1", "dvhe", "s263", "H263", "CRAW", "SVQ1", "SVQ3", "cvid", "rle ", "raw ", "dvc ", "dvcp", "dv5p", "xvid", "mjp2", "png ") -> {
                 out.add(g, "CompressorID", fourcc, fourcc)
+                f.ascii(e.body + 12, 4).let { if (it.isNotBlank() && it[0] != '\u0000') out.add(g, "VendorID", it) }
                 out.add(g, "SourceImageWidth", "${f.u16be(e.body + 24)}"); out.add(g, "SourceImageHeight", "${f.u16be(e.body + 26)}")
+                out.add(g, "XResolution", fixed(f.u32be(e.body + 28), 16)); out.add(g, "YResolution", fixed(f.u32be(e.body + 32), 16))
                 val cn = f.u8(e.body + 42)
                 if (cn in 1..31) out.add(g, "CompressorName", f.ascii(e.body + 43, cn).trim())
+                out.add(g, "BitDepth", "${f.u16be(e.body + 74)}")
+                sampleBoxes(f, e, 78, g, out)
             }
             fourcc in setOf("mp4a", "ac-3", "ec-3", "Opus", "alac", "fLaC", "samr", "sawb", "sowt", "twos", "lpcm", "ipcm", "mp3 ", ".mp3", "ulaw", "alaw") -> {
                 out.add(g, "AudioFormat", fourcc.trim(), fourcc.trim())
                 out.add(g, "AudioChannels", "${f.u16be(e.body + 16)}")
                 out.add(g, "AudioBitsPerSample", "${f.u16be(e.body + 18)}")
                 out.add(g, "AudioSampleRate", "${f.u32be(e.body + 24) shr 16}")
+                sampleBoxes(f, e, 28, g, out)
             }
             else -> out.add(g, "SampleFormat", fourcc)
+        }
+    }
+
+    /** The boxes inside a sample description, after its [header] bytes: pixel shape and bit rates. */
+    private fun sampleBoxes(f: MetaInput, e: Box, header: Int, g: String, out: Fields) {
+        for (c in boxes(f, e.body + header, e.end)) when (c.type) {
+            "pasp" -> { val h = f.u32be(c.body); val v = f.u32be(c.body + 4); if (h > 0 && v > 0) out.add(g, "PixelAspectRatio", "$h:$v") }
+            "btrt" -> { out.add(g, "BufferSize", "${f.u32be(c.body)}"); out.add(g, "MaxBitrate", "${f.u32be(c.body + 4)}"); out.add(g, "AverageBitrate", "${f.u32be(c.body + 8)}") }
         }
     }
 
@@ -163,7 +235,7 @@ object BmffMeta {
                 }
                 b.type == "auth" -> out.add(g, "Author", String(f.bytes(b.body + 6, (b.end - b.body - 6).coerceIn(0, 4096).toInt()), Charsets.UTF_8).trimEnd('\u0000'))
                 b.type == "cprt" -> out.add(g, "Copyright", String(f.bytes(b.body + 6, (b.end - b.body - 6).coerceIn(0, 4096).toInt()), Charsets.UTF_8).trimEnd('\u0000'))
-                b.type == "loci" -> {}
+                b.type == "loci" -> loci(f, b, g, out)
                 b.type == "SDLN" || b.type == "smta" -> out.add(g, "SamsungModel", "(Samsung's own data)")
             }
         }
@@ -174,6 +246,35 @@ object BmffMeta {
         "inf" to "Information", "fmt" to "Format", "req" to "Requirements", "src" to "Source", "wrt" to "Composer", "gen" to "Genre",
         "lyr" to "Lyrics", "grp" to "Grouping", "dir" to "Director", "prd" to "Producer", "cpy" to "Copyright", "aut" to "Author", "enc" to "EncodedBy")
 
+    /** 3GPP's location box: a place name, a role, and the position as fixed-point numbers. */
+    private fun loci(f: MetaInput, b: Box, g: String, out: Fields) {
+        val d = f.bytes(b.body, (b.end - b.body).coerceIn(0, 4096).toInt())
+        var p = 6 // version and flags, language
+        fun str(): String {
+            if (p + 2 <= d.size && (d[p] == 0xFE.toByte() && d[p + 1] == 0xFF.toByte() || d[p] == 0xFF.toByte() && d[p + 1] == 0xFE.toByte())) {
+                var e = p + 2
+                while (e + 1 < d.size && !(d[e] == 0.toByte() && d[e + 1] == 0.toByte())) e += 2
+                val s = String(d, p, e - p, Charsets.UTF_16); p = e + 2; return s
+            }
+            var e = p
+            while (e < d.size && d[e] != 0.toByte()) e++
+            val s = String(d, p, e - p, Charsets.UTF_8); p = e + 1; return s
+        }
+        val name = str()
+        if (p + 13 > d.size) return
+        val role = d[p].toInt(); p++
+        fun fixed(o: Int) = B.u32be(d, o).toInt() / 65536.0
+        val lon = fixed(p); val lat = fixed(p + 4); val alt = fixed(p + 8); p += 12
+        val body = str(); val notes = str()
+        val roleName = when (role) { 0 -> "shooting"; 1 -> "real"; 2 -> "fictional"; else -> "$role" }
+        out.add(g, "LocationInformation", "${name.ifEmpty { "(none)" }} Role=$roleName Lat=${"%.5f".format(java.util.Locale.ROOT, lat)} Lon=${"%.5f".format(java.util.Locale.ROOT, lon)} Alt=${"%.2f".format(java.util.Locale.ROOT, alt)} Body=$body Notes=$notes", privacy = Privacy.LOCATION)
+        if (lat != 0.0 || lon != 0.0) {
+            out.add("Composite", "GPSLatitude", ExifReader.dms(lat, true), ExifReader.num(lat))
+            out.add("Composite", "GPSLongitude", ExifReader.dms(lon, false), ExifReader.num(lon))
+            out.add("Composite", "GPSPosition", "${ExifReader.dms(lat, true)}, ${ExifReader.dms(lon, false)}", "${ExifReader.num(lat)} ${ExifReader.num(lon)}")
+        }
+    }
+
     /** ISO 6709 ("+40.7128-074.0060+010.000/"): signed degrees and an optional altitude. */
     private fun location(s: String, g: String, out: Fields) {
         val m = Regex("""([+-]\d+(?:\.\d+)?)([+-]\d+(?:\.\d+)?)([+-]\d+(?:\.\d+)?)?""").find(s) ?: return
@@ -182,6 +283,14 @@ object BmffMeta {
             listOfNotNull(lat, lon, alt).joinToString(" ") { ExifReader.num(it) })
         out.add("Composite", "GPSLatitude", ExifReader.dms(lat, true), ExifReader.num(lat))
         out.add("Composite", "GPSLongitude", ExifReader.dms(lon, false), ExifReader.num(lon))
+        out.add("Composite", "GPSPosition", "${ExifReader.dms(lat, true)}, ${ExifReader.dms(lon, false)}", "${ExifReader.num(lat)} ${ExifReader.num(lon)}")
+        alt?.let { out.add("Composite", "GPSAltitude", ExifReader.num(it, 1) + " m", ExifReader.num(it)) }
+    }
+
+    /** ISO 6709 text anywhere (Matroska tags, other boxes): the position, when it is one. */
+    fun iso6709(s: String, g: String, out: Fields): Boolean {
+        if (!Regex("""^\s*[+-]\d+(\.\d+)?[+-]\d+(\.\d+)?""").containsMatchIn(s)) return false
+        location(s, g, out); return true
     }
 
     /** A meta box: phone keys (mdta handler: keys + ilst) or iTunes tags (mdir: ilst). */
@@ -199,6 +308,11 @@ object BmffMeta {
                 keys.add(f.ascii(at + 8, sz - 8))
                 at += sz
             }
+        }
+        kids.firstOrNull { it.type == "hdlr" }?.let { h ->
+            val hg = if (g == "ItemList" || g == "Keys") "QuickTime" else g
+            out.add(hg, "HandlerType", f.ascii(h.body + 8, 4))
+            f.ascii(h.body + 12, 4).let { if (it.isNotBlank() && it[0] != '\u0000') out.add(hg, "HandlerVendorID", it) }
         }
         val ilst = kids.firstOrNull { it.type == "ilst" } ?: return
         for (item in boxes(f, ilst.body, ilst.end, anyType = true)) {
@@ -239,7 +353,8 @@ object BmffMeta {
         "com.android.version" to "AndroidVersion", "com.android.capture.fps" to "AndroidCaptureFPS", "com.android.manufacturer" to "AndroidManufacturer",
         "com.android.model" to "AndroidModel", "com.apple.quicktime.title" to "DisplayName", "com.apple.quicktime.description" to "Description",
         "com.apple.quicktime.author" to "Author", "com.apple.quicktime.artist" to "Artist", "com.apple.quicktime.album" to "Album",
-        "com.apple.quicktime.copyright" to "Copyright", "com.apple.quicktime.keywords" to "Keywords", "com.apple.quicktime.comment" to "Comment")
+        "com.apple.quicktime.copyright" to "Copyright", "com.apple.quicktime.keywords" to "Keywords", "com.apple.quicktime.comment" to "Comment",
+        "location" to "GPSCoordinates", "com.apple.quicktime.location.name" to "LocationName", "date" to "DateTimeOriginal")
 
     private fun uuid(f: MetaInput, b: Box, out: Fields) {
         val id = f.bytes(b.body, 16).joinToString("") { "%02x".format(it) }
@@ -278,12 +393,16 @@ object BmffMeta {
                 items[id] = Item(id, type, content)
             }
         }
+        kids.firstOrNull { it.type == "hdlr" }?.let { h -> f.ascii(h.body + 8, 4).let { t -> out.add("QuickTime", "HandlerType", if (t == "pict") "Picture" else t, t) } }
         kids.firstOrNull { it.type == "iloc" }?.let { iloc(f, it, items) }
         kids.firstOrNull { it.type == "iprp" }?.let { iprp ->
             val ipco = children(f, iprp).firstOrNull { it.type == "ipco" } ?: return@let
             val props = children(f, ipco)
             // The primary picture's size: the first ispe (good enough for single-picture files).
-            props.firstOrNull { it.type == "ispe" }?.let { out.add("QuickTime", "ImageWidth", "${f.u32be(it.body + 4)}"); out.add("QuickTime", "ImageHeight", "${f.u32be(it.body + 8)}") }
+            props.firstOrNull { it.type == "ispe" }?.let {
+                out.add("QuickTime", "ImageSpatialExtent", "${f.u32be(it.body + 4)} × ${f.u32be(it.body + 8)}", "${f.u32be(it.body + 4)} ${f.u32be(it.body + 8)}")
+                out.add("QuickTime", "ImageWidth", "${f.u32be(it.body + 4)}"); out.add("QuickTime", "ImageHeight", "${f.u32be(it.body + 8)}")
+            }
             props.firstOrNull { it.type == "irot" }?.let { out.add("QuickTime", "Rotation", "${(f.u8(it.body) and 3) * 90}") }
             props.firstOrNull { it.type == "colr" && f.ascii(it.body, 4).let { t -> t == "prof" || t == "rICC" } }?.let { IccReader.read(f.bytes(it.body + 4, (it.end - it.body - 4).coerceIn(0, 4L shl 20).toInt()), out) }
         }

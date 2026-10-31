@@ -51,8 +51,8 @@ object IptcReader {
         for ((name, vs) in lists) {
             val v = vs.joinToString(", ")
             val raw = when {
-                name.endsWith("Date") && v.length == 8 && v.all { it.isDigit() } -> "${v.take(4)}:${v.substring(4, 6)}:${v.substring(6)}"
-                name.endsWith("Time") && v.length >= 6 -> v.take(2) + ":" + v.substring(2, 4) + ":" + v.substring(4, 6) + v.drop(6).let { z -> if (z.length == 5) z.take(3) + ":" + z.drop(3) else z }
+                name.contains("Date") && v.length == 8 && v.all { it.isDigit() } -> "${v.take(4)}:${v.substring(4, 6)}:${v.substring(6)}"
+                name.contains("Time") && v.length >= 6 && v.take(6).all { it.isDigit() } -> v.take(2) + ":" + v.substring(2, 4) + ":" + v.substring(4, 6) + v.drop(6).let { z -> if (z.length == 5) z.take(3) + ":" + z.drop(3) else z }
                 else -> v
             }
             out.add("IPTC", name, raw, raw)
@@ -83,13 +83,41 @@ object PhotoshopReader {
                 0x040F -> f.icc = data
                 0x03ED -> if (data.size >= 16) {
                     out.add("Photoshop", "XResolution", ExifReader.num(B.u32be(data, 0) / 65536.0))
+                    out.add("Photoshop", "DisplayedUnitsX", if (B.u16be(data, 4) == 2) "cm" else "inches", "${B.u16be(data, 4)}")
                     out.add("Photoshop", "YResolution", ExifReader.num(B.u32be(data, 8) / 65536.0))
+                    out.add("Photoshop", "DisplayedUnitsY", if (B.u16be(data, 12) == 2) "cm" else "inches", "${B.u16be(data, 12)}")
                 }
-                0x0406 -> if (data.size >= 2) out.add("Photoshop", "PhotoshopQuality", (B.u16be(data, 0).toShort() + 4).toString())
+                0x0406 -> if (data.size >= 4) {
+                    // Quality -4…8 shown as Photoshop's 0…12.
+                    val q = B.u16be(data, 0).toShort().toInt()
+                    out.add("Photoshop", "PhotoshopQuality", "${q + 4}", "$q")
+                    B.u16be(data, 2).let { out.add("Photoshop", "PhotoshopFormat", when (it) { 0 -> "Standard"; 1 -> "Optimized"; 0x101 -> "Progressive"; else -> "$it" }, "$it") }
+                }
+                0x040A -> if (data.isNotEmpty()) out.add("Photoshop", "CopyrightFlag", if (data[0].toInt() != 0) "True" else "False", "${data[0].toInt()}")
+                0x040B -> out.add("Photoshop", "URL", B.cstring(data, 0, data.size, Charsets.UTF_8))
+                0x040D -> if (data.size >= 4) out.add("Photoshop", "GlobalAngle", "${B.u32be(data, 0).toInt()}")
+                0x0419 -> if (data.size >= 4) out.add("Photoshop", "GlobalAltitude", "${B.u32be(data, 0).toInt()}")
                 0x0409, 0x040C -> out.add("Photoshop", "PhotoshopThumbnail", "(${maxOf(0, size - 28)} bytes, a smaller copy of the picture)", "${maxOf(0, size - 28)}")
                 0x0425 -> out.add("Photoshop", "IPTCDigest", data.joinToString("") { "%02x".format(it) })
-                0x041A -> {} // slices
-                0x0421 -> if (data.size > 8) out.add("Photoshop", "HasRealMergedData", if (data[4].toInt() != 0) "Yes" else "No", "${data[4].toInt()}")
+                0x041A -> if (data.size >= 24) {
+                    // Slices: version, bounds, then the group's name (counted UTF-16) and the number of slices.
+                    val n = B.u32be(data, 20).toInt()
+                    if (n in 0..1000 && 24 + n * 2 + 4 <= data.size) {
+                        out.add("Photoshop", "SlicesGroupName", String(data, 24, n * 2, Charsets.UTF_16BE).trimEnd('\u0000'))
+                        out.add("Photoshop", "NumSlices", "${B.u32be(data, 24 + n * 2)}")
+                    }
+                }
+                0x0421 -> if (data.size > 8) {
+                    out.add("Photoshop", "HasRealMergedData", if (data[4].toInt() != 0) "Yes" else "No", "${data[4].toInt()}")
+                    // Then the writer's and the reader's names, each a counted UTF-16 string.
+                    var p = 5
+                    for (name in listOf("WriterName", "ReaderName")) {
+                        val n = B.u32be(data, p).toInt()
+                        if (n !in 0..1000 || p + 4 + n * 2 > data.size) break
+                        out.add("Photoshop", name, String(data, p + 4, n * 2, Charsets.UTF_16BE).trimEnd('\u0000'), privacy = Privacy.SOFTWARE)
+                        p += 4 + n * 2
+                    }
+                }
             }
             i = start + size + (size % 2)
         }
