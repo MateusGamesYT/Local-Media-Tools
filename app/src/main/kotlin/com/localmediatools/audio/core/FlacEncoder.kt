@@ -166,6 +166,17 @@ class FlacEncoder(
             val c = o.toLong() * bps + riceCost(residual(x, o)) + 6
             if (c < bestCost) { bestCost = c; bestOrder = o }
         }
+        // Linear prediction (as FLAC encoders do): used when it beats the fixed predictors.
+        val lpc = if (n > 2 * MAX_LPC) bestLpc(x, bps) else null
+        if (lpc != null && lpc.cost < bestCost) {
+            val p = lpc.coefs.size
+            w.put(0, 1); w.put(0x20 or (p - 1), 6); w.put(0, 1)
+            for (i in 0 until p) w.putSigned(x[i], bps)
+            w.put(lpc.precision - 1, 4); w.putSigned(lpc.shift, 5)
+            for (c in lpc.coefs) w.putSigned(c, lpc.precision)
+            rice(w, lpc.residual, n, p)
+            return
+        }
         if (bestOrder < 0) {
             w.put(0, 1); w.put(1, 6); w.put(0, 1)
             for (v in x) w.putSigned(v, bps)
@@ -174,6 +185,83 @@ class FlacEncoder(
         w.put(0, 1); w.put(8 or bestOrder, 6); w.put(0, 1)
         for (i in 0 until bestOrder) w.putSigned(x[i], bps)
         rice(w, residual(x, bestOrder), n, bestOrder)
+    }
+
+    private class Lpc(val coefs: IntArray, val precision: Int, val shift: Int, val residual: IntArray, val cost: Long)
+
+    /**
+     * The best linear predictor up to order [MAX_LPC]: autocorrelation of the Tukey-windowed block,
+     * Levinson–Durbin, then the two orders the error curve favours tried exactly with quantised
+     * coefficients.
+     */
+    private fun bestLpc(x: IntArray, bps: Int): Lpc? {
+        val n = x.size
+        val win = DoubleArray(n) { i ->
+            // Tukey window, half of it tapered (FLAC's default).
+            val taper = n / 4
+            when { i < taper -> 0.5 * (1 - kotlin.math.cos(Math.PI * i / taper)); i >= n - taper -> 0.5 * (1 - kotlin.math.cos(Math.PI * (n - 1 - i) / taper)); else -> 1.0 }
+        }
+        val xw = DoubleArray(n) { x[it] * win[it] }
+        val r = DoubleArray(MAX_LPC + 1) { lag -> var s = 0.0; for (i in lag until n) s += xw[i] * xw[i - lag]; s }
+        if (r[0] <= 0.0) return null
+        // Levinson–Durbin: coefficients and prediction error for every order.
+        val coefs = Array(MAX_LPC) { DoubleArray(it + 1) }
+        val err = DoubleArray(MAX_LPC)
+        var a = DoubleArray(0)
+        var e = r[0]
+        for (p in 1..MAX_LPC) {
+            var acc = r[p]
+            for (j in 0 until p - 1) acc -= a[j] * r[p - 1 - j]
+            val k = acc / e
+            val next = DoubleArray(p)
+            for (j in 0 until p - 1) next[j] = a[j] - k * a[p - 2 - j]
+            next[p - 1] = k
+            a = next
+            e *= (1 - k * k)
+            if (e <= 0) e = 1e-9
+            coefs[p - 1] = a.copyOf(); err[p - 1] = e
+        }
+        // Expected bits: residual bits from the error, plus the coefficients and warm-up.
+        val precision = if (bps <= 8) 8 else if (bps <= 16) 13 else 15
+        val estimate = (1..MAX_LPC).map { p -> p to (0.5 * kotlin.math.ln(maxOf(err[p - 1] / n, 1e-9)) / kotlin.math.ln(2.0) * n + p * (bps + precision)) }
+        val tries = estimate.sortedBy { it.second }.take(2).map { it.first }
+        var best: Lpc? = null
+        for (p in tries) {
+            val q = quantize(coefs[p - 1], precision) ?: continue
+            val (qc, shift) = q
+            val res = IntArray(n - p)
+            var ok = true
+            for (i in p until n) {
+                var sum = 0L
+                for (j in 0 until p) sum += qc[j].toLong() * x[i - j - 1]
+                val v = x[i] - (sum shr shift)
+                if (v > Int.MAX_VALUE / 4 || v < Int.MIN_VALUE / 4) { ok = false; break }
+                res[i - p] = v.toInt()
+            }
+            if (!ok) continue
+            val cost = p.toLong() * bps + 4 + 5 + p.toLong() * precision + riceCost(res) + 6
+            if (best == null || cost < best.cost) best = Lpc(qc, precision, shift, res, cost)
+        }
+        return best
+    }
+
+    /** Coefficients as integers of [precision] bits and the shift that scales them, with error feedback. */
+    private fun quantize(c: DoubleArray, precision: Int): Pair<IntArray, Int>? {
+        val cmax = c.maxOf { kotlin.math.abs(it) }
+        if (cmax <= 0.0 || cmax.isNaN()) return null
+        val limit = (1 shl (precision - 1)) - 1
+        var log2 = 0
+        while ((1 shl log2) <= cmax) log2++
+        val shift = (precision - 1 - log2).coerceIn(0, 15)
+        val out = IntArray(c.size)
+        var error = 0.0
+        for (i in c.indices) {
+            error += c[i] * (1 shl shift)
+            val q = Math.round(error).toInt().coerceIn(-limit - 1, limit)
+            out[i] = q
+            error -= q
+        }
+        return out to shift
     }
 
     /** About how many bits Rice coding takes for [r] in one partition (from the mean size of the values). */
@@ -256,6 +344,9 @@ class FlacEncoder(
     }
 
     companion object {
+        /** The highest prediction order tried (FLAC's -8 uses 12). */
+        const val MAX_LPC = 12
+
         fun crc8(b: ByteArray): Int {
             var c = 0
             for (x in b) { c = c xor (x.toInt() and 0xFF); repeat(8) { c = if (c and 0x80 != 0) ((c shl 1) xor 0x07) and 0xFF else (c shl 1) and 0xFF } }
@@ -300,6 +391,9 @@ class BitWriter {
     }
 
     fun align() { if (nbits > 0) put(0, 8 - nbits) }
+
+    /** Bits written so far. */
+    val bitCount: Long get() = bytes * 8L + nbits
 
     private fun byte(v: Int) {
         if (bytes == buf.size) buf = buf.copyOf(buf.size * 2)

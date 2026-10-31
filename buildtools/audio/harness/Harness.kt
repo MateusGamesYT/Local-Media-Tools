@@ -35,6 +35,22 @@ fun main(args: Array<String>) {
             java.io.RandomAccessFile(f, "rw").use { it.seek(enc.streamInfoOffset); it.write(info) }
             System.err.println("encoded ${samples.size / ch} frames in ${(System.nanoTime() - t) / 1_000_000} ms → ${f.length()} bytes")
         }
+        "mp3" -> {
+            // mp3 <rate> <channels> <kbps> <in.f32> <out.mp3>
+            val rate = args[1].toInt(); val ch = args[2].toInt(); val kbps = args[3].toInt()
+            val x = readAll(File(args[4]))
+            val f = File(args[5])
+            val t = System.nanoTime()
+            val os = f.outputStream().buffered(1 shl 20)
+            val enc = com.localmediatools.audio.core.Mp3Encoder(os, rate, ch, kbps)
+            enc.allShort = System.getenv("LMT_MP3_ALLSHORT") == "1"
+            var i = 0
+            while (i < x.size) { val n = minOf(x.size - i, 4096 * ch); enc.add(x.copyOfRange(i, i + n)); i += n }
+            var info: ByteArray? = null
+            enc.finish { _, b -> info = b }; os.close()
+            java.io.RandomAccessFile(f, "rw").use { it.seek(0); it.write(info!!) }
+            System.err.println("mp3: ${x.size / ch} frames in ${(System.nanoTime() - t) / 1_000_000} ms → ${f.length()} bytes, ${enc.shortGranules} short granules, ${enc.stuffedBytes} bytes stuffed")
+        }
         "loudness" -> {
             val rate = args[1].toInt(); val ch = args[2].toInt()
             val m = LoudnessMeter(rate, ch)
