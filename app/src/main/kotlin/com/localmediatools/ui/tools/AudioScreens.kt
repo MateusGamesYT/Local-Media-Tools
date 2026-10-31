@@ -107,7 +107,7 @@ class WaveformView(ctx: Context, private val selectable: Boolean, private val on
     var playhead = -1.0; set(v) { field = v; invalidate() }
     private var active = 0
     private val barPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val shade = Paint().apply { color = Palette.withAlpha(Color.BLACK, 140) }
+    private val shade = Paint().apply { color = Palette.withAlpha(Palette.WARNING, 70) }
     private val handle = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
     private val head = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Palette.WARNING; strokeWidth = ctx.dp(2).toFloat() }
     private val r = RectF()
@@ -329,7 +329,7 @@ class TrimAudioScreen(a: MainActivity) : ToolScreen(a, ToolId.TRIM_AUDIO) {
         if (!::times.isInitialized) return
         val s = (wave.start * durationUs).toLong(); val e = (wave.end * durationUs).toLong()
         val kept = if (AudioPrefs.trimRemove) durationUs - (e - s) else e - s
-        times.text = if (durationUs <= 0) "" else tr("Start {0} · End {1} · keeps {2}", fmtTime(s), fmtTime(e), Format.duration(kept.coerceAtLeast(0) / 1000))
+        times.text = if (durationUs <= 0) "" else tr("Start {0} · End {1} · keeps {2}", fmtTime(s), fmtTime(e), com.localmediatools.tools.AudioJobs.len(kept.coerceAtLeast(0), 1_000_000))
         wave.removed = if (AudioPrefs.trimRemove) listOf(wave.start to wave.end) else listOf(0.0 to wave.start, wave.end to 1.0)
         if (fields && durationUs > 0) { startField.edit.setText(fmtTime(s)); endField.edit.setText(fmtTime(e)) }
         refreshValidation()
@@ -638,7 +638,7 @@ class RemoveSilenceScreen(a: MainActivity) : ToolScreen(a, ToolId.REMOVE_SILENCE
         wave.removed = removed
         val kept = keep.sumOf(Span::length)
         info.text = if (a.frames - kept < a.rate / 10) tr("No silence to remove at this setting.") else tr("Removes {0}: {1} becomes {2}",
-            Format.duration((a.frames - kept) * 1000 / a.rate), Format.duration(a.frames * 1000 / a.rate), Format.duration(kept * 1000 / a.rate))
+            com.localmediatools.tools.AudioJobs.len(a.frames - kept, a.rate), com.localmediatools.tools.AudioJobs.len(a.frames, a.rate), com.localmediatools.tools.AudioJobs.len(kept, a.rate))
         refreshValidation()
     }
 

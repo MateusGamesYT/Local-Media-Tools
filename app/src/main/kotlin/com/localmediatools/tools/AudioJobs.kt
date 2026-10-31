@@ -42,7 +42,11 @@ internal object AudioJobs {
 
     fun db(v: Double) = String.format(Locale.ROOT, "%+.1f dB", v)
     fun lufs(v: Double) = if (v.isInfinite()) "−∞ LUFS" else String.format(Locale.ROOT, "%.1f LUFS", v)
-    fun len(frames: Long, rate: Int) = Format.duration(frames * 1000 / rate.coerceAtLeast(1))
+    /** A length: "7.7 s" under a minute (short cuts show), else "3:12". */
+    fun len(frames: Long, rate: Int): String {
+        val sec = frames.toDouble() / rate.coerceAtLeast(1)
+        return if (sec < 59.95) Format.seconds(Math.round(sec * 10) / 10.0) else Format.duration((sec * 1000).toLong())
+    }
 
     /** Streams [item]'s sound (from [startUs] to [endUs]) at [rate] and [ch] into [emit], reporting progress for item [index]. */
     fun pump(ctx: JobContext, item: MediaItem, info: AudioInfo, rate: Int, ch: Int, index: Int, from: Double, to: Double,

@@ -278,6 +278,7 @@ class ScreenshotTest {
             @Suppress("DEPRECATION") a.onBackPressed(); idle()
         }
         Selection.of(ToolId.REMOVE_SILENCE).add(listOf(sound("speech.wav")))
+        com.localmediatools.ui.tools.AudioPrefs.silKeepMs = 200
         open(a, ToolId.REMOVE_SILENCE, dir, "34_remove_silence") { texts(a).any { it.startsWith("Removes ") && " becomes " in it } }
         Selection.of(ToolId.AUDIO_VOLUME).add(listOf(sound("speech.wav"), sound("music.wav")))
         open(a, ToolId.AUDIO_VOLUME, dir, "35_volume") { true }
