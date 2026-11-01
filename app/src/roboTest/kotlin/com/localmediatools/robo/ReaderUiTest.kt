@@ -94,9 +94,10 @@ class ReaderUiTest {
         ToolLauncher.open(a, ToolId.READER)
         idle()
         assertTrue(a.navigator.top is ReaderHomeScreen)
+        // The list of recent files is read in the background; the empty-list line comes when it is done.
+        waitFor("the empty list of recent files") { texts(a).contains("Files you open show up here.") }
         render(a, "0_home_empty")
         assertTrue(texts(a).contains("Open a file"))
-        assertTrue(texts(a).contains("Files you open show up here."))
         all(a.navigator.top!!.view).first { it is TextView && it.text == "Open a file" }.let { (it.parent as View).performClick() }
         idle()
         val started = shadowOf(a).nextStartedActivityForResult
