@@ -136,4 +136,47 @@ class AiToolsTest {
         val r2 = Robo.runJob(app, FaceBlurJob(listOf(other), plan)).single()
         assertEquals(ItemOutcome.SKIPPED, r2.outcome)
     }
+
+    /**
+     * Private details in a real advert (resources/privacy, CC BY 2.0): the phone number and e-mail
+     * addresses TextOCR outlined lose their letters even at the lightest strength, blurred and
+     * pixelated; the rest of the photo is left as it was.
+     */
+    @Test fun privateDetailsAreHiddenEvenAtLight() {
+        val name = "223514026649d937.jpg"
+        val bytes = javaClass.getResourceAsStream("/privacy/$name")!!.readBytes()
+        val src = Robo.item(app, Robo.write(inDir, name, bytes))
+        val orig = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        val quads = String(javaClass.getResourceAsStream("/privacy/labels.tsv")!!.readBytes()).lines()
+            .filter { it.startsWith(name) && "\tprivate\t" in it }.map { l -> l.split('\t')[3].split(' ').map { it.toFloat() }.toFloatArray() }
+        assertEquals(3, quads.size)
+        val tracks = quads.mapIndexed { i, q ->
+            com.localmediatools.vision.core.PrivateTrack(i, 0, com.localmediatools.vision.core.FindKind.TEXT, setOf(com.localmediatools.vision.core.Detail.EMAIL), "", still = true)
+                .apply { samples.add(com.localmediatools.vision.core.PrivateSample(0, q)) }
+        }
+        fun spread(b: Bitmap, q: FloatArray): Double {
+            val xs = q.filterIndexed { i, _ -> i % 2 == 0 }; val ys = q.filterIndexed { i, _ -> i % 2 == 1 }
+            val vals = ArrayList<Double>()
+            for (y in (ys.min() * b.height).toInt()..(ys.max() * b.height).toInt()) for (x in (xs.min() * b.width).toInt()..(xs.max() * b.width).toInt()) {
+                val c = b.getPixel(x.coerceIn(0, b.width - 1), y.coerceIn(0, b.height - 1)); vals.add((Color.red(c) + Color.green(c) + Color.blue(c)) / 3.0)
+            }
+            val m = vals.average(); return Math.sqrt(vals.sumOf { (it - m) * (it - m) } / vals.size)
+        }
+        for (pixelate in listOf(false, true)) {
+            val plan = FaceBlurPlan(emptyMap(), pixelate, 0.4f, privates = mapOf(src.key to tracks))
+            val r = Robo.runJob(app, FaceBlurJob(listOf(src), plan)).single()
+            assertEquals(r.message, ItemOutcome.SUCCESS, r.outcome)
+            assertTrue(r.details!!, r.details!!.startsWith(if (pixelate) "3 private details pixelated" else "3 private details blurred"))
+            val out = Robo.decode(File(r.outputs.single().uri.path!!))
+            // Kept for checking with the text reader (buildtools/privacy/harness: run.sh find lines).
+            File("build/robo-privacy").mkdirs(); File(r.outputs.single().uri.path!!).copyTo(File("build/robo-privacy/${if (pixelate) "pixelated" else "blurred"}-$name"), overwrite = true)
+            for (q in quads) assertTrue("letters gone: ${spread(out, q)} vs ${spread(orig, q)}", spread(out, q) < 0.4 * spread(orig, q))
+            // Far from the details (the top of the advert) nothing changed beyond JPEG noise.
+            var diff = 0.0; var n = 0
+            for (y in 0 until orig.height / 3 step 5) for (x in 0 until orig.width step 5) {
+                val a = orig.getPixel(x, y); val b = out.getPixel(x, y); diff += Math.abs(Color.green(a) - Color.green(b)); n++
+            }
+            assertTrue("rest unchanged: ${diff / n}", diff / n < 4)
+        }
+    }
 }

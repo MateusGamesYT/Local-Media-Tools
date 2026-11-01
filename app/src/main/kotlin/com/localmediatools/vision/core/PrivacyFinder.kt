@@ -14,7 +14,8 @@ import org.opencv.dnn.Net
 import org.opencv.dnn.TextDetectionModel_DB
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.BarcodeDetector
-import org.opencv.objdetect.QRCodeDetector
+import org.opencv.objdetect.GraphicalCodeDetector
+import org.opencv.objdetect.QRCodeDetectorAruco
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.math.max
@@ -100,7 +101,7 @@ internal fun floats(m: Mat): FloatArray {
  */
 class PlateDetector(path: String) {
     private val net: Net = Dnn.readNet(path)
-    private var priorsFor = 0 to 0
+    private var priorsFor = 0 to 0 // priors are made for one input size
     private var priors = FloatArray(0)
 
     fun detect(bgr: Mat, minScore: Float): List<Found> = synchronized(this) {
@@ -125,10 +126,20 @@ class PlateDetector(path: String) {
                     q[k * 2] = (px + loc[i * 14 + o] * 0.1f * sx) * w
                     q[k * 2 + 1] = (py + loc[i * 14 + o + 1] * 0.1f * sy) * h
                 }
-                cand.add(Found(FindKind.PLATE, Quad(q), s))
+                val quad = Quad(q)
+                if (plateLike(quad, w, h)) cand.add(Found(FindKind.PLATE, quad, s))
             }
             return nms(cand, 0.3f)
         } finally { blob.release(); outs.forEach { it.release() } }
+    }
+
+    /**
+     * Shaped like a plate: at most half the picture across, 1.2 to 8 times as long as high (the
+     * detector sometimes returns long slanted shapes across a car).
+     */
+    private fun plateLike(q: Quad, w: Int, h: Int): Boolean {
+        val lo = min(q.width, q.height); val hi = max(q.width, q.height)
+        return hi <= 0.5f * max(w, h) && lo > 0f && hi / lo in 1.2f..8f
     }
 
     private fun priors(w: Int, h: Int): FloatArray {
@@ -276,33 +287,60 @@ class TextReader(path: String, dictionary: List<String>) {
     companion object { const val H = 48; const val W = 320 }
 }
 
-/** QR codes and barcodes (OpenCV's detectors). */
+/**
+ * QR codes and barcodes (OpenCV's detectors), on the picture and on a copy of [SMALL] px (close-ups
+ * fill the frame). QR codes with the ArUco-based detector: on 34 Open Images photos people marked as
+ * showing a code (fetch_codes.py, checked by eye), QR codes were found in 7 of the 8 photos with one
+ * with OpenCV 4.12 as on phones (6 with the desktop 4.9; the classic detector on the picture alone:
+ * 4), barcodes in 16 of 28 (small, slanted or crowded ones are missed).
+ */
 class CodeDetector {
-    private val qr = QRCodeDetector()
+    private val qr = QRCodeDetectorAruco()
     private val bar = BarcodeDetector()
 
     fun detect(bgr: Mat): List<Found> = synchronized(this) {
-        val out = ArrayList<Found>()
-        for (d in listOf(qr, bar)) {
-            val pts = Mat()
+        val all = ArrayList<Found>()
+        val long = max(bgr.cols(), bgr.rows())
+        for (side in intArrayOf(long, SMALL)) {
+            if (side > long || (side != long && side >= long * 0.75)) continue
+            val (img, s) = fitMat(bgr, side)
             try {
-                if (d.detectMulti(bgr, pts) && !pts.empty()) {
-                    val f = floats(pts)
-                    for (i in 0 until f.size / 8) out.add(Found(FindKind.CODE, Quad(f.copyOfRange(i * 8, i * 8 + 8)), 1f))
+                for (d in listOf<GraphicalCodeDetector>(qr, bar)) {
+                    val pts = Mat()
+                    try {
+                        if (d.detectMulti(img, pts) && !pts.empty()) {
+                            val f = floats(pts)
+                            for (i in 0 until f.size / 8) all.add(Found(FindKind.CODE, Quad(f.copyOfRange(i * 8, i * 8 + 8)).map(1 / s, 1 / s), 1f))
+                        }
+                    } catch (_: Exception) {
+                        // A detector that fails on a picture finds nothing in it.
+                    } finally { pts.release() }
                 }
-            } catch (_: Exception) {
-                // A detector that fails on a picture finds nothing in it.
-            } finally { pts.release() }
+            } finally { if (img !== bgr) img.release() }
         }
-        return out
+        // The same code found twice (both sizes): keep the larger outline.
+        val kept = ArrayList<Found>()
+        for (f in all.sortedByDescending { (it.quad.x1 - it.quad.x0) * (it.quad.y1 - it.quad.y0) }) {
+            val a = (f.quad.x1 - f.quad.x0) * (f.quad.y1 - f.quad.y0)
+            if (kept.none { k ->
+                    val ix = max(0f, min(k.quad.x1, f.quad.x1) - max(k.quad.x0, f.quad.x0)); val iy = max(0f, min(k.quad.y1, f.quad.y1) - max(k.quad.y0, f.quad.y0))
+                    ix * iy > 0.5f * a
+                }) kept.add(f)
+        }
+        return kept
     }
+
+    companion object { const val SMALL = 800 }
 }
 
 /**
  * Finds what to hide besides faces, in a photo or video frame worked on at up to 1600 px:
  *  - licence plates: [PlateDetector] on the whole picture (at up to 1024 px, score 0.5), then again
  *    inside each vehicle (found by the caller, [vehicles] in pixels) enlarged to 960 px (score 0.4),
- *    where any text found counts too (badges, numbers on vans);
+ *    where any text found counts too (badges, numbers on vans), and plate-shaped lines of text on a
+ *    vehicle. On 300 Open Images photos (eval_plates.py) 94.0 % of the plates that can be read were
+ *    hidden (233 of 248; the plate detector alone: 77.4 %), with 3.5 other boxes per photo, mostly
+ *    badges and dealers' signs on the cars;
  *  - text: lines found by [TextDetector] (at up to 1280 px), all of them or, read by [TextReader], the
  *    ones [PrivateText] says hold private details, and the value next to a label such as "Password:";
  *  - QR codes and barcodes.
@@ -320,17 +358,34 @@ class PrivacyFinder(
      */
     fun find(bgr: Mat, opts: PrivacyOptions, vehicles: List<FloatArray> = emptyList(), memory: LineMemory? = null, check: () -> Unit = {}): List<Found> {
         val out = ArrayList<Found>()
-        if (opts.plates && plates != null) { out.addAll(platesIn(bgr, vehicles, check)); check() }
-        if (opts.text && textDetector != null) {
+        // Text lines of the whole picture: for the text options, and plate-shaped ones on vehicles.
+        val lines = if (textDetector != null && (opts.text || (opts.plates && vehicles.isNotEmpty()))) {
             val (small, s) = fitMat(bgr, TEXT_SIDE)
-            val lines = try { textDetector.detect(small) } finally { if (small !== bgr) small.release() }
-            val inPx = lines.map { Found(FindKind.TEXT, it.quad.map(1 / s, 1 / s), it.score) }
+            try { textDetector.detect(small).map { Found(FindKind.TEXT, it.quad.map(1 / s, 1 / s), it.score) } }
+            finally { if (small !== bgr) small.release() }
+        } else emptyList()
+        check()
+        if (opts.plates && plates != null) {
+            out.addAll(platesIn(bgr, vehicles, check))
+            out.addAll(lines.filter { plateShaped(it.quad) && vehicles.any { v -> onVehicle(it.quad, v) } }.map { Found(FindKind.PLATE, it.quad, it.score) })
             check()
-            if (opts.allText) out.addAll(inPx)
-            else if (reader != null && classifier != null) out.addAll(privateLines(bgr, inPx, memory, check))
         }
+        if (opts.allText) out.addAll(lines)
+        else if (opts.privateText && reader != null && classifier != null) out.addAll(privateLines(bgr, lines, memory, check))
         if (opts.codes && codes != null) out.addAll(codes.detect(bgr))
         return out
+    }
+
+    /** A line of text shaped like a plate: at least 8 px tall, 1.6 to 6.5 times as wide. */
+    private fun plateShaped(q: Quad): Boolean {
+        val w = q.x1 - q.x0; val h = q.y1 - q.y0
+        return h >= 8f && w / max(h, 1f) in 1.6f..6.5f
+    }
+
+    /** Inside the vehicle's box grown by 30 %. */
+    private fun onVehicle(q: Quad, v: FloatArray): Boolean {
+        val gx = (v[2] - v[0]) * 0.3f; val gy = (v[3] - v[1]) * 0.3f
+        return q.x0 >= v[0] - gx && q.x1 <= v[2] + gx && q.y0 >= v[1] - gy && q.y1 <= v[3] + gy
     }
 
     private fun platesIn(bgr: Mat, vehicles: List<FloatArray>, check: () -> Unit): List<Found> {

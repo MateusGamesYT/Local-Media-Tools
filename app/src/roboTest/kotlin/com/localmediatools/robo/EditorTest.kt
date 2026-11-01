@@ -165,6 +165,19 @@ class EditorTest {
             assertEquals(b.getPixel(20, 20), out.getPixel(20, 20))
             assertEquals(b.getPixel(580, 380), out.getPixel(580, 380))
         }
+        // A JPEG (no transparency of its own): just outside the pixelated circle, inside its block grid,
+        // the photo shows through unchanged.
+        val jpg = Robo.item(app, Robo.write(inDir, "flat.jpg", Robo.encode(Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).apply { eraseColor(Color.rgb(40, 160, 90)) }, Bitmap.CompressFormat.JPEG)))
+        val store2 = PatchStore.newSession(app)
+        ImageSource.open(app, jpg).use { src ->
+            val rs = RetouchedSource(src, store2, emptyList())
+            val pix = Retouch.obscure(rs, listOf(Stroke(floatArrayOf(150f, 200f), 60f)), PatchKind.PIXELATE, 0.5f, store2, 256L shl 20)
+            val out = save(jpg, EditState(patches = listOf(pix)), store2)
+            for ((x, y) in listOf(150 to 137, 150 to 263, 87 to 200, 213 to 200, 105 to 155, 195 to 245)) {
+                val c = out.getPixel(x, y)
+                assertTrue("photo shows at $x,$y: ${Integer.toHexString(c)}", Math.abs(Color.red(c) - 40) < 12 && Math.abs(Color.green(c) - 160) < 12 && Math.abs(Color.blue(c) - 90) < 12)
+            }
+        }
     }
 
     private fun idle(ms: Long = 200) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))

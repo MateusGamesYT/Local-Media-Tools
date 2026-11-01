@@ -60,8 +60,11 @@ class FileOutputs(val dir: File) {
 }
 
 object Robo {
-    /** Face-scan stand-in: two people (a coloured disc each) seen in every given file. */
-    fun fakeFaces(items: List<MediaItem>): com.localmediatools.vision.FaceScanResult {
+    /**
+     * Face-scan stand-in: two people (a coloured disc each) seen in every given file, and per file one
+     * thing of each private kind asked for (a plate, a phone number, a QR code).
+     */
+    fun fakeFaces(items: List<MediaItem>, privacy: com.localmediatools.vision.core.PrivacyOptions = com.localmediatools.vision.core.PrivacyOptions()): com.localmediatools.vision.FaceScanResult {
         val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
         val tracks = ArrayList<com.localmediatools.vision.core.FaceTrack>()
         for ((k, item) in items.withIndex()) for (p in 0 until 2) {
@@ -75,7 +78,22 @@ object Robo {
                 android.graphics.Canvas(this).drawCircle(48f, 52f, 30f, android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { color = if (p == 0) 0xFFE0A47A.toInt() else 0xFF8D5A3B.toInt() })
             }
         }
-        return com.localmediatools.vision.FaceScanResult(items, com.localmediatools.vision.core.FaceTracker.cluster(tracks), thumbs, emptyList())
+        val privates = ArrayList<com.localmediatools.vision.core.PrivateTrack>()
+        val privateThumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.PrivateTrack, Bitmap>()
+        for ((k, _) in items.withIndex()) {
+            val kinds = listOfNotNull(
+                if (privacy.plates) com.localmediatools.vision.core.FindKind.PLATE to emptySet<com.localmediatools.vision.core.Detail>() else null,
+                if (privacy.text) com.localmediatools.vision.core.FindKind.TEXT to setOf(com.localmediatools.vision.core.Detail.PHONE) else null,
+                if (privacy.codes) com.localmediatools.vision.core.FindKind.CODE to emptySet<com.localmediatools.vision.core.Detail>() else null)
+            for ((i, kd) in kinds.withIndex()) {
+                val t = com.localmediatools.vision.core.PrivateTrack(privates.size, k, kd.first, kd.second, "", still = true)
+                val y = 0.7f + 0.08f * i
+                t.samples.add(com.localmediatools.vision.core.PrivateSample(0, floatArrayOf(0.3f, y, 0.6f, y, 0.6f, y + 0.05f, 0.3f, y + 0.05f)))
+                privates.add(t)
+                privateThumbs[t] = Bitmap.createBitmap(240, 120, Bitmap.Config.ARGB_8888).apply { eraseColor(0xFFE8E2C8.toInt()) }
+            }
+        }
+        return com.localmediatools.vision.FaceScanResult(items, com.localmediatools.vision.core.FaceTracker.cluster(tracks), thumbs, emptyList(), privates, privateThumbs)
     }
 
     /** App-wide UI state lives in singletons that survive between tests in one Robolectric sandbox. */
@@ -84,6 +102,7 @@ object Robo {
         com.localmediatools.ui.tools.WatermarkState.text = ""
         com.localmediatools.ui.tools.WatermarkState.logo = null
         com.localmediatools.ui.tools.WatermarkState.perGroup.clear()
+        com.localmediatools.ui.tools.FaceBlurPrefs.privacy = com.localmediatools.vision.core.PrivacyOptions()
     }
 
     /** Runs [job] to completion; [budget] is the memory budget each parallel item gets. */

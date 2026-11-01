@@ -274,11 +274,15 @@ object Retouch {
                 (ceil(b.right / block) * block).toInt().coerceAtMost(w), (ceil(b.bottom / block) * block).toInt().coerceAtMost(h))
             if (area.width().toLong() * area.height() * BYTES_PER_PIXEL > budget) throw UserFacingException(tr("That area is too large for the memory available. Do it in smaller parts."))
             val aw = area.width(); val ah = area.height()
-            val bmp = rs.decode(area, 1, budget)
-            val px = IntArray(aw * ah); bmp.getPixels(px, 0, aw, 0, 0, aw, ah)
+            val src = rs.decode(area, 1, budget)
+            val px = IntArray(aw * ah); src.getPixels(px, 0, aw, 0, 0, aw, ah)
+            src.recycle()
             val mask = alphaMask(strokes, area, 0f)
             val alpha = ByteArray(aw * ah)
             MosaicOps.pixelate(px, aw, ah, block, area.left % block, area.top % block, mask, alpha)
+            // A new bitmap with transparency: a JPEG's own is opaque, and the blocks' corners outside
+            // the strokes would cover the photo instead of showing it.
+            val bmp = Bitmap.createBitmap(aw, ah, Bitmap.Config.ARGB_8888)
             bmp.setPixels(px.mapIndexed { i, c -> ((alpha[i].toInt() and 255) shl 24) or (c and 0x00FFFFFF) }.toIntArray(), 0, aw, 0, 0, aw, ah)
             return store.save(kind, area.left, area.top, bmp)
         }

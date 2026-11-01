@@ -25,6 +25,7 @@ ap.add_argument('--veh-th', type=float, default=0.3)
 ap.add_argument('--veh-crop', type=int, default=640)
 ap.add_argument('--veh-lpd-th', type=float, default=0.5)
 ap.add_argument('--veh-max', type=int, default=8)
+ap.add_argument('--plate-shape', action='store_true')   # drop plate-detector boxes not shaped like a plate (as the app)
 ap.add_argument('--text-filter', default='none')     # none, veh (near a vehicle), geom (plate-shaped), vehgeom (either), vehandgeom (both)
 a = ap.parse_args()
 rows = json.load(open(f'{a.work}/plates-{a.split}.json'))[:a.limit]
@@ -114,6 +115,11 @@ def lpd_boxes_at(small):
     out = []
     for d in lpd.infer(small):
         q = d[:8].reshape(4, 2) / s
+        if a.plate_shape:
+            # PlateDetector.plateLike: at most half the picture across, 1.2 to 8 times as long as high.
+            e = lambda i, j: float(np.linalg.norm(q[i] - q[j]))
+            wq = max(e(0, 1), e(3, 2)); hq = max(e(0, 3), e(1, 2)); lo, hi = min(wq, hq), max(wq, hq)
+            if hi > 0.5 * max(w, h) or lo <= 0 or not 1.2 <= hi / lo <= 8: continue
         out.append((q[:, 0].min(), q[:, 1].min(), q[:, 0].max(), q[:, 1].max(), float(d[8])))
     return out
 

@@ -55,7 +55,7 @@ class UiSmokeTest {
         shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         inDir = File(app.cacheDir, "ui-in").apply { deleteRecursively(); mkdirs() }
         outputs = FileOutputs(File(app.cacheDir, "ui-out").apply { deleteRecursively() }).also { it.install() }
-        com.localmediatools.vision.FaceScanner.override = { items, _ -> Robo.fakeFaces(items) }
+        com.localmediatools.vision.FaceScanner.override = { items, p -> Robo.fakeFaces(items, p) }
     }
 
     @After fun tearDown() { outputs.uninstall(); com.localmediatools.vision.FaceScanner.override = null }
@@ -193,6 +193,19 @@ class UiSmokeTest {
                     while (System.currentTimeMillis() < deadline && texts(a).none { it.startsWith("Found") }) { idle(50); Thread.sleep(20); render(a) }
                     assertTrue(texts(a).joinToString("|"), texts(a).any { it.startsWith("Found 2 different people") })
                     assertTrue(texts(a).count { it == "Hidden" } == 2)
+                    // Asking for number plates too looks again; each plate found is listed, hidden.
+                    findDesc(a) { it == "Number plates" }!!.performClick()
+                    val until = System.currentTimeMillis() + 20_000
+                    while (System.currentTimeMillis() < until && texts(a).none { it == "Number plate" }) { idle(50); Thread.sleep(20); render(a) }
+                    val n = Selection.of(t).usable.size
+                    assertTrue(texts(a).joinToString("|"), texts(a).count { it == "Number plate" } == n)
+                    assertTrue(texts(a).joinToString("|"), texts(a).any { "private detail" in it })
+                    assertTrue(texts(a).count { it == "Hidden" } == 2 + n)
+                    findDesc(a) { it == "Number plates" }!!.performClick()
+                    val back = System.currentTimeMillis() + 20_000
+                    while (System.currentTimeMillis() < back && (texts(a).any { it == "Number plate" } || texts(a).none { it.startsWith("Found 2 different people") })) { idle(50); Thread.sleep(20); render(a) }
+                    assertTrue(texts(a).none { it == "Number plate" })
+                    idle(500); render(a)
                 }
                 if (t == ToolId.WATERMARK) {
                     assertTrue(texts(a).any { it.startsWith("Add watermark text") })
