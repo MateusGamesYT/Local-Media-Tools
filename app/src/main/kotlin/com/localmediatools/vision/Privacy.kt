@@ -48,7 +48,7 @@ object PrivacyModels {
      * these kinds merged), largest first, as x0, y0, x1, y1 in [bmp]'s pixels.
      */
     fun vehicles(ctx: Context, bmp: Bitmap): List<FloatArray> {
-        val found = ObjectTagger.create(ctx).detect(bmp)
+        val found = ObjectTagger.holding(ctx) { it.detect(bmp) }
             .filter { it.cls in PrivacyFinder.VEHICLE_CLASSES && it.score >= PrivacyFinder.VEHICLE_SCORE }
         val kept = EfficientDetDecoder.nms(found, 0.5f, 50)
         return kept.sortedByDescending { it.area }.take(PrivacyFinder.MAX_VEHICLES)

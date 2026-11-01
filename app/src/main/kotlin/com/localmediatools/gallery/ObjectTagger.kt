@@ -129,15 +129,35 @@ class ObjectTagger private constructor(
         private const val HEAD = "gallery/scene_head.bin"
 
         @Volatile private var shared: ObjectTagger? = null
+        /** Tools using the models through [holding] right now, and whether a [release] waits for them. */
+        private var holds = 0
+        private var releaseWanted = false
 
-        /** Frees the models (tens of MB) when nothing needs them; the next [create] loads them again. */
+        /**
+         * Frees the models (tens of MB) when nothing needs them; the next [create] loads them again.
+         * While a tool is [holding] them, they are freed when it is done (unless wanted again meanwhile).
+         */
         fun release() = synchronized(this) {
+            if (holds > 0) { releaseWanted = true; return@synchronized }
             val t = shared ?: return@synchronized
             shared = null
             synchronized(t) { t.detector.close(); t.scene.close() }
         }
 
-        fun create(ctx: Context): ObjectTagger = shared ?: synchronized(this) {
+        /** Runs [block] with the models, which a [release] meanwhile (the Gallery finishing its indexing) doesn't free under it. */
+        fun <T> holding(ctx: Context, block: (ObjectTagger) -> T): T {
+            val t = synchronized(this) { holds++; try { create(ctx) } catch (e: Throwable) { holds--; throw e } }
+            try { return block(t) } finally {
+                synchronized(this) {
+                    holds--
+                    if (holds == 0 && releaseWanted) { releaseWanted = false; release() }
+                }
+            }
+        }
+
+        fun create(ctx: Context): ObjectTagger = synchronized(this) {
+            // Wanted again: a release put off by [holding] no longer applies.
+            releaseWanted = false
             shared ?: run {
                 val threads = Runtime.getRuntime().availableProcessors().coerceIn(2, 4)
                 val det = Interpreter(map(ctx, DET_MODEL), Interpreter.Options().setNumThreads(threads))

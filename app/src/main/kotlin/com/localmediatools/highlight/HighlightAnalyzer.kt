@@ -123,7 +123,7 @@ object HighlightAnalyzer {
     } catch (t: Throwable) { emptyList() }
 
     private fun tags(ctx: Context, bmp: Bitmap): Pair<Map<String, Float>, FloatArray?> = try {
-        val (tags, f) = ObjectTagger.create(ctx).tagWithFeatures(bmp)
+        val (tags, f) = ObjectTagger.holding(ctx) { it.tagWithFeatures(bmp) }
         tags.filterValues { it >= Taxonomy.KEEP } to normalized(f)
     } catch (t: Throwable) { emptyMap<String, Float>() to null }
 

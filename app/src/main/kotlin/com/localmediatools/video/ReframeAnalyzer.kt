@@ -44,6 +44,12 @@ object ReframeAnalyzer {
                 cancelled: () -> Boolean = { false }, progress: (Double) -> Unit = {}): List<Key> {
         override?.let { f -> return f(uri, fromMs, toMs, outAspect, zoom) ?: emptyList() }
         val info = VideoProbe.probe(ctx, uri)
+        if (info.video == null) return emptyList()
+        return ObjectTagger.holding(ctx) { tagger -> analyze(ctx, uri, info, fromMs, toMs, outAspect, zoom, rotation, tagger, cancelled, progress) }
+    }
+
+    private fun analyze(ctx: Context, uri: Uri, info: VideoInfo, fromMs: Long, toMs: Long, outAspect: Float, zoom: Float, rotation: Int,
+                        tagger: ObjectTagger, cancelled: () -> Boolean, progress: (Double) -> Unit): List<Key> {
         val v = info.video ?: return emptyList()
         // Displayed size (the stored picture turned by its rotation), then the user's turn on top.
         val turned = (info.rotation + rotation) % 180 != 0
@@ -52,7 +58,6 @@ object ReframeAnalyzer {
         val s = SIDE.toFloat() / max(dw, dh)
         val w = max(2, (dw * s).roundToInt() / 2 * 2); val h = max(2, (dh * s).roundToInt() / 2 * 2)
         val faces = VisionModels.faces(ctx)
-        val tagger = ObjectTagger.create(ctx)
         val thumbs = ArrayList<ByteArray>()
         val times = ArrayList<Long>()
         val found = HashMap<Long, List<Found>>()

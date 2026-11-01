@@ -160,7 +160,7 @@ object VisionOps {
      */
     fun enhance(ctx: Context, bmp: Bitmap, strength: Float): EnhanceResult {
         val faces = try { photoFaces(ctx, bmp, 800, embed = false).map { FaceBox(it.x, it.y, it.w, it.h) } } catch (_: Throwable) { emptyList() }
-        val scene = try { SceneMapper.fromCategories(ObjectTagger.create(ctx).tag(bmp)).first } catch (_: Throwable) { SceneKind.GENERAL }
+        val scene = try { SceneMapper.fromCategories(ObjectTagger.holding(ctx) { it.tag(bmp) }).first } catch (_: Throwable) { SceneKind.GENERAL }
         val small = fit(bmp, 384)
         val px = IntArray(small.width * small.height)
         small.getPixels(px, 0, small.width, 0, 0, small.width, small.height)
