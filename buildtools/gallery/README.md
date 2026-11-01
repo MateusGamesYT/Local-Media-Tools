@@ -257,6 +257,25 @@ on the BIWI Kinect Head Pose database (not redistributable; only the measured re
 the same YuNet + SFace pipeline, clustering several hundred faces of 16 people. `lbp_eval.py`
 measured the classical fallback descriptor.
 
+### Smaller copies of the photo for the Gallery's faces (measured for 1.15; not shipped)
+
+Face blur looks for faces in smaller copies of the photo too since 1.14 (large faces are often missed
+at 1,600 px). `people/detect_scales.py` measured the same for the Gallery: the shipped pipeline (YuNet
+at 0.62 on a 1,600 px copy, small faces looked at again in the full photo, ResNet-50) re-run on the
+1,233 photos (OpenCV 4.12; 4,645 faces, against 4,578 with 4.11 when the labels were made; 5 of the 802
+labelled faces sit far from their person's mean face, so the labels still point at the right faces),
+then the same plus copies at 800, 400 and 256 px, at the same score, boxes of one face merged; labels
+carried over by overlap. Through the app's grouping with `ClusterParams.R50`:
+
+| | B-cubed recall, half A / half B / all | faces of another person in a group (all) | faces found |
+|---|---|---|---|
+| shipped | 0.928 / 0.878 / 0.904 | 0 | 4,645 |
+| with smaller copies | 0.913 / 0.880 / 0.897 | 2 | 4,887 (259 new, none of the 840 labelled lost) |
+
+The 259 new faces are unlabelled, so whether they join the right people isn't measured; on the
+labelled faces the grouping got no better and put 2 faces with the wrong person. The Gallery keeps its
+detection; labelling the new faces would be the next step.
+
 ## Videos: which frames to look at (measured for 1.10.0)
 
 Until 1.9, the Gallery looked at a video in three moments (15, 50 and 85 %), each decoded from the

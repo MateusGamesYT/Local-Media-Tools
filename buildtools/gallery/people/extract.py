@@ -56,8 +56,11 @@ def use_mbf():
 _r50 = []
 def emb_r50(img, r):
     if not _r50:
-        import tensorflow as tf
-        it = tf.lite.Interpreter(model_path=os.path.join(M, 'face_recognition_r50_w600k_int8.tflite'), num_threads=4); it.allocate_tensors()
+        try:
+            from tensorflow.lite import Interpreter
+        except ImportError:
+            from ai_edge_litert.interpreter import Interpreter   # the same TFLite runtime, without TensorFlow
+        it = Interpreter(model_path=os.path.join(M, 'face_recognition_r50_w600k_int8.tflite'), num_threads=4); it.allocate_tensors()
         _r50.append(it)
     it = _r50[0]; i = it.get_input_details()[0]['index']; o = it.get_output_details()[0]['index']
     al = cv2.warpAffine(img, align_matrix(r), (112, 112), flags=cv2.INTER_LINEAR)
