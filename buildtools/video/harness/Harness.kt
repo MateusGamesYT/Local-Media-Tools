@@ -41,24 +41,30 @@ fun main(args: Array<String>) {
         val r = l.split('\t')
         found.getOrPut(r[0].toLong()) { ArrayList() }.add(Found(SubjectKind.valueOf(r[1]), Box(r[2].toFloat(), r[3].toFloat(), r[4].toFloat(), r[5].toFloat()), r[6].toFloat()))
     }
-    // The app's samples: every 1/rate seconds, the first detected frame at or after; a cut starts a new
-    // sample at its first frame (with what the next detected frame found).
+    // The app's samples (ReframeAnalyzer): every 1/rate seconds the first detected frame at or after;
+    // then the first sample at or after each cut moves to the cut's first frame.
     val detTimes = (0 until n step 2).map { ms[it] }
-    val samples = ArrayList<ReframeSample>()
     val period = 1000.0 / rate
     var next = 0.0
-    var ci = 0
-    for (t in detTimes) {
-        val cutHere = ci < cutFrames.size && ms[cutFrames[ci]] <= t
-        if (t + 1e-6 < next && !cutHere) continue
-        val sampleMs = if (cutHere) ms[cutFrames[ci]] else t
-        if (cutHere) ci++
-        samples.add(ReframeSample(sampleMs, found[t] ?: emptyList(), cut = cutHere))
-        next = t + period
-    }
+    val chosen = LinkedHashMap<Long, List<Found>>()
+    for (t in detTimes) { if (t + 1e-6 < next) continue; chosen[t] = found[t] ?: emptyList(); next = t + period }
+    val samples = samples(chosen, cutFrames.map { ms[it] })
     val srcAspect = o["src"]?.toFloat() ?: (16f / 9f)
     val opts = Reframe.Options(aspect, zoom)
     val subjects = Reframe.subjects(samples, srcAspect, aspect, p)
     val keys = Reframe.path(samples, subjects, srcAspect, opts, p)
     out.printWriter().use { w -> for (t in ms) { val c = Reframe.at(keys, t); w.println("$t\t${c.x}\t${c.y}\t${c.w}\t${c.h}") } }
+}
+
+/** As ReframeAnalyzer.samples (kept the same; that file needs Android). */
+fun samples(found: Map<Long, List<Found>>, cuts: List<Long>): List<ReframeSample> {
+    val out = ArrayList<ReframeSample>()
+    var ci = 0
+    for (t in found.keys.sorted()) {
+        var cut: Long? = null
+        while (ci < cuts.size && cuts[ci] <= t) { cut = cuts[ci]; ci++ }
+        if (cut != null && out.isNotEmpty() && cut > out.last().ms) out.add(ReframeSample(cut, found[t] ?: emptyList(), cut = true))
+        else out.add(ReframeSample(t, found[t] ?: emptyList()))
+    }
+    return out
 }

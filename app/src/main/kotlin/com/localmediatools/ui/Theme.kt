@@ -87,6 +87,7 @@ object Icons {
         ToolId.DUPLICATES -> R.drawable.ic_tool_duplicates
         ToolId.MERGE_VIDEOS -> R.drawable.ic_tool_video_merge
         ToolId.HIGHLIGHT_VIDEO -> R.drawable.ic_tool_highlight
+        ToolId.VIDEO_EDITOR -> R.drawable.ic_tool_video_editor
         ToolId.VIDEO_SPEED -> R.drawable.ic_tool_speed
         ToolId.SPLIT_VIDEO -> R.drawable.ic_tool_split
         ToolId.TRIM_VIDEO -> R.drawable.ic_tool_trim

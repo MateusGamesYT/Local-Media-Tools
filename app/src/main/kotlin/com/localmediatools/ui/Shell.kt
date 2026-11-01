@@ -50,6 +50,7 @@ object ToolLauncher {
         if (t == ToolId.TOOL_STACK) { activity.navigator.push(StackScreen(activity)); return }
         if (t == ToolId.READER) { activity.navigator.push(com.localmediatools.ui.reader.ReaderHomeScreen(activity)); return }
         if (t == ToolId.METADATA) { activity.navigator.push(com.localmediatools.ui.meta.MetadataScreen(activity)); return }
+        if (t == ToolId.VIDEO_EDITOR) { activity.navigator.push(com.localmediatools.ui.video.VideoEditorScreen(activity)); return }
         if (mode == null) { activity.navigator.push(ToolScreens.create(activity, t)); return }
         activity.pickMedia(PickKind.IMAGES, multiple = false) { uris -> uris.firstOrNull()?.let { openEditor(activity, it, t, mode) } }
     }
@@ -76,6 +77,7 @@ object ToolLauncher {
         ToolId.DUPLICATES to N_("duplicate similar same copies clean storage space free gallery burst"),
         ToolId.MERGE_VIDEOS to N_("join combine concatenate clips append video"),
         ToolId.HIGHLIGHT_VIDEO to N_("highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto"),
+        ToolId.VIDEO_EDITOR to N_("edit video editor cut trim split join timeline clips text title music fade transition crop reframe vertical portrait reels shorts tiktok zoom follow subject speed colour color filter"),
         ToolId.VIDEO_SPEED to N_("fast slow motion timelapse time lapse speed up hyperlapse"),
         ToolId.TRIM_VIDEO to N_("cut shorten clip rotate sideways"),
         ToolId.SPLIT_VIDEO to N_("cut parts segments whatsapp status"),

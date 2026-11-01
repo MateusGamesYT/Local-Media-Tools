@@ -123,7 +123,7 @@ data class EditProject(
     val shape: OutShape = OutShape.ORIGINAL,
     val texts: List<EditText> = emptyList(),
     val fadeOutMs: Long = 0,
-    val musicVolume: Float = 0.6f,
+    val musicVolume: Float = 1f,
     /** The music steps back while clips play their own sound. */
     val duckMusic: Boolean = true,
 ) {

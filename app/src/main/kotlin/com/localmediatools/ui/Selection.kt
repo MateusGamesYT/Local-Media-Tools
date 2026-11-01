@@ -129,7 +129,7 @@ object ToolRules {
         ToolId.MERGE_VIDEOS, ToolId.VIDEO_SPEED -> PickKind.VIDEOS
         ToolId.COMPRESS_GIF, ToolId.OPTIMIZE_GIF -> PickKind.GIFS
         ToolId.PDF_TO_IMAGES, ToolId.MERGE_PDFS, ToolId.EXTRACT_PDF_PAGES -> PickKind.PDFS
-        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.HIGHLIGHT_VIDEO, ToolId.DENOISE -> PickKind.MEDIA
+        ToolId.REMOVE_METADATA, ToolId.FACE_BLUR, ToolId.HIGHLIGHT_VIDEO, ToolId.DENOISE, ToolId.VIDEO_EDITOR -> PickKind.MEDIA
         ToolId.TOOL_STACK -> PickKind.ANY
         ToolId.PRINT -> PickKind.PRINTABLE
         ToolId.TRIM_AUDIO, ToolId.MERGE_AUDIO, ToolId.CONVERT_AUDIO, ToolId.AUDIO_VOLUME, ToolId.AUDIO_SPEED, ToolId.SPLIT_AUDIO, ToolId.REMOVE_SILENCE -> PickKind.AUDIO
@@ -191,7 +191,7 @@ object ToolRules {
             PickKind.VIDEOS -> if (item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("video/") == true)) null else tr("Not a video file")
             PickKind.GIFS -> if (item.format == SniffedFormat.GIF) null else tr("Not a GIF file")
             PickKind.PDFS -> if (item.kind == MediaKind.PDF) null else tr("Not a PDF file")
-            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO && t != ToolId.DENOISE)) null else tr("Not a photo or video")
+            PickKind.MEDIA -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.VIDEO || (item.kind == MediaKind.GIF && t != ToolId.FACE_BLUR && t != ToolId.HIGHLIGHT_VIDEO && t != ToolId.DENOISE && t != ToolId.VIDEO_EDITOR)) null else tr("Not a photo or video")
             PickKind.ANY -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.VIDEO || item.kind == MediaKind.PDF) null else tr("Not a photo, video, GIF or PDF")
             PickKind.PRINTABLE -> if (item.kind == MediaKind.IMAGE || item.kind == MediaKind.GIF || item.kind == MediaKind.PDF || item.kind == MediaKind.DOCUMENT) null else tr("Not a photo, PDF or document")
             PickKind.AUDIO -> if (item.kind == MediaKind.AUDIO || item.kind == MediaKind.VIDEO || (item.format == SniffedFormat.UNKNOWN && item.mime?.startsWith("audio/") == true)) null else tr("Not a sound file")

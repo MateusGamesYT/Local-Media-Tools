@@ -225,6 +225,21 @@ object Format {
         return if (h > 0) String.format(Locale.US, "%d:%02d:%02d", h, m, sec) else String.format(Locale.US, "%d:%02d", m, sec)
     }
 
+    /** A position or length in a video, to a tenth of a second ("0:03.4", "1:02:05.0"). */
+    fun clock(ms: Long): String {
+        val t = (ms.coerceAtLeast(0) + 50) / 100
+        val tenth = t % 10; val s = t / 10
+        val h = s / 3600; val m = (s % 3600) / 60; val sec = s % 60
+        val dot = java.text.DecimalFormatSymbols.getInstance(I18n.locale).decimalSeparator
+        return if (h > 0) String.format(Locale.US, "%d:%02d:%02d%c%d", h, m, sec, dot, tenth) else String.format(Locale.US, "%d:%02d%c%d", m, sec, dot, tenth)
+    }
+
+    /** A number with at most two decimals, as the app's language writes it ("1.5", "0,25"). */
+    fun decimal(d: Double): String {
+        val f = java.text.DecimalFormat("0.##", java.text.DecimalFormatSymbols.getInstance(I18n.locale))
+        return f.format(d)
+    }
+
     fun seconds(sec: Double): String = when {
         sec >= 60 && sec % 60 == 0.0 -> tr("{0} min", (sec / 60).toInt())
         sec >= 60 -> tr("{0} min {1} s", (sec / 60).toInt(), (sec % 60).toInt())

@@ -54,6 +54,9 @@ enum class ToolId(
         N_("On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video."),
         OutputArea.BLURRED_IMAGES, OutputArea.BLURRED_VIDEO),
 
+    VIDEO_EDITOR(ToolSection.VIDEO, N_("Video editor"), N_("Cut, join, frame, colour, texts and music"),
+        N_("Put videos and photos in order, trim and split them, change speed and volume, add fades, looks and texts, and music written on this phone or a song of yours. Auto reframe turns a landscape video into a portrait one (or zooms in) and keeps the person or thing it is about in the picture, found by on-device AI. Your originals stay untouched."),
+        OutputArea.EDITED_VIDEO),
     HIGHLIGHT_VIDEO(ToolSection.VIDEO, N_("Highlight video"), N_("Your best moments, cut to music, automatically"),
         N_("Pick the photos and videos of a day out, a trip or a party. On-device AI puts them in the order they were taken, finds the moments (setting off, lunch, the beach…), picks the best shots and the liveliest part of each video, and edits them into a short film on the beat of background music it writes for it — always instrumental, and quieter while your videos speak. Review the moments, change anything, then save. Nothing is uploaded."),
         OutputArea.HIGHLIGHTS),
