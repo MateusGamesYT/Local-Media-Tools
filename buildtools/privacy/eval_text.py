@@ -4,8 +4,8 @@
 
 Text is found with PP-OCRv3's detector (OpenCV Zoo) and read with PP-OCRv5's mobile recogniser
 (PaddleOCR, Apache 2.0; ONNX with a fixed 48 × 320 input so OpenCV's DNN module runs it): the app's
-own files (build_models.py), as the app runs them. A legible word counts as found when the found boxes, grown by the blur margin, cover at least
-80 % of it, and as read when the text read from a box over it contains the word (letters and digits,
+own files (build_models.py), as the app runs them. A legible word counts as found when the found boxes, grown as the app blurs them (0.35 of the line's
+height on every side), cover at least 80 % of it, and as read when the text read from a box over it contains the word (letters and digits,
 any case).
 """
 import argparse, json, os, re, time, unicodedata
@@ -14,7 +14,7 @@ import numpy as np, cv2 as cv
 ap = argparse.ArgumentParser()
 ap.add_argument('work'); ap.add_argument('--side', type=int, default=1600); ap.add_argument('--limit', type=int, default=10**9)
 ap.add_argument('--det-side', type=int, default=1280); ap.add_argument('--rec-width', type=int, default=320)
-ap.add_argument('--margin', type=float, default=0.10); ap.add_argument('--no-rec', action='store_true')
+ap.add_argument('--margin', type=float, default=0.35); ap.add_argument('--no-rec', action='store_true')
 ap.add_argument('--det-model', default='text_detection_ppocrv3_en_fp16.onnx')     # in the app's assets unless found in <work>/models
 ap.add_argument('--rec-model', default='text_recognition_ppocrv5_mobile_fp16.onnx')
 ap.add_argument('--square', action='store_true')   # a model with a fixed det-side × det-side input
@@ -89,6 +89,13 @@ def read_line(crop):
 
 def norm(s): return ''.join(ch for ch in unicodedata.normalize('NFKC', s).casefold() if ch.isalnum())
 
+def grown(q):
+    # As the app blurs it (PrivacyShape.grown): the margin times the line's thickness on every side.
+    q = order(q)
+    e1 = np.linalg.norm(q[1] - q[0]); e2 = np.linalg.norm(q[3] - q[0]); m = min(e1, e2) * a.margin
+    u = (q[1] - q[0]) / max(e1, 1e-3); v = (q[3] - q[0]) / max(e2, 1e-3)
+    return np.array([q[0] - u * m - v * m, q[1] + u * m - v * m, q[2] + u * m + v * m, q[3] - u * m + v * m], np.float32)
+
 def covered(gq, quads, shape):
     x0, y0 = np.floor(gq.min(0)).astype(int); x1, y1 = np.ceil(gq.max(0)).astype(int)
     x0, y0 = max(0, x0), max(0, y0); x1, y1 = min(shape[1], x1), min(shape[0], y1)
@@ -96,8 +103,7 @@ def covered(gq, quads, shape):
     gm = np.zeros((y1 - y0, x1 - x0), np.uint8); cv.fillPoly(gm, [np.round(gq - [x0, y0]).astype(np.int32)], 1)
     dm = np.zeros_like(gm)
     for q in quads:
-        c = q.mean(0); g = c + (q - c) * (1 + a.margin)
-        cv.fillPoly(dm, [np.round(g - [x0, y0]).astype(np.int32)], 1)
+        cv.fillPoly(dm, [np.round(grown(q) - [x0, y0]).astype(np.int32)], 1)
     n = gm.sum()
     return (gm & dm).sum() / n if n else 0.0
 

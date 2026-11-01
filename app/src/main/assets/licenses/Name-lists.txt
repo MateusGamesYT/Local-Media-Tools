@@ -1,0 +1,31 @@
+Lists of common first names and surnames (assets/privacy/first_names.txt, surnames.txt), used only to
+recognise names in text the app reads, so they can be blurred. Made by buildtools/privacy/make_names.py
+from the most common names of three sources, written in lower case without accents:
+
+- United States: baby names recorded by the US Social Security Administration (public data),
+  compiled as "US SSA Baby Names (National)" by nkrishnaswami on Hugging Face, CC0 1.0.
+
+- Brazil: "IBGE Nomes no Brasil 2022", data of the Instituto Brasileiro de Geografia e Estatística
+  (IBGE, Censo Demográfico 2022), compiled and structured by Gabriel Lobo (@olob0) on Hugging Face,
+  licensed under Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/).
+  Changes: only the most common given names and surnames, lower case, without accents.
+
+- France: "French First Names from Death Records (1970-2024)", data of INSEE, compiled by Ronan Le
+  Meillat on Hugging Face (eltorio/french_first_names_insee_2024), MIT License:
+
+  Copyright (c) 2024 Ronan Le Meillat
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+  associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute,
+  sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or
+  substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+  NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
+  OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

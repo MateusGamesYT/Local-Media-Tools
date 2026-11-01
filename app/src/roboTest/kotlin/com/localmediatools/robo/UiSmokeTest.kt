@@ -203,7 +203,8 @@ class UiSmokeTest {
                     assertTrue(texts(a).count { it == "Hidden" } == 2 + n)
                     findDesc(a) { it == "Number plates" }!!.performClick()
                     val back = System.currentTimeMillis() + 20_000
-                    while (System.currentTimeMillis() < back && (texts(a).any { it == "Number plate" } || texts(a).none { it.startsWith("Found 2 different people") })) { idle(50); Thread.sleep(20); render(a) }
+                    // Looked at again without plates: the status no longer mentions private details.
+                    while (System.currentTimeMillis() < back && texts(a).none { it.startsWith("Found 2 different people") && "private detail" !in it }) { idle(50); Thread.sleep(20); render(a) }
                     assertTrue(texts(a).none { it == "Number plate" })
                     idle(500); render(a)
                 }

@@ -434,6 +434,9 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("MI-GAN (Picsart AI Research)", "MIT License", tr("Magic eraser model, converted to TensorFlow Lite.")),
             Triple("MobileNet-V3 image embedder (MediaPipe)", "Apache License 2.0", tr("Stitcher alignment assist and similar-photo detection.")),
             Triple("YuNet face detector (OpenCV Zoo)", "MIT License", tr("Finding faces for face blur, the Gallery and auto enhance.")),
+            Triple("LPD-YuNet licence plate detector (OpenCV Zoo)", "Apache License 2.0", tr("Finding number plates to blur.")),
+            Triple("PP-OCRv3 text detection, PP-OCRv5 text recognition (PaddleOCR)", "Apache License 2.0", tr("Finding and reading text in photos and videos, to blur private details.")),
+            Triple(tr("First names and surnames (US Social Security Administration; IBGE, compiled by Gabriel Lobo; INSEE, compiled by Ronan Le Meillat)"), "CC0 1.0 · CC BY 4.0 · MIT License", tr("Recognising names in text, to blur them.")),
             Triple("ResNet-50 face recognition (InsightFace, w600k_r50)", tr("Non-commercial research use only (code MIT)"), tr("Recognising the people in the Gallery.")),
             Triple("MobileFaceNet face recognition (InsightFace, w600k_mbf)", tr("Non-commercial research use only (code MIT)"), tr("Recognising the same person across video frames and files for face blur.")),
             Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", tr("Background remover.")),
@@ -453,7 +456,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
                 addView(UI.text(ctx, what, TextStyle.CAPTION).apply { setPadding(0, ctx.dp(3), 0, 0) })
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
-        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/InsightFace-models.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
+        for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/LPD-YuNet-Apache-2.0.txt", "licenses/PaddleOCR-Apache-2.0.txt", "licenses/Name-lists.txt", "licenses/InsightFace-models.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
                 "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt", "licenses/Document-fonts-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })

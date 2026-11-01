@@ -128,7 +128,8 @@ object FaceScanner {
 
     /** Plates, private text and codes in [bmp] (in its pixels). */
     private fun findPrivate(ctx: Context, bmp: Bitmap, privacy: PrivacyOptions, memory: LineMemory?, cancelled: () -> Boolean): List<Found> {
-        val vehicles = if (privacy.plates) PrivacyModels.vehicles(ctx, bmp) else emptyList()
+        // Without the object detector (it can fail to load) plates are still looked for in the whole picture.
+        val vehicles = if (privacy.plates) try { PrivacyModels.vehicles(ctx, bmp) } catch (e: Cancelled) { throw e } catch (_: Throwable) { emptyList() } else emptyList()
         val m = VisionOps.bgr(bmp)
         try {
             return PrivacyModels.finder(ctx).find(m, privacy, vehicles, memory) { if (cancelled()) throw Cancelled() }

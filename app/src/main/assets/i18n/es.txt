@@ -1395,6 +1395,18 @@
 < Finding faces for face blur, the Gallery and auto enhance.
 > Búsqueda de caras para el desenfoque de caras, la Galería y la mejora automática.
 
+< Finding number plates to blur.
+> Buscando matrículas para desenfocar.
+
+< Finding and reading text in photos and videos, to blur private details.
+> Buscando y leyendo texto en fotos y vídeos, para desenfocar datos privados.
+
+< First names and surnames (US Social Security Administration; IBGE, compiled by Gabriel Lobo; INSEE, compiled by Ronan Le Meillat)
+> Nombres y apellidos (US Social Security Administration; IBGE, compilado por Gabriel Lobo; INSEE, compilado por Ronan Le Meillat)
+
+< Recognising names in text, to blur them.
+> Reconocer nombres en el texto, para desenfocarlos.
+
 < Non-commercial research use only (code MIT)
 > Solo para uso de investigación no comercial (código MIT)
 
@@ -3372,6 +3384,51 @@
 < name_enhanced.jpg (PNG stays PNG)
 > nombre_enhanced.jpg (el PNG sigue siendo PNG)
 
+< Number plate
+> Matrícula
+
+< QR code or barcode
+> Código QR o de barras
+
+< Password or code
+> Contraseña o código
+
+< Card number
+> Número de tarjeta
+
+< Document number
+> Número de documento
+
+< Bank details
+> Datos bancarios
+
+< E-mail address
+> Correo electrónico
+
+< Phone number
+> Número de teléfono
+
+< Address
+> Dirección
+
+< Date of birth
+> Fecha de nacimiento
+
+< User name
+> Nombre de usuario
+
+< Number
+> Número
+
+< Text
+> Texto
+
+< Pixelate chosen faces and details
+> Pixelar caras y datos seleccionados
+
+< Blur chosen faces and details
+> Desenfocar caras y datos seleccionados
+
 < Pixelate chosen faces
 > Pixelar las caras elegidas
 
@@ -3393,6 +3450,42 @@
 < Hide no one
 > No ocultar a nadie
 
+< Private details found
+> Datos privados encontrados
+
+< Hide all details
+> Ocultar todos los datos
+
+< Hide no details
+> No ocultar ningún dato
+
+< Also hide
+> Ocultar también
+
+< Number plates
+> Matrículas
+
+< On cars, motorbikes, buses and lorries
+> En coches, motos, autobuses y camiones
+
+< Private details in text
+> Datos privados en textos
+
+< Names, phone numbers, e-mail and home addresses, passwords, card, account and document numbers
+> Nombres, teléfonos, correos electrónicos y domicilios, contraseñas, números de tarjeta, de cuenta y de documento
+
+< All text
+> Todo el texto
+
+< Every sign, label and line of writing
+> Cada letrero, etiqueta y línea de texto
+
+< QR codes and barcodes
+> Códigos QR y de barras
+
+< They can hold links, tickets and Wi-Fi passwords
+> Pueden contener enlaces, entradas y contraseñas de Wi-Fi
+
 < Style
 > Estilo
 
@@ -3411,8 +3504,17 @@
 < Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
 > Las caras se siguen de fotograma en fotograma y se emparejan en todos los archivos seleccionados, así que cada persona aparece una sola vez. Los vídeos se recodifican como MP4 H.264 con una calidad cercana a la original; el sonido se conserva.
 
+< Private details are found by reading the text in your photos on this phone. Small, blurry or handwritten text can be missed, and plates of some countries are found less often: check the result before you share it.
+> Los datos privados se encuentran leyendo el texto de las fotos en este teléfono. El texto pequeño, borroso o escrito a mano puede pasar desapercibido, y las matrículas de algunos países se encuentran con menos frecuencia: conviene revisar el resultado antes de compartirlo.
+
+< Every face and private detail found at this step will be hidden. To choose, put photos or videos in the stack.
+> Todas las caras y datos privados encontrados en este paso se ocultarán. Para elegir, se añaden fotos o vídeos a la pila.
+
 < Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
 > Se ocultará toda cara encontrada en este paso. Para elegir personas, pon fotos o vídeos en la cadena.
+
+< Select photos or videos; faces and private details are found automatically.
+> Seleccionar fotos o vídeos; las caras y los datos privados se encuentran automáticamente.
 
 < Watching the video for faces…
 < Watching {0} videos for faces…
@@ -3432,6 +3534,14 @@
 < Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
 > Se encontró {0} persona. Toca una cara para que siga visible; las caras resaltadas se ocultarán.
 > Se encontraron {0} personas distintas. Toca una cara para que siga visible; las caras resaltadas se ocultarán.
+
+< No private details were found.
+> No se han encontrado datos privados.
+
+< Found {0} private detail; tap it to keep it visible.
+< Found {0} private details; tap one to keep it visible.
+> Se ha encontrado {0} dato privado; tocarlo para mantenerlo visible.
+> Se han encontrado {0} datos privados; tocar uno para mantenerlo visible.
 
 < Stopped. Tap Find faces to look again.
 > Detenido. Toca Buscar caras para volver a buscar.
@@ -3464,14 +3574,29 @@
 < Person {0}, in {1}, stays visible
 > La persona {0}, en {1}, sigue visible
 
-< Tap the people you want to hide
-> Toca las personas que quieras ocultar
+< {0} in {1}, will be hidden
+> {0} en {1}: se ocultará
+
+< {0} in {1}, stays visible
+> {0} en {1}: sigue visible
+
+< Finding faces and private details…
+> Buscando caras y datos privados…
+
+< Tap what you want to hide
+> Seleccionar lo que se quiere ocultar
 
 < Tap Find faces first
 > Toca primero Buscar caras
 
+< Nothing to hide in these files
+> No hay nada que ocultar en estos archivos
+
 < No faces to hide in these files
 > No hay caras que ocultar en estos archivos
+
+< Tap the people you want to hide
+> Toca las personas que quieras ocultar
 
 < name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
 > nombre_blurred.jpg / .png (Pictures) · nombre_blurred.mp4 (Movies)
@@ -3484,8 +3609,23 @@
 > Oculta {1} de {0} persona (las demás siguen visibles)
 > Oculta {1} de {0} personas (las demás siguen visibles)
 
+< number plates
+> matrículas
+
+< all text
+> todo el texto
+
+< private details in text
+> datos privados en textos
+
+< also {0}
+> también {0}
+
 < Find faces first
 > Busca primero las caras
+
+< Nothing chosen to hide is in these files
+> Lo elegido para ocultar no está en estos archivos
 
 < The chosen people don't appear in these files
 > Las personas elegidas no aparecen en estos archivos
@@ -5420,6 +5560,9 @@
 < Looking at {0}
 > Mirando {0}
 
+< Looking for private details in {0}
+> Buscando datos privados en {0}
+
 < couldn't be read
 > no se pudo leer
 
@@ -5587,6 +5730,16 @@
 < fine-tuned
 > ajustada con precisión
 
+< Pixelating faces and private details in {0} file
+< Pixelating faces and private details in {0} files
+> Pixelando caras y datos privados en {0} archivo
+> Pixelando caras y datos privados en {0} archivos
+
+< Blurring faces and private details in {0} file
+< Blurring faces and private details in {0} files
+> Desenfocando caras y datos privados en {0} archivo
+> Desenfocando caras y datos privados en {0} archivos
+
 < Pixelating faces in {0} file
 < Pixelating faces in {0} files
 > Pixelando caras en {0} archivo
@@ -5597,17 +5750,33 @@
 > Desenfocando caras en {0} archivo
 > Desenfocando caras en {0} archivos
 
+< Nothing to hide was found in this file.
+> No se ha encontrado nada que ocultar en este archivo.
+
 < No faces to hide were found in this file.
 > No se encontraron caras que ocultar en este archivo.
+
+< Nothing chosen to hide is in this file, so it was left as it is.
+> Lo elegido para ocultar no está en este archivo, así que se ha dejado tal cual.
 
 < None of the chosen people appear in this file, so it was left as it is.
 > Ninguna de las personas elegidas aparece en este archivo, así que se dejó como está.
 
+< Finding faces and private details
+> Buscando caras y datos privados
+
 < Finding faces
 > Buscando caras
 
-< Photo metadata (location, camera, dates) is not copied.
-> Los metadatos de la foto (ubicación, cámara, fechas) no se copian.
+< {0} face track pixelated
+< {0} face tracks pixelated
+> {0} trayectoria de cara pixelada
+> {0} trayectorias de cara pixeladas
+
+< {0} face track blurred
+< {0} face tracks blurred
+> {0} trayectoria de cara desenfocada
+> {0} trayectorias de cara desenfocadas
 
 < {0} face pixelated
 < {0} faces pixelated
@@ -5619,21 +5788,27 @@
 > {0} cara desenfocada
 > {0} caras desenfocadas
 
+< {0} private detail pixelated
+< {0} private details pixelated
+> {0} dato privado pixelado
+> {0} datos privados pixelados
+
+< {0} private detail blurred
+< {0} private details blurred
+> {0} dato privado desenfocado
+> {0} datos privados desenfocados
+
+< Photo metadata (location, camera, dates) is not copied.
+> Los metadatos de la foto (ubicación, cámara, fechas) no se copian.
+
 < This file has no video track.
 > Este archivo no tiene pista de vídeo.
 
 < Blurring faces frame by frame
 > Desenfocando caras fotograma a fotograma
 
-< {0} face track pixelated
-< {0} face tracks pixelated
-> {0} trayectoria de cara pixelada
-> {0} trayectorias de cara pixeladas
-
-< {0} face track blurred
-< {0} face tracks blurred
-> {0} trayectoria de cara desenfocada
-> {0} trayectorias de cara desenfocadas
+< Blurring faces and private details frame by frame
+> Desenfocando caras y datos privados fotograma a fotograma
 
 < H.264 from {0}
 > H.264 desde {0}
@@ -6404,8 +6579,8 @@
 < Chain tools: each works on the last one's results
 > Encadena herramientas: cada una trabaja con los resultados de la anterior
 
-< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
-> Elige los archivos una vez, añade las herramientas que quieras en orden (por ejemplo Desenfocar caras → Compresor de vídeo → Vídeo → GIF → Optimizador de GIF) y ejecútalas todas con un toque. Cada herramienta conserva todos sus ajustes; solo se guardan los resultados finales.
+< Pick files once, add the tools you want in order — for example Blur faces & private info → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> Elige los archivos una vez, añade las herramientas que quieras en orden (por ejemplo Desenfocar caras y datos privados → Compresor de vídeo → Vídeo → GIF → Optimizador de GIF) y ejecútalas todas con un toque. Cada herramienta conserva todos sus ajustes; solo se guardan los resultados finales.
 
 < Photo editor
 > Editor de fotos
@@ -6458,14 +6633,14 @@
 < Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
 > Elimina el grano de las fotos y los vídeos hechos con poca luz sin perder detalle: se mide el ruido de cada archivo y solo se quita esa cantidad. Los archivos RAW (DNG, CR2, NEF, ARW) siguen siendo RAW: se limpian los propios datos del sensor y se guardan en el mismo formato con todos sus metadatos, listos para tu editor RAW. Los vídeos se limpian en el chip gráfico del teléfono, cada fotograma junto con los anteriores. Funciona con lotes enteros.
 
-< Blur faces
-> Desenfocar caras
+< Blur faces & private info
+> Desenfocar caras y datos privados
 
-< Find faces in photos and videos, pick who to hide
-> Busca caras en fotos y vídeos y elige a quién ocultar
+< Hide faces, number plates, private text and codes
+> Ocultar caras, matrículas, datos privados en textos y códigos
 
-< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
-> La IA del dispositivo encuentra todas las caras de tus fotos y vídeos y las agrupa por persona. Elige a quién desenfocar o pixelar; las caras se siguen durante todo el vídeo.
+< On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
+> La IA del propio dispositivo encuentra todas las caras de las fotos y vídeos y las agrupa por persona; también puede encontrar matrículas, datos privados en textos (nombres, teléfonos, direcciones, contraseñas…) y códigos QR. Se elige qué desenfocar o pixelar; el seguimiento abarca todo el vídeo.
 
 < Highlight video
 > Vídeo destacado

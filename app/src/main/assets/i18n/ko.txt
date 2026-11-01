@@ -1353,6 +1353,18 @@
 < Finding faces for face blur, the Gallery and auto enhance.
 > 얼굴 블러, 갤러리, 자동 보정을 위한 얼굴 찾기.
 
+< Finding number plates to blur.
+> 블러 처리할 번호판 찾기
+
+< Finding and reading text in photos and videos, to blur private details.
+> 사진과 동영상의 텍스트를 찾아 읽어 개인 정보를 블러 처리
+
+< First names and surnames (US Social Security Administration; IBGE, compiled by Gabriel Lobo; INSEE, compiled by Ronan Le Meillat)
+> 이름과 성 (US Social Security Administration; IBGE, Gabriel Lobo 편집; INSEE, Ronan Le Meillat 편집)
+
+< Recognising names in text, to blur them.
+> 텍스트 속 이름을 인식해 블러 처리
+
 < Non-commercial research use only (code MIT)
 > 비상업적 연구 용도로만 사용 가능(코드는 MIT)
 
@@ -3292,6 +3304,51 @@
 < name_enhanced.jpg (PNG stays PNG)
 > name_enhanced.jpg(PNG는 PNG로 유지)
 
+< Number plate
+> 번호판
+
+< QR code or barcode
+> QR 코드 또는 바코드
+
+< Password or code
+> 비밀번호 또는 코드
+
+< Card number
+> 카드 번호
+
+< Document number
+> 문서 번호
+
+< Bank details
+> 은행 정보
+
+< E-mail address
+> 이메일 주소
+
+< Phone number
+> 전화번호
+
+< Address
+> 주소
+
+< Date of birth
+> 생년월일
+
+< User name
+> 사용자 이름
+
+< Number
+> 번호
+
+< Text
+> 텍스트
+
+< Pixelate chosen faces and details
+> 선택한 얼굴과 정보 모자이크
+
+< Blur chosen faces and details
+> 선택한 얼굴과 정보 블러 처리
+
 < Pixelate chosen faces
 > 선택한 얼굴에 모자이크
 
@@ -3313,6 +3370,42 @@
 < Hide no one
 > 아무도 가리지 않기
 
+< Private details found
+> 찾은 개인 정보
+
+< Hide all details
+> 모든 정보 숨기기
+
+< Hide no details
+> 정보 숨기지 않기
+
+< Also hide
+> 추가로 숨기기
+
+< Number plates
+> 번호판
+
+< On cars, motorbikes, buses and lorries
+> 자동차, 오토바이, 버스, 트럭
+
+< Private details in text
+> 텍스트 속 개인 정보
+
+< Names, phone numbers, e-mail and home addresses, passwords, card, account and document numbers
+> 이름, 전화번호, 이메일과 집 주소, 비밀번호, 카드·계좌·문서 번호
+
+< All text
+> 모든 텍스트
+
+< Every sign, label and line of writing
+> 모든 간판, 라벨, 글줄
+
+< QR codes and barcodes
+> QR 코드와 바코드
+
+< They can hold links, tickets and Wi-Fi passwords
+> 링크, 티켓, Wi-Fi 비밀번호를 담고 있을 수 있습니다
+
 < Style
 > 스타일
 
@@ -3331,8 +3424,17 @@
 < Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
 > 얼굴은 프레임마다 추적되고 선택한 모든 파일에 걸쳐 대조되므로 각 인물이 한 번만 표시돼요. 동영상은 원본에 가까운 화질의 H.264 MP4로 다시 인코딩되며, 소리는 유지돼요.
 
+< Private details are found by reading the text in your photos on this phone. Small, blurry or handwritten text can be missed, and plates of some countries are found less often: check the result before you share it.
+> 개인 정보는 이 휴대폰에서 사진 속 텍스트를 읽어 찾습니다. 작거나 흐릿하거나 손글씨인 텍스트는 놓칠 수 있고, 일부 국가의 번호판은 덜 자주 찾아집니다. 공유하기 전에 결과를 확인하세요.
+
+< Every face and private detail found at this step will be hidden. To choose, put photos or videos in the stack.
+> 이 단계에서 찾은 모든 얼굴과 개인 정보는 가려집니다. 고르려면 사진이나 동영상을 스택에 넣으세요.
+
 < Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
 > 이 단계에서 찾은 모든 얼굴이 가려져요. 인물을 직접 고르려면 사진이나 동영상을 스택에 넣어 주세요.
+
+< Select photos or videos; faces and private details are found automatically.
+> 사진이나 동영상을 선택하세요. 얼굴과 개인 정보는 자동으로 찾습니다.
 
 < Watching the video for faces…
 < Watching {0} videos for faces…
@@ -3350,6 +3452,13 @@
 < Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
 < Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
 > {0}명을 찾았어요. 얼굴을 탭하면 가려지지 않고 그대로 표시돼요. 강조 표시된 얼굴은 가려져요.
+
+< No private details were found.
+> 개인 정보를 찾지 못했습니다.
+
+< Found {0} private detail; tap it to keep it visible.
+< Found {0} private details; tap one to keep it visible.
+> 개인 정보 {0}개를 찾았습니다. 탭하면 계속 보이게 합니다.
 
 < Stopped. Tap Find faces to look again.
 > 중지했어요. '얼굴 찾기'를 탭하면 다시 찾아요.
@@ -3380,14 +3489,29 @@
 < Person {0}, in {1}, stays visible
 > {1}에 있는 인물 {0}: 표시됨
 
-< Tap the people you want to hide
-> 가리고 싶은 인물을 탭하세요
+< {0} in {1}, will be hidden
+> {0}, {1}: 가려질 예정
+
+< {0} in {1}, stays visible
+> {0}, {1}: 계속 보임
+
+< Finding faces and private details…
+> 얼굴과 개인 정보를 찾는 중…
+
+< Tap what you want to hide
+> 숨길 것을 탭하세요
 
 < Tap Find faces first
 > 먼저 '얼굴 찾기'를 탭하세요
 
+< Nothing to hide in these files
+> 이 파일들에는 숨길 것이 없습니다
+
 < No faces to hide in these files
 > 이 파일들에는 가릴 얼굴이 없어요
+
+< Tap the people you want to hide
+> 가리고 싶은 인물을 탭하세요
 
 < name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
 > name_blurred.jpg / .png(Pictures) · name_blurred.mp4(Movies)
@@ -3399,8 +3523,23 @@
 < Hides {1} of {0} people (others stay visible)
 > {0}명 중 {1}명을 가려요(나머지는 그대로 표시)
 
+< number plates
+> 번호판
+
+< all text
+> 모든 텍스트
+
+< private details in text
+> 텍스트 속 개인 정보
+
+< also {0}
+> 또한 {0}
+
 < Find faces first
 > 먼저 얼굴을 찾아 주세요
+
+< Nothing chosen to hide is in these files
+> 숨기기로 고른 것이 이 파일들에는 없습니다
 
 < The chosen people don't appear in these files
 > 선택한 인물이 이 파일들에 없어요
@@ -5312,6 +5451,9 @@
 < Looking at {0}
 > 살펴보는 중: {0}
 
+< Looking for private details in {0}
+> {0}에서 개인 정보를 찾는 중
+
 < couldn't be read
 > 읽을 수 없음
 
@@ -5477,6 +5619,14 @@
 < fine-tuned
 > 미세 조정
 
+< Pixelating faces and private details in {0} file
+< Pixelating faces and private details in {0} files
+> {0}개 파일의 얼굴과 개인 정보를 모자이크하는 중
+
+< Blurring faces and private details in {0} file
+< Blurring faces and private details in {0} files
+> {0}개 파일의 얼굴과 개인 정보를 블러 처리하는 중
+
 < Pixelating faces in {0} file
 < Pixelating faces in {0} files
 > 파일 {0}개의 얼굴에 모자이크 적용 중
@@ -5485,17 +5635,31 @@
 < Blurring faces in {0} files
 > 파일 {0}개의 얼굴을 블러 처리 중
 
+< Nothing to hide was found in this file.
+> 이 파일에서 숨길 것을 찾지 못했습니다.
+
 < No faces to hide were found in this file.
 > 이 파일에서 가릴 얼굴을 찾지 못했어요.
+
+< Nothing chosen to hide is in this file, so it was left as it is.
+> 숨기기로 고른 것이 이 파일에는 없어서 그대로 두었습니다.
 
 < None of the chosen people appear in this file, so it was left as it is.
 > 선택한 인물이 이 파일에 없어서 그대로 두었어요.
 
+< Finding faces and private details
+> 얼굴과 개인 정보를 찾는 중
+
 < Finding faces
 > 얼굴을 찾는 중
 
-< Photo metadata (location, camera, dates) is not copied.
-> 사진 메타데이터(위치, 카메라, 날짜)는 복사되지 않아요.
+< {0} face track pixelated
+< {0} face tracks pixelated
+> 얼굴 트랙 {0}개에 모자이크 적용
+
+< {0} face track blurred
+< {0} face tracks blurred
+> 얼굴 트랙 {0}개 블러 처리
 
 < {0} face pixelated
 < {0} faces pixelated
@@ -5505,19 +5669,25 @@
 < {0} faces blurred
 > 얼굴 {0}개 블러 처리
 
+< {0} private detail pixelated
+< {0} private details pixelated
+> 개인 정보 {0}개를 모자이크했습니다
+
+< {0} private detail blurred
+< {0} private details blurred
+> 개인 정보 {0}개를 블러 처리했습니다
+
+< Photo metadata (location, camera, dates) is not copied.
+> 사진 메타데이터(위치, 카메라, 날짜)는 복사되지 않아요.
+
 < This file has no video track.
 > 이 파일에는 영상 트랙이 없어요.
 
 < Blurring faces frame by frame
 > 프레임마다 얼굴을 블러 처리하는 중
 
-< {0} face track pixelated
-< {0} face tracks pixelated
-> 얼굴 트랙 {0}개에 모자이크 적용
-
-< {0} face track blurred
-< {0} face tracks blurred
-> 얼굴 트랙 {0}개 블러 처리
+< Blurring faces and private details frame by frame
+> 프레임마다 얼굴과 개인 정보를 블러 처리하는 중
 
 < H.264 from {0}
 > H.264(원본: {0})
@@ -6246,8 +6416,8 @@
 < Chain tools: each works on the last one's results
 > 도구를 이어서: 각 도구가 앞 도구의 결과를 처리해요
 
-< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
-> 파일을 한 번 선택하고 원하는 도구를 순서대로 추가한 뒤(예: 얼굴 블러 → 동영상 압축 → 동영상→GIF → GIF 최적화) 한 번의 탭으로 모두 실행하세요. 각 도구의 설정은 그대로 유지되며 최종 결과만 저장돼요.
+< Pick files once, add the tools you want in order — for example Blur faces & private info → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> 파일을 한 번 선택하고 원하는 도구를 순서대로 추가한 뒤(예: 얼굴 블러 및 개인 정보 → 동영상 압축 → 동영상→GIF → GIF 최적화) 한 번의 탭으로 모두 실행하세요. 각 도구의 설정은 그대로 유지되며 최종 결과만 저장돼요.
 
 < Photo editor
 > 사진 편집기
@@ -6300,14 +6470,14 @@
 < Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
 > 어두운 곳에서 찍은 사진과 동영상의 거친 입자를 디테일은 그대로 둔 채 없애요. 파일마다 노이즈를 측정해서 그만큼만 제거해요. RAW 파일(DNG, CR2, NEF, ARW)은 RAW로 유지돼요. 센서 데이터 자체를 정리해 모든 메타데이터와 함께 같은 형식으로 저장하므로 RAW 편집기에서 바로 쓸 수 있어요. 동영상은 휴대전화의 그래픽 칩에서 각 프레임을 이전 프레임들과 함께 처리해요. 여러 파일을 한꺼번에 처리할 수 있어요.
 
-< Blur faces
-> 얼굴 블러
+< Blur faces & private info
+> 얼굴 블러 및 개인 정보
 
-< Find faces in photos and videos, pick who to hide
-> 사진과 동영상에서 얼굴을 찾고 가릴 사람 선택
+< Hide faces, number plates, private text and codes
+> 얼굴, 번호판, 텍스트 속 개인 정보, 코드 가리기
 
-< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
-> 기기 내 AI가 사진과 동영상 속 모든 얼굴을 찾아 인물별로 묶어요. 블러나 모자이크를 적용할 사람을 선택하세요. 얼굴은 동영상 전체에서 추적돼요.
+< On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
+> 기기 내 AI가 사진과 동영상의 모든 얼굴을 찾아 사람별로 묶습니다. 번호판, 텍스트 속 개인 정보(이름, 전화번호, 주소, 비밀번호…), QR 코드도 찾을 수 있습니다. 블러 처리하거나 모자이크할 항목을 고르세요. 모든 항목은 동영상 전체에서 추적됩니다.
 
 < Highlight video
 > 하이라이트 영상

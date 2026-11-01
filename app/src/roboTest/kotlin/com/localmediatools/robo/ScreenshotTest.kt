@@ -198,18 +198,6 @@ class ScreenshotTest {
         } finally { FakeGallery.uninstall() }
     }
 
-    /** A simple cartoon face for the stand-in face thumbnails. */
-    private fun avatar(skin: Int, hair: Int): Bitmap {
-        val b = Bitmap.createBitmap(160, 160, Bitmap.Config.ARGB_8888)
-        b.eraseColor(0xFF3A4152.toInt())
-        val c = Canvas(b); val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
-        p.color = hair; c.drawCircle(80f, 70f, 52f, p)
-        p.color = skin; c.drawOval(38f, 44f, 122f, 140f, p)
-        p.color = 0xFF2B2B2B.toInt(); c.drawCircle(64f, 86f, 5f, p); c.drawCircle(96f, 86f, 5f, p)
-        p.style = android.graphics.Paint.Style.STROKE; p.strokeWidth = 4f; c.drawArc(62f, 98f, 98f, 122f, 20f, 140f, false, p)
-        return b
-    }
-
     private fun newToolShots(a: MainActivity, app: android.app.Application, inDir: File, dir: File) {
         // Background remover: a "product" photo; the model is replaced by the known subject shape.
         val prod = Bitmap.createBitmap(900, 900, Bitmap.Config.ARGB_8888)
@@ -236,19 +224,46 @@ class ScreenshotTest {
         Selection.of(ToolId.AUTO_ENHANCE).add(listOf(photo(app, inDir)))
         open(a, ToolId.AUTO_ENHANCE, dir, "31_auto_enhance") { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Landscape:") || it.text.startsWith("General:") } }
 
-        // Face blur: two people found in a photo and a video (stand-in for the face models).
-        val faces = listOf(avatar(0xFFF1C27D.toInt(), 0xFF4A3426.toInt()), avatar(0xFFC68642.toInt(), 0xFF1E1E1E.toInt()), avatar(0xFFFFDBAC.toInt(), 0xFFB5651D.toInt()))
+        // Blur faces & private info, on real photos (test resources privacy/, CC BY 2.0): the woman by
+        // the car, the car's number plate and an advert's phone number and e-mail addresses (the boxes
+        // people and TextOCR marked), listed as the app lists what its models find.
+        fun fixture(n: String) = ScreenshotTest::class.java.getResourceAsStream("/privacy/$n")!!.readBytes()
+        val carName = "e6299b9e04680adb.jpg"; val adName = "223514026649d937.jpg"
+        val carItem = Robo.item(app, Robo.write(inDir, carName, fixture(carName))); val adItem = Robo.item(app, Robo.write(inDir, adName, fixture(adName)))
+        val rows = String(fixture("labels.tsv")).lines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }
+        com.localmediatools.ui.tools.FaceBlurPrefs.privacy = com.localmediatools.vision.core.PrivacyOptions(plates = true, privateText = true)
         com.localmediatools.vision.FaceScanner.override = { items, _ ->
-            val fake = Robo.fakeFaces(items)
-            val people = fake.people
+            val car = Robo.decode(File(inDir, carName)); val ad = Robo.decode(File(inDir, adName))
+            val k = items.indexOfFirst { it.name == carName }.coerceAtLeast(0); val ka = items.indexOfFirst { it.name == adName }.coerceAtLeast(0)
+            val face = com.localmediatools.vision.core.FaceTrack(0, k, still = true).apply {
+                samples.add(com.localmediatools.vision.core.FaceSample(0, 0.567f, 0.215f, 0.125f, 0.2f, 0.95f, com.localmediatools.vision.core.FaceEngine.normalize(FloatArray(128) { 1f })))
+            }
             val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
-            for ((k, p) in people.withIndex()) for (t in p.tracks) thumbs[t] = faces[k % faces.size].copy(Bitmap.Config.ARGB_8888, false)
-            com.localmediatools.vision.FaceScanResult(items, people, thumbs, emptyList())
+            thumbs[face] = com.localmediatools.vision.VisionOps.faceThumb(car, face.samples[0])
+            val privates = ArrayList<com.localmediatools.vision.core.PrivateTrack>()
+            val pThumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.PrivateTrack, Bitmap>()
+            for (r in rows) {
+                val c = r[3].split(' ').map { it.toFloat() }
+                val (src, bmp, kind, details) = when {
+                    r[0] == carName && r[1] == "plate" -> listOf(k, car, com.localmediatools.vision.core.FindKind.PLATE, emptySet<com.localmediatools.vision.core.Detail>())
+                    r[0] == adName && r[1] == "private" -> listOf(ka, ad, com.localmediatools.vision.core.FindKind.TEXT,
+                        setOf(if (r[2] == "email") com.localmediatools.vision.core.Detail.EMAIL else com.localmediatools.vision.core.Detail.PHONE))
+                    else -> continue
+                }
+                val q = if (c.size == 4) floatArrayOf(c[0], c[1], c[2], c[1], c[2], c[3], c[0], c[3]) else c.toFloatArray()
+                @Suppress("UNCHECKED_CAST")
+                val t = com.localmediatools.vision.core.PrivateTrack(privates.size, src as Int, kind as com.localmediatools.vision.core.FindKind,
+                    details as Set<com.localmediatools.vision.core.Detail>, "", still = true)
+                t.samples.add(com.localmediatools.vision.core.PrivateSample(0, q))
+                privates.add(t); pThumbs[t] = com.localmediatools.vision.PrivacyModels.thumb(bmp as Bitmap, q)
+            }
+            com.localmediatools.vision.FaceScanResult(items, com.localmediatools.vision.core.FaceTracker.cluster(listOf(face)), thumbs, emptyList(), privates, pThumbs)
         }
-        val vid = Robo.item(app, Robo.write(inDir, "party.mp4", byteArrayOf(0, 0, 0, 24) + "ftypisom".toByteArray() + ByteArray(64)))
-        Selection.of(ToolId.FACE_BLUR).add(listOf(photo(app, inDir), vid))
+        Selection.of(ToolId.FACE_BLUR).clear()
+        Selection.of(ToolId.FACE_BLUR).add(listOf(carItem, adItem))
         open(a, ToolId.FACE_BLUR, dir, "32_face_blur") { all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().any { it.text.startsWith("Found") } }
         com.localmediatools.vision.FaceScanner.override = null
+        com.localmediatools.ui.tools.FaceBlurPrefs.privacy = com.localmediatools.vision.core.PrivacyOptions()
 
         // The duplicate finder is rendered by DuplicatesUiTest, from real photos.
 
@@ -294,7 +309,7 @@ class ScreenshotTest {
         open(a, ToolId.MERGE_VIDEOS, dir, "34_merge_videos") { true }
         Selection.of(ToolId.VIDEO_SPEED).add(clips.take(1))
         open(a, ToolId.VIDEO_SPEED, dir, "35_video_speed") { true }
-        stackShots(a, app, inDir, dir, faces)
+        stackShots(a, app, inDir, dir, realFaces())
     }
 
     private fun texts(a: MainActivity) = all(a.navigator.top!!.view).filterIsInstance<android.widget.TextView>().map { it.text.toString() }
@@ -307,7 +322,17 @@ class ScreenshotTest {
         c!!.performClick(); idle(600)
     }
 
-    /** Builds "Blur faces → Video compressor → Video → GIF → GIF optimizer" through the real screens. */
+    /** Face pictures of three different people from the real-people set (test resources people/, CC BY 2.0). */
+    private fun realFaces(): List<Bitmap> {
+        val rows = String(ScreenshotTest::class.java.getResourceAsStream("/people/faces.tsv")!!.readBytes()).lines()
+            .filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }.filter { it[9].isNotEmpty() }
+        return rows.distinctBy { it[9] }.take(3).map { r ->
+            val bmp = android.graphics.BitmapFactory.decodeStream(ScreenshotTest::class.java.getResourceAsStream("/people/${r[0]}"))
+            com.localmediatools.vision.VisionOps.faceThumb(bmp, com.localmediatools.vision.core.FaceSample(0, r[2].toFloat(), r[3].toFloat(), r[4].toFloat(), r[5].toFloat(), r[6].toFloat(), null))
+        }
+    }
+
+    /** Builds "Blur faces & private info → Video compressor → Video → GIF → GIF optimizer" through the real screens. */
     private fun stackShots(a: MainActivity, app: android.app.Application, inDir: File, dir: File, faces: List<Bitmap>) {
         com.localmediatools.vision.FaceScanner.override = { items, _ ->
             val fake = Robo.fakeFaces(items)

@@ -1437,6 +1437,18 @@
 < Finding faces for face blur, the Gallery and auto enhance.
 > Поиск лиц для размытия лиц, Галереи и автоулучшения.
 
+< Finding number plates to blur.
+> Поиск номерных знаков для размытия.
+
+< Finding and reading text in photos and videos, to blur private details.
+> Поиск и чтение текста на фото и видео, чтобы размыть личные данные.
+
+< First names and surnames (US Social Security Administration; IBGE, compiled by Gabriel Lobo; INSEE, compiled by Ronan Le Meillat)
+> Имена и фамилии (US Social Security Administration; IBGE, составитель Gabriel Lobo; INSEE, составитель Ronan Le Meillat)
+
+< Recognising names in text, to blur them.
+> Распознавание имён в тексте, чтобы их размыть.
+
 < Non-commercial research use only (code MIT)
 > Только для некоммерческих исследований (код под лицензией MIT)
 
@@ -3452,6 +3464,51 @@
 < name_enhanced.jpg (PNG stays PNG)
 > имя_enhanced.jpg (PNG остаётся PNG)
 
+< Number plate
+> Номерной знак
+
+< QR code or barcode
+> QR-код или штрихкод
+
+< Password or code
+> Пароль или код
+
+< Card number
+> Номер карты
+
+< Document number
+> Номер документа
+
+< Bank details
+> Банковские реквизиты
+
+< E-mail address
+> Адрес эл. почты
+
+< Phone number
+> Номер телефона
+
+< Address
+> Адрес
+
+< Date of birth
+> Дата рождения
+
+< User name
+> Имя пользователя
+
+< Number
+> Номер
+
+< Text
+> Текст
+
+< Pixelate chosen faces and details
+> Пикселизировать выбранные лица и данные
+
+< Blur chosen faces and details
+> Размыть выбранные лица и данные
+
 < Pixelate chosen faces
 > Пикселизировать выбранные лица
 
@@ -3473,6 +3530,42 @@
 < Hide no one
 > Никого не скрывать
 
+< Private details found
+> Найденные личные данные
+
+< Hide all details
+> Скрыть все данные
+
+< Hide no details
+> Не скрывать данные
+
+< Also hide
+> Также скрыть
+
+< Number plates
+> Номерные знаки
+
+< On cars, motorbikes, buses and lorries
+> На автомобилях, мотоциклах, автобусах и грузовиках
+
+< Private details in text
+> Личные данные в тексте
+
+< Names, phone numbers, e-mail and home addresses, passwords, card, account and document numbers
+> Имена, номера телефонов, адреса эл. почты и домашние адреса, пароли, номера карт, счетов и документов
+
+< All text
+> Весь текст
+
+< Every sign, label and line of writing
+> Каждая вывеска, подпись и строка текста
+
+< QR codes and barcodes
+> QR-коды и штрихкоды
+
+< They can hold links, tickets and Wi-Fi passwords
+> Они могут содержать ссылки, билеты и пароли Wi-Fi
+
 < Style
 > Стиль
 
@@ -3491,8 +3584,17 @@
 < Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
 > Лица отслеживаются от кадра к кадру и сопоставляются во всех выбранных файлах, поэтому каждый человек указан один раз. Видео перекодируются в H.264 MP4 с качеством, близким к исходному; звук сохраняется.
 
+< Private details are found by reading the text in your photos on this phone. Small, blurry or handwritten text can be missed, and plates of some countries are found less often: check the result before you share it.
+> Личные данные находятся путём чтения текста на ваших фото на этом телефоне. Мелкий, размытый или рукописный текст может быть пропущен, а номерные знаки некоторых стран находятся реже: проверьте результат, прежде чем делиться им.
+
+< Every face and private detail found at this step will be hidden. To choose, put photos or videos in the stack.
+> Все лица и личные данные, найденные на этом шаге, будут скрыты. Чтобы выбрать, добавьте фото или видео в стопку.
+
 < Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
 > Все лица, найденные на этом шаге, будут скрыты. Чтобы выбрать людей, добавьте в цепочку фото или видео.
+
+< Select photos or videos; faces and private details are found automatically.
+> Выберите фото или видео; лица и личные данные находятся автоматически.
 
 < Watching the video for faces…
 < Watching {0} videos for faces…
@@ -3514,6 +3616,15 @@
 > Найдено людей: {0}. Коснитесь лица, чтобы оставить его видимым; выделенные лица будут скрыты.
 > Найдено людей: {0}. Коснитесь лица, чтобы оставить его видимым; выделенные лица будут скрыты.
 > Найдено людей: {0}. Коснитесь лица, чтобы оставить его видимым; выделенные лица будут скрыты.
+
+< No private details were found.
+> Личные данные не найдены.
+
+< Found {0} private detail; tap it to keep it visible.
+< Found {0} private details; tap one to keep it visible.
+> Найден {0} элемент личных данных; нажмите на него, чтобы оставить видимым.
+> Найдено {0} элемента личных данных; нажмите на один, чтобы оставить видимым.
+> Найдено {0} элементов личных данных; нажмите на один, чтобы оставить видимым.
 
 < Stopped. Tap Find faces to look again.
 > Остановлено. Коснитесь «Найти лица», чтобы искать снова.
@@ -3548,14 +3659,29 @@
 < Person {0}, in {1}, stays visible
 > Человек {0} в {1} остаётся видимым
 
-< Tap the people you want to hide
-> Коснитесь людей, которых хотите скрыть
+< {0} in {1}, will be hidden
+> {0} в {1}: будет скрываться
+
+< {0} in {1}, stays visible
+> {0} в {1}: не будет скрываться
+
+< Finding faces and private details…
+> Поиск лиц и личных данных…
+
+< Tap what you want to hide
+> Нажмите на то, что хотите скрыть
 
 < Tap Find faces first
 > Сначала коснитесь «Найти лица»
 
+< Nothing to hide in these files
+> В этих файлах нечего скрывать
+
 < No faces to hide in these files
 > В этих файлах нет лиц, которые нужно скрыть
+
+< Tap the people you want to hide
+> Коснитесь людей, которых хотите скрыть
 
 < name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
 > имя_blurred.jpg / .png (Pictures) · имя_blurred.mp4 (Movies)
@@ -3569,8 +3695,23 @@
 > Скрывает {1} из {0} человек (остальные остаются видимыми)
 > Скрывает {1} из {0} человек (остальные остаются видимыми)
 
+< number plates
+> номерные знаки
+
+< all text
+> весь текст
+
+< private details in text
+> личные данные в тексте
+
+< also {0}
+> также {0}
+
 < Find faces first
 > Сначала найдите лица
+
+< Nothing chosen to hide is in these files
+> Ничего из выбранного для скрытия нет в этих файлах
 
 < The chosen people don't appear in these files
 > Выбранные люди не встречаются в этих файлах
@@ -5528,6 +5669,9 @@
 < Looking at {0}
 > Просмотр {0}
 
+< Looking for private details in {0}
+> Поиск личных данных в {0}
+
 < couldn't be read
 > не удалось прочитать
 
@@ -5697,6 +5841,18 @@
 < fine-tuned
 > тонко настроено
 
+< Pixelating faces and private details in {0} file
+< Pixelating faces and private details in {0} files
+> Пикселизация лиц и личных данных в {0} файле
+> Пикселизация лиц и личных данных в {0} файлах
+> Пикселизация лиц и личных данных в {0} файлах
+
+< Blurring faces and private details in {0} file
+< Blurring faces and private details in {0} files
+> Размытие лиц и личных данных в {0} файле
+> Размытие лиц и личных данных в {0} файлах
+> Размытие лиц и личных данных в {0} файлах
+
 < Pixelating faces in {0} file
 < Pixelating faces in {0} files
 > Пикселизация лиц в файлах: {0}
@@ -5709,17 +5865,35 @@
 > Размытие лиц в файлах: {0}
 > Размытие лиц в файлах: {0}
 
+< Nothing to hide was found in this file.
+> Ничего для скрытия в этом файле не найдено.
+
 < No faces to hide were found in this file.
 > В этом файле не найдено лиц, которые нужно скрыть.
+
+< Nothing chosen to hide is in this file, so it was left as it is.
+> Ничего из выбранного для скрытия нет в этом файле, поэтому он оставлен без изменений.
 
 < None of the chosen people appear in this file, so it was left as it is.
 > Никто из выбранных людей не встречается в этом файле, поэтому он оставлен как есть.
 
+< Finding faces and private details
+> Поиск лиц и личных данных
+
 < Finding faces
 > Поиск лиц
 
-< Photo metadata (location, camera, dates) is not copied.
-> Метаданные фото (местоположение, камера, даты) не копируются.
+< {0} face track pixelated
+< {0} face tracks pixelated
+> Пикселизировано дорожек лиц: {0}
+> Пикселизировано дорожек лиц: {0}
+> Пикселизировано дорожек лиц: {0}
+
+< {0} face track blurred
+< {0} face tracks blurred
+> Размыто дорожек лиц: {0}
+> Размыто дорожек лиц: {0}
+> Размыто дорожек лиц: {0}
 
 < {0} face pixelated
 < {0} faces pixelated
@@ -5733,23 +5907,29 @@
 > Размыто лиц: {0}
 > Размыто лиц: {0}
 
+< {0} private detail pixelated
+< {0} private details pixelated
+> Пикселизирован {0} элемент личных данных
+> Пикселизировано {0} элемента личных данных
+> Пикселизировано {0} элементов личных данных
+
+< {0} private detail blurred
+< {0} private details blurred
+> Размыт {0} элемент личных данных
+> Размыто {0} элемента личных данных
+> Размыто {0} элементов личных данных
+
+< Photo metadata (location, camera, dates) is not copied.
+> Метаданные фото (местоположение, камера, даты) не копируются.
+
 < This file has no video track.
 > В этом файле нет видеодорожки.
 
 < Blurring faces frame by frame
 > Размытие лиц кадр за кадром
 
-< {0} face track pixelated
-< {0} face tracks pixelated
-> Пикселизировано дорожек лиц: {0}
-> Пикселизировано дорожек лиц: {0}
-> Пикселизировано дорожек лиц: {0}
-
-< {0} face track blurred
-< {0} face tracks blurred
-> Размыто дорожек лиц: {0}
-> Размыто дорожек лиц: {0}
-> Размыто дорожек лиц: {0}
+< Blurring faces and private details frame by frame
+> Размытие лиц и личных данных покадрово
 
 < H.264 from {0}
 > H.264 из {0}
@@ -6562,8 +6742,8 @@
 < Chain tools: each works on the last one's results
 > Соединяйте инструменты: каждый работает с результатами предыдущего
 
-< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
-> Выберите файлы один раз, добавьте нужные инструменты по порядку — например, «Размытие лиц» → «Сжатие видео» → «Видео → GIF» → «Оптимизатор GIF» — и запустите все одним касанием. Каждый инструмент сохраняет все свои настройки; сохраняются только итоговые результаты.
+< Pick files once, add the tools you want in order — for example Blur faces & private info → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> Выберите файлы один раз, добавьте нужные инструменты по порядку — например, «Размытие лиц и личных данных» → «Сжатие видео» → «Видео → GIF» → «Оптимизатор GIF» — и запустите все одним касанием. Каждый инструмент сохраняет все свои настройки; сохраняются только итоговые результаты.
 
 < Photo editor
 > Фоторедактор
@@ -6616,14 +6796,14 @@
 < Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
 > Убирает зернистость с фото и видео, снятых при слабом освещении, сохраняя детали: шум каждого файла измеряется, и убирается ровно столько, сколько нужно. RAW-файлы (DNG, CR2, NEF, ARW) остаются RAW: очищаются сами данные сенсора, которые сохраняются в том же формате со всеми метаданными, готовые для вашего RAW-редактора. Видео очищаются на графическом чипе телефона, каждый кадр вместе с предыдущими. Работает с целыми партиями.
 
-< Blur faces
-> Размытие лиц
+< Blur faces & private info
+> Размытие лиц и личных данных
 
-< Find faces in photos and videos, pick who to hide
-> Находите лица на фото и видео, выбирайте, кого скрыть
+< Hide faces, number plates, private text and codes
+> Скрыть лица, номерные знаки, текст с личными данными и коды
 
-< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
-> ИИ на устройстве находит каждое лицо на ваших фото и видео и группирует их по людям. Выберите, кого размыть или пикселизировать; лица отслеживаются на протяжении всего видео.
+< On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
+> ИИ на устройстве находит каждое лицо на фото и видео и группирует их по людям; также он может найти номерные знаки, личные данные в тексте (имена, номера телефонов, адреса, пароли…) и QR-коды. Выберите, что размыть или пикселизировать; всё отслеживается на протяжении всего видео.
 
 < Highlight video
 > Видео из лучших моментов

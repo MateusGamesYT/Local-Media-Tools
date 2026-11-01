@@ -8,17 +8,17 @@ itself (or to your own song), **printing** to Wi-Fi printers without the printer
 tools** for photos, video, GIF, documents, PDF and audio, among them **audio tools** to trim, merge,
 convert, normalise, speed up and split sound files, a **file reader** for the PDF,
 Word, Excel and PowerPoint files Android can't open by itself, a **metadata viewer** that shows what
-any file reveals about you, and on-device AI for **face blurring in photos and
-videos**, **background removal**, **one-tap enhancement**, a **magic eraser**, a **duplicate finder** and
+any file reveals about you, and on-device AI to **blur faces, number plates, private details in text
+and QR codes in photos and videos**, **background removal**, **one-tap enhancement**, a **magic eraser**, a **duplicate finder** and
 a **denoiser** that keeps RAW files RAW. Nothing is uploaded: the app never connects to servers
 on the internet (its only network traffic is to your own printer, and the code allows nothing else),
 originals are never modified, and every result is written to a hidden file that is only published
 after it has been completely written and checked.
 
-**Tool stacks** chain any of them: pick files once, add steps (for example Blur faces → Video
+**Tool stacks** chain any of them: pick files once, add steps (for example Blur faces & private info → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.13.0.apk`](release/LocalMediaTools-1.13.0.apk)
+**Install:** [`release/LocalMediaTools-1.14.0.apk`](release/LocalMediaTools-1.14.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -60,10 +60,11 @@ The audio screenshots show *Vibe Ace* by Kevin MacLeod (CC BY 3.0) and a LibriSp
 |---|---|---|
 | ![](docs/screenshots/tool-stack.png) | ![](docs/screenshots/stack-step.png) | ![](docs/screenshots/stack-picker.png) |
 
-| Home | Denoiser | Blur faces | Background remover | Auto enhance | Speed & timelapse |
+| Home | Denoiser | Blur faces & private info | Background remover | Auto enhance | Speed & timelapse |
 |---|---|---|---|---|---|
 | ![](docs/screenshots/home.png) | ![](docs/screenshots/denoiser.png) | ![](docs/screenshots/face-blur.png) | ![](docs/screenshots/background-remover.png) | ![](docs/screenshots/auto-enhance.png) | ![](docs/screenshots/speed.png) |
 
+*Blur faces & private info* shows two Creative Commons photos (CC BY 2.0), "Mini Wannita" by Bernard Goldbach and an advert photographed by Entressen kirjasto (sources in [`CREDITS.tsv`](app/src/test/resources/privacy/CREDITS.tsv)), with the woman's face, the car's number plate and the advert's e-mail addresses and phone number listed as the app lists what it finds (the boxes come from the photos' markings and, for the face, were set by hand; the app's models don't run in the screenshot test).
 The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`CREDITS.tsv`](app/src/test/resources/denoise/CREDITS.tsv)) and what the app's photo denoiser made of it.
 
 | Português (Brasil) | 简体中文 | 日本語 | Русский |
@@ -74,7 +75,74 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.13.0: audio tools
+## What's new in 1.14.0: blur number plates, private details and QR codes, and find more faces
+
+**Blur faces** is now **Blur faces & private info**. Besides faces it can hide, if you switch them on
+under *Also hide*:
+
+- **Number plates** on cars, motorbikes, buses and lorries.
+- **Private details in text**: the app reads the text in your photos and videos and hides lines with
+  e-mail addresses, phone numbers, card numbers (with their check digit), IBANs, document numbers
+  (CPF, CNPJ, RG, US SSN by their shape), other long numbers, passwords and codes, names, street
+  addresses and postcodes, dates of birth and user names. A label such as "Password:", "Senha:",
+  "Name:" or "Tel." also hides the value next to it or under it, in the app's ten languages. Names are
+  recognised with lists of common first names and surnames (US, Brazil, France); dates, times, prices
+  and spans of years are left alone.
+- **All text**: every sign, label and line of writing.
+- **QR codes and barcodes** (they can hold links, tickets and Wi-Fi passwords).
+
+Each thing found is listed with a picture of it, next to the people; tap one to keep it visible.
+In videos, plates, text and codes are followed from frame to frame, and a line of text is read once,
+not in every frame (again only if it comes much closer). Text is hidden with blocks or blur sized to the letters, so it can't be read even at
+*Light*. In tool stacks, everything of the kinds you chose is hidden at that step.
+
+**Faces are found more often**, in face blur and in the editor's one-tap face blur: the photo is also
+looked at in smaller copies (large, close faces are often missed at full size) and at a lower score,
+and the boxes of each face are merged. On 700 Open Images photos the settings weren't tuned on,
+**86.8 %** of the faces people marked end up under the blur, up from 77.0 % (86.4 % from 76.9 % at the
+size video frames are worked on). Boxes on no marked face go from 0.97 to 1.33 per photo; looking
+through them, most are real faces the markings leave out (crowds, profiles, blurry faces in the
+background), about one in five is something else (hands, a statue, a dog). The Gallery's people
+detection is unchanged: changing it needs a new measurement of how people are grouped.
+
+**Fixed**: pixelating part of a JPEG (faces, or the editor's pixelate brush) covered the corners of
+the block grid outside the brush with a solid edge instead of showing the photo there.
+
+How well it works, measured on real photos (scripts and results in
+[`buildtools/privacy/`](buildtools/privacy/README.md)):
+
+- **Plates**: of 248 readable plates in 300 Open Images photos, **94.0 %** are hidden (the plate
+  model alone finds 77.4 %: it was trained on Chinese plates, so the app also looks again inside each
+  vehicle it finds and takes plate-shaped text on vehicles). The price is 3.5 other boxes per photo,
+  mostly badges and dealers' names on the cars. On 700 other photos, counting every plate marked,
+  also those too small or blurred to read, 65.9 % are hidden.
+- **Private details**: on 175 photos of signs, adverts and labels with phone numbers or e-mail
+  addresses (TextOCR), **94.4 %** of the e-mail addresses (17 of 18) and **69.3 %** of the numbers of
+  eight or more digits (131 of 189) are hidden. Most of the rest is text too small or blurry to be
+  found: hiding all text would cover 82 % of those numbers. On 400 everyday photos the option hides
+  0.33 lines per photo, of about 18 lines of text in each; most are real names, numbers and
+  addresses, a few are shop names or book titles.
+- **All text**: 79.2 % of the 15,784 legible words in those 400 photos are hidden.
+- **Codes**: on 34 photos people marked as showing a code, QR codes were found in 7 of the 8 photos
+  with one and barcodes in 16 of 28 (checked by eye); small, slanted or crowded barcodes are missed.
+- **Unreadable**: an advert's phone number and e-mail addresses, blurred and pixelated at *Light*,
+  were read again with the app's own text reader: nothing of them could be read.
+- **On-device models** (Apache 2.0): LPD-YuNet for plates (OpenCV Zoo), PP-OCRv3 to find text and
+  PP-OCRv5 to read it (PaddleOCR), with weights stored as 16-bit numbers (about 12 MB together), and
+  OpenCV's QR code and barcode detectors. Licences and the name lists' sources are under
+  *Settings → About*.
+- **Tested** on the JVM and in the Android test runtime with real photos (CC BY 2.0, credits in
+  [`CREDITS.tsv`](app/src/test/resources/privacy/CREDITS.tsv)): plates, phone numbers and e-mail
+  addresses, a QR code and a barcode are found and hidden, faces found before are still found, the
+  screen, the job and tool stacks. The GPU shader that hides rectangles in videos and the video scan
+  don't run in these tests. Not tried on a phone; looking for plates and text in videos takes several
+  times longer than looking for faces alone.
+- **Limits**: small, blurry, curved or handwritten text is often missed, and text is read correctly
+  about half the time (words), so check the result before sharing. Check the list: everything found
+  is hidden unless you tap it.
+- **Translated** into all ten languages.
+
+## What was new in 1.13.0: audio tools
 
 A new **Audio** section with eight tools. They take sound files — MP3, M4A/AAC, FLAC, Ogg Vorbis,
 Opus, WAV, AIFF, AMR — and the sound of videos, and save **MP3, M4A (AAC), Opus, FLAC or WAV** at the
@@ -839,7 +907,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Background remover | AI cut-out, transparent PNG or plain colour | `Pictures/LocalMediaTools/Cutouts` |
 | | Auto enhance | AI-assisted one-tap fixes, batch | `Pictures/LocalMediaTools/Enhanced` |
 | | Denoiser | Grain removed from photos, RAW files (CR2, DNG, NEF, ARW written back as themselves) and videos, as much as each file has | `Pictures/LocalMediaTools/Denoised`, `Movies/…/Denoised` |
-| | Blur faces | Find faces in photos and videos, choose who to hide | `Pictures/…/Blurred faces`, `Movies/…/Blurred faces` |
+| | Blur faces & private info | Find faces, number plates, private text and QR codes in photos and videos; choose what to hide | `Pictures/…/Blurred faces`, `Movies/…/Blurred faces` |
 | Images | Image compressor | JPEG/WebP, quality, max width (0 = original), never saves a larger file | `Pictures/LocalMediaTools/Compressed` |
 | | Lossless image optimizer | Pixel-identical PNG or lossless WebP | `Pictures/LocalMediaTools/Compressed` |
 | | Convert images | PNG/JPEG/WebP from HEIC, AVIF, TIFF, BMP, PSD, QOI, PNM, TGA, … | `Pictures/LocalMediaTools/Converted` |

@@ -1353,6 +1353,18 @@
 < Finding faces for face blur, the Gallery and auto enhance.
 > 查找人脸，用于人脸模糊、图库和自动增强。
 
+< Finding number plates to blur.
+> 查找需要模糊处理的车牌。
+
+< Finding and reading text in photos and videos, to blur private details.
+> 在照片和视频中查找并读取文字，以模糊隐私信息。
+
+< First names and surnames (US Social Security Administration; IBGE, compiled by Gabriel Lobo; INSEE, compiled by Ronan Le Meillat)
+> 名字和姓氏（US Social Security Administration；IBGE，Gabriel Lobo 整理；INSEE，Ronan Le Meillat 整理）
+
+< Recognising names in text, to blur them.
+> 识别文字中的姓名，以便模糊处理。
+
 < Non-commercial research use only (code MIT)
 > 仅限非商业研究使用（代码为 MIT 许可）
 
@@ -3292,6 +3304,51 @@
 < name_enhanced.jpg (PNG stays PNG)
 > 文件名_enhanced.jpg（PNG 仍为 PNG）
 
+< Number plate
+> 车牌
+
+< QR code or barcode
+> QR 码或条形码
+
+< Password or code
+> 密码或验证码
+
+< Card number
+> 卡号
+
+< Document number
+> 证件号码
+
+< Bank details
+> 银行信息
+
+< E-mail address
+> 电子邮件地址
+
+< Phone number
+> 电话号码
+
+< Address
+> 地址
+
+< Date of birth
+> 出生日期
+
+< User name
+> 用户名
+
+< Number
+> 数字
+
+< Text
+> 文字
+
+< Pixelate chosen faces and details
+> 将所选人脸和信息像素化
+
+< Blur chosen faces and details
+> 模糊所选人脸和信息
+
 < Pixelate chosen faces
 > 将所选人脸像素化
 
@@ -3313,6 +3370,42 @@
 < Hide no one
 > 都不隐藏
 
+< Private details found
+> 已找到的隐私信息
+
+< Hide all details
+> 隐藏全部信息
+
+< Hide no details
+> 不隐藏任何信息
+
+< Also hide
+> 另外隐藏
+
+< Number plates
+> 车牌
+
+< On cars, motorbikes, buses and lorries
+> 适用于汽车、摩托车、公交车和卡车
+
+< Private details in text
+> 文字中的隐私信息
+
+< Names, phone numbers, e-mail and home addresses, passwords, card, account and document numbers
+> 姓名、电话号码、电子邮件和家庭住址、密码、卡号、账户号码和证件号码
+
+< All text
+> 所有文字
+
+< Every sign, label and line of writing
+> 每个标牌、标签和文字行
+
+< QR codes and barcodes
+> QR 码和条形码
+
+< They can hold links, tickets and Wi-Fi passwords
+> 可能包含链接、门票和 Wi-Fi 密码
+
 < Style
 > 样式
 
@@ -3331,8 +3424,17 @@
 < Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
 > 会逐帧跟踪人脸，并在所有所选文件中匹配，因此每个人只列出一次。视频会以接近原画质的质量重新编码为 H.264 MP4；声音会保留。
 
+< Private details are found by reading the text in your photos on this phone. Small, blurry or handwritten text can be missed, and plates of some countries are found less often: check the result before you share it.
+> 隐私信息需通过读取本机照片中的文字来查找。小字、模糊或手写的文字可能会被漏掉，部分国家的车牌较难被找到：分享前请检查结果。
+
+< Every face and private detail found at this step will be hidden. To choose, put photos or videos in the stack.
+> 在此步骤中找到的所有人脸和隐私信息都会被隐藏。要进行选择，请将照片或视频放入堆栈。
+
 < Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
 > 此步骤中找到的每张人脸都会被隐藏。若要选择人物，请把照片或视频放进组合。
+
+< Select photos or videos; faces and private details are found automatically.
+> 选择照片或视频；人脸和隐私信息将自动查找。
 
 < Watching the video for faces…
 < Watching {0} videos for faces…
@@ -3350,6 +3452,13 @@
 < Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
 < Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
 > 找到{0}个人物。点按人脸可使其保持可见；高亮的人脸将被隐藏。
+
+< No private details were found.
+> 未找到隐私信息。
+
+< Found {0} private detail; tap it to keep it visible.
+< Found {0} private details; tap one to keep it visible.
+> 已找到{0}项隐私信息；点按即可保持可见。
 
 < Stopped. Tap Find faces to look again.
 > 已停止。点按“查找人脸”可重新查找。
@@ -3380,14 +3489,29 @@
 < Person {0}, in {1}, stays visible
 > 人物 {0}（出现在 {1}）保持可见
 
-< Tap the people you want to hide
-> 点按你想隐藏的人物
+< {0} in {1}, will be hidden
+> {0}在{1}中，将被隐藏
+
+< {0} in {1}, stays visible
+> {0}在{1}中，保持可见
+
+< Finding faces and private details…
+> 正在查找人脸和隐私信息…
+
+< Tap what you want to hide
+> 点选要隐藏的内容
 
 < Tap Find faces first
 > 请先点按“查找人脸”
 
+< Nothing to hide in these files
+> 这些文件中没有需要隐藏的内容
+
 < No faces to hide in these files
 > 这些文件中没有可隐藏的人脸
+
+< Tap the people you want to hide
+> 点按你想隐藏的人物
 
 < name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
 > 文件名_blurred.jpg / .png（Pictures）· 文件名_blurred.mp4（Movies）
@@ -3399,8 +3523,23 @@
 < Hides {1} of {0} people (others stay visible)
 > 隐藏{0}人中的{1}人（其他人保持可见）
 
+< number plates
+> 车牌
+
+< all text
+> 所有文字
+
+< private details in text
+> 文字中的隐私信息
+
+< also {0}
+> 还包括{0}
+
 < Find faces first
 > 请先查找人脸
+
+< Nothing chosen to hide is in these files
+> 所选的隐藏内容不在这些文件中
 
 < The chosen people don't appear in these files
 > 所选人物没有出现在这些文件中
@@ -5312,6 +5451,9 @@
 < Looking at {0}
 > 正在查看 {0}
 
+< Looking for private details in {0}
+> 正在查找{0}中的隐私信息
+
 < couldn't be read
 > 无法读取
 
@@ -5477,6 +5619,14 @@
 < fine-tuned
 > 已微调
 
+< Pixelating faces and private details in {0} file
+< Pixelating faces and private details in {0} files
+> 正在对{0}个文件中的人脸和隐私信息进行像素化
+
+< Blurring faces and private details in {0} file
+< Blurring faces and private details in {0} files
+> 正在对{0}个文件中的人脸和隐私信息进行模糊处理
+
 < Pixelating faces in {0} file
 < Pixelating faces in {0} files
 > 正在将{0}个文件中的人脸像素化
@@ -5485,17 +5635,31 @@
 < Blurring faces in {0} files
 > 正在将{0}个文件中的人脸模糊
 
+< Nothing to hide was found in this file.
+> 此文件中未找到需要隐藏的内容。
+
 < No faces to hide were found in this file.
 > 在此文件中没有找到需要隐藏的人脸。
+
+< Nothing chosen to hide is in this file, so it was left as it is.
+> 所选的隐藏内容不在此文件中，因此保持原样。
 
 < None of the chosen people appear in this file, so it was left as it is.
 > 所选人物都没有出现在此文件中，因此保持原样。
 
+< Finding faces and private details
+> 正在查找人脸和隐私信息
+
 < Finding faces
 > 正在查找人脸
 
-< Photo metadata (location, camera, dates) is not copied.
-> 照片元数据（位置、相机、日期）不会被复制。
+< {0} face track pixelated
+< {0} face tracks pixelated
+> 已将{0}条人脸轨迹像素化
+
+< {0} face track blurred
+< {0} face tracks blurred
+> 已将{0}条人脸轨迹模糊
 
 < {0} face pixelated
 < {0} faces pixelated
@@ -5505,19 +5669,25 @@
 < {0} faces blurred
 > 已将{0}张人脸模糊
 
+< {0} private detail pixelated
+< {0} private details pixelated
+> 已像素化{0}项隐私信息
+
+< {0} private detail blurred
+< {0} private details blurred
+> 已模糊{0}项隐私信息
+
+< Photo metadata (location, camera, dates) is not copied.
+> 照片元数据（位置、相机、日期）不会被复制。
+
 < This file has no video track.
 > 此文件没有视频轨道。
 
 < Blurring faces frame by frame
 > 正在逐帧模糊人脸
 
-< {0} face track pixelated
-< {0} face tracks pixelated
-> 已将{0}条人脸轨迹像素化
-
-< {0} face track blurred
-< {0} face tracks blurred
-> 已将{0}条人脸轨迹模糊
+< Blurring faces and private details frame by frame
+> 逐帧模糊人脸和隐私信息
 
 < H.264 from {0}
 > 来自 {0} 的 H.264
@@ -6246,8 +6416,8 @@
 < Chain tools: each works on the last one's results
 > 串联工具：每个工具处理上一个工具的结果
 
-< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
-> 只需选择一次文件，按顺序添加你想要的工具——例如“人脸模糊 → 视频压缩 → 视频转 GIF → GIF 优化器”——然后一键全部运行。每个工具都保留其全部设置；只保存最终结果。
+< Pick files once, add the tools you want in order — for example Blur faces & private info → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> 只需选择一次文件，按顺序添加你想要的工具——例如“人脸模糊和隐私信息 → 视频压缩 → 视频转 GIF → GIF 优化器”——然后一键全部运行。每个工具都保留其全部设置；只保存最终结果。
 
 < Photo editor
 > 照片编辑器
@@ -6300,14 +6470,14 @@
 < Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
 > 去除在弱光下拍摄的照片和视频中的颗粒，同时保留细节：会测量每个文件的噪点，只去除相应的量。RAW 文件（DNG、CR2、NEF、ARW）仍为 RAW：传感器数据本身会被清理，并连同全部元数据以相同格式保存，可直接用于你的 RAW 编辑器。视频在手机的图形芯片上处理，每一帧都会结合它之前的帧。支持批量处理。
 
-< Blur faces
-> 人脸模糊
+< Blur faces & private info
+> 人脸模糊和隐私信息
 
-< Find faces in photos and videos, pick who to hide
-> 在照片和视频中查找人脸，选择要隐藏的人
+< Hide faces, number plates, private text and codes
+> 隐藏人脸、车牌、含隐私信息的文字、二维码和条形码
 
-< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
-> 本机 AI 会找出你照片和视频中的每一张人脸，并按人物分组。选择要模糊或像素化的人；人脸会在整段视频中被持续跟踪。
+< On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
+> 设备端 AI 会找出照片和视频中的每张人脸，并按人物分组；还可以找出车牌、文字中的隐私信息（姓名、电话号码、地址、密码…）以及 QR 码。选择要模糊或像素化的内容；处理会在整个视频中持续跟踪。
 
 < Highlight video
 > 精彩视频

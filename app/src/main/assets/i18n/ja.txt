@@ -1353,6 +1353,18 @@
 < Finding faces for face blur, the Gallery and auto enhance.
 > 顔ぼかし、ギャラリー、自動補正のための顔検出。
 
+< Finding number plates to blur.
+> ぼかし対象のナンバープレートを検出します。
+
+< Finding and reading text in photos and videos, to blur private details.
+> 個人情報をぼかすため、写真や動画の文字を検出して読み取ります。
+
+< First names and surnames (US Social Security Administration; IBGE, compiled by Gabriel Lobo; INSEE, compiled by Ronan Le Meillat)
+> 名前と姓（US Social Security Administration；IBGE、Gabriel Lobo 編纂；INSEE、Ronan Le Meillat 編纂）
+
+< Recognising names in text, to blur them.
+> テキスト内の名前を認識し、ぼかします。
+
 < Non-commercial research use only (code MIT)
 > 非営利の研究目的のみ（コードはMIT）
 
@@ -3292,6 +3304,51 @@
 < name_enhanced.jpg (PNG stays PNG)
 > name_enhanced.jpg（PNGはPNGのまま）
 
+< Number plate
+> ナンバープレート
+
+< QR code or barcode
+> QRコードまたはバーコード
+
+< Password or code
+> パスワードまたはコード
+
+< Card number
+> カード番号
+
+< Document number
+> 書類番号
+
+< Bank details
+> 銀行情報
+
+< E-mail address
+> メールアドレス
+
+< Phone number
+> 電話番号
+
+< Address
+> 住所
+
+< Date of birth
+> 生年月日
+
+< User name
+> ユーザー名
+
+< Number
+> 番号
+
+< Text
+> テキスト
+
+< Pixelate chosen faces and details
+> 選んだ顔と情報をモザイク
+
+< Blur chosen faces and details
+> 選んだ顔と情報をぼかす
+
 < Pixelate chosen faces
 > 選んだ顔にモザイクをかける
 
@@ -3313,6 +3370,42 @@
 < Hide no one
 > 誰も隠さない
 
+< Private details found
+> 見つかった個人情報
+
+< Hide all details
+> すべての情報を隠す
+
+< Hide no details
+> 情報を隠さない
+
+< Also hide
+> さらに隠す
+
+< Number plates
+> ナンバープレート
+
+< On cars, motorbikes, buses and lorries
+> 車、バイク、バス、トラック
+
+< Private details in text
+> テキスト内の個人情報
+
+< Names, phone numbers, e-mail and home addresses, passwords, card, account and document numbers
+> 名前、電話番号、メールアドレスと自宅住所、パスワード、カード・口座・書類の番号
+
+< All text
+> すべてのテキスト
+
+< Every sign, label and line of writing
+> 看板、ラベル、書かれた文字の行すべて
+
+< QR codes and barcodes
+> QRコードとバーコード
+
+< They can hold links, tickets and Wi-Fi passwords
+> リンク、チケット、Wi-Fi のパスワードが含まれることがあります
+
 < Style
 > スタイル
 
@@ -3331,8 +3424,17 @@
 < Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept.
 > 顔はフレームごとに追跡され、選択したすべてのファイルにわたって照合されるため、同じ人物は1回だけ表示されます。動画はH.264 MP4として、元に近い画質で再エンコードされ、音声は保持されます。
 
+< Private details are found by reading the text in your photos on this phone. Small, blurry or handwritten text can be missed, and plates of some countries are found less often: check the result before you share it.
+> 個人情報は、この端末で写真内の文字を読み取って見つけます。小さい文字、ぼやけた文字、手書きの文字は見逃すことがあり、一部の国のナンバープレートは見つかりにくいです。共有する前に結果を確認してください。
+
+< Every face and private detail found at this step will be hidden. To choose, put photos or videos in the stack.
+> この工程で見つかったすべての顔と個人情報は隠されます。選ぶには、写真や動画をスタックに入れてください。
+
 < Every face found at this step will be hidden. To choose people, put photos or videos in the stack.
 > このステップで見つかったすべての顔が隠されます。人物を選ぶには、写真や動画をスタックに入れてください。
+
+< Select photos or videos; faces and private details are found automatically.
+> 写真または動画を選択してください。顔と個人情報は自動で見つかります。
 
 < Watching the video for faces…
 < Watching {0} videos for faces…
@@ -3350,6 +3452,13 @@
 < Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.
 < Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.
 > {0}人が見つかりました。顔をタップすると表示されたままになります。ハイライトされた顔は隠されます。
+
+< No private details were found.
+> 個人情報は見つかりませんでした。
+
+< Found {0} private detail; tap it to keep it visible.
+< Found {0} private details; tap one to keep it visible.
+> {0}件の個人情報が見つかりました。タップすると表示したままにします。
 
 < Stopped. Tap Find faces to look again.
 > 停止しました。「顔を検出」をタップすると、もう一度探します。
@@ -3380,14 +3489,29 @@
 < Person {0}, in {1}, stays visible
 > 人物{0}（{1}内）は表示されたままです
 
-< Tap the people you want to hide
-> 隠したい人物をタップしてください
+< {0} in {1}, will be hidden
+> {0}（{1}内）は隠されます。
+
+< {0} in {1}, stays visible
+> {0}（{1}内）は表示されたままです。
+
+< Finding faces and private details…
+> 顔と個人情報を検出しています…
+
+< Tap what you want to hide
+> 隠したいものをタップしてください
 
 < Tap Find faces first
 > 先に「顔を検出」をタップしてください
 
+< Nothing to hide in these files
+> これらのファイルに隠すものはありません
+
 < No faces to hide in these files
 > これらのファイルには隠す顔がありません
+
+< Tap the people you want to hide
+> 隠したい人物をタップしてください
 
 < name_blurred.jpg / .png (Pictures) · name_blurred.mp4 (Movies)
 > name_blurred.jpg / .png（Pictures） · name_blurred.mp4（Movies）
@@ -3399,8 +3523,23 @@
 < Hides {1} of {0} people (others stay visible)
 > {0}人中{1}人を隠します（ほかは表示されたまま）
 
+< number plates
+> ナンバープレート
+
+< all text
+> すべてのテキスト
+
+< private details in text
+> テキスト内の個人情報
+
+< also {0}
+> さらに{0}
+
 < Find faces first
 > 先に顔を検出してください
+
+< Nothing chosen to hide is in these files
+> 隠すために選んだものは、これらのファイルにはありません
 
 < The chosen people don't appear in these files
 > 選んだ人物はこれらのファイルに写っていません
@@ -5312,6 +5451,9 @@
 < Looking at {0}
 > {0}を確認中
 
+< Looking for private details in {0}
+> {0}内の個人情報を検出しています
+
 < couldn't be read
 > 読み込めませんでした
 
@@ -5477,6 +5619,14 @@
 < fine-tuned
 > 微調整
 
+< Pixelating faces and private details in {0} file
+< Pixelating faces and private details in {0} files
+> {0}個のファイル内の顔と個人情報をモザイク処理しています
+
+< Blurring faces and private details in {0} file
+< Blurring faces and private details in {0} files
+> {0}個のファイル内の顔と個人情報をぼかしています
+
 < Pixelating faces in {0} file
 < Pixelating faces in {0} files
 > {0}個のファイルの顔にモザイクをかけています
@@ -5485,17 +5635,31 @@
 < Blurring faces in {0} files
 > {0}個のファイルの顔をぼかしています
 
+< Nothing to hide was found in this file.
+> このファイルには隠すものが見つかりませんでした。
+
 < No faces to hide were found in this file.
 > このファイルには、隠す顔が見つかりませんでした。
+
+< Nothing chosen to hide is in this file, so it was left as it is.
+> 隠すために選んだものはこのファイルにないため、そのままにしました。
 
 < None of the chosen people appear in this file, so it was left as it is.
 > 選んだ人物はこのファイルに写っていないため、そのままにしました。
 
+< Finding faces and private details
+> 顔と個人情報を検出しています
+
 < Finding faces
 > 顔を検出中
 
-< Photo metadata (location, camera, dates) is not copied.
-> 写真のメタデータ（位置情報、カメラ、日付）はコピーされません。
+< {0} face track pixelated
+< {0} face tracks pixelated
+> {0}個の顔トラックにモザイクをかけました
+
+< {0} face track blurred
+< {0} face tracks blurred
+> {0}個の顔トラックをぼかしました
 
 < {0} face pixelated
 < {0} faces pixelated
@@ -5505,19 +5669,25 @@
 < {0} faces blurred
 > {0}個の顔をぼかしました
 
+< {0} private detail pixelated
+< {0} private details pixelated
+> {0}件の個人情報をモザイク処理しました
+
+< {0} private detail blurred
+< {0} private details blurred
+> {0}件の個人情報をぼかしました
+
+< Photo metadata (location, camera, dates) is not copied.
+> 写真のメタデータ（位置情報、カメラ、日付）はコピーされません。
+
 < This file has no video track.
 > このファイルには映像トラックがありません。
 
 < Blurring faces frame by frame
 > フレームごとに顔をぼかしています
 
-< {0} face track pixelated
-< {0} face tracks pixelated
-> {0}個の顔トラックにモザイクをかけました
-
-< {0} face track blurred
-< {0} face tracks blurred
-> {0}個の顔トラックをぼかしました
+< Blurring faces and private details frame by frame
+> コマごとに顔と個人情報をぼかしています
 
 < H.264 from {0}
 > H.264（元：{0}）
@@ -6246,8 +6416,8 @@
 < Chain tools: each works on the last one's results
 > ツールをつなげて、前のツールの結果を次のツールで処理
 
-< Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
-> ファイルを一度選び、使いたいツールを順に追加します（例：顔ぼかし → 動画圧縮 → 動画→GIF → GIF最適化）。ワンタップですべて実行できます。各ツールの設定はそのまま使え、保存されるのは最終的な結果だけです。
+< Pick files once, add the tools you want in order — for example Blur faces & private info → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved.
+> ファイルを一度選び、使いたいツールを順に追加します（例：顔ぼかしと個人情報 → 動画圧縮 → 動画→GIF → GIF最適化）。ワンタップですべて実行できます。各ツールの設定はそのまま使え、保存されるのは最終的な結果だけです。
 
 < Photo editor
 > フォトエディター
@@ -6300,14 +6470,14 @@
 < Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches.
 > 暗いところで撮った写真や動画のざらつきを、ディテールを保ったまま取り除きます。ファイルごとにノイズを測定し、その分だけを除去します。RAWファイル（DNG、CR2、NEF、ARW）はRAWのままで、センサーデータそのもののノイズを除去し、すべてのメタデータとともに同じ形式で保存するので、そのままRAW現像ソフトで使えます。動画は端末のグラフィックチップで処理し、各フレームをその前のフレームと合わせて処理します。まとめて処理することもできます。
 
-< Blur faces
-> 顔ぼかし
+< Blur faces & private info
+> 顔ぼかしと個人情報
 
-< Find faces in photos and videos, pick who to hide
-> 写真や動画から顔を検出し、隠す人物を選択
+< Hide faces, number plates, private text and codes
+> 顔、ナンバープレート、テキスト内の個人情報、コードを隠す
 
-< On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video.
-> 端末内AIが写真や動画に写っているすべての顔を見つけ、人物ごとにグループ化します。ぼかす人物、またはモザイクをかける人物を選べます。動画では顔が最初から最後まで追跡されます。
+< On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
+> 端末内のAIが写真と動画のすべての顔を見つけ、人物ごとにまとめます。ナンバープレート、テキスト内の個人情報（名前、電話番号、住所、パスワード…）、QRコードも見つけられます。ぼかすかモザイクにするかを選んでください。すべて動画全体で追跡されます。
 
 < Highlight video
 > ハイライト動画
