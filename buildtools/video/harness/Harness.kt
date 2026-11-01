@@ -25,7 +25,8 @@ fun main(args: Array<String>) {
     val zoom = o["zoom"]?.toFloat() ?: 0f
     val d = Reframe.DEFAULT
     val p = Reframe.Params(o["speed"]?.toDouble() ?: d.speed, o["accel"]?.toDouble() ?: d.accel, o["margin"]?.toFloat() ?: d.margin,
-        o["hold"]?.toLong() ?: d.holdMs, o["stick"]?.toFloat() ?: d.stick)
+        o["hold"]?.toLong() ?: d.holdMs, o["stick"]?.toFloat() ?: d.stick, o["heads"]?.let { it == "1" } ?: d.heads,
+        o["centre"]?.toFloat() ?: d.centre)
     o["cutmin"]?.let { Cuts.MIN_DIFF = it.toFloat() }; o["cutratio"]?.let { Cuts.RATIO = it.toFloat() }
     // Frames and their grey copies.
     val raw = File(dir, "$clip.thumbs").readBytes()

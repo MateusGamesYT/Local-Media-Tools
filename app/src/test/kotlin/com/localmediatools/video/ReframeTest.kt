@@ -116,4 +116,24 @@ class ReframeTest {
         assertTrue("${keys[0].crop.x}", keys[0].crop.x <= 0.7f && keys[0].crop.x + keys[0].crop.w >= 0.82f)
         for (i in 1 until keys.size) assertTrue(abs(keys[i].crop.x - keys[i - 1].crop.x) < 0.05f)
     }
+
+    /** A person too close to fit across a portrait picture: their face stays in, as near their middle as that allows. */
+    @Test fun aPersonTooWideKeepsTheirHeadIn() {
+        // Body 0.15–0.55 across (wider than the crop's 0.316), face at its right, 0.44–0.50 (as in the real clip in VideoEditorTest).
+        val body = Found(SubjectKind.PERSON, Box(0.15f, 0.05f, 0.40f, 0.94f), 0.93f)
+        val face = Found(SubjectKind.FACE, Box(0.44f, 0.18f, 0.06f, 0.19f), 0.85f)
+        val s = (0 until 30).map { ReframeSample(it * 200L, if (it % 4 == 3) listOf(body) else listOf(body, face)) }
+        val keys = plan(s)
+        // The head: the face widened by 30 % of its width on each side (0.422–0.518), with the margin around it.
+        val headX0 = 0.44f - 0.06f * 0.3f; val headX1 = headX0 + 0.06f * 1.6f; val room = 0.06f * 1.6f * Reframe.DEFAULT.margin
+        for (k in keys) {
+            assertTrue("${k.crop}", k.crop.x <= headX0 - room && k.crop.x1 >= headX1 + room - 1e-3f)
+            // And no further right than the head needs: as much of the body as possible.
+            assertTrue("${k.crop}", k.crop.x1 <= headX1 + room + 0.01f)
+        }
+        // Without the rule the crop sits on the body's middle and the face is at its very edge.
+        val off = Reframe.Params(heads = false)
+        val mid = Reframe.path(s, Reframe.subjects(s, landscape, 9f / 16f, off), landscape, portrait, off)
+        assertEquals(0.35f, mid[0].crop.cx, 0.01f)
+    }
 }

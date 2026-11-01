@@ -57,6 +57,8 @@ data class Key(val ms: Long, val crop: Box, val shot: Int)
  *     shot, otherwise a smooth path (least squares: close to the subject, little speed, little change of
  *     speed) that is then pulled back wherever the subject would leave the picture; cuts start a new
  *     path instead of panning across them;
+ *     When a person is too wide for the picture (close to the camera), their head stays in, as near
+ *     their middle as that allows;
  *  3. with [Options.zoom], a closer crop for the shot so the subject fills more of the picture, at most
  *     [MAX_ZOOM] times (beyond that the picture gets soft).
  *
@@ -77,6 +79,10 @@ object Reframe {
         val holdMs: Long = 1200,
         /** Continuity: how much more a subject overlapping the last one counts. */
         val stick: Float = 2f,
+        /** A subject wider than the picture: keep its head (the faces found in it) in, rather than its middle. */
+        val heads: Boolean = true,
+        /** How much less a subject at the picture's edge counts than one in the middle (0: no difference, 1: none at the edge). */
+        val centre: Float = 0.5f,
     )
 
     var DEFAULT = Params()
@@ -103,7 +109,7 @@ object Reframe {
                 out.add(held); continue
             }
             fun score(c: Found): Float {
-                val centre = 1f - 0.5f * min(1f, sqrt((c.box.cx - 0.5f).let { it * it } + (c.box.cy - 0.5f).let { it * it }) * 2f)
+                val centre = 1f - p.centre * min(1f, sqrt((c.box.cx - 0.5f).let { it * it } + (c.box.cy - 0.5f).let { it * it }) * 2f)
                 val cont = last?.let { l -> 1f + p.stick * max(c.box.iou(l), closeness(c.box, l)) } ?: 1f
                 return c.kind.weight * c.score * sqrt(c.box.area) * centre * cont
             }
@@ -157,17 +163,42 @@ object Reframe {
         val baseW = min(1f, o.outAspect / srcAspect)
         val baseH = min(1f, srcAspect / o.outAspect)
         val keys = ArrayList<Key>(samples.size)
+        val heads = if (p.heads) heads(samples, subjects, p) else List(samples.size) { null }
         var start = 0; var shot = 0
         while (start < samples.size) {
             var end = start + 1
             while (end < samples.size && !samples[end].cut) end++
-            shot(samples, subjects, start, end, baseW, baseH, o, p, keys, shot++)
+            shot(samples, subjects, heads, start, end, baseW, baseH, o, p, keys, shot++)
             start = end
         }
         return keys
     }
 
-    private fun shot(samples: List<ReframeSample>, subjects: List<Box?>, a: Int, b: Int, baseW: Float, baseH: Float, o: Options, p: Params, out: MutableList<Key>, shot: Int) {
+    /**
+     * The head of each sample's subject: the faces found inside it, widened to the whole head (null when
+     * none). A face missed for a moment is taken to be where it last was, while that is in the subject.
+     */
+    internal fun heads(samples: List<ReframeSample>, subjects: List<Box?>, p: Params = DEFAULT): List<Box?> {
+        val out = ArrayList<Box?>(samples.size)
+        var last: Box? = null; var lastMs = Long.MIN_VALUE
+        for ((i, s) in samples.withIndex()) {
+            if (s.cut) last = null
+            val sub = subjects[i]
+            if (sub == null) { out.add(null); continue }
+            var head: Box? = null
+            for (f in s.found) {
+                if (f.kind != SubjectKind.FACE || f.box.intersection(sub) < 0.7f * f.box.area) continue
+                val h = Box(f.box.x - f.box.w * 0.3f, f.box.y - f.box.h * 0.35f, f.box.w * 1.6f, f.box.h * 1.45f).clipped()
+                head = head?.union(h) ?: h
+            }
+            if (head != null) { last = head; lastMs = s.ms }
+            else if (last != null && s.ms - lastMs <= p.holdMs && last.intersection(sub) >= 0.7f * last.area) head = last
+            out.add(head)
+        }
+        return out
+    }
+
+    private fun shot(samples: List<ReframeSample>, subjects: List<Box?>, heads: List<Box?>, a: Int, b: Int, baseW: Float, baseH: Float, o: Options, p: Params, out: MutableList<Key>, shot: Int) {
         val subs = subjects.subList(a, b)
         val known = subs.filterNotNull()
         // Zoom, once for the shot (a crop that keeps changing size is tiring to watch).
@@ -186,7 +217,7 @@ object Reframe {
         // Where the crop's centre would put each subject in the middle (null: free).
         val wantX = DoubleArray(n) { i -> subs[i]?.cx?.toDouble() ?: Double.NaN }
         val wantY = DoubleArray(n) { i -> subs[i]?.let { s -> (s.y + min(s.h, h * 0.9f) * 0.45f).toDouble() } ?: Double.NaN }
-        val xs = axis(samples, a, n, wantX, subs, w, true, p)
+        val xs = axis(samples, a, n, wantX, subs, w, true, p, heads.subList(a, b))
         val ys = axis(samples, a, n, wantY, subs, h, false, p)
         for (i in 0 until n) {
             val cx = xs[i].toFloat().coerceIn(w / 2, 1 - w / 2); val cy = ys[i].toFloat().coerceIn(h / 2, 1 - h / 2)
@@ -195,7 +226,8 @@ object Reframe {
     }
 
     /** One axis of the camera's path: still if one position keeps every subject in, else smoothed and pulled back where needed. */
-    private fun axis(samples: List<ReframeSample>, a: Int, n: Int, want: DoubleArray, subs: List<Box?>, size: Float, horizontal: Boolean, p: Params): DoubleArray {
+    private fun axis(samples: List<ReframeSample>, a: Int, n: Int, want: DoubleArray, subs: List<Box?>, size: Float, horizontal: Boolean, p: Params,
+                     heads: List<Box?>? = null): DoubleArray {
         val half = size / 2.0
         val lo = half; val hi = 1.0 - half
         if (hi <= lo + 1e-6) return DoubleArray(n) { 0.5 }
@@ -206,7 +238,14 @@ object Reframe {
             val s0 = if (horizontal) s.x - s.w * p.margin else s.y - s.h * p.margin
             val s1 = if (horizontal) s.x1 + s.w * p.margin else min(s.y1 + s.h * p.margin, s.y + size * 0.95f)
             val cMin = s1 - half; val cMax = s0 + half
+            val head = heads?.get(i)
             if (cMin <= cMax) { minC[i] = max(lo, cMin); maxC[i] = min(hi, cMax) }
+            else if (head != null) {
+                // Too wide to fit: the head stays in, the crop as near the subject's middle as that allows.
+                val hMin = head.x1 + head.w * p.margin - half; val hMax = head.x - head.w * p.margin + half
+                if (hMin <= hMax) { minC[i] = max(lo, hMin).coerceAtMost(hi); maxC[i] = min(hi, hMax).coerceAtLeast(minC[i]); want[i] = want[i].coerceIn(minC[i], maxC[i]) }
+                else { val c = head.cx.toDouble().coerceIn(lo, hi); minC[i] = c; maxC[i] = c; want[i] = c }
+            }
             else { val c = (want[i]).coerceIn(lo, hi); minC[i] = c; maxC[i] = c }
         }
         // Still camera: one position inside every range.
