@@ -24,13 +24,15 @@ os.makedirs(os.path.join(out, 'photos'), exist_ok=True)
 
 KINDS = ['Dog', 'Cat', 'Car', 'Cake', 'Bicycle', 'Boat', 'Guitar', 'Snow', 'Airplane', 'Train', 'Balloon', 'Umbrella',
          'Pizza', 'Book', 'Horse', 'Bird']
+# Photos without one of the kinds' labels that still show one (looked at on the contact sheet): cars.
+SHOW_A_KIND = {'96b4b7234c2470fe', '7b55e36e86964c9a'}
 data = json.load(open(f'{work}/oi-search.json')); names = data['classes']
 mid = {n: m for m, n in names.items() if n in KINDS}
 picked, others = [], []
 for p in data['photos']:
     have = [n for n in KINDS if mid[n] in p['pos']]
     if len(have) == 1 and sum(1 for q in picked if q[1] == have[0]) < 3: picked.append((p, have[0]))
-    elif not have and len(others) < 12 and len(p['pos']) >= 2: others.append((p, ''))
+    elif not have and len(others) < 12 and len(p['pos']) >= 2 and p['id'] not in SHOW_A_KIND: others.append((p, ''))
 rows = picked + others
 assert len(picked) == 3 * len(KINDS), [n for n in KINDS if sum(1 for q in picked if q[1] == n) < 3]
 

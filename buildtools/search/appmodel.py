@@ -27,7 +27,7 @@ class AppModel:
         sc = np.frombuffer(t, '>f4', R, 20).astype(np.float32)
         if bits == 8: Q = np.frombuffer(t, np.int8, R * D, 20 + R * 4).reshape(R, D).astype(np.float32)
         else:
-            u = np.frombuffer(t, np.uint8, R * D // 2, 20 + R * 4)
+            u = np.frombuffer(t, np.uint8, R * D // 2, 20 + R * 4).reshape(R, D // 2)
             lo = (u & 15).astype(np.int8); hi = (u >> 4).astype(np.int8); lo[lo > 7] -= 16; hi[hi > 7] -= 16
             Q = np.empty((R, D), np.float32); Q[:, 0::2] = lo; Q[:, 1::2] = hi
         self.table = Q * sc[:, None]
