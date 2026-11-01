@@ -1117,6 +1117,9 @@
 < highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
 > 精彩 集锦 剪辑 蒙太奇 电影 影片 幻灯片 回忆 旅行 假期 度假 活动 音乐 回顾 自动
 
+< edit video editor cut trim split join timeline clips text title music fade transition crop reframe vertical portrait reels shorts tiktok zoom follow subject speed colour color filter
+> 编辑 视频编辑器 剪切 修剪 分割 拼接 时间线 片段 文字 标题 音乐 淡入淡出 转场 裁剪 自动构图 竖屏 竖版 reels shorts tiktok 缩放 跟随 主体 速度 颜色 色彩 滤镜
+
 < fast slow motion timelapse time lapse speed up hyperlapse
 > 快 慢 慢动作 延时 延时摄影 加速 变速 快进
 
@@ -4130,6 +4133,15 @@
 < The title at the start and each moment's name
 > 开头的标题和每个瞬间的名称
 
+< Language of the captions
+> 字幕语言
+
+< Dates and moments' names in the video can be in another language than the app's
+> 视频中的日期和时刻名称可以使用与应用不同的语言
+
+< As the app
+> 与应用相同
+
 < Sound from your videos
 > 视频原声
 
@@ -4783,6 +4795,230 @@
 < Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
 > 大小为较短边的 {0}% · 不透明度 {1}%。形状未列出的图片使用默认位置（{2}）。
 
+< Clip
+> 片段
+
+< Frame
+> 构图
+
+< Look
+> 滤镜
+
+< Close the editor
+> 关闭编辑器
+
+< Add videos and photos to start
+> 添加视频和照片即可开始
+
+< They go in the order you pick them; you can move them later.
+> 按您选择的顺序排列；之后可以移动。
+
+< Add videos and photos
+> 添加视频和照片
+
+< Play
+> 播放
+
+< Adding {0} file…
+< Adding {0} files…
+> 正在添加 {0} 个文件…
+
+< {0} file isn't a video or photo that can be read.
+< {0} files aren't videos or photos that can be read.
+> {0} 个文件不是可读取的视频或照片。
+
+< Clip {0}: {1}, {2}
+> 片段 {0}：{1}，{2}
+
+< Transition into clip {0}: {1}
+> 片段 {0} 的入场转场：{1}
+
+< Cut
+> 直接切换
+
+< Cross-fade
+> 交叉溶解
+
+< Fade through black
+> 黑场过渡
+
+< Start {0} · end {1} of {2}
+> 起点 {0} · 终点 {1}（共 {2}）
+
+< Start of the clip
+> 片段起点
+
+< End of the clip
+> 片段终点
+
+< Shown for {0}
+> 显示 {0}
+
+< Split here
+> 在此分割
+
+< Move the playhead inside the clip, at least half a second from its ends.
+> 将播放头移到片段内，且距离两端至少半秒。
+
+< Duplicate
+> 复制
+
+< Move left
+> 左移
+
+< Move right
+> 右移
+
+< Turn
+> 旋转
+
+< Normal
+> 标准
+
+< Volume {0}%
+> 音量 {0}%
+
+< This video has no sound
+> 此视频没有声音
+
+< How the clip fills the video's shape
+> 片段如何填满视频的画面形状
+
+< The whole picture, over a blurred copy of itself where the shapes differ.
+> 整个画面，在形状不同的地方叠加其模糊副本。
+
+< Zoom
+> 缩放
+
+< Left – right
+> 左右
+
+< Up – down
+> 上下
+
+< Photos are filled from the middle; auto reframe follows people and things in videos.
+> 照片从中间开始填充；自动构图会跟随视频中的人物和物体。
+
+< Follows the person or thing the clip is about, found by on-device AI.
+> 跟随片段中的人物或物体，由设备端 AI 识别。
+
+< Finding the subject when the clip is ready…
+> 片段准备好后正在查找主体…
+
+< Zoom in on the subject
+> 放大到主体
+
+< Whole picture
+> 整个画面
+
+< Fill
+> 填充
+
+< Auto reframe
+> 自动构图
+
+< Finding the subject…
+> 正在查找主体…
+
+< The subject couldn't be found in this clip; it is filled from the middle.
+> 在此片段中找不到主体；将从中间开始填充。
+
+< Use on every clip
+> 应用于所有片段
+
+< Warm
+> 暖色
+
+< Cool
+> 冷色
+
+< Black & white
+> 黑白
+
+< Faded
+> 褪色
+
+< Add text here
+> 在此添加文字
+
+< Titles and captions appear over the video from the playhead on, for 3 seconds; change that after adding.
+> 标题和字幕会从播放头开始显示在视频上，持续 3 秒；添加后可以更改。
+
+< Delete "{0}"
+> 删除“{0}”
+
+< Your text
+> 您的文字
+
+< Middle
+> 居中
+
+< How long
+> 时长
+
+< Large
+> 大
+
+< On a dark box
+> 深色底框
+
+< Add text
+> 添加文字
+
+< Edit text
+> 编辑文字
+
+< Listening to your song…
+> 正在分析您的歌曲…
+
+< Your song couldn't be read.
+> 无法读取您的歌曲。
+
+< A new tune will be written when the video is saved.
+> 保存视频时将生成新的音轨。
+
+< Music volume {0}%
+> 音乐音量 {0}%
+
+< Quieter while clips play their sound
+> 片段播放自身声音时自动调低
+
+< Each clip's own volume is under Clip. The preview plays the clips' own sound; the music is mixed in when the video is saved.
+> 每个片段的音量在“片段”中设置。预览播放的是片段自身的声音；保存视频时才会混入音乐。
+
+< The video's shape
+> 视频的画面比例
+
+< Fade out at the end
+> 结尾淡出
+
+< For portrait (9:16) and square videos from landscape clips, choose Auto reframe under Frame: the picture follows the person or thing the clip is about.
+> 对于由横向片段制作的竖版（9:16）和方形视频，请在“构图”中选择“自动构图”：画面会跟随片段中的人物或物体。
+
+< As the first clip
+> 作为第一个片段
+
+< Landscape 16:9
+> 横向 16:9
+
+< Portrait 9:16
+> 纵向 9:16
+
+< Portrait 4:5
+> 竖版 4:5
+
+< 720p (smaller)
+> 720p（较小）
+
+< 1080p
+> 1080p
+
+< Save the video
+> 保存视频
+
+< Remove every clip, text and setting of this video? The files themselves stay.
+> 要删除此视频的所有片段、文字和设置吗？文件本身会保留。
+
 < Queued — it prints when the current job finishes.
 > 已加入队列——当前任务完成后开始打印。
 
@@ -4918,18 +5154,12 @@
 < Colour
 > 彩色
 
-< Black & white
-> 黑白
-
 < Draft
 > 草稿
 
 @ print quality
 < Best
 > 最佳
-
-< Normal
-> 标准
 
 < photos
 > 照片
@@ -6341,6 +6571,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > 用你审阅的瞬间制作一部影片，因此无法在组合中运行
 
+< Edits one video by hand, so it can't run in a stack
+> 手动编辑视频，因此无法在组合中运行
+
 < Shows documents instead of saving files, so it can't be a step of a stack
 > 显示文档而不是保存文件，因此不能作为组合的一个步骤
 
@@ -6506,6 +6739,15 @@
 
 < On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
 > 设备端 AI 会找出照片和视频中的每张人脸，并按人物分组；还可以找出车牌、文字中的隐私信息（姓名、电话号码、地址、密码…）以及 QR 码。选择要模糊或像素化的内容；处理会在整个视频中持续跟踪。
+
+< Video editor
+> 视频编辑器
+
+< Cut, join, frame, colour, texts and music
+> 剪切、拼接、构图、调色、文字和音乐
+
+< Put videos and photos in order, trim and split them, change speed and volume, add fades, looks and texts, and music written on this phone or a song of yours. Auto reframe turns a landscape video into a portrait one (or zooms in) and keeps the person or thing it is about in the picture, found by on-device AI. Your originals stay untouched.
+> 按顺序排列视频和照片，修剪和分割，更改速度和音量，添加淡入淡出、滤镜和文字，以及本机生成的音乐或您自己的歌曲。自动构图可将横向视频转为竖版（或放大），并借助设备端 AI 让片段中的人物或物体始终留在画面中。原始文件不会被改动。
 
 < Highlight video
 > 精彩视频
@@ -6816,6 +7058,19 @@
 < Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
 > 将每个视频的声音保存为音频文件。AAC 音频会原样复制到 M4A 文件中，不重新编码；其他音频或你选择的任何格式（MP3、Opus、FLAC、WAV）则会进行转换。
 
+< Saving an edited video of {0} clip
+< Saving an edited video of {0} clips
+> 正在保存包含 {0} 个片段的编辑视频
+
+< Add at least one video or photo.
+> 请至少添加一个视频或照片。
+
+< Finding the subject ({0} of {1})
+> 正在查找主体（{0}/{1}）
+
+< The video is empty.
+> 视频为空。
+
 < Merging {0} video
 < Merging {0} videos
 > 正在合并{0}个视频
@@ -6938,24 +7193,6 @@
 
 < Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
 > 无法读取你的歌曲。请选择其他音频文件，或应用自带的曲子。
-
-< The video encoder stopped taking frames.
-> 视频编码器不再接收帧。
-
-< The video encoder produced nothing.
-> 视频编码器没有产生任何内容。
-
-< This device has no H.264 encoder for {0}×{1}.
-> 此设备没有适用于 {0}×{1} 的 H.264 编码器。
-
-< The H.264 encoder rejected {0}×{1}.
-> H.264 编码器拒绝了 {0}×{1}。
-
-< Landscape 16:9
-> 横向 16:9
-
-< Portrait 9:16
-> 纵向 9:16
 
 < More {1}
 > {1}（续）
@@ -7088,6 +7325,18 @@
 @ time pattern: when a moment starts
 < h:mm a
 > HH:mm
+
+< The video encoder stopped taking frames.
+> 视频编码器不再接收帧。
+
+< The video encoder produced nothing.
+> 视频编码器没有产生任何内容。
+
+< This device has no H.264 encoder for {0}×{1}.
+> 此设备没有适用于 {0}×{1} 的 H.264 编码器。
+
+< The H.264 encoder rejected {0}×{1}.
+> H.264 编码器拒绝了 {0}×{1}。
 
 < A clip has no video track.
 > 有一个片段没有视频轨道。

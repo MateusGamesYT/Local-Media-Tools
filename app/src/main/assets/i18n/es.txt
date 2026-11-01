@@ -1155,6 +1155,9 @@
 < highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
 > destacados resumen montaje película filme presentación recuerdos viaje vacaciones evento música repaso editar automático
 
+< edit video editor cut trim split join timeline clips text title music fade transition crop reframe vertical portrait reels shorts tiktok zoom follow subject speed colour color filter
+> editar editor vídeo cortar recortar dividir unir línea tiempo clips texto título música fundido transición encuadre vertical retrato reels shorts tiktok zoom seguir sujeto velocidad color filtro
+
 < fast slow motion timelapse time lapse speed up hyperlapse
 > rápido lento cámara lenta timelapse acelerar velocidad hiperlapse
 
@@ -4222,6 +4225,15 @@
 < The title at the start and each moment's name
 > El título del principio y el nombre de cada momento
 
+< Language of the captions
+> Idioma de los subtítulos
+
+< Dates and moments' names in the video can be in another language than the app's
+> Las fechas y los nombres de los momentos del vídeo pueden estar en otro idioma que el de la app
+
+< As the app
+> Igual que la app
+
 < Sound from your videos
 > Sonido de tus vídeos
 
@@ -4883,6 +4895,232 @@
 < Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
 > Tamaño {0} % del lado más corto · opacidad {1} %. Las imágenes cuya forma no figura usan la posición predeterminada ({2}).
 
+< Clip
+> Clip
+
+< Frame
+> Encuadre
+
+< Look
+> Filtro
+
+< Close the editor
+> Cerrar el editor
+
+< Add videos and photos to start
+> Añade vídeos y fotos para empezar
+
+< They go in the order you pick them; you can move them later.
+> Se colocan en el orden en que los eliges; después puedes moverlos.
+
+< Add videos and photos
+> Añadir vídeos y fotos
+
+< Play
+> Reproducir
+
+< Adding {0} file…
+< Adding {0} files…
+> Añadiendo {0} archivo…
+> Añadiendo {0} archivos…
+
+< {0} file isn't a video or photo that can be read.
+< {0} files aren't videos or photos that can be read.
+> {0} archivo no es un vídeo ni una foto que se pueda leer.
+> {0} archivos no son vídeos ni fotos que se puedan leer.
+
+< Clip {0}: {1}, {2}
+> Clip {0}: {1}, {2}
+
+< Transition into clip {0}: {1}
+> Transición al clip {0}: {1}
+
+< Cut
+> Corte directo
+
+< Cross-fade
+> Fundido cruzado
+
+< Fade through black
+> Fundido a negro
+
+< Start {0} · end {1} of {2}
+> Inicio {0} · fin {1} de {2}
+
+< Start of the clip
+> Inicio del clip
+
+< End of the clip
+> Fin del clip
+
+< Shown for {0}
+> Se muestra durante {0}
+
+< Split here
+> Dividir aquí
+
+< Move the playhead inside the clip, at least half a second from its ends.
+> Mueve el cabezal de reproducción dentro del clip, a medio segundo como mínimo de sus extremos.
+
+< Duplicate
+> Duplicar
+
+< Move left
+> Mover a la izquierda
+
+< Move right
+> Mover a la derecha
+
+< Turn
+> Girar
+
+< Normal
+> Normal
+
+< Volume {0}%
+> Volumen {0}%
+
+< This video has no sound
+> Este vídeo no tiene sonido
+
+< How the clip fills the video's shape
+> Cómo el clip llena la forma del vídeo
+
+< The whole picture, over a blurred copy of itself where the shapes differ.
+> La imagen completa, sobre una copia desenfocada de sí misma donde las formas no coinciden.
+
+< Zoom
+> Zoom
+
+< Left – right
+> Izquierda – derecha
+
+< Up – down
+> Arriba – abajo
+
+< Photos are filled from the middle; auto reframe follows people and things in videos.
+> Las fotos se rellenan desde el centro; el reencuadre automático sigue a personas y objetos de los vídeos.
+
+< Follows the person or thing the clip is about, found by on-device AI.
+> Sigue a la persona o al objeto del que trata el clip, detectado por IA en el propio dispositivo.
+
+< Finding the subject when the clip is ready…
+> Buscando el sujeto cuando el clip esté listo…
+
+< Zoom in on the subject
+> Acercar al sujeto
+
+< Whole picture
+> Imagen completa
+
+< Fill
+> Rellenar
+
+< Auto reframe
+> Reencuadre automático
+
+< Finding the subject…
+> Buscando el sujeto…
+
+< The subject couldn't be found in this clip; it is filled from the middle.
+> No se pudo encontrar el sujeto en este clip; se rellena desde el centro.
+
+< Use on every clip
+> Usar en todos los clips
+
+< Warm
+> Cálido
+
+< Cool
+> Frío
+
+< Black & white
+> Blanco y negro
+
+< Faded
+> Desvanecido
+
+< Add text here
+> Añade el texto aquí
+
+< Titles and captions appear over the video from the playhead on, for 3 seconds; change that after adding.
+> Los títulos y los subtítulos aparecen sobre el vídeo desde el cabezal de reproducción, durante 3 segundos; puedes cambiarlo después de añadirlos.
+
+< Delete "{0}"
+> Eliminar "{0}"
+
+< Your text
+> Tu texto
+
+< Middle
+> Centro
+
+< How long
+> Duración
+
+< Large
+> Grande
+
+< On a dark box
+> Sobre un recuadro oscuro
+
+< Add text
+> Añadir texto
+
+< Edit text
+> Editar texto
+
+< Listening to your song…
+> Escuchando tu canción…
+
+< Your song couldn't be read.
+> No se pudo leer tu canción.
+
+< A new tune will be written when the video is saved.
+> Se creará una pista nueva al guardar el vídeo.
+
+< Music volume {0}%
+> Volumen de la música {0}%
+
+< Quieter while clips play their sound
+> Más bajo mientras los clips reproducen su propio sonido
+
+< Each clip's own volume is under Clip. The preview plays the clips' own sound; the music is mixed in when the video is saved.
+> El volumen de cada clip está en Clip. La vista previa reproduce el sonido de los propios clips; la música se mezcla al guardar el vídeo.
+
+< The video's shape
+> Formato del vídeo
+
+< Fade out at the end
+> Desvanecer al final
+
+< For portrait (9:16) and square videos from landscape clips, choose Auto reframe under Frame: the picture follows the person or thing the clip is about.
+> Para vídeos verticales (9:16) y cuadrados hechos con clips horizontales, elige Reencuadre automático en Encuadre: la imagen sigue a la persona o al objeto del clip.
+
+< As the first clip
+> Como primer clip
+
+< Landscape 16:9
+> Horizontal 16:9
+
+< Portrait 9:16
+> Vertical 9:16
+
+< Portrait 4:5
+> Vertical 4:5
+
+< 720p (smaller)
+> 720p (más pequeño)
+
+< 1080p
+> 1080p
+
+< Save the video
+> Guardar el vídeo
+
+< Remove every clip, text and setting of this video? The files themselves stay.
+> ¿Quitar todos los clips, textos y ajustes de este vídeo? Los archivos en sí se conservan.
+
 < Queued — it prints when the current job finishes.
 > En cola: se imprimirá cuando termine el trabajo actual.
 
@@ -5020,18 +5258,12 @@
 < Colour
 > Color
 
-< Black & white
-> Blanco y negro
-
 < Draft
 > Borrador
 
 @ print quality
 < Best
 > Mejor
-
-< Normal
-> Normal
 
 < photos
 > fotos
@@ -6504,6 +6736,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > Crea una película a partir de los momentos que revisas, así que no puede ejecutarse en una cadena
 
+< Edits one video by hand, so it can't run in a stack
+> Edita un vídeo a mano, así que no puede ejecutarse en una cadena
+
 < Shows documents instead of saving files, so it can't be a step of a stack
 > Muestra documentos en lugar de guardar archivos, así que no puede ser un paso de una cadena
 
@@ -6670,6 +6905,15 @@
 
 < On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
 > La IA del propio dispositivo encuentra todas las caras de las fotos y vídeos y las agrupa por persona; también puede encontrar matrículas, datos privados en textos (nombres, teléfonos, direcciones, contraseñas…) y códigos QR. Se elige qué desenfocar o pixelar; el seguimiento abarca todo el vídeo.
+
+< Video editor
+> Editor de vídeo
+
+< Cut, join, frame, colour, texts and music
+> Cortar, unir, encuadrar, color, textos y música
+
+< Put videos and photos in order, trim and split them, change speed and volume, add fades, looks and texts, and music written on this phone or a song of yours. Auto reframe turns a landscape video into a portrait one (or zooms in) and keeps the person or thing it is about in the picture, found by on-device AI. Your originals stay untouched.
+> Ordena vídeos y fotos, recorta y divide, cambia la velocidad y el volumen, añade fundidos, filtros y textos, y música creada en este teléfono o una canción tuya. El reencuadre automático convierte un vídeo horizontal en vertical (o amplía la imagen) y mantiene en pantalla a la persona o el objeto del clip, detectados por IA en el propio dispositivo. Tus originales no se modifican.
 
 < Highlight video
 > Vídeo destacado
@@ -6980,6 +7224,20 @@
 < Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
 > Guarda el sonido de cada vídeo como archivo de audio. El sonido AAC se copia a un archivo M4A tal cual, sin recodificar; otro sonido, o cualquier formato que elijas (MP3, Opus, FLAC, WAV), se convierte.
 
+< Saving an edited video of {0} clip
+< Saving an edited video of {0} clips
+> Guardando un vídeo editado de {0} clip
+> Guardando un vídeo editado de {0} clips
+
+< Add at least one video or photo.
+> Añade al menos un vídeo o una foto.
+
+< Finding the subject ({0} of {1})
+> Buscando el sujeto ({0} de {1})
+
+< The video is empty.
+> El vídeo está vacío.
+
 < Merging {0} video
 < Merging {0} videos
 > Uniendo {0} vídeo
@@ -7112,24 +7370,6 @@
 < Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
 > No se pudo leer tu canción. Elige otro archivo de audio o una de las melodías de la app.
 
-< The video encoder stopped taking frames.
-> El codificador de vídeo dejó de aceptar fotogramas.
-
-< The video encoder produced nothing.
-> El codificador de vídeo no produjo nada.
-
-< This device has no H.264 encoder for {0}×{1}.
-> Este dispositivo no tiene un codificador H.264 para {0}×{1}.
-
-< The H.264 encoder rejected {0}×{1}.
-> El codificador H.264 rechazó {0}×{1}.
-
-< Landscape 16:9
-> Horizontal 16:9
-
-< Portrait 9:16
-> Vertical 9:16
-
 < More {1}
 > Más {1}
 
@@ -7261,6 +7501,18 @@
 @ time pattern: when a moment starts
 < h:mm a
 > H:mm
+
+< The video encoder stopped taking frames.
+> El codificador de vídeo dejó de aceptar fotogramas.
+
+< The video encoder produced nothing.
+> El codificador de vídeo no produjo nada.
+
+< This device has no H.264 encoder for {0}×{1}.
+> Este dispositivo no tiene un codificador H.264 para {0}×{1}.
+
+< The H.264 encoder rejected {0}×{1}.
+> El codificador H.264 rechazó {0}×{1}.
 
 < A clip has no video track.
 > Un clip no tiene pista de vídeo.

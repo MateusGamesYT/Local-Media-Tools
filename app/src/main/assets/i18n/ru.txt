@@ -1193,6 +1193,9 @@
 < highlight reel montage movie film slideshow memories trip holiday vacation event music recap edit auto
 > лучшие моменты обзор монтаж фильм слайдшоу воспоминания поездка отпуск событие музыка итоги редактировать авто
 
+< edit video editor cut trim split join timeline clips text title music fade transition crop reframe vertical portrait reels shorts tiktok zoom follow subject speed colour color filter
+> редактировать видеоредактор монтаж резать обрезать разделить склеить таймлайн клипы текст заголовок музыка затухание переход кадрировать автокадрирование вертикальное портрет reels shorts tiktok зум следить объект скорость цвет фильтр
+
 < fast slow motion timelapse time lapse speed up hyperlapse
 > быстро медленно замедленная съёмка таймлапс ускорить скорость гиперлапс
 
@@ -4314,6 +4317,15 @@
 < The title at the start and each moment's name
 > Заголовок в начале и название каждого момента
 
+< Language of the captions
+> Язык субтитров
+
+< Dates and moments' names in the video can be in another language than the app's
+> Даты и названия моментов в видео могут быть на другом языке, отличном от языка приложения
+
+< As the app
+> Как в приложении
+
 < Sound from your videos
 > Звук ваших видео
 
@@ -4983,6 +4995,234 @@
 < Size {0}% of the shorter side · opacity {1}%. Images whose shape isn't listed use the default position ({2}).
 > Размер {0}% меньшей стороны · непрозрачность {1}%. Изображения, форма которых не указана, используют положение по умолчанию ({2}).
 
+< Clip
+> Клип
+
+< Frame
+> Кадрирование
+
+< Look
+> Фильтр
+
+< Close the editor
+> Закрыть редактор
+
+< Add videos and photos to start
+> Добавьте видео и фото, чтобы начать
+
+< They go in the order you pick them; you can move them later.
+> Они идут в том порядке, в котором вы их выбрали; потом их можно переставить.
+
+< Add videos and photos
+> Добавить видео и фото
+
+< Play
+> Воспроизвести
+
+< Adding {0} file…
+< Adding {0} files…
+> Добавление {0} файл…
+> Добавление {0} файла…
+> Добавление {0} файлов…
+
+< {0} file isn't a video or photo that can be read.
+< {0} files aren't videos or photos that can be read.
+> {0} файл не является видео или фото, которое можно прочитать.
+> {0} файла не являются видео или фото, которые можно прочитать.
+> {0} файлов не являются видео или фото, которые можно прочитать.
+
+< Clip {0}: {1}, {2}
+> Клип {0}: {1}, {2}
+
+< Transition into clip {0}: {1}
+> Переход к клипу {0}: {1}
+
+< Cut
+> Склейка
+
+< Cross-fade
+> Перекрёстное растворение
+
+< Fade through black
+> Затемнение через чёрный
+
+< Start {0} · end {1} of {2}
+> Начало {0} · конец {1} из {2}
+
+< Start of the clip
+> Начало клипа
+
+< End of the clip
+> Конец клипа
+
+< Shown for {0}
+> Показывается {0}
+
+< Split here
+> Разделить здесь
+
+< Move the playhead inside the clip, at least half a second from its ends.
+> Переместите ползунок воспроизведения внутрь клипа, минимум на полсекунды от его краёв.
+
+< Duplicate
+> Дублировать
+
+< Move left
+> Сдвинуть влево
+
+< Move right
+> Сдвинуть вправо
+
+< Turn
+> Повернуть
+
+< Normal
+> Обычное
+
+< Volume {0}%
+> Громкость {0}%
+
+< This video has no sound
+> В этом видео нет звука
+
+< How the clip fills the video's shape
+> Как клип заполняет форму видео
+
+< The whole picture, over a blurred copy of itself where the shapes differ.
+> Вся картинка поверх размытой копии самой себя там, где формы не совпадают.
+
+< Zoom
+> Зум
+
+< Left – right
+> Слева – справа
+
+< Up – down
+> Сверху – снизу
+
+< Photos are filled from the middle; auto reframe follows people and things in videos.
+> Фото заполняются от центра; автокадрирование следит за людьми и предметами в видео.
+
+< Follows the person or thing the clip is about, found by on-device AI.
+> Следит за человеком или предметом, о котором клип, — их находит ИИ на устройстве.
+
+< Finding the subject when the clip is ready…
+> Поиск объекта, когда клип будет готов…
+
+< Zoom in on the subject
+> Приблизить к объекту
+
+< Whole picture
+> Вся картинка
+
+< Fill
+> Заполнить
+
+< Auto reframe
+> Автокадрирование
+
+< Finding the subject…
+> Поиск объекта…
+
+< The subject couldn't be found in this clip; it is filled from the middle.
+> Объект не найден в этом клипе; он заполняется от центра.
+
+< Use on every clip
+> Применить ко всем клипам
+
+< Warm
+> Тёплый
+
+< Cool
+> Холодный
+
+< Black & white
+> Чёрно-белое
+
+< Faded
+> Выцветший
+
+< Add text here
+> Добавьте текст сюда
+
+< Titles and captions appear over the video from the playhead on, for 3 seconds; change that after adding.
+> Заголовки и подписи появляются поверх видео от ползунка воспроизведения на 3 секунды; это можно изменить после добавления.
+
+< Delete "{0}"
+> Удалить «{0}»
+
+< Your text
+> Ваш текст
+
+< Middle
+> По центру
+
+< How long
+> Длительность
+
+< Large
+> Крупный
+
+< On a dark box
+> На тёмной подложке
+
+< Add text
+> Добавить текст
+
+< Edit text
+> Изменить текст
+
+< Listening to your song…
+> Анализируем вашу песню…
+
+< Your song couldn't be read.
+> Не удалось прочитать вашу песню.
+
+< A new tune will be written when the video is saved.
+> Новая дорожка будет создана при сохранении видео.
+
+< Music volume {0}%
+> Громкость музыки {0}%
+
+< Quieter while clips play their sound
+> Тише, пока клипы воспроизводят свой звук
+
+< Each clip's own volume is under Clip. The preview plays the clips' own sound; the music is mixed in when the video is saved.
+> Громкость каждого клипа — в разделе «Клип». Предпросмотр воспроизводит звук самих клипов; музыка добавляется при сохранении видео.
+
+< The video's shape
+> Формат видео
+
+< Fade out at the end
+> Затухание в конце
+
+< For portrait (9:16) and square videos from landscape clips, choose Auto reframe under Frame: the picture follows the person or thing the clip is about.
+> Для вертикальных (9:16) и квадратных видео из горизонтальных клипов выберите в разделе «Кадрирование» пункт «Автокадрирование»: изображение следует за человеком или предметом клипа.
+
+< As the first clip
+> Как первый клип
+
+< Landscape 16:9
+> Горизонтальное 16:9
+
+< Portrait 9:16
+> Вертикальное 9:16
+
+< Portrait 4:5
+> Вертикальный 4:5
+
+< 720p (smaller)
+> 720p (меньше)
+
+< 1080p
+> 1080p
+
+< Save the video
+> Сохранить видео
+
+< Remove every clip, text and setting of this video? The files themselves stay.
+> Удалить все клипы, текст и настройки этого видео? Сами файлы останутся.
+
 < Queued — it prints when the current job finishes.
 > В очереди — печать начнётся, когда завершится текущее задание.
 
@@ -5122,18 +5362,12 @@
 < Colour
 > Цвет
 
-< Black & white
-> Чёрно-белое
-
 < Draft
 > Черновик
 
 @ print quality
 < Best
 > Лучшее
-
-< Normal
-> Обычное
 
 < photos
 > фото
@@ -6667,6 +6901,9 @@
 < Makes one film from the moments you review, so it can't run in a stack
 > Делает один фильм из моментов, которые вы проверяете, поэтому не может выполняться в цепочке
 
+< Edits one video by hand, so it can't run in a stack
+> Редактирует видео вручную, поэтому не может выполняться в цепочке
+
 < Shows documents instead of saving files, so it can't be a step of a stack
 > Показывает документы вместо сохранения файлов, поэтому не может быть шагом цепочки
 
@@ -6834,6 +7071,15 @@
 
 < On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video.
 > ИИ на устройстве находит каждое лицо на фото и видео и группирует их по людям; также он может найти номерные знаки, личные данные в тексте (имена, номера телефонов, адреса, пароли…) и QR-коды. Выберите, что размыть или пикселизировать; всё отслеживается на протяжении всего видео.
+
+< Video editor
+> Видеоредактор
+
+< Cut, join, frame, colour, texts and music
+> Резка, склейка, кадрирование, цвет, тексты и музыка
+
+< Put videos and photos in order, trim and split them, change speed and volume, add fades, looks and texts, and music written on this phone or a song of yours. Auto reframe turns a landscape video into a portrait one (or zooms in) and keeps the person or thing it is about in the picture, found by on-device AI. Your originals stay untouched.
+> Расставьте видео и фото по порядку, обрежьте и разделите их, меняйте скорость и громкость, добавляйте затухания, фильтры и тексты, а также музыку, созданную на этом телефоне, или вашу песню. Автокадрирование превращает горизонтальное видео в вертикальное (или приближает кадр) и держит в кадре человека или предмет клипа — их находит ИИ на устройстве. Исходные файлы не меняются.
 
 < Highlight video
 > Видео из лучших моментов
@@ -7144,6 +7390,21 @@
 < Saves the sound of each video as an audio file. AAC sound is copied into an M4A file as it is, with no re-encoding; other sound, or any format you choose (MP3, Opus, FLAC, WAV), is converted.
 > Сохраняет звук каждого видео как аудиофайл. Звук AAC копируется в файл M4A как есть, без перекодирования; другой звук или любой выбранный формат (MP3, Opus, FLAC, WAV) конвертируется.
 
+< Saving an edited video of {0} clip
+< Saving an edited video of {0} clips
+> Сохранение отредактированного видео ({0} клип)
+> Сохранение отредактированного видео ({0} клипа)
+> Сохранение отредактированного видео ({0} клипов)
+
+< Add at least one video or photo.
+> Добавьте хотя бы одно видео или фото.
+
+< Finding the subject ({0} of {1})
+> Поиск объекта ({0} из {1})
+
+< The video is empty.
+> Видео пустое.
+
 < Merging {0} video
 < Merging {0} videos
 > Объединение видео: {0}
@@ -7285,24 +7546,6 @@
 < Your song couldn't be read. Pick another audio file, or one of the app's own tunes.
 > Не удалось прочитать вашу песню. Выберите другой аудиофайл или одну из мелодий приложения.
 
-< The video encoder stopped taking frames.
-> Видеокодировщик перестал принимать кадры.
-
-< The video encoder produced nothing.
-> Видеокодировщик ничего не выдал.
-
-< This device has no H.264 encoder for {0}×{1}.
-> На этом устройстве нет кодировщика H.264 для {0}×{1}.
-
-< The H.264 encoder rejected {0}×{1}.
-> Кодировщик H.264 отклонил {0}×{1}.
-
-< Landscape 16:9
-> Горизонтальное 16:9
-
-< Portrait 9:16
-> Вертикальное 9:16
-
 < More {1}
 > Ещё: {1}
 
@@ -7434,6 +7677,18 @@
 @ time pattern: when a moment starts
 < h:mm a
 > HH:mm
+
+< The video encoder stopped taking frames.
+> Видеокодировщик перестал принимать кадры.
+
+< The video encoder produced nothing.
+> Видеокодировщик ничего не выдал.
+
+< This device has no H.264 encoder for {0}×{1}.
+> На этом устройстве нет кодировщика H.264 для {0}×{1}.
+
+< The H.264 encoder rejected {0}×{1}.
+> Кодировщик H.264 отклонил {0}×{1}.
 
 < A clip has no video track.
 > У одного клипа нет видеодорожки.

@@ -524,9 +524,9 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
         var seconds = ((t?.let { it.endMs - it.startMs } ?: 3000L) / 1000.0)
         var big = (t?.size ?: 1f) > 1.2f
         var withBox = t?.box ?: false
-        box.addView(label(tr("Where")))
+        box.addView(label(tr("Position")))
         box.addView(ChoiceGroup(ctx, TextPlace.entries, { when (it) { TextPlace.TOP -> tr("Top"); TextPlace.MIDDLE -> tr("Middle"); TextPlace.BOTTOM -> tr("Bottom") } }, place) { place = it })
-        box.addView(label(tr("For")))
+        box.addView(label(tr("How long")))
         box.addView(ChoiceGroup(ctx, listOf(2.0, 3.0, 5.0, 8.0), { tr("{0} s", it) }, seconds.takeIf { it in listOf(2.0, 3.0, 5.0, 8.0) }) { seconds = it })
         box.addView(ToggleRow(ctx, tr("Large"), null, big) { big = it })
         box.addView(ToggleRow(ctx, tr("On a dark box"), null, withBox) { withBox = it })
