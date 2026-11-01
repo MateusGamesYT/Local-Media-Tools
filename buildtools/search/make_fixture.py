@@ -84,9 +84,9 @@ open(os.path.join(out, 'model.tsv'), 'w').write(f"logit_scale\t{cfg['logit_scale
 # How the fixture searches with the app's threshold (the JVM test checks the same).
 E = np.array([np.frombuffer(base64.b64decode(l.split('\t')[2])[4:], np.int8) * struct.unpack('>f', base64.b64decode(l.split('\t')[2])[:4])[0] for l in lines[1:]])
 labels = [l.split('\t')[1] for l in lines[1:]]
-thr = (np.log(0.0004 / (1 - 0.0004)) - cfg['logit_bias']) / cfg['logit_scale']
 for q, lang, want in QUERIES:
     s = E @ embed_text(q)
+    thr = M.cut(s.max())
     found = [labels[i] for i in np.argsort(-s) if s[i] >= thr]
     top = [labels[i] for i in np.argsort(-s)[:3]]
     print(f'{q:28s} {lang} want {want or "-":9s} found {len(found):2d}: right {sum(1 for f in found if f == want)}/3, top 3 {top}')

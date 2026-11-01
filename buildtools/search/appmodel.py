@@ -61,3 +61,7 @@ class AppModel:
         return np.stack(out)
 
     def threshold_cos(self, p=0.0004): return (np.log(p / (1 - p)) - self.bias) / self.scale
+
+    # Where a query's matches end (cutoff.py; MatchScale in the app): SURE, or DROP below the best photo, never below FLOOR.
+    SURE, DROP, FLOOR = 0.09, 0.0425, 0.06
+    def cut(self, best): return np.maximum(self.FLOOR, np.minimum(self.SURE, best - self.DROP))

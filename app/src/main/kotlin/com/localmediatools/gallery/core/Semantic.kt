@@ -4,7 +4,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
 import kotlin.math.exp
-import kotlin.math.ln
 import kotlin.math.sqrt
 
 /**
@@ -50,30 +49,37 @@ object Embedding {
 }
 
 /**
- * How sure a match is. SigLIP 2 scores a photo and a text as a probability, sigmoid([scale] × cosine +
- * [bias]) (the model's own two numbers, from search/model.json). Across all photos of a library these
- * are small for short queries: one threshold for every query, [THRESHOLD], gave the best balance of
- * precision and recall on Open Images (buildtools/search/fusion.py: 4,999 photos, 112 classes with
- * human-checked labels; chosen on half the classes, the other half scored the same, F1 0.35 and 0.35).
- * [calibrated] puts that threshold at 0.5, like the categories' scores ([Taxonomy.TAGGED]), so the two
- * can be compared and combined.
+ * How sure a match is, and where a search's list of matches ends. SigLIP 2 scores a photo and a text
+ * as a probability, sigmoid([scale] × cosine + [bias]) (the model's own two numbers, from
+ * search/model.json), small across a library for short queries. Where the list ends was measured with
+ * the app's own model files on Open Images (buildtools/search/cutoff.py: 4,999 photos, 112 classes with
+ * human-checked labels, their names in the app's ten languages; settings chosen on half the classes,
+ * scored on the other half): a photo matches when its cosine reaches [SURE], or, for a query whose best
+ * photo scores lower (short words in other languages than English often do), when it comes within
+ * [DROP] of the best one, never below [FLOOR]. That found 43% of the photos people marked instead of
+ * 35% with one threshold for all, at precision 0.34 instead of 0.38 (lower bounds: photos nobody
+ * checked count as wrong), F1 0.316 instead of 0.303. [calibrated] puts the cut at 0.5, like the
+ * categories' scores ([Taxonomy.TAGGED]), so the two can be compared and combined.
  */
 class MatchScale(val scale: Float, val bias: Float) {
     fun probability(cos: Float): Double = 1.0 / (1.0 + exp(-(scale.toDouble() * cos + bias)))
 
-    /** The cosine where [probability] reaches [THRESHOLD]. */
-    val threshold: Float = ((ln(THRESHOLD / (1 - THRESHOLD)) - bias) / scale).toFloat()
+    /** Where the matches of a query end, given its best photo's cosine [best] in the library. */
+    fun cutoff(best: Float): Float = maxOf(FLOOR, minOf(SURE, best - DROP))
 
-    /** 0.5 at [threshold], up to 1 for a sure match, down to 0 (as [Taxonomy.calibrate]). */
-    fun calibrated(cos: Float): Float {
+    /** 0.5 at [cut], up to 1 for a sure match, down to 0 (as [Taxonomy.calibrate]). */
+    fun calibrated(cos: Float, cut: Float = SURE): Float {
+        val pc = probability(cut)
         val p = probability(cos)
-        return if (p >= THRESHOLD) (0.5 + 0.5 * ((p - THRESHOLD) / (1 - THRESHOLD)).coerceIn(0.0, 1.0)).toFloat()
-        else (0.5 * p / THRESHOLD).toFloat()
+        return if (p >= pc) (0.5 + 0.5 * ((p - pc) / (1 - pc)).coerceIn(0.0, 1.0)).toFloat()
+        else (0.5 * p / pc).toFloat()
     }
 
     companion object {
-        /** Measured (see above): mean precision 0.39 (0.64 among photos whose label people checked), recall 0.44. */
-        const val THRESHOLD = 0.0004
+        /** Cosines of SigLIP 2 B/32 (measured, see above; chosen on all classes, the halves gave 0.08–0.09, 0.0425 and 0.04–0.06). */
+        const val SURE = 0.09f
+        const val DROP = 0.0425f
+        const val FLOOR = 0.06f
     }
 }
 

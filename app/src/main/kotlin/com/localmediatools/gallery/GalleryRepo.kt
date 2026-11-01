@@ -54,7 +54,7 @@ object GalleryRepo {
     /**
      * The search with the search model, for a query that describes something ([ParsedQuery.content]):
      * among the items people, albums, kinds and dates allow, each is scored by how well its description
-     * matches the text ([MatchScale.calibrated]: 0.5 and up is a match) and by the categories the query
+     * matches the text ([MatchScale.calibrated] at the query's [MatchScale.cutoff]: 0.5 and up is a match) and by the categories the query
      * names (their tag scores, as before); an item matches when either says so (on Open Images this
      * found 82% of the photos instead of 68%, buildtools/search/fusion.py), best first. Null where the
      * model can't run or nothing is described yet: the search works as before.
@@ -73,10 +73,14 @@ object GalleryRepo {
         val before = run(ctx, q.terms).mapTo(HashSet()) { it.id }
         val cats = q.terms.filterIsInstance<SearchTerm.Category>().map { it.key }
         val tagScore = if (cats.isEmpty()) emptyMap() else db.minTagScores(before, cats)
-        val cos = index.best(emb, candidates.map { it.id })
+        // Where the matches end depends on how well the query's best photo in the whole library matches.
+        val all = index.best(emb)
+        val cut = scale.cutoff(all.values.maxOrNull() ?: 0f)
+        val ids = candidates.mapTo(HashSet()) { it.id }
+        val cos = all.filterKeys { it in ids }
         val score = HashMap<Long, Float>(candidates.size * 2)
         for (m in candidates) {
-            val sem = cos[m.id]?.let { scale.calibrated(it) } ?: 0f
+            val sem = cos[m.id]?.let { scale.calibrated(it, cut) } ?: 0f
             val old = if (m.id in before) maxOf(Taxonomy.TAGGED, tagScore[m.id] ?: Taxonomy.TAGGED) else 0f
             score[m.id] = maxOf(sem, old)
         }

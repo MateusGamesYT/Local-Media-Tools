@@ -33,18 +33,26 @@ class SearchCoreTest {
         }
     }
 
-    @Test fun matchScalePutsTheThresholdAtHalf() {
+    @Test fun matchScalePutsTheCutAtHalf() {
         // SigLIP 2 B/32's own scale and bias.
         val s = MatchScale(111.83f, -16.77f)
-        assertEquals(0.5f, s.calibrated(s.threshold), 0.001f)
-        assertEquals(MatchScale.THRESHOLD, s.probability(s.threshold), 1e-6)
-        var prev = -1f
-        for (k in -20..40) {
-            val c = s.calibrated(k / 100f)
-            assertTrue(c >= prev); assertTrue(c in 0f..1f); prev = c
+        // A query whose best photo matches well ends at SURE; a weaker one closer to its best; never below FLOOR.
+        assertEquals(MatchScale.SURE, s.cutoff(0.3f), 0f)
+        assertEquals(0.11f - MatchScale.DROP, s.cutoff(0.11f), 1e-6f)
+        assertEquals(MatchScale.FLOOR, s.cutoff(0.07f), 0f)
+        // The best photo itself is always in, unless even it is below the floor.
+        for (best in listOf(0.061f, 0.08f, 0.1f, 0.2f)) assertTrue(s.calibrated(best, s.cutoff(best)) >= 0.5f)
+        assertTrue(s.calibrated(0.05f, s.cutoff(0.05f)) < 0.5f)
+        for (cut in listOf(MatchScale.FLOOR, 0.075f, MatchScale.SURE)) {
+            assertEquals(0.5f, s.calibrated(cut, cut), 0.001f)
+            var prev = -1f
+            for (k in -20..40) {
+                val c = s.calibrated(k / 100f, cut)
+                assertTrue(c >= prev); assertTrue(c in 0f..1f); prev = c
+            }
+            assertTrue(s.calibrated(cut - 0.01f, cut) < 0.5f)
+            assertTrue(s.calibrated(cut + 0.01f, cut) > 0.5f)
         }
-        assertTrue(s.calibrated(s.threshold - 0.01f) < 0.5f)
-        assertTrue(s.calibrated(s.threshold + 0.01f) > 0.5f)
     }
 
     @Test fun semanticIndexScoresBestFrameAndReplacesItems() {
