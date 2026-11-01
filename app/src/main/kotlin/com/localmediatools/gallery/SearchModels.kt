@@ -135,8 +135,11 @@ object SearchModels {
             (0xFF shl 24) or (x shl 16) or (y shl 8) or ((x + y) / 2)
         })!!
 
+        private var closed = false
+
         private fun run(px: IntArray): FloatArray? = synchronized(this) {
             val m = model ?: return null
+            if (closed) return null
             input.rewind()
             for (c in px) {
                 input.putFloat(((c shr 16) and 255) / 127.5f - 1f)
@@ -150,7 +153,7 @@ object SearchModels {
             Embedding.normalize(e)
         }
 
-        internal fun close() = synchronized(this) { model?.close() }
+        internal fun close() = synchronized(this) { closed = true; model?.close() }
     }
 
     /** The text side: a text → its description (length 1). */
@@ -158,6 +161,7 @@ object SearchModels {
         private val input = ByteBuffer.allocateDirect(LENGTH * Embedding.DIM * 4).order(ByteOrder.nativeOrder())
         private val output = Array(1) { FloatArray(Embedding.DIM) }
         private val row = FloatArray(Embedding.DIM)
+        private var closed = false
         private val recent = object : LinkedHashMap<String, FloatArray>(16, 0.75f, true) {
             override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, FloatArray>?) = size > 32
         }
@@ -166,6 +170,8 @@ object SearchModels {
             textOverride?.let { return it(text) }
             val m = model ?: return null
             synchronized(this) {
+                // Freed while a search was on its way (search closed): no description.
+                if (closed) return null
                 recent[text]?.let { return it }
                 val rows = tokenizer!!.encode(text, LENGTH)
                 input.rewind()
@@ -178,6 +184,6 @@ object SearchModels {
             }
         }
 
-        internal fun close() = synchronized(this) { model?.close() }
+        internal fun close() = synchronized(this) { closed = true; model?.close() }
     }
 }

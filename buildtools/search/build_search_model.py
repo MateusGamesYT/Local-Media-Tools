@@ -69,6 +69,9 @@ class Text(torch.nn.Module):
         return torch.nn.functional.normalize(s.t.head(h)[:, 0], dim=-1)
 
 def export(mod, x, name):
+    # Converted before (the towers don't depend on the vocabulary): reused unless REBUILD is set.
+    done = os.path.join(conv, 'tf_' + name, name + '_dynamic_range_quant.tflite')
+    if os.path.exists(done) and not os.environ.get('REBUILD'): return done
     path = os.path.join(conv, name + '.onnx')
     torch.onnx.export(mod, (x,), path, input_names=['input'], output_names=['embedding'], opset_version=17, dynamo=False)
     s, ok = onnxsim.simplify(onnx.load(path)); assert ok; onnx.save(s, path)

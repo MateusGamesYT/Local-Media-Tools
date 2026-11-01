@@ -60,7 +60,7 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val root = UI.vertical(ctx).apply { setBackgroundColor(Palette.BG) }
         val bar = UI.horizontal(ctx).apply { setPadding(ctx.dp(4), ctx.dp(8), ctx.dp(14), ctx.dp(8)) }
         bar.addView(UI.iconButton(ctx, R.drawable.ic_back, tr("Back")) { pop() })
-        field = SearchField(ctx, tr("People, things, places, dates")) { q -> onQuery(q) }
+        field = SearchField(ctx, tr("People, places, dates, or describe a photo")) { q -> onQuery(q) }
         bar.addView(field, lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         root.addView(bar)
         val body = FrameLayout(ctx)
