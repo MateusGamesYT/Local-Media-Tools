@@ -1383,6 +1383,9 @@
 < Recognising scenes and kinds of things in the gallery and for auto enhance.
 > 识别图库中的场景和物品类型，也用于自动增强。
 
+< Understanding what photos show and what you type into Gallery search, in the app's languages.
+> 理解照片内容，以及您在图库搜索中输入的文字，支持应用的各种语言。
+
 < Writing the instrumental background music for highlight videos, on the phone.
 > 在手机上为精彩视频生成纯音乐背景音乐。
 
@@ -2376,11 +2379,20 @@
 < Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
 > 之前找到的人脸正在用更新、更准确的人脸模型重新分析。名称、确认和更正都会保留；完成后会重新给人物归组。
 
+< Photos looked at before are being described for the new search, which understands what you type ("dog on the beach", "red car at night"). Faces, names and things found stay as they are.
+> 之前已分析的照片正在为新搜索生成描述，新搜索能理解您输入的内容（“海滩上的狗”、“夜间的红色汽车”）。人脸、姓名和识别出的事物保持不变。
+
 < Objects and scenes: {0}.
 > 物体和场景：{0}。
 
 < Faces and people: {0}.
 > 人脸和人物：{0}。
+
+< Search by description: {0}.
+> 按描述搜索：{0}。
+
+< unavailable (search uses names, things and dates)
+> 不可用（搜索使用人名、事物和日期）
 
 < Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
 > 一切都在这部手机上以低优先级运行。手机变热时会减速，过热或电量低时会暂停，并从中断处继续。
@@ -2419,11 +2431,14 @@
 < names are kept
 > 名称会保留
 
-< Finding people and things · {0} of {1}
-> 正在查找人物和物品 · {0} / {1}
+< Preparing the new search · {0} of {1}
+> 正在准备新搜索 · {0}/{1}
 
 < on this phone
 > 在这部手机上
+
+< Finding people and things · {0} of {1}
+> 正在查找人物和物品 · {0} / {1}
 
 < {1}, {0} item
 < {1}, {0} items
@@ -2637,8 +2652,8 @@
 < Same person as…
 > 与…是同一个人
 
-< People, things, places, dates
-> 人物、物品、地点、日期
+< People, places, dates, or describe a photo
+> 人物、地点、日期，或描述一张照片
 
 < Showing results for {0} (you typed {1})
 > 显示“{0}”的结果（你输入的是“{1}”）
@@ -2646,6 +2661,13 @@
 < still analysing {0} more
 < still analysing {0} more
 > 还有{0}个仍在分析
+
+< No sure match · the closest one
+< No sure matches · the {0} closest
+> 没有确定的匹配 · 最接近的 {0} 张
+
+< Nothing matches this surely. These are the photos that come closest; try other words or fewer of them.
+> 没有完全确定的匹配。以下是最接近的照片；试试其他词语，或减少词语数量。
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > 试试你给某人起的名字，或“狗”“汽车”“海滩”“食物”“日落”“文档”之类的词。
@@ -2655,6 +2677,12 @@
 
 < Nothing found yet.
 > 还没有找到任何内容。
+
+< Best match
+> 最佳匹配
+
+< Looking for: {0}
+> 正在查找：{0}
 
 < Things in your photos
 > 你照片中的物品

@@ -1425,6 +1425,9 @@
 < Recognising scenes and kinds of things in the gallery and for auto enhance.
 > Erkennt Szenen und Arten von Dingen in der Galerie und für die automatische Verbesserung.
 
+< Understanding what photos show and what you type into Gallery search, in the app's languages.
+> Verstehen, was Fotos zeigen und was in die Galerie-Suche eingegeben wird, in den Sprachen der App.
+
 < Writing the instrumental background music for highlight videos, on the phone.
 > Komponiert auf dem Smartphone die instrumentale Hintergrundmusik für Highlight-Videos.
 
@@ -2442,11 +2445,20 @@
 < Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
 > Zuvor gefundene Gesichter werden mit dem neueren, genaueren Gesichtsmodell noch einmal angesehen. Namen, Bestätigungen und Korrekturen bleiben erhalten; Personen werden danach neu gruppiert.
 
+< Photos looked at before are being described for the new search, which understands what you type ("dog on the beach", "red car at night"). Faces, names and things found stay as they are.
+> Bereits analysierte Fotos werden für die neue Suche beschrieben, die versteht, was eingegeben wird („Hund am Strand“, „rotes Auto bei Nacht“). Gesichter, Namen und gefundene Dinge bleiben, wie sie sind.
+
 < Objects and scenes: {0}.
 > Objekte und Szenen: {0}.
 
 < Faces and people: {0}.
 > Gesichter und Personen: {0}.
+
+< Search by description: {0}.
+> Suche nach Beschreibung: {0}.
+
+< unavailable (search uses names, things and dates)
+> nicht verfügbar (die Suche nutzt Namen, Dinge und Datumsangaben)
 
 < Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
 > Alles läuft mit niedriger Priorität auf diesem Smartphone. Es wird langsamer, wenn das Smartphone warm wird, pausiert, wenn es sehr heiß oder der Akku fast leer ist, und macht danach dort weiter, wo es aufgehört hat.
@@ -2486,11 +2498,14 @@
 < names are kept
 > Namen bleiben erhalten
 
-< Finding people and things · {0} of {1}
-> Personen und Dinge werden gesucht · {0} von {1}
+< Preparing the new search · {0} of {1}
+> Neue Suche wird vorbereitet · {0} von {1}
 
 < on this phone
 > auf diesem Smartphone
+
+< Finding people and things · {0} of {1}
+> Personen und Dinge werden gesucht · {0} von {1}
 
 < {1}, {0} item
 < {1}, {0} items
@@ -2713,8 +2728,8 @@
 < Same person as…
 > Dieselbe Person wie…
 
-< People, things, places, dates
-> Personen, Dinge, Orte, Daten
+< People, places, dates, or describe a photo
+> Personen, Orte, Datumsangaben oder ein Foto beschreiben
 
 < Showing results for {0} (you typed {1})
 > Ergebnisse für {0} (du hast {1} eingegeben)
@@ -2724,6 +2739,14 @@
 > noch {0} in Analyse
 > noch {0} in Analyse
 
+< No sure match · the closest one
+< No sure matches · the {0} closest
+> Keine sichere Übereinstimmung · die nächste
+> Keine sicheren Übereinstimmungen · die {0} nächsten
+
+< Nothing matches this surely. These are the photos that come closest; try other words or fewer of them.
+> Nichts passt eindeutig. Dies sind die am ehesten passenden Fotos; andere oder weniger Wörter ausprobieren.
+
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > Probiere einen Namen, den du jemandem gegeben hast, oder Begriffe wie Hund, Auto, Strand, Essen, Sonnenuntergang oder Dokument.
 
@@ -2732,6 +2755,12 @@
 
 < Nothing found yet.
 > Noch nichts gefunden.
+
+< Best match
+> Beste Übereinstimmung
+
+< Looking for: {0}
+> Gesucht: {0}
 
 < Things in your photos
 > Dinge in deinen Fotos

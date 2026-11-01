@@ -1467,6 +1467,9 @@
 < Recognising scenes and kinds of things in the gallery and for auto enhance.
 > Распознавание сцен и видов предметов в галерее и для автоулучшения.
 
+< Understanding what photos show and what you type into Gallery search, in the app's languages.
+> Понимание того, что показано на фото, и запросов, которые вы вводите в поиск «Галереи», на языках приложения.
+
 < Writing the instrumental background music for highlight videos, on the phone.
 > Сочинение инструментальной фоновой музыки для видео из лучших моментов, на телефоне.
 
@@ -2508,11 +2511,20 @@
 < Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
 > Ранее найденные лица заново просматриваются новой, более точной моделью лиц. Имена, подтверждения и исправления сохраняются; по завершении люди будут сгруппированы заново.
 
+< Photos looked at before are being described for the new search, which understands what you type ("dog on the beach", "red car at night"). Faces, names and things found stay as they are.
+> Ранее проанализированные фото описываются для нового поиска, который понимает то, что вы вводите («собака на пляже», «красная машина ночью»). Лица, имена и найденные предметы остаются без изменений.
+
 < Objects and scenes: {0}.
 > Объекты и сцены: {0}.
 
 < Faces and people: {0}.
 > Лица и люди: {0}.
+
+< Search by description: {0}.
+> Поиск по описанию: {0}.
+
+< unavailable (search uses names, things and dates)
+> недоступно (поиск использует имена, предметы и даты)
 
 < Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
 > Всё работает на этом телефоне с низким приоритетом. Замедляется, когда телефон нагревается, приостанавливается, когда он сильно горячий или батарея почти разряжена, и продолжает с того места, где остановилось.
@@ -2553,11 +2565,14 @@
 < names are kept
 > имена сохраняются
 
-< Finding people and things · {0} of {1}
-> Поиск людей и предметов · {0} из {1}
+< Preparing the new search · {0} of {1}
+> Подготовка нового поиска · {0} из {1}
 
 < on this phone
 > на этом телефоне
+
+< Finding people and things · {0} of {1}
+> Поиск людей и предметов · {0} из {1}
 
 < {1}, {0} item
 < {1}, {0} items
@@ -2789,8 +2804,8 @@
 < Same person as…
 > Тот же человек, что и…
 
-< People, things, places, dates
-> Люди, предметы, места, даты
+< People, places, dates, or describe a photo
+> Люди, места, даты или опишите фото
 
 < Showing results for {0} (you typed {1})
 > Результаты для «{0}» (вы ввели «{1}»)
@@ -2801,6 +2816,15 @@
 > Ещё анализируется: {0}
 > Ещё анализируется: {0}
 
+< No sure match · the closest one
+< No sure matches · the {0} closest
+> Нет уверенных совпадений · {0} ближайшее
+> Нет уверенных совпадений · {0} ближайшие
+> Нет уверенных совпадений · {0} ближайших
+
+< Nothing matches this surely. These are the photos that come closest; try other words or fewer of them.
+> Уверенных совпадений нет. Вот фото, которые ближе всего подходят; попробуйте другие слова или меньше слов.
+
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > Попробуйте имя, которое вы кому-то дали, или слова вроде «собака», «машина», «пляж», «еда», «закат» или «документ».
 
@@ -2809,6 +2833,12 @@
 
 < Nothing found yet.
 > Пока ничего не найдено.
+
+< Best match
+> По релевантности
+
+< Looking for: {0}
+> Ищу: {0}
 
 < Things in your photos
 > Предметы на ваших фото

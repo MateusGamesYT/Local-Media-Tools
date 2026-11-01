@@ -1383,6 +1383,9 @@
 < Recognising scenes and kinds of things in the gallery and for auto enhance.
 > ギャラリー内と自動補正のための、シーンやものの種類の認識。
 
+< Understanding what photos show and what you type into Gallery search, in the app's languages.
+> 写真に写っているものと、ギャラリー検索に入力する言葉を、アプリの各言語で理解します。
+
 < Writing the instrumental background music for highlight videos, on the phone.
 > ハイライト動画用のインストゥルメンタルBGMを、端末内で作成します。
 
@@ -2376,11 +2379,20 @@
 < Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
 > 以前に見つかった顔を、新しくより正確な顔モデルで再確認しています。名前、確認、修正はそのまま残り、完了すると人物が再グループ化されます。
 
+< Photos looked at before are being described for the new search, which understands what you type ("dog on the beach", "red car at night"). Faces, names and things found stay as they are.
+> 解析済みの写真の説明を、新しい検索用に作成しています。新しい検索は、入力した言葉（「ビーチの犬」「夜の赤い車」など）を理解します。顔、名前、見つかったものはそのまま残ります。
+
 < Objects and scenes: {0}.
 > 物体とシーン：{0}。
 
 < Faces and people: {0}.
 > 顔と人物：{0}。
+
+< Search by description: {0}.
+> 説明で検索：{0}。
+
+< unavailable (search uses names, things and dates)
+> 利用できません（検索は名前、もの、日付を使います）
 
 < Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
 > すべての処理はこの端末内で、低い優先度で実行されます。端末が温かくなると動作が遅くなり、高温になったりバッテリー残量が少なくなったりすると一時停止して、中断した箇所から再開します。
@@ -2419,11 +2431,14 @@
 < names are kept
 > 名前は保持されます
 
-< Finding people and things · {0} of {1}
-> 人物とものを検出中 · {0}/{1}
+< Preparing the new search · {0} of {1}
+> 新しい検索を準備中 · {0}/{1}
 
 < on this phone
 > この端末内
+
+< Finding people and things · {0} of {1}
+> 人物とものを検出中 · {0}/{1}
 
 < {1}, {0} item
 < {1}, {0} items
@@ -2637,8 +2652,8 @@
 < Same person as…
 > 同じ人物…
 
-< People, things, places, dates
-> 人物、もの、場所、日付
+< People, places, dates, or describe a photo
+> 人物、場所、日付、または写真の説明
 
 < Showing results for {0} (you typed {1})
 > {0}の検索結果を表示しています（入力：{1}）
@@ -2646,6 +2661,13 @@
 < still analysing {0} more
 < still analysing {0} more
 > あと{0}件を分析中
+
+< No sure match · the closest one
+< No sure matches · the {0} closest
+> 確実な一致はなし · 最も近い {0} 枚
+
+< Nothing matches this surely. These are the photos that come closest; try other words or fewer of them.
+> 確実に一致するものはありません。最も近い写真を表示しています。別の言葉を試すか、言葉を減らしてください。
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > 付けた名前、または「犬」「車」「ビーチ」「食べ物」「夕焼け」「書類」などで検索してみてください。
@@ -2655,6 +2677,12 @@
 
 < Nothing found yet.
 > まだ何も見つかっていません。
+
+< Best match
+> 関連性順
+
+< Looking for: {0}
+> 探しているもの：{0}
 
 < Things in your photos
 > 写真に写っているもの

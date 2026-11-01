@@ -1383,6 +1383,9 @@
 < Recognising scenes and kinds of things in the gallery and for auto enhance.
 > 갤러리와 자동 보정을 위한 장면 및 사물 종류 인식.
 
+< Understanding what photos show and what you type into Gallery search, in the app's languages.
+> 사진에 담긴 내용과 갤러리 검색에 입력하는 내용을, 앱이 지원하는 언어로 이해합니다.
+
 < Writing the instrumental background music for highlight videos, on the phone.
 > 하이라이트 영상용 연주곡 배경음악을 휴대전화에서 작곡.
 
@@ -2376,11 +2379,20 @@
 < Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.
 > 이전에 찾은 얼굴을 더 새롭고 정확한 얼굴 모델로 다시 확인하는 중이에요. 이름, 확인, 수정 내용은 그대로 유지되며, 끝나면 인물이 다시 그룹으로 묶여요.
 
+< Photos looked at before are being described for the new search, which understands what you type ("dog on the beach", "red car at night"). Faces, names and things found stay as they are.
+> 이전에 분석된 사진의 설명을 새 검색을 위해 만드는 중입니다. 새 검색은 입력한 내용을 이해합니다(“해변의 개”, “밤의 빨간 차”). 얼굴, 이름, 찾은 사물은 그대로 유지됩니다.
+
 < Objects and scenes: {0}.
 > 사물과 장면: {0}.
 
 < Faces and people: {0}.
 > 얼굴과 인물: {0}.
+
+< Search by description: {0}.
+> 설명으로 검색: {0}.
+
+< unavailable (search uses names, things and dates)
+> 사용할 수 없음 (검색은 이름, 사물, 날짜를 사용합니다)
 
 < Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.
 > 모든 작업은 이 휴대전화에서 낮은 우선순위로 실행돼요. 휴대전화가 따뜻해지면 속도가 느려지고, 매우 뜨겁거나 배터리가 부족하면 일시중지했다가 멈춘 곳부터 이어서 진행해요.
@@ -2419,11 +2431,14 @@
 < names are kept
 > 이름은 유지돼요
 
-< Finding people and things · {0} of {1}
-> 인물과 사물 찾는 중 · {0}/{1}
+< Preparing the new search · {0} of {1}
+> 새 검색 준비 중 · {0}/{1}
 
 < on this phone
 > 이 휴대전화에서
+
+< Finding people and things · {0} of {1}
+> 인물과 사물 찾는 중 · {0}/{1}
 
 < {1}, {0} item
 < {1}, {0} items
@@ -2637,8 +2652,8 @@
 < Same person as…
 > 같은 인물…
 
-< People, things, places, dates
-> 인물, 사물, 장소, 날짜
+< People, places, dates, or describe a photo
+> 인물, 장소, 날짜 또는 사진 설명
 
 < Showing results for {0} (you typed {1})
 > {0} 검색 결과를 표시 중이에요(입력한 검색어: {1})
@@ -2646,6 +2661,13 @@
 < still analysing {0} more
 < still analysing {0} more
 > {0}개 더 분석 중
+
+< No sure match · the closest one
+< No sure matches · the {0} closest
+> 확실한 일치 없음 · 가장 가까운 {0}장
+
+< Nothing matches this surely. These are the photos that come closest; try other words or fewer of them.
+> 확실히 일치하는 항목이 없습니다. 아래는 가장 가까운 사진입니다. 다른 단어를 쓰거나 단어 수를 줄여 보세요.
 
 < Try a name you gave someone, or things like dog, car, beach, food, sunset or document.
 > 지정한 이름이나 '강아지', '자동차', '해변', '음식', '노을', '문서' 같은 단어로 검색해 보세요.
@@ -2655,6 +2677,12 @@
 
 < Nothing found yet.
 > 아직 찾은 항목이 없어요.
+
+< Best match
+> 관련성순
+
+< Looking for: {0}
+> 찾는 내용: {0}
 
 < Things in your photos
 > 사진 속 사물
