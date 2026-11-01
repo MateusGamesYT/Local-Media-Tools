@@ -160,6 +160,8 @@ class VideoEditorTest {
             if (p.box.cx >= k.crop.x && p.box.cx <= k.crop.x + k.crop.w) inside++
         }
         assertTrue("$inside of $seen", seen > 20 && inside >= seen * 0.9)
+        s.setPlayhead(s.timeline.placed[1].startMs + 9_000, follow = false); idle()
+        render(a, "video-editor-reframe")
         // A title.
         s.setTab(EditTab.TEXT); idle()
         s.setPlayhead(s.timeline.placed[1].startMs + 500, follow = false)

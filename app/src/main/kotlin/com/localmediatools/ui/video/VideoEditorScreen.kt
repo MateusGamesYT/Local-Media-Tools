@@ -68,6 +68,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /** The editor's tool tabs. */
@@ -297,7 +298,11 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
         val on = i == selected
         background = Shapes.rounded(ctx, Palette.SURFACE_2, 12f)
         clipToOutline = true
-        val img = ImageView(ctx).apply { scaleType = ImageView.ScaleType.CENTER_CROP }
+        val img = ImageView(ctx).apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            // With the clip's look, as it will be in the video.
+            c.look.matrix()?.let { colorFilter = android.graphics.ColorMatrixColorFilter(EditPreview.colorMatrix(it)) }
+        }
         addView(img, FrameLayout.LayoutParams(MATCH, MATCH))
         scope.launch {
             val b = withContext(Dispatchers.IO) { EditMedia.frame(ctx, c.source, c.inMs, 160) }
@@ -501,11 +506,14 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
                 gravity = Gravity.CENTER_VERTICAL
                 setPadding(0, ctx.dp(8), 0, 0)
                 addView(UI.text(ctx, "${Format.clock(t.startMs)}–${Format.clock(t.endMs)}  ${t.text}", TextStyle.BODY).apply { maxLines = 1 }, lp(0, WRAP, 1f))
-                addView(UI.secondaryButton(ctx, tr("Edit")) { setPlayhead(t.startMs + 1, follow = true); editText(t) })
+                addView(UI.secondaryButton(ctx, tr("Edit")) { setPlayhead(shownAt(t.startMs, t.endMs), follow = true); editText(t) })
                 addView(UI.iconButton(ctx, R.drawable.ic_trash, tr("Delete \"{0}\"", t.text)) { change(project.copy(texts = project.texts.filter { it.id != t.id })) })
             })
         }
     }
+
+    /** A moment where a text from [start] to [end] is fully shown (past its fade-in). */
+    private fun shownAt(start: Long, end: Long): Long = min(start + EditTimeline.TEXT_FADE_MS.toLong() + 50, (start + end) / 2)
 
     /** Adds a text at the playhead ([t] null) or changes one. */
     fun editText(t: EditTextItem?) {
@@ -530,6 +538,8 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
                 val end = (start + (seconds * 1000).toLong()).coerceAtMost(max(start + 500, timeline.durationMs))
                 val item = EditTextItem(t?.id ?: nextId++, text, start, end, place, if (big) 1.5f else 1f, withBox)
                 change(project.copy(texts = project.texts.filter { it.id != item.id } + item))
+                // Shown in full in the preview (at its very start it is still fading in).
+                setPlayhead(shownAt(start, end), follow = false)
             }
             .setNegativeButton(tr("Cancel"), null).show()
     }
