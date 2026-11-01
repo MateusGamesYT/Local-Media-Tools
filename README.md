@@ -117,7 +117,9 @@ How well it works, measured with the app's own model files on real photos (scrip
 - **On 60 real photos** in the tests (16 kinds of things, 30 searches in the ten languages), the best
   match is right for every search; 85 % of the right photos are shown and 87 % of the shown photos are right.
 - **The model**: SigLIP 2 B/32 (Google DeepMind, Apache 2.0), converted to TensorFlow Lite with 8-bit
-  weights. Its text side keeps the token table rows for the 20,000 most common words of each language
+  weights. It was chosen over OpenCLIP's multilingual XLM-R B/32 (LAION-5B, about the same size), which
+  found less in every language on the same photos (unconverted, mean average precision: English 0.339
+  against 0.391, French 0.298 against 0.344, Korean 0.292 against 0.328). Its text side keeps the token table rows for the 20,000 most common words of each language
   (50,000 for Chinese, Japanese and Korean), every single character and every byte, at 8 bits (4 bits
   cost up to 0.09 in mean average precision outside English, so they weren't used). The app's tokenizer
   gives the original tokenizer's tokens for texts in all ten languages. Together about 270 MB: the APK
