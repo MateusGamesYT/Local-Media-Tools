@@ -493,6 +493,41 @@ class GalleryTest {
         render(a)
     }
 
+    /**
+     * Real photos and the search model's real descriptions of them and of the searches (SearchPhotos),
+     * through everything the app does when searching: the parser, the stored descriptions, the index,
+     * where the matches end and the order. Searches in the app's languages find their kind first.
+     */
+    @Test fun realPhotosAreFoundByWhatTheyShow() {
+        FakeGallery.uninstall()
+        SearchPhotos.install(app)
+        try {
+            val a = openGallery()
+            val db = GalleryDb.get(app)
+            assertEquals(60, db.searchedCount(GalleryIndex.SEARCH_VERSION))
+            val want = mapOf("dog" to "Dog", "cachorro" to "Dog", "gato" to "Cat", "voiture" to "Car", "birthday cake" to "Cake",
+                "Kuchen" to "Cake", "bicicletta" to "Bicycle", "велосипед" to "Bicycle", "boats on the water" to "Boat", "barco" to "Boat",
+                "someone playing the guitar" to "Guitar", "ギター" to "Guitar", "snow" to "Snow", "neige" to "Snow", "飞机" to "Airplane",
+                "기차" to "Train", "balloons" to "Balloon", "umbrella" to "Umbrella", "Regenschirm" to "Umbrella", "pizza" to "Pizza",
+                "libro" to "Book", "книга" to "Book", "horse" to "Horse", "cavalo" to "Horse", "鳥" to "Bird")
+            var right = 0; var shown = 0; var found = 0
+            for ((q, kind) in want) {
+                val r = GalleryRepo.search(app, q)
+                assertTrue("$q: ranked", r.ranked && !r.closest)
+                assertEquals("$q: best match", kind, SearchPhotos.label(r.items.first().id))
+                shown += r.items.size; right += r.items.count { SearchPhotos.label(it.id) == kind }; found += 3
+            }
+            // As in SearchRealPhotosTest, through the whole app.
+            assertTrue("found $right of $found", right >= 0.8 * found)
+            assertTrue("$right right of $shown", right >= 0.8 * shown)
+            // Nothing like it: the closest ones, said so.
+            assertTrue(GalleryRepo.search(app, "volcano erupting at night").closest)
+            a.navigator.push(SearchScreen(a, "someone playing the guitar")); idle(800)
+            waitFor("results") { texts(a).any { it.endsWith("results") } }
+            render(a, "gallery-search-describe")
+        } finally { SearchPhotos.uninstall() }
+    }
+
     /** Starts a pass and waits until it has completely finished. */
     private fun runIndex() {
         waitFor("previous pass") { !GalleryIndex.busy }

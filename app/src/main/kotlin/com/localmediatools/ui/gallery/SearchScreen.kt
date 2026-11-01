@@ -129,7 +129,10 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val onlyText = r.query.terms.all { it is SearchTerm.Text }
         resultHead.removeAllViews()
         val chips = UI.horizontal(ctx)
-        for (t in r.query.terms) chips.addView(termChip(t), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(8) })
+        // Searched by description: the people, albums, kinds and dates it was narrowed to, and what was described.
+        val shownTerms: List<SearchTerm> = if (r.ranked) r.query.terms.filter { it !is SearchTerm.Category && it !is SearchTerm.Text } else r.query.terms
+        if (r.ranked && r.query.content.isNotBlank()) chips.addView(descriptionChip(r.query.content), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(8) })
+        for (t in shownTerms) chips.addView(termChip(t), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { rightMargin = ctx.dp(8) })
         resultHead.addView(HorizontalScrollView(ctx).apply { isHorizontalScrollBarEnabled = false; addView(chips) })
         if (r.query.corrections.isNotEmpty()) {
             resultHead.addView(UI.text(ctx, tr("Showing results for {0} (you typed {1})", r.query.corrections.joinToString(", ") { "\"${it.second}\"" },
@@ -177,6 +180,15 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
                 setOnClickListener { if (newestFirst != newest) { newestFirst = newest; last?.let { showResults(it) } } }
             }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { leftMargin = ctx.dp(6) })
         }
+    }
+
+    /** What the search model looked for. */
+    private fun descriptionChip(text: String): View = UI.horizontal(ctx).apply {
+        background = Shapes.pill(ctx, Palette.ACCENT_DARK, Palette.ACCENT)
+        setPadding(ctx.dp(12), ctx.dp(6), ctx.dp(12), ctx.dp(6))
+        addView(UI.iconView(ctx, R.drawable.ic_sparkle, Palette.ACCENT, 15))
+        addView(UI.text(ctx, text, TextStyle.CAPTION, Palette.TEXT).apply { setPadding(ctx.dp(6), 0, 0, 0); maxLines = 1 })
+        contentDescription = tr("Looking for: {0}", text)
     }
 
     private fun termChip(t: SearchTerm): View = UI.horizontal(ctx).apply {

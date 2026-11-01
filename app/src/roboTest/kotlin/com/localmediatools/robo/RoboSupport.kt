@@ -330,3 +330,71 @@ object FakeGallery {
         com.localmediatools.gallery.GalleryDb.closeForTests()
     }
 }
+
+/**
+ * A photo library of real photos with the search model's real descriptions, for the Gallery's search
+ * by description: the 60 Open Images photos of resources/search (CC BY 2.0, credits in CREDITS.tsv),
+ * their descriptions by the app's converted image model (photos.tsv) and the descriptions of 30
+ * searches in the app's ten languages through its tokenizer and text model (queries.tsv), all made
+ * by buildtools/search/make_fixture.py. Only running the models on the phone is stood in for.
+ */
+object SearchPhotos {
+    class Photo(val id: Long, val file: String, val label: String, val packed: ByteArray)
+
+    private fun table(name: String) = SearchPhotos::class.java.getResourceAsStream("/search/$name")!!.readBytes().toString(Charsets.UTF_8)
+        .lines().filter { it.isNotEmpty() && !it.startsWith("#") }.map { it.split('\t') }
+
+    val photos: List<Photo> by lazy {
+        table("photos.tsv").mapIndexed { i, r -> Photo(i + 1L, r[0], r[1], java.util.Base64.getDecoder().decode(r[2])) }
+    }
+    /** By the query in lower case (the model reads lower case; the search hands over what describes the photo). */
+    val queries: Map<String, FloatArray> by lazy {
+        table("queries.tsv").associate { it[0].lowercase() to com.localmediatools.gallery.core.Embedding.unpack(java.util.Base64.getDecoder().decode(it[3])) }
+    }
+    private val model by lazy { table("model.tsv").associate { it[0] to it[1].toFloat() } }
+
+    fun label(id: Long) = photos[(id - 1).toInt()].label
+
+    fun media(): List<com.localmediatools.gallery.GMedia> = photos.map { p ->
+        com.localmediatools.gallery.GMedia(
+            id = p.id, video = false, mime = "image/jpeg", name = p.file, bucketId = "c", bucket = "Camera", path = "DCIM/Camera/",
+            taken = FakeGallery.now - p.id * 5 * 3_600_000L, modified = 1000 + p.id, size = 40_000, width = 320, height = 240,
+            orientation = 0, durationMs = 0, favorite = false,
+        )
+    }
+
+    private val bitmaps = HashMap<Long, Bitmap>()
+    private fun bitmap(id: Long): Bitmap = synchronized(bitmaps) {
+        bitmaps.getOrPut(id) { SearchPhotos::class.java.getResourceAsStream("/search/photos/${photos[(id - 1).toInt()].file}")!!.use { BitmapFactory.decodeStream(it)!! } }
+    }
+
+    fun install(app: Context) {
+        com.localmediatools.gallery.GalleryDb.closeForTests()
+        app.deleteDatabase("gallery.db")
+        com.localmediatools.gallery.GalleryIndex.resetForTests()
+        app.getSharedPreferences("gallery", Context.MODE_PRIVATE).edit().clear().apply()
+        org.robolectric.Shadows.shadowOf(app as android.app.Application).grantPermissions(
+            android.Manifest.permission.READ_MEDIA_IMAGES, android.Manifest.permission.READ_MEDIA_VIDEO)
+        com.localmediatools.gallery.GalleryLibrary.source = { media() }
+        com.localmediatools.gallery.GalleryIndex.analyzerOverride = { m ->
+            com.localmediatools.gallery.Analysis(emptyMap(), emptyList(), listOf(0L to photos[(m.id - 1).toInt()].packed))
+        }
+        com.localmediatools.gallery.SearchModels.imageOverride = { null }
+        com.localmediatools.gallery.SearchModels.textOverride = { q -> queries[q.lowercase()] }
+        com.localmediatools.gallery.SearchModels.scaleOverride = com.localmediatools.gallery.core.MatchScale(model.getValue("logit_scale"), model.getValue("logit_bias"))
+        com.localmediatools.ui.gallery.GalleryThumbs.override = { m, _, size ->
+            val b = bitmap(m?.id ?: 1L)
+            val s = size.coerceIn(64, 512).toFloat() / maxOf(b.width, b.height)
+            Bitmap.createScaledBitmap(b, maxOf(1, (b.width * s).toInt()), maxOf(1, (b.height * s).toInt()), true)
+        }
+    }
+
+    fun uninstall() {
+        com.localmediatools.gallery.GalleryLibrary.source = null
+        com.localmediatools.gallery.GalleryIndex.analyzerOverride = null
+        com.localmediatools.ui.gallery.GalleryThumbs.override = null
+        com.localmediatools.gallery.SearchModels.resetForTests()
+        com.localmediatools.gallery.GalleryIndex.resetForTests()
+        com.localmediatools.gallery.GalleryDb.closeForTests()
+    }
+}
