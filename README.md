@@ -35,6 +35,16 @@ in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found
 real descriptions of them, made by the converted model on the build computer (the model doesn't run in
 the screenshot test); the third photo is a wrong match.
 
+| Video editor | Auto reframe |
+|---|---|
+| ![](docs/screenshots/video-editor.png) | ![](docs/screenshots/video-editor-reframe.png) |
+
+The video editor screenshots show a Global Lives Project recording (Cali, Colombia; CC BY 3.0, credits in
+[`CREDITS.tsv`](app/src/test/resources/video/CREDITS.tsv)) cut into a portrait video, with the camera
+path auto reframe planned from what the app's detectors found in it (the detectors ran on the build
+computer; they don't run in the screenshot test), and *Caroline Wozniacki @ US Open* by karlnorling
+(CC BY 2.0, credits in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)).
+
 | Highlight video | Duplicate finder | One group at a time | Name people |
 |---|---|---|---|
 | ![](docs/screenshots/highlight.png) | ![](docs/screenshots/duplicates.png) | ![](docs/screenshots/duplicates-review.png) | ![](docs/screenshots/name-people.png) |
@@ -79,6 +89,79 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 | Magic eraser | Looks | Crop & straighten | Settings |
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
+
+## What's new in 1.16.0: a video editor that keeps people in the picture
+
+**Video editor** (new, in Video): put videos and photos in order and make one video of them.
+
+- **Clips**: trim the start and end, split at the playhead, duplicate, move, turn, change the speed
+  (0.25×–4×, the sound keeps its pitch) and the volume. Photos show for 1.5 to 8 seconds.
+- **Between clips**: a cut, a cross-fade or a fade through black; the sound fades with the picture.
+- **The video's shape**: as the first clip, landscape 16:9, portrait 9:16, square or portrait 4:5. Each
+  clip is shown whole (over a blurred copy of itself where the shapes differ), fills the shape (zoom and
+  move it by hand), or uses **auto reframe**.
+- **Auto reframe** follows the person or thing the clip is about, found by on-device AI (the face and
+  object detectors the app already uses), like a camera operator would: still when the subject fits in
+  one place, otherwise a smooth movement, a new framing at each cut of the clip, and, when a person is
+  too close to fit across a portrait picture, their head kept in the picture rather than their middle.
+  **Zoom in on the subject** crops closer (at most 2×) so the subject fills more of the picture.
+- **Looks** (vivid, warm, cool, black & white, faded, drama) and brightness, contrast, saturation and
+  warmth, per clip or for every clip.
+- **Texts**: titles and captions from the playhead on, at the top, middle or bottom, for 2–8 seconds,
+  large or on a dark box.
+- **Music**: the tunes the phone writes for highlight videos, or your own song, under the clips' own
+  sound, which it steps back for (can be switched off), and a fade out at the end.
+- **Undo and redo**, a **preview** that plays the clips with their sound, and the project kept until you
+  start over (the files themselves are never changed). Saved as an MP4 (H.264 and AAC) in 720p or 1080p
+  to `Movies/LocalMediaTools/Edited`. It also opens from the Gallery (select photos and videos, then
+  *Use in a tool* → Video editor).
+
+**Highlight videos: captions in a language of their own.** Dates, moment names and the title can be in
+another of the app's ten languages than the one the app is set to (*Language of the captions*).
+
+How well auto reframe keeps people in the picture, measured on real recordings (Global Lives Project,
+CC BY 3.0: 18 clips of 30 seconds of daily life, filmed alongside one person, in 640 × 360; 15 of them
+with people in them) turned into portrait 9:16 videos. Where the people really are comes from two
+larger detectors that the app doesn't use (Faster R-CNN for people, Keypoint R-CNN for heads); the
+settings were chosen on half the clips and checked on the other half (scripts in
+[`buildtools/video/`](buildtools/video/)):
+
+| On the 8 clips with people used only for checking | Subject's head in the picture | Someone's head in the picture | Camera turning back |
+|---|---|---|---|
+| The middle of the video (what a phone does without reframing) | 24 % | 63 % | never (it doesn't move) |
+| Following what was found, without smoothing | 53 % | 91 % | 72 times a minute |
+| Auto reframe without keeping heads in | 53 % | 91 % | 64 times a minute |
+| **Auto reframe (1.16)** | **58 %** | **94 %** | **37 times a minute** |
+
+- *The subject* is the person on screen the most and the biggest; *in the picture* means 90 % or more of
+  their head inside the crop (582 moments). A portrait crop of a landscape video keeps a third of its
+  width, so people close to the camera rarely fit whole (52 % of the subject's body is inside on
+  average, against 50 % for the middle of the video), which is why the head counts.
+- Where it goes wrong: in 2 of the 8 clips several people sit together and auto reframe follows someone
+  else than the person on screen the most (someone's head is in the picture 94–100 % of the time there),
+  and in 1 a person lies on a bed with their face hidden, so the picture keeps their middle. In the other
+  5 the subject's head is in the picture 87–99 % of the time.
+- The settings (how much the camera may move, the room around the subject, keeping heads in, how much
+  the middle of the picture counts when choosing the subject) were tried in 144 combinations on the other
+  7 clips with people; the best of them there did no better on these 8 (58 %, 94 %, 37 times a minute)
+  than the settings the app had, so those stayed. Results:
+  [`results_9x16.json`](buildtools/video/results_9x16.json).
+- **Other fixes**: the object detector the Gallery shares with other tools is no longer freed while
+  another tool is using it (when the Gallery finished indexing during auto reframe, blurring private
+  info or analysing a highlight video, their next detection failed).
+- **Tested** on the JVM (timeline, splitting, speed, transitions, looks, texts, sound, saving the project,
+  the camera path) and in the Android test runtime with a real recording and a real photo (the editor
+  from adding clips to saving, auto reframe on what the app's detectors found in the recording, the
+  project coming back). The video drawing (GPU), decoding and encoding, and the detectors on the phone
+  don't run in these tests (the shaders were checked with a GLSL compiler), and **the app has not been
+  tried on a phone yet**.
+- **Limits**: while it plays, the preview cuts from clip to clip (no cross-fades), shows black where the
+  saved video has the blurred copy, and doesn't play the music; the saved video has all of it. Auto
+  reframe looks at each clip once (it takes a while for long clips), can miss small, far-away people
+  (the object detector sees the picture at 448 pixels), keeps the middle of a person whose face it can't
+  see (lying down, turned away), and in a group chooses one person, who may not be the one you mean. A
+  portrait crop of a landscape video keeps a third of its width, so it is softer than the original.
+- **Translated** into all ten languages.
 
 ## What was new in 1.15.0: search your photos by describing them
 
