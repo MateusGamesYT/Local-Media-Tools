@@ -85,7 +85,8 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
             bucket_id TEXT NOT NULL, bucket TEXT NOT NULL, path TEXT NOT NULL,
             taken INTEGER NOT NULL, modified INTEGER NOT NULL, size INTEGER NOT NULL,
             width INTEGER NOT NULL, height INTEGER NOT NULL, orientation INTEGER NOT NULL, duration INTEGER NOT NULL,
-            favorite INTEGER NOT NULL DEFAULT 0, analyzed INTEGER NOT NULL DEFAULT 0, failures INTEGER NOT NULL DEFAULT 0)""")
+            favorite INTEGER NOT NULL DEFAULT 0, analyzed INTEGER NOT NULL DEFAULT 0, failures INTEGER NOT NULL DEFAULT 0,
+            searched INTEGER NOT NULL DEFAULT 0)""")
         db.execSQL("CREATE INDEX media_taken ON media(taken DESC)")
         db.execSQL("CREATE INDEX media_bucket ON media(bucket_id, taken DESC)")
         db.execSQL("CREATE INDEX media_pending ON media(analyzed, taken DESC)")
@@ -102,11 +103,23 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
         db.execSQL("CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, hidden INTEGER NOT NULL DEFAULT 0, cover_face INTEGER, created INTEGER NOT NULL, favorite INTEGER NOT NULL DEFAULT 0)")
         db.execSQL("CREATE TABLE not_person(face_id INTEGER NOT NULL, person_id INTEGER NOT NULL, PRIMARY KEY(face_id, person_id)) WITHOUT ROWID")
         db.execSQL("CREATE TABLE meta(k TEXT PRIMARY KEY, v TEXT)")
+        createSearch(db)
+    }
+
+    /** The search model's descriptions of each photo (one per video frame looked at), [Embedding.pack]ed. */
+    private fun createSearch(db: SQLiteDatabase) {
+        db.execSQL("CREATE TABLE search(id INTEGER PRIMARY KEY AUTOINCREMENT, media_id INTEGER NOT NULL, frame_ms INTEGER NOT NULL, emb BLOB NOT NULL)")
+        db.execSQL("CREATE INDEX search_media ON search(media_id)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         // 2: favourite people (1.12). Everything already there stays.
         if (oldVersion < 2) db.execSQL("ALTER TABLE people ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0")
+        // 3: descriptions for the search model (1.15); every item gets one while the rest stays.
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE media ADD COLUMN searched INTEGER NOT NULL DEFAULT 0")
+            createSearch(db)
+        }
     }
 
     // ---------------------------------------------------------------- media
@@ -131,7 +144,7 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
                 if (m.id in changed) {
                     // Content changed: what we learned about it is stale.
                     forgetAnalysis(db, m.id)
-                    v.put("analyzed", 0); v.put("failures", 0)
+                    v.put("analyzed", 0); v.put("failures", 0); v.put("searched", 0)
                     db.insertWithOnConflict("media", null, v, SQLiteDatabase.CONFLICT_REPLACE)
                 } else {
                     // Metadata only (favourite, album rename): keep the analysis.
@@ -158,6 +171,7 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
     private fun forgetAnalysis(db: SQLiteDatabase, id: Long) {
         val a = arrayOf(id.toString())
         db.delete("tags", "media_id=?", a)
+        if (db.delete("search", "media_id=?", a) > 0) searchForgets.incrementAndGet()
         db.execSQL("DELETE FROM not_person WHERE face_id IN (SELECT id FROM faces WHERE media_id=?)", a)
         db.delete("faces", "media_id=?", a)
     }
@@ -177,12 +191,15 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
 
     fun mediaById(id: Long): GMedia? = queryMedia("m.id=?", arrayOf(id.toString())).firstOrNull()
 
-    fun pending(version: Int, limit: Int, exclude: Collection<Long> = emptyList()): List<GMedia> =
-        queryMedia("m.analyzed < ? AND m.failures < 2" + (if (exclude.isEmpty()) "" else " AND m.id NOT IN (${exclude.joinToString(",")})"),
-            arrayOf(version.toString()), limit = limit)
+    /** Items to look at: not analysed at [version], or not described for search at [search] (0: no search model). */
+    fun pending(version: Int, limit: Int, exclude: Collection<Long> = emptyList(), search: Int = 0): List<GMedia> =
+        queryMedia("(m.analyzed < ? OR m.searched < ?) AND m.failures < 2" + (if (exclude.isEmpty()) "" else " AND m.id NOT IN (${exclude.joinToString(",")})"),
+            arrayOf(version.toString(), search.toString()), limit = limit)
 
-    fun counts(version: Int): Pair<Int, Int> {
-        readableDatabase.rawQuery("SELECT COUNT(*), SUM(CASE WHEN analyzed >= ? OR failures >= 2 THEN 1 ELSE 0 END) FROM media", arrayOf(version.toString())).use { c ->
+    /** (done, total): items analysed at [version] and described for search at [search], or given up on. */
+    fun counts(version: Int, search: Int = 0): Pair<Int, Int> {
+        readableDatabase.rawQuery("SELECT COUNT(*), SUM(CASE WHEN (analyzed >= ? AND searched >= ?) OR failures >= 2 THEN 1 ELSE 0 END) FROM media",
+            arrayOf(version.toString(), search.toString())).use { c ->
             c.moveToFirst(); return c.getInt(1) to c.getInt(0)
         }
     }
@@ -213,17 +230,76 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
     }
 
     // ---------------------------------------------------------------- analysis results
-    fun saveAnalysis(id: Long, version: Int, tags: Map<String, Float>, faces: List<GFace>) {
+    /** [search]: the search model's descriptions (frame ms → [Embedding.pack]ed), stored as [searchVersion] (0: none). */
+    fun saveAnalysis(id: Long, version: Int, tags: Map<String, Float>, faces: List<GFace>,
+                     search: List<Pair<Long, ByteArray>> = emptyList(), searchVersion: Int = 0) {
         val db = writableDatabase
         db.beginTransaction()
         try {
             db.delete("tags", "media_id=?", arrayOf(id.toString()))
             for ((k, s) in tags) db.insert("tags", null, ContentValues().apply { put("media_id", id); put("cat", k); put("score", s) })
             replaceFaces(db, id, faces)
+            if (searchVersion > 0) writeSearch(db, id, search, searchVersion)
             db.execSQL("UPDATE media SET analyzed=?, failures=0 WHERE id=?", arrayOf<Any>(version, id))
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
+        if (searchVersion > 0) searchSeq.incrementAndGet()
     }
+
+    /** Only the search model's descriptions are new (the rest of the analysis stays). */
+    fun saveSearch(id: Long, search: List<Pair<Long, ByteArray>>, searchVersion: Int) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            writeSearch(db, id, search, searchVersion)
+            db.execSQL("UPDATE media SET failures=0 WHERE id=?", arrayOf<Any>(id))
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+        searchSeq.incrementAndGet()
+    }
+
+    private fun writeSearch(db: SQLiteDatabase, id: Long, search: List<Pair<Long, ByteArray>>, searchVersion: Int) {
+        db.delete("search", "media_id=?", arrayOf(id.toString()))
+        for ((ms, e) in search) db.insert("search", null, ContentValues().apply { put("media_id", id); put("frame_ms", ms); put("emb", e) })
+        db.execSQL("UPDATE media SET searched=? WHERE id=?", arrayOf<Any>(searchVersion, id))
+    }
+
+    /** Increases whenever search descriptions are written (the in-memory index reads what is new). */
+    val searchSeq = java.util.concurrent.atomic.AtomicLong()
+    /** Increases whenever an item's search descriptions are dropped (it changed or was deleted). */
+    val searchForgets = java.util.concurrent.atomic.AtomicLong()
+
+    /**
+     * Search descriptions stored after row [afterRow] (for reading the new ones only): calls [each]
+     * with media id and its packed descriptions; returns the last row read.
+     */
+    fun searchRows(afterRow: Long, each: (Long, List<ByteArray>) -> Unit): Long {
+        var last = afterRow
+        val byMedia = LinkedHashMap<Long, ArrayList<ByteArray>>()
+        readableDatabase.rawQuery("SELECT s.id, s.media_id, s.emb FROM search s WHERE s.media_id IN " +
+            "(SELECT media_id FROM search WHERE id > ?) ORDER BY s.media_id, s.id", arrayOf(afterRow.toString())).use { c ->
+            while (c.moveToNext()) {
+                last = maxOf(last, c.getLong(0))
+                byMedia.getOrPut(c.getLong(1)) { ArrayList() }.add(c.getBlob(2))
+            }
+        }
+        for ((k, v) in byMedia) each(k, v)
+        return last
+    }
+
+    /** Items without search descriptions anymore (deleted, or changed and waiting to be looked at again). */
+    fun searchGone(ids: Collection<Long>): Set<Long> {
+        if (ids.isEmpty()) return emptySet()
+        val have = HashSet<Long>()
+        for (chunk in ids.chunked(900)) readableDatabase.rawQuery("SELECT DISTINCT media_id FROM search WHERE media_id IN (${chunk.joinToString(",")})", null).use { c ->
+            while (c.moveToNext()) have.add(c.getLong(0))
+        }
+        return ids.filterTo(HashSet()) { it !in have }
+    }
+
+    /** How many items have search descriptions. */
+    fun searchedCount(version: Int): Int =
+        readableDatabase.rawQuery("SELECT COUNT(*) FROM media WHERE searched >= ?", arrayOf(version.toString())).use { c -> c.moveToFirst(); c.getInt(0) }
 
     /** Like [saveAnalysis] when only the faces were looked at again: the tags stay. */
     fun saveFaces(id: Long, version: Int, faces: List<GFace>) {
@@ -313,6 +389,19 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
         put("score", f.score); put("eye", f.eyePx); put("yaw", f.yaw); put("good", if (f.good) 1 else 0); put("quality", f.quality)
         put("frame_ms", f.frameMs); put("kind", f.kind.code); f.emb?.let { put("emb", pack(it)) }
         f.personId?.let { put("person_id", it) }; put("confirmed", if (f.confirmed) 1 else 0)
+    }
+
+    /** For each of [ids], the lowest of its scores for [cats] (only items that have them all). */
+    fun minTagScores(ids: Collection<Long>, cats: List<String>): Map<Long, Float> {
+        val out = HashMap<Long, Float>()
+        if (ids.isEmpty() || cats.isEmpty()) return out
+        val q = cats.joinToString(",") { "?" }
+        for (chunk in ids.chunked(800)) readableDatabase.rawQuery(
+            "SELECT media_id, MIN(score), COUNT(*) FROM tags WHERE cat IN ($q) AND media_id IN (${chunk.joinToString(",")}) GROUP BY media_id",
+            cats.toTypedArray()).use { c ->
+            while (c.moveToNext()) if (c.getInt(2) == cats.size) out[c.getLong(0)] = c.getFloat(1)
+        }
+        return out
     }
 
     fun tagged(cat: String, minScore: Float): List<GMedia> =
@@ -563,11 +652,12 @@ class GalleryDb private constructor(ctx: Context, name: String?) : SQLiteOpenHel
     /** Clears everything learned (people, names and tags); the library itself is re-read on the next sync. */
     fun reset() {
         val db = writableDatabase
-        for (t in listOf("tags", "faces", "people", "not_person", "media", "meta")) db.delete(t, null, null)
+        for (t in listOf("tags", "faces", "people", "not_person", "media", "meta", "search")) db.delete(t, null, null)
+        searchSeq.incrementAndGet(); searchForgets.incrementAndGet()
     }
 
     companion object {
-        const val VERSION = 2
+        const val VERSION = 3
         private const val ME_KEY = "me_person"
         @Volatile private var instance: GalleryDb? = null
 

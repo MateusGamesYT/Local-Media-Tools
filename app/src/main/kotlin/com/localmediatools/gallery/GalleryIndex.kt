@@ -48,6 +48,12 @@ object GalleryIndex {
     const val PHOTOS_SAME_FROM = 4
 
     /**
+     * Bump when the search model's descriptions change. 1 (1.15.0): SigLIP 2 B/32. Items analysed
+     * before only get their descriptions (faces, tags and what the user said stay).
+     */
+    const val SEARCH_VERSION = 1
+
+    /**
      * How hot the phone may get (PowerManager's thermal status): from [EASE_AT] indexing goes on at
      * about half speed (after each item, a pause as long as the item took), from [PAUSE_AT] it waits
      * until the phone is below it again. Until 1.8.0 it paused from SEVERE, which phones reach easily
@@ -70,6 +76,9 @@ object GalleryIndex {
     /** What the current engines would store; anything below is (re)analysed. */
     @Volatile var target = analyzedValue(EngineMode.AI, EngineMode.AI); private set
 
+    /** [SEARCH_VERSION] where the search model runs on this phone, else 0 (nothing to describe). */
+    @Volatile var searchTarget = SEARCH_VERSION; private set
+
     enum class Phase { IDLE, READING, ANALYZING, GROUPING, PAUSED, DONE }
 
     data class State(
@@ -82,6 +91,8 @@ object GalleryIndex {
         val pausedByUser: Boolean = false,
         /** Faces found before are being described again by a newer face model (names are kept). */
         val updatingFaces: Boolean = false,
+        /** Items analysed before are being described for the new search (nothing else changes). */
+        val updatingSearch: Boolean = false,
         /** Going slower because the phone is warm ([EASE_AT]). */
         val warm: Boolean = false,
         val faceMode: EngineMode? = null,
@@ -162,6 +173,7 @@ object GalleryIndex {
                 }
                 analyzer = null
                 ObjectTagger.release()
+                SearchModels.releaseImages()
                 com.localmediatools.vision.VisionModels.releaseGalleryFaces()
             }
         }
@@ -190,18 +202,19 @@ object GalleryIndex {
         if (removed > 0) db.pruneEmptyPeople()
         if (changed > 0 || removed > 0) notifyChanged()
         if (userPaused) {
-            val (d, t) = db.counts(target)
+            val (d, t) = db.counts(target, searchTarget)
             _state.update { it.copy(phase = Phase.PAUSED, done = d, total = t, pausedWhy = tr("Paused"), pausedByUser = true) }
             return
         }
         val a = if (analyzerOverride != null) null else analyzer ?: GalleryAnalyzer.create(ctx).also { analyzer = it }
         target = if (a == null) analyzedValue(EngineMode.AI, EngineMode.AI) else analyzedValue(a.faceMode, a.objectMode)
+        searchTarget = if (a?.searchWorks ?: (SearchModels.imageOverride != null)) SEARCH_VERSION else 0
         // Items without faces need nothing new from a face-model update; where the face AI doesn't work,
         // faces described before stay as they are (still grouped) instead of becoming basic ones.
         // (Photos only: every video analysed before 5 is looked at again in more frames.)
         for (v in FACES_ONLY_FROM until ANALYZER_VERSION) db.promoteUnchanged(v, target, keepFaces = a != null && a.faceMode != EngineMode.AI, photosOnly = true)
         for (v in PHOTOS_SAME_FROM until ANALYZER_VERSION) db.promotePhotos(v, target)
-        var (done, total) = db.counts(target)
+        var (done, total) = db.counts(target, searchTarget)
         if (done >= total) {
             // Nothing new to look at, but people found under older grouping rules are regrouped once.
             if (!GalleryPeople.current(db)) regroup(ctx, db)
@@ -217,7 +230,7 @@ object GalleryIndex {
         // Items that failed in this run aren't tried again until the next one.
         val attempted = HashSet<Long>()
         while (coroutineContext.isActive) {
-            val batch = db.pending(target, 24, attempted)
+            val batch = db.pending(target, 24, attempted, searchTarget)
             if (batch.isEmpty()) break
             for (m in batch) {
                 if (!coroutineContext.isActive) return
@@ -228,9 +241,21 @@ object GalleryIndex {
                 val t0 = System.nanoTime()
                 // Analysed before with engines at least as capable for tags: only the faces are new.
                 val prev = db.analyzedValue(m.id)
-                val facesOnly = !m.video && prev / 10 in FACES_ONLY_FROM until ANALYZER_VERSION && prev % 2 >= target % 2
-                if (facesOnly != _state.value.updatingFaces) _state.update { it.copy(updatingFaces = facesOnly) }
-                val result = try {
+                // Analysed as now: only the search model's descriptions are missing.
+                val searchOnly = prev >= target
+                val facesOnly = !searchOnly && !m.video && prev / 10 in FACES_ONLY_FROM until ANALYZER_VERSION && prev % 2 >= target % 2
+                if (facesOnly != _state.value.updatingFaces || searchOnly != _state.value.updatingSearch) _state.update { it.copy(updatingFaces = facesOnly, updatingSearch = searchOnly) }
+                if (searchOnly) {
+                    val described = try {
+                        analyzerOverride?.let { it(m).search } ?: a!!.describeOnly(m)
+                    } catch (e: OutOfMemoryError) { null } catch (e: Exception) { null }
+                    if (described != null) {
+                        db.saveSearch(m.id, described, searchTarget)
+                        done++
+                        _state.update { it.copy(done = done) }
+                    }
+                }
+                val result = if (searchOnly) null else try {
                     // A video's earlier faces are looked at again in their own frames (what was said about them stays).
                     val keep = if (m.video) db.faceFrames(m.id) else emptyList()
                     analyzerOverride?.invoke(m) ?: if (facesOnly) a!!.analyzeFaces(m, keep) else a!!.analyze(m, keep)
@@ -239,7 +264,9 @@ object GalleryIndex {
                     val faces = result.faces.map { f ->
                         GFace(0, m.id, f.x, f.y, f.w, f.h, f.score, f.eyePx, f.yaw, f.good, f.quality, f.frameMs, f.kind, f.emb, null, false)
                     }
-                    if (facesOnly) db.saveFaces(m.id, target, faces) else db.saveAnalysis(m.id, target, result.tags, faces)
+                    val search = result.search?.takeIf { searchTarget > 0 }
+                    if (facesOnly) { db.saveFaces(m.id, target, faces); search?.let { db.saveSearch(m.id, it, searchTarget) } }
+                    else db.saveAnalysis(m.id, target, result.tags, faces, search ?: emptyList(), if (search != null) searchTarget else 0)
                     // Faces described again keep their people until the regrouping at the end, so nobody
                     // shows up twice (old and new descriptions) on the way.
                     if (!facesOnly) newFaces += result.faces.count { it.emb != null }
@@ -260,12 +287,12 @@ object GalleryIndex {
                 // Let waiting work (naming, merging) in between items.
                 yield()
             }
-            val c = db.counts(target); done = c.first; total = c.second
+            val c = db.counts(target, searchTarget); done = c.first; total = c.second
             _state.update { it.copy(done = done, total = total) }
         }
         regroup(ctx, db)
-        val (d, t) = db.counts(target)
-        _state.update { it.copy(phase = Phase.DONE, done = d, total = t, updatingFaces = false, warm = false) }
+        val (d, t) = db.counts(target, searchTarget)
+        _state.update { it.copy(phase = Phase.DONE, done = d, total = t, updatingFaces = false, updatingSearch = false, warm = false) }
         notifyChanged()
     }
 

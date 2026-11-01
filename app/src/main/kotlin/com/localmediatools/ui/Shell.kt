@@ -442,6 +442,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             Triple("U²-Net-p (Qin et al.) via rembg", "Apache License 2.0 · MIT License", tr("Background remover.")),
             Triple("EfficientDet-Lite2 (MediaPipe)", "Apache License 2.0", tr("Finding people, animals, vehicles and objects in the gallery.")),
             Triple("EfficientNetV2-B3, ImageNet-21k (Google AutoML)", "Apache License 2.0", tr("Recognising scenes and kinds of things in the gallery and for auto enhance.")),
+            Triple("SigLIP 2 B/32 (Google DeepMind)", "Apache License 2.0", tr("Understanding what photos show and what you type into Gallery search, in the app's languages.")),
             Triple("MusicVAE trio model (Magenta, Google)", "Apache License 2.0", tr("Writing the instrumental background music for highlight videos, on the phone.")),
             Triple("WordNet 3.0 (Princeton University)", "WordNet License", tr("Grouping the classifier's classes into searchable categories.")),
             Triple("Open Images V7 annotations (Google)", "CC BY 4.0", tr("Human-verified labels used to calibrate and train the category recognisers.")),
@@ -457,7 +458,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
             }, lp().apply { bottomMargin = ctx.dp(10) })
         }
         for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/LPD-YuNet-Apache-2.0.txt", "licenses/PaddleOCR-Apache-2.0.txt", "licenses/Name-lists.txt", "licenses/InsightFace-models.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
-                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt", "licenses/Document-fonts-OFL.txt")) {
+                "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/SigLIP2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt", "licenses/Document-fonts-OFL.txt")) {
             val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })
             body.addView(UI.text(ctx, text, TextStyle.CAPTION).apply { setTextIsSelectable(true) })

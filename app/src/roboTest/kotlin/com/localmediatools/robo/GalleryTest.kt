@@ -10,6 +10,7 @@ import com.localmediatools.app.MainActivity
 import com.localmediatools.gallery.GalleryDb
 import com.localmediatools.gallery.GalleryIndex
 import com.localmediatools.gallery.GalleryRepo
+import com.localmediatools.gallery.SearchModels
 import com.localmediatools.gallery.core.SearchTerm
 import com.localmediatools.ui.MainShell
 import com.localmediatools.ui.gallery.FaceSheet
@@ -415,6 +416,83 @@ class GalleryTest {
         waitFor("resume") { GalleryIndex.state.value.phase == GalleryIndex.Phase.DONE }
         render(a)
     }
+    /**
+     * 1.15's search model on a library indexed before it: every item only gets its description (faces,
+     * tags and names stay), then descriptions find what no category has ("kite"), with people and
+     * dates as filters, together with the categories, best first; and the closest ones when nothing
+     * matches. The model is stood in for by orthogonal "concept" directions (a photo of a kite points
+     * half along the kite direction), so matches are exact and the real thresholds apply.
+     */
+    @Test fun describedPhotosAreFoundByWhatTheyShow() {
+        val a = openGallery()
+        val db = GalleryDb.get(app)
+        assertEquals(0, GalleryIndex.searchTarget)
+        val caroline = db.people().first { p -> db.faces("f.person_id = ?", arrayOf(p.id.toString())).any { FakeGallery.faceOwners[it.id] == 0 } }
+        FaceSheet.nameGroup(a, caroline, "Caroline", emptyList()) {}
+        waitFor("naming") { db.people().any { it.name == "Caroline" } }
+        idle(800)
+        val faces = db.faces("1").associate { it.id to it.personId }
+        // Words the stand-in model knows; anything else gets a direction of its own.
+        val concepts = HashMap<String, Int>()
+        fun dir(word: String) = concepts.getOrPut(word) { concepts.size }
+        fun vec(dims: List<Int>) = com.localmediatools.gallery.core.Embedding.normalize(FloatArray(768).also { v -> for (d in dims) v[d] += 1f })
+        val kites = setOf(3L, 9L, 25L)
+        fun photo(id: Long): FloatArray {
+            val words = FakeGallery.tags(id).keys.toMutableList()
+            if (id in kites) words.add("kite")
+            // A dog the categories missed.
+            if (id == 31L) words.add("dog")
+            return vec(words.map { dir(it) } + (400 + id.toInt()))
+        }
+        val synonyms = mapOf("dogs" to "dog", "kites" to "kite")
+        SearchModels.textOverride = { t -> vec(t.split(' ').filter { it.isNotBlank() }.map { dir(synonyms[it] ?: it) }) }
+        SearchModels.scaleOverride = com.localmediatools.gallery.core.MatchScale(111.83f, -16.77f)
+        SearchModels.imageOverride = { null }
+        val looked = java.util.Collections.synchronizedList(ArrayList<Long>())
+        GalleryIndex.analyzerOverride = { m ->
+            looked.add(m.id)
+            val f = FakeGallery.analysis(m)
+            com.localmediatools.gallery.Analysis(f.tags, f.faces, listOf(0L to com.localmediatools.gallery.core.Embedding.pack(photo(m.id))))
+        }
+        runIndex()
+        assertEquals(GalleryIndex.SEARCH_VERSION, GalleryIndex.searchTarget)
+        assertEquals(36, db.searchedCount(GalleryIndex.SEARCH_VERSION))
+        assertEquals(36, looked.toSet().size)
+        assertTrue(db.pending(GalleryIndex.target, 100, search = GalleryIndex.searchTarget).isEmpty())
+        // Only descriptions were added: the same faces, with their people and names.
+        assertEquals(faces, db.faces("1").associate { it.id to it.personId })
+        assertTrue(db.people().any { it.name == "Caroline" })
+        // Nothing found these before: no category, no file name.
+        val kite = GalleryRepo.search(app, "kite")
+        assertTrue(kite.ranked); assertTrue(!kite.closest)
+        assertEquals(kites, kite.items.map { it.id }.toSet())
+        // A person and a description: Caroline's photos with a kite.
+        assertEquals(setOf(3L, 9L), GalleryRepo.search(app, "Caroline flying a kite").items.map { it.id }.toSet())
+        // The categories and the model together: the four tagged dogs and the one the categories missed.
+        val dogs = GalleryRepo.search(app, "dogs")
+        assertEquals(setOf(2L, 6L, 12L, 18L, 31L), dogs.items.map { it.id }.toSet())
+        // Best first: a photo that is only a dog before one that is a dog on the beach.
+        assertTrue(dogs.items.indexOfFirst { it.id == 2L } < dogs.items.indexOfFirst { it.id == 6L })
+        // Nothing like it: the closest ones, said so.
+        val none = GalleryRepo.search(app, "volcano")
+        assertTrue(none.closest)
+        assertEquals(GalleryRepo.CLOSEST, none.items.size)
+        // Filters alone stay as before (newest first, not ranked).
+        assertTrue(!GalleryRepo.search(app, "videos").ranked)
+        // A changed photo loses its description until it is looked at again.
+        val changed = FakeGallery.media().map { if (it.id == 3L) com.localmediatools.gallery.GMedia(it.id, it.video, it.mime, it.name, it.bucketId, it.bucket, it.path,
+            it.taken, it.modified + 1, it.size, it.width, it.height, it.orientation, it.durationMs, it.favorite) else it }
+        GalleryIndex.analyzerOverride = { m -> if (m.id == 3L) throw IllegalStateException("not readable now") else FakeGallery.analysis(m) }
+        com.localmediatools.gallery.GalleryLibrary.source = { changed }
+        runIndex()
+        assertEquals(setOf(9L, 25L), GalleryRepo.search(app, "kite").items.map { it.id }.toSet())
+        // The search screen: best first with the order switch.
+        a.navigator.push(SearchScreen(a, "kite")); idle(800)
+        waitFor("results") { texts(a).any { it.startsWith("2 results") } }
+        assertTrue(texts(a).contains("Best match") && texts(a).contains("Newest"))
+        render(a)
+    }
+
     /** Starts a pass and waits until it has completely finished. */
     private fun runIndex() {
         waitFor("previous pass") { !GalleryIndex.busy }

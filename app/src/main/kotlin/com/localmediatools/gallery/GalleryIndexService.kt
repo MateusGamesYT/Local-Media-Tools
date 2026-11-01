@@ -128,6 +128,7 @@ class GalleryIndexService : Service() {
                 s.phase == GalleryIndex.Phase.PAUSED -> s.pausedWhy ?: tr("Paused")
                 s.phase == GalleryIndex.Phase.GROUPING -> tr("Grouping faces into people")
                 s.updatingFaces && s.total > 0 -> tr("Updating face recognition · {0} of {1}", s.done, s.total) + " · " + tr("names are kept")
+                s.updatingSearch && s.total > 0 -> tr("Preparing the new search · {0} of {1}", s.done, s.total) + " · " + tr("on this phone")
                 s.total > 0 -> trn(s.total, "{1} of {0} photo or video · on this phone", "{1} of {0} photos and videos · on this phone", s.done)
                 else -> tr("Reading your library")
             }

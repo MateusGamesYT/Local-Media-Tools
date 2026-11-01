@@ -56,8 +56,13 @@ class SearchVocabulary(
     val me: Pair<Long, String>? = null,
 )
 
-/** A parsed query: the terms, plus "did you mean" fixes that were applied to misspelled words. */
-class ParsedQuery(val terms: List<SearchTerm>, val corrections: List<Pair<String, String>>) {
+/**
+ * A parsed query: the terms, plus "did you mean" fixes that were applied to misspelled words.
+ * [content]: what the query describes, for the search model ("dog on the beach" from "photos of
+ * Sophie with her dog on the beach in 2023"): the words as typed (accents kept, lower case), without
+ * people, albums, kinds and dates, nor the small words around them.
+ */
+class ParsedQuery(val terms: List<SearchTerm>, val corrections: List<Pair<String, String>>, val content: String = "") {
     val isEmpty get() = terms.isEmpty()
 }
 
@@ -88,9 +93,14 @@ object SearchParser {
      * Lower case, accents on Latin letters dropped ("Cão" and "cao" match; Japanese and Korean
      * marks are kept), punctuation gone, characters of Chinese and Japanese spaced out.
      */
-    fun normalize(s: String): String = java.text.Normalizer.normalize(
+    fun normalize(s: String): String = words(java.text.Normalizer.normalize(
         latinMarks.replace(java.text.Normalizer.normalize(s.lowercase(I18n.locale), java.text.Normalizer.Form.NFD), ""), java.text.Normalizer.Form.NFC)
-        .replace('ё', 'е')
+        .replace('ё', 'е'))
+
+    /** As [normalize] but with accents kept: the same words, as typed (for the search model, where "cão" is not "cao"). */
+    fun asTyped(s: String): String = words(java.text.Normalizer.normalize(s.lowercase(I18n.locale), java.text.Normalizer.Form.NFC))
+
+    private fun words(s: String) = s
         .replace('’', '\'').replace("'s ", " ").replace(Regex("'s$"), "")
         .replace(Regex("[^\\p{L}\\p{N}&+' ]"), " ")
         .replace(unspaced, " $1 ")
@@ -142,6 +152,15 @@ object SearchParser {
     fun parse(query: String, vocab: SearchVocabulary, nowMs: Long = System.currentTimeMillis(), zone: java.util.TimeZone = java.util.TimeZone.getDefault()): ParsedQuery {
         val words = normalize(query).split(' ').filter { it.isNotEmpty() }
         if (words.isEmpty()) return ParsedQuery(emptyList(), emptyList())
+        // The same words as typed (one for one; if accents changed the split, the normalised ones).
+        val typed = asTyped(query).split(' ').filter { it.isNotEmpty() }.takeIf { it.size == words.size } ?: words
+        // Words that are people, albums, kinds or dates: not part of what the photo shows.
+        val filter = BooleanArray(words.size)
+        fun used(t: SearchTerm, from: Int, len: Int) {
+            if (t !is SearchTerm.Category) for (k in from until from + len) filter[k] = true
+        }
+        // Misspelled words that were corrected: the search model gets the corrected word.
+        val fixed = HashMap<Int, String>()
         val stop = list(ENGLISH_STOP + "," + trc("search: words to leave out of a search, separated by commas",
             "a,an,the,of,with,and,&,+,at,in,on,by,from,near,to,for,my,me,our,show,find,all,some,where,is,are,was,were,together,or,both,having,who,that,taken")).toHashSet()
         val spans = spans()
@@ -180,12 +199,13 @@ object SearchParser {
         while (i < words.size) {
             // Dates first: "june 2023", "2023", "last year", "today".
             val t = time(words, i, nowMs, zone, spans, monthNames, stop)
-            if (t != null) { terms.add(t.first); i += t.second; continue }
+            if (t != null) { terms.add(t.first); used(t.first, i, t.second); i += t.second; continue }
             var matched = false
             for (len in minOf(maxLen, words.size - i) downTo 1) {
                 val phrase = words.subList(i, i + len).joinToString(" ")
                 val make = dict[phrase] ?: continue
-                terms.add(make()); i += len; matched = true; break
+                val term = make()
+                terms.add(term); used(term, i, len); i += len; matched = true; break
             }
             if (matched) continue
             val w = words[i]
@@ -193,7 +213,7 @@ object SearchParser {
             // Korean: a word with a particle on it ("해변에서", at the beach).
             if (hangul.containsMatchIn(w)) {
                 val stem = koreanParticles.firstOrNull { w.length > it.length && w.endsWith(it) && dict.containsKey(w.removeSuffix(it)) }
-                if (stem != null) { terms.add(dict[w.removeSuffix(stem)]!!()); i++; continue }
+                if (stem != null) { val term = dict[w.removeSuffix(stem)]!!(); terms.add(term); used(term, i, 1); i++; continue }
             }
             // Typos: closest single-word entry within an edit budget that grows with length.
             val budget = when { w.length >= 7 -> 2; w.length >= 4 -> 1; else -> 0 }
@@ -205,7 +225,8 @@ object SearchParser {
                     if (d < bd || (d == bd && best != null && k < best)) { bd = d; best = k }
                 }
                 if (best != null && bd <= budget) {
-                    terms.add(dict[best]!!()); corrections.add(w to best); i++; continue
+                    val term = dict[best]!!()
+                    terms.add(term); used(term, i, 1); fixed[i] = best; corrections.add(w to best); i++; continue
                 }
             }
             leftovers.add(w); i++
@@ -213,7 +234,16 @@ object SearchParser {
         if (leftovers.isNotEmpty()) terms.add(SearchTerm.Text(leftovers.joinToString(" ").replace(betweenUnspaced, "")))
         // The same condition twice ("dog dogs") counts once.
         val unique = terms.distinctBy { termKey(it) }
-        return ParsedQuery(unique, corrections)
+        return ParsedQuery(unique, corrections, content(words, typed, filter, fixed, stop))
+    }
+
+    /** The words not taken by people, albums, kinds and dates, without small words at either end. */
+    private fun content(words: List<String>, typed: List<String>, filter: BooleanArray, fixed: Map<Int, String>, stop: Set<String>): String {
+        val keep = words.indices.filter { !filter[it] }
+        var a = 0; var b = keep.size
+        while (a < b && words[keep[a]] in stop) a++
+        while (b > a && words[keep[b - 1]] in stop) b--
+        return keep.subList(a, b).joinToString(" ") { fixed[it] ?: typed[it] }.replace(betweenUnspaced, "")
     }
 
     fun termKey(t: SearchTerm): String = when (t) {

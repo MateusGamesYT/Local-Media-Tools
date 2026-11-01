@@ -39,7 +39,8 @@ import kotlinx.coroutines.withContext
 /**
  * Gallery search: people by name ("Sophie", "John and Sophie"), things and places ("dog", "car",
  * "beach"), albums, dates ("June 2023", "last week") and kinds ("videos", "screenshots"),
- * combined freely. Everything matches on this phone.
+ * combined freely, and descriptions in any of the app's languages ("red car at night", "Sophie
+ * blowing out candles"), scored by the on-device search model. Everything matches on this phone.
  */
 class SearchScreen(activity: MainActivity, private val initial: String? = null) : Screen(activity) {
     private lateinit var field: SearchField
@@ -49,6 +50,9 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
     private lateinit var resultHead: LinearLayout
     private var job: Job? = null
     private var data: Suggest? = null
+    private var last: SearchResult? = null
+    /** Ranked results shown newest first instead (the user's choice, kept while the screen is open). */
+    private var newestFirst = false
 
     private class Suggest(val people: List<Pair<GPerson, GFace?>>, val cats: List<Pair<Category, Int>>, val albums: List<Pair<String, String>>)
 
@@ -72,6 +76,8 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
             setMargins(ctx.dp(14), 0, ctx.dp(14), ctx.dp(16))
         })
         loadSuggestions()
+        // The text side of the search model takes a moment to load: start now, while the user types.
+        scope.launch(Dispatchers.IO) { try { com.localmediatools.gallery.SearchModels.texts(ctx) } catch (_: Throwable) { } }
         if (!initial.isNullOrBlank()) field.edit.setText(initial)
         else field.edit.post {
             field.edit.requestFocus()
@@ -84,6 +90,12 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
     private val watch = IndexWatch(this, 0) { if (field.edit.text.isNotBlank()) onQuery(field.edit.text.toString(), 600) }
 
     override fun onShow() { watch.shown() }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // About 120 MB: freed when search closes (loaded again in a moment next time).
+        com.localmediatools.gallery.SearchModels.releaseTexts()
+    }
 
     private fun loadSuggestions() = scope.launch {
         val s = withContext(Dispatchers.IO) {
@@ -112,6 +124,7 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
 
     private fun showResults(r: SearchResult) {
         if (r.query.isEmpty) return
+        last = r
         // Plain words that matched nothing known: keep showing suggestions while typing.
         val onlyText = r.query.terms.all { it is SearchTerm.Text }
         resultHead.removeAllViews()
@@ -125,7 +138,16 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
         val n = r.items.size
         val st = GalleryIndex.state.value
         val tail = if (st.working && st.total > 0) " · " + trn(st.total - st.done, "still analysing {0} more", "still analysing {0} more") else ""
-        resultHead.addView(UI.text(ctx, (if (n == 0) tr("No matches") else trn(n, "{0} result", "{0} results")) + tail, TextStyle.CAPTION, Palette.TEXT_3).apply { setPadding(0, ctx.dp(8), 0, ctx.dp(4)) })
+        val count = when {
+            n == 0 -> tr("No matches")
+            r.closest -> trn(n, "No sure match · the closest one", "No sure matches · the {0} closest")
+            else -> trn(n, "{0} result", "{0} results")
+        }
+        val head = UI.horizontal(ctx).apply { gravity = Gravity.CENTER_VERTICAL }
+        head.addView(UI.text(ctx, count + tail, TextStyle.CAPTION, Palette.TEXT_3), lp(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        if (r.ranked && n > 1 && !r.closest) head.addView(orderToggle())
+        resultHead.addView(head, lp().apply { topMargin = ctx.dp(8); bottomMargin = ctx.dp(4) })
+        if (r.closest) resultHead.addView(UI.text(ctx, tr("Nothing matches this surely. These are the photos that come closest; try other words or fewer of them."), TextStyle.BODY_2).apply { setPadding(0, ctx.dp(4), 0, ctx.dp(4)) })
         if (n == 0) {
             val why = when {
                 onlyText -> tr("Try a name you gave someone, or things like dog, car, beach, food, sunset or document.")
@@ -134,11 +156,27 @@ class SearchScreen(activity: MainActivity, private val initial: String? = null) 
             }
             resultHead.addView(UI.text(ctx, why, TextStyle.BODY_2).apply { setPadding(0, ctx.dp(8), 0, 0) })
         }
-        grid.setItems(r.items)
+        val byMatch = r.ranked && !newestFirst
+        grid.grouping = if (byMatch) MediaGrid.Grouping.NONE else MediaGrid.Grouping.DAY
+        grid.setItems(if (byMatch) r.items else r.items.sortedWith(compareByDescending<com.localmediatools.gallery.GMedia> { it.taken }.thenByDescending { it.id }))
         if (onlyText && n == 0) { results.visibility = View.GONE; suggestions.visibility = View.VISIBLE; return }
         grid.scrollToTop()
         results.visibility = View.VISIBLE
         suggestions.visibility = View.GONE
+    }
+
+    /** "Best match · Newest": the order of ranked results. */
+    private fun orderToggle(): View = UI.horizontal(ctx).apply {
+        for ((label, newest) in listOf(tr("Best match") to false, tr("Newest") to true)) {
+            val on = newest == newestFirst
+            addView(UI.text(ctx, label, TextStyle.CAPTION, if (on) Palette.TEXT else Palette.TEXT_2).apply {
+                background = if (on) Shapes.pill(ctx, Palette.ACCENT_DARK, Palette.ACCENT) else Shapes.clickable(ctx, Palette.SURFACE_2, 100f, Palette.STROKE_2)
+                setPadding(ctx.dp(10), ctx.dp(5), ctx.dp(10), ctx.dp(5))
+                isClickable = true; isFocusable = true
+                contentDescription = label + if (on) tr(", selected") else ""
+                setOnClickListener { if (newestFirst != newest) { newestFirst = newest; last?.let { showResults(it) } } }
+            }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { leftMargin = ctx.dp(6) })
+        }
     }
 
     private fun termChip(t: SearchTerm): View = UI.horizontal(ctx).apply {

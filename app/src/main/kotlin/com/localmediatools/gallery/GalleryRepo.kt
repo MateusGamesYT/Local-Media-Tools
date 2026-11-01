@@ -7,10 +7,16 @@ import com.localmediatools.gallery.core.ParsedQuery
 import com.localmediatools.gallery.core.SearchParser
 import com.localmediatools.gallery.core.SearchTerm
 import com.localmediatools.gallery.core.SearchVocabulary
+import com.localmediatools.gallery.core.SemanticIndex
 import com.localmediatools.gallery.core.Taxonomy
 
-/** Results of a gallery search. */
-class SearchResult(val query: ParsedQuery, val items: List<GMedia>)
+/**
+ * Results of a gallery search. [ranked]: best match first (the query described something and the
+ * search model scored it), else newest first. [closest]: nothing matched surely; these are the
+ * nearest ones. [unsearched]: items not described for the search model yet (only found by name,
+ * category or date until they are).
+ */
+class SearchResult(val query: ParsedQuery, val items: List<GMedia>, val ranked: Boolean = false, val closest: Boolean = false, val unsearched: Int = 0)
 
 /** Read side of the gallery: categories, albums, people and search, on top of [GalleryDb]. */
 object GalleryRepo {
@@ -38,7 +44,71 @@ object GalleryRepo {
 
     fun search(ctx: Context, text: String): SearchResult {
         val q = SearchParser.parse(text, vocabulary(ctx))
-        return SearchResult(q, run(ctx, q.terms))
+        if (q.isEmpty) return SearchResult(q, emptyList())
+        return semantic(ctx, q) ?: SearchResult(q, run(ctx, q.terms))
+    }
+
+    /** At most this many nearest items when nothing matches surely. */
+    const val CLOSEST = 24
+
+    /**
+     * The search with the search model, for a query that describes something ([ParsedQuery.content]):
+     * among the items people, albums, kinds and dates allow, each is scored by how well its description
+     * matches the text ([MatchScale.calibrated]: 0.5 and up is a match) and by the categories the query
+     * names (their tag scores, as before); an item matches when either says so (on Open Images this
+     * found 82% of the photos instead of 68%, buildtools/search/fusion.py), best first. Null where the
+     * model can't run or nothing is described yet: the search works as before.
+     */
+    private fun semantic(ctx: Context, q: ParsedQuery): SearchResult? {
+        if (q.content.isBlank()) return null
+        val scale = SearchModels.scale(ctx) ?: return null
+        val db = GalleryDb.get(ctx)
+        val index = semanticIndex(db)
+        if (index.size == 0) return null
+        val emb = SearchModels.texts(ctx)?.embed(q.content) ?: return null
+        val filters = q.terms.filter { it is SearchTerm.Person || it is SearchTerm.Album || it is SearchTerm.Kind || it is SearchTerm.Time }
+        val candidates = if (filters.isEmpty()) all(ctx) else run(ctx, filters)
+        if (candidates.isEmpty()) return SearchResult(q, emptyList(), ranked = true)
+        // As before: every category tagged (and any other words in the file or album name).
+        val before = run(ctx, q.terms).mapTo(HashSet()) { it.id }
+        val cats = q.terms.filterIsInstance<SearchTerm.Category>().map { it.key }
+        val tagScore = if (cats.isEmpty()) emptyMap() else db.minTagScores(before, cats)
+        val cos = index.best(emb, candidates.map { it.id })
+        val score = HashMap<Long, Float>(candidates.size * 2)
+        for (m in candidates) {
+            val sem = cos[m.id]?.let { scale.calibrated(it) } ?: 0f
+            val old = if (m.id in before) maxOf(Taxonomy.TAGGED, tagScore[m.id] ?: Taxonomy.TAGGED) else 0f
+            score[m.id] = maxOf(sem, old)
+        }
+        val unsearched = candidates.count { it.id !in cos }
+        // Sure matches all score near 1: among them the closer description comes first, then the newer.
+        val found = candidates.filter { score[it.id]!! >= Taxonomy.TAGGED }
+            .sortedWith(compareByDescending<GMedia> { score[it.id]!! }.thenByDescending { cos[it.id] ?: -1f }.thenByDescending { it.taken })
+        if (found.isNotEmpty()) return SearchResult(q, found, ranked = true, unsearched = unsearched)
+        val near = candidates.filter { it.id in cos }.sortedByDescending { cos[it.id]!! }.take(CLOSEST)
+        return SearchResult(q, near, ranked = true, closest = near.isNotEmpty(), unsearched = unsearched)
+    }
+
+    private val index = SemanticIndex()
+    private var indexDb: GalleryDb? = null
+    private var indexRow = 0L
+    private var indexSeq = -1L
+    private var indexForgets = -1L
+
+    /** The library's search descriptions in memory, brought up to date with what the index wrote since. */
+    fun semanticIndex(db: GalleryDb): SemanticIndex = synchronized(index) {
+        if (indexDb !== db) { index.clear(); indexDb = db; indexRow = 0L; indexSeq = -1L; indexForgets = -1L }
+        val forgets = db.searchForgets.get()
+        if (forgets != indexForgets) {
+            indexForgets = forgets
+            for (id in db.searchGone(index.mediaIds())) index.put(id, emptyList())
+        }
+        val seq = db.searchSeq.get()
+        if (seq != indexSeq) {
+            indexSeq = seq
+            indexRow = db.searchRows(indexRow) { id, rows -> index.put(id, rows) }
+        }
+        index
     }
 
     /** Items matching every term. */

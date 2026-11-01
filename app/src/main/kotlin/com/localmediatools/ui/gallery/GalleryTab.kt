@@ -408,8 +408,13 @@ class GalleryTab(private val shell: MainShell) {
             null -> tr("starts with the first photo")
         }
         val progress = if (s.total > 0) trn(s.total, "{1} of {0} photo or video analysed.", "{1} of {0} photos and videos analysed.", s.done) else tr("Reading your library.")
-        val update = if (s.updatingFaces) "\n\n" + tr("Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.") else ""
-        val msg = "$progress$update\n\n" + tr("Objects and scenes: {0}.", mode(s.objectMode)) + "\n" + tr("Faces and people: {0}.", mode(s.faceMode)) + "\n\n" +
+        val update = when {
+            s.updatingFaces -> "\n\n" + tr("Faces found before are being looked at again with the newer, more accurate face model. Names, confirmations and corrections stay; people are regrouped when it finishes.")
+            s.updatingSearch -> "\n\n" + tr("Photos looked at before are being described for the new search, which understands what you type (\"dog on the beach\", \"red car at night\"). Faces, names and things found stay as they are.")
+            else -> ""
+        }
+        val msg = "$progress$update\n\n" + tr("Objects and scenes: {0}.", mode(s.objectMode)) + "\n" + tr("Faces and people: {0}.", mode(s.faceMode)) + "\n" +
+            tr("Search by description: {0}.", if (GalleryIndex.searchTarget > 0) tr("on-device AI") else tr("unavailable (search uses names, things and dates)")) + "\n\n" +
             tr("Everything runs on this phone at low priority. It slows down when the phone gets warm, pauses when it is very hot or the battery is low, and continues where it left off.")
         AlertDialog.Builder(activity).setTitle(tr("Organising your gallery")).setMessage(msg)
             .setPositiveButton(tr("OK"), null)
@@ -480,6 +485,7 @@ class IndexStatusBar(ctx: android.content.Context, onClick: () -> Unit) : Linear
             s.phase == GalleryIndex.Phase.READING -> tr("Reading your library…")
             s.phase == GalleryIndex.Phase.GROUPING -> tr("Grouping faces into people…")
             s.updatingFaces -> tr("Updating face recognition · {0} of {1}", s.done, s.total) + " · " + if (s.warm) tr("slower while the phone is warm") else tr("names are kept")
+            s.updatingSearch -> tr("Preparing the new search · {0} of {1}", s.done, s.total) + " · " + if (s.warm) tr("slower while the phone is warm") else tr("on this phone")
             else -> tr("Finding people and things · {0} of {1}", s.done, s.total) + " · " + if (s.warm) tr("slower while the phone is warm") else tr("on this phone")
         }
         bar.setProgress(s.fraction, if (s.phase == GalleryIndex.Phase.PAUSED) Palette.WARNING else Palette.ACCENT)

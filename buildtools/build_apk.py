@@ -227,7 +227,7 @@ def compile_resources():
          "--manifest", os.path.join(SRC, "AndroidManifest.xml"), "--java", gen,
          "--min-sdk-version", str(MIN_SDK), "--target-sdk-version", str(TARGET_SDK),
          "--version-code", str(VERSION_CODE), "--version-name", VERSION_NAME,
-         "-A", assets, "-0", "tflite", "-0", "ttf", "--no-version-vectors", out])
+         "-A", assets, "-0", "tflite", "-0", "ttf", "-0", "emb", "--no-version-vectors", out])
 
 
 def compile_code():

@@ -13,12 +13,14 @@ TFLite runtime is 2.16); weights come from the Hugging Face cache (HF_HOME).
                                            [1, 64, 768] → 768 numbers (L2-normalised); 8-bit weights
   search/tokenizer.bin                     TextTokenizer: characters, byte tokens, all 580,604 merges,
                                            and each token's row in the table
-  search/embeddings.bin                    the rows of the tokens of the most common N words of each of
+  search/tokens.emb                        the rows of the tokens of the most common N words of each of
                                            the app's ten languages (FrequencyWords, OpenSubtitles 2018/
                                            2016, CC BY-SA 4.0, used only to choose the rows) plus every
                                            single character and byte, at 8 or 4 bits with a scale per row
   search/model.json                        the score's scale and bias (SigLIP: match probability =
-                                           sigmoid(scale x cosine + bias)) and the input size
+                                           sigmoid(scale x cosine + bias)), the input size, and the app's
+                                           self-test references: what the converted models give for a
+                                           fixed picture and a fixed text
 
 Every converted part is checked against the original on real photos and texts (cosine of embeddings).
 """
@@ -111,7 +113,7 @@ q = 2 ** (BITS - 1) - 1
 scale = (np.abs(Wt).max(1) / q + 1e-12).astype(np.float32)
 Qt = np.clip(np.round(Wt / scale[:, None]), -q - 1, q).astype(np.int8)
 os.makedirs(os.path.join(assets, 'search'), exist_ok=True)
-with open(os.path.join(assets, 'search', 'embeddings.bin'), 'wb') as f:
+with open(os.path.join(assets, 'search', 'tokens.emb'), 'wb') as f:
     # magic "LMTE", version 1, rows, dim, bits; per row its float scale; then the values (4-bit: two
     # per byte, low nibble first, as signed numbers -8..7).
     f.write(struct.pack('>iiiii', 0x4C4D5445, 1, len(keep), D, BITS)); f.write(scale.astype('>f4').tobytes())
@@ -152,11 +154,39 @@ for t in texts:
     cos.append(float(run_tflite(tt, x) @ ref))
 print(f'text tower: 8-bit weights against the original on {len(texts)} texts: cosine min {min(cos):.4f}, median {np.median(cos):.4f}')
 
+# Test fixture: texts in the app's ten languages with the original tokenizer's ids (Hugging Face) and the
+# rows the app must give; the JVM tests check TextTokenizer against both.
+from transformers import AutoProcessor
+hf = AutoProcessor.from_pretrained(RID).tokenizer
+FIX = ['a dog on the beach', 'Sophie blowing out candles', 'red car at night', 'cão na praia', 'pôr do sol em São Paulo',
+       'perro en la playa', 'niño con globos', 'chien sur la plage', 'fête d\'anniversaire', 'Hund am Strand', 'Straßenbahn im Schnee',
+       'cane sulla spiaggia', 'собака на пляже', 'ёлка и снег', '海边的狗', '生日蛋糕', '海辺の犬', 'ラーメンを食べる', '해변의 강아지',
+       '생일 케이크', 'receipt 2023 €45,90', 'emoji 🐶🎂 ok', 'x' * 120, '']
+fx = []
+for t in FIX:
+    ids = hf(t.lower(), padding='max_length', max_length=64, truncation=True)['input_ids']
+    mine = bpe.ids(t.lower())
+    assert ids == mine, (t, ids[:12], mine[:12])
+    fx.append(f"{t}\t{' '.join(map(str, bpe.ids(t.lower())))}\t{' '.join(map(str, app_rows(t)))}")
+os.makedirs(os.path.join(here, '..', '..', 'app', 'src', 'test', 'resources', 'search'), exist_ok=True)
+open(os.path.join(here, '..', '..', 'app', 'src', 'test', 'resources', 'search', 'tokens.tsv'), 'w', encoding='utf-8').write(
+    '# text, the original tokenizer\'s 64 ids, the 64 rows the app gives (buildtools/search/build_search_model.py)\n' + '\n'.join(fx) + '\n')
+print(f'tokenizer: {len(FIX)} texts in ten languages give the original ids')
+
+# Self-test references (SearchModels): a fixed picture (red across, green down, blue their mean) and a text.
+yy, xx = np.mgrid[0:256, 0:256]
+pat = np.stack([xx, yy, (xx + yy) // 2], -1).astype(np.float32) / 127.5 - 1
+ref_image = run_tflite(vt, pat[None])
+ref_text_s = 'a dog on the beach'
+ref_text = run_tflite(tt, Wd[app_rows(ref_text_s)][None].astype(np.float32))
+
 import shutil
 shutil.copy(vt, os.path.join(assets, 'models', 'search_image_siglip2_b32.tflite'))
 shutil.copy(tt, os.path.join(assets, 'models', 'search_text_siglip2_b32.tflite'))
 json.dump({'model': 'SigLIP 2 B/32 (google/siglip2-base-patch32-256)', 'image_size': 256,
-           'logit_scale': float(m.logit_scale.exp()), 'logit_bias': float(m.logit_bias), 'rows': len(keep), 'bits': BITS},
+           'logit_scale': float(m.logit_scale.detach().exp()), 'logit_bias': float(m.logit_bias.detach()), 'rows': len(keep), 'bits': BITS,
+           'words_per_language': NWORDS, 'selftest_image': [round(float(x), 6) for x in ref_image],
+           'selftest_text': ref_text_s, 'selftest_text_embedding': [round(float(x), 6) for x in ref_text]},
           open(os.path.join(assets, 'search', 'model.json'), 'w'), indent=1)
-for n in ('models/search_image_siglip2_b32.tflite', 'models/search_text_siglip2_b32.tflite', 'search/tokenizer.bin', 'search/embeddings.bin'):
+for n in ('models/search_image_siglip2_b32.tflite', 'models/search_text_siglip2_b32.tflite', 'search/tokenizer.bin', 'search/tokens.emb'):
     print(n, os.path.getsize(os.path.join(assets, n)) // 1000, 'kB')

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
+import com.localmediatools.gallery.core.Embedding
 import com.localmediatools.gallery.core.VideoSampling
 import com.localmediatools.image.ImageSource
 import com.localmediatools.vision.VisionModels
@@ -15,8 +16,11 @@ import kotlin.math.max
 /** Which engine recognises things or faces on this phone. */
 enum class EngineMode { AI, BASIC, OFF }
 
-/** What indexing learned about one photo or video. */
-class Analysis(val tags: Map<String, Float>, val faces: List<FoundFace>)
+/**
+ * What indexing learned about one photo or video. [search]: the search model's descriptions (frame ms →
+ * [com.localmediatools.gallery.core.Embedding.pack]ed; one for a photo), null where it can't run.
+ */
+class Analysis(val tags: Map<String, Float>, val faces: List<FoundFace>, val search: List<Pair<Long, ByteArray>>? = null)
 
 /**
  * Looks at one photo or video: objects and scenes (on-device AI, or the basic fallback) and faces.
@@ -29,7 +33,11 @@ class GalleryAnalyzer private constructor(
     private val basicFaces: BasicFaces?,
     private val objects: ObjectTagger?,
     private val basicObjects: BasicTagger,
+    private val search: SearchModels.SearchImages?,
 ) {
+    /** Whether photos get descriptions for the search model. */
+    val searchWorks get() = search != null
+
     val faceMode get() = if (faces != null) EngineMode.AI else if (basicFaces != null) EngineMode.BASIC else EngineMode.OFF
     val objectMode get() = if (objects != null) EngineMode.AI else EngineMode.BASIC
 
@@ -45,9 +53,67 @@ class GalleryAnalyzer private constructor(
             try {
                 val found = findFaces(src, work)
                 val tags = if (withTags) tagsFor(work, found) else emptyMap()
-                return Analysis(tags, found)
+                return Analysis(tags, found, describe(work)?.let { listOf(0L to it) })
             } finally { work.recycle() }
         }
+    }
+
+    /**
+     * Only the search model's descriptions (what was found before stays): a photo from a smaller copy
+     * (the model looks at [SearchModels.SIZE] px), a video at the moments [VideoSampling] spreads over it.
+     * Null where the model can't run.
+     */
+    fun describeOnly(m: GMedia): List<Pair<Long, ByteArray>>? {
+        if (search == null) return null
+        if (!m.video) ImageSource.open(ctx, m.uri, m.name).use { src ->
+            val work = src.preview(DESCRIBE_SIDE)
+            try { return listOf(0L to (describe(work) ?: throw IllegalStateException("search model gave no description"))) } finally { work.recycle() }
+        }
+        val mmr = MediaMetadataRetriever()
+        try {
+            mmr.setDataSource(ctx, m.uri)
+            val dur = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: m.durationMs
+            val frames = Frames()
+            for (t in keyframes(m) { sync -> VideoSampling.moments(dur, emptyList(), sync) }) {
+                val frame = try {
+                    mmr.getScaledFrameAtTime(t * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, DESCRIBE_SIDE, DESCRIBE_SIDE)
+                } catch (e: Exception) { null } ?: continue
+                try { frames.add(t, describe(frame)) } finally { frame.recycle() }
+            }
+            if (frames.decoded == 0) throw IllegalStateException("no frame of ${m.name} could be decoded")
+            return frames.list()
+        } finally {
+            try { mmr.release() } catch (_: Exception) { }
+        }
+    }
+
+    /** The search model's description of a picture, packed; null without the model. Fails (the item is tried again later) if the model gives none. */
+    private fun describe(bmp: Bitmap): ByteArray? {
+        val s = search ?: return null
+        val e = s.embed(bmp) ?: throw IllegalStateException("search model gave no description")
+        return Embedding.pack(e)
+    }
+
+    /**
+     * A video's descriptions: one per frame looked at, except frames that look like one already kept
+     * (cosine [SAME_FRAME] or more: the same shot), so a long still scene doesn't fill the index.
+     */
+    private class Frames {
+        private val kept = ArrayList<Pair<Long, FloatArray>>()
+        private val packed = ArrayList<Pair<Long, ByteArray>>()
+        var decoded = 0; private set
+        var any = false; private set
+
+        fun add(t: Long, p: ByteArray?) {
+            decoded++
+            if (p == null) return
+            any = true
+            val e = Embedding.unpack(p)
+            if (kept.any { Embedding.cosine(it.second, e) >= SAME_FRAME }) return
+            kept.add(t to e); packed.add(t to p)
+        }
+
+        fun list(): List<Pair<Long, ByteArray>>? = if (any) packed else null
     }
 
     /**
@@ -64,6 +130,7 @@ class GalleryAnalyzer private constructor(
             val times = keyframes(m) { sync -> VideoSampling.moments(dur, keepFrames, sync) }
             val tags = HashMap<String, Float>()
             val all = ArrayList<FoundFace>()
+            val frames = Frames()
             var decoded = 0
             for (t in times) {
                 val frame = try {
@@ -74,11 +141,14 @@ class GalleryAnalyzer private constructor(
                     val f = findFaces(null, frame)
                     // Remember the frame, so the face's picture can be cut from that same frame later.
                     all.addAll(f.map { it.atFrame(t) })
-                    if (withTags) for ((k, v) in tagsFor(frame, f)) tags[k] = max(tags[k] ?: 0f, v)
+                    if (withTags) {
+                        for ((k, v) in tagsFor(frame, f)) tags[k] = max(tags[k] ?: 0f, v)
+                        frames.add(t, describe(frame))
+                    }
                 } finally { frame.recycle() }
             }
             if (decoded == 0) throw IllegalStateException("no frame of ${m.name} could be decoded")
-            return Analysis(tags, dedupe(all))
+            return Analysis(tags, dedupe(all), if (withTags) frames.list() else null)
         } finally {
             try { mmr.release() } catch (_: Exception) { }
         }
@@ -130,6 +200,11 @@ class GalleryAnalyzer private constructor(
     }
 
     companion object {
+        /** Side of the copy a photo is described from when only its search description is new. */
+        const val DESCRIBE_SIDE = 768
+        /** Video frames this alike are one shot (one description kept). */
+        const val SAME_FRAME = 0.95f
+
         /** Builds the analyzer, choosing AI engines that pass their self-test and falling back otherwise. */
         fun create(ctx: Context): GalleryAnalyzer {
             val app = ctx.applicationContext
@@ -140,7 +215,8 @@ class GalleryAnalyzer private constructor(
             val objects = try {
                 ObjectTagger.create(app).takeIf { SelfTest.objects(it) }
             } catch (t: Throwable) { android.util.Log.w("LMT", "object AI unavailable", t); null }
-            return GalleryAnalyzer(app, faces, basic, objects, BasicTagger)
+            val search = try { SearchModels.images(app) } catch (t: Throwable) { android.util.Log.w("LMT", "search model unavailable", t); null }
+            return GalleryAnalyzer(app, faces, basic, objects, BasicTagger, search)
         }
     }
 
