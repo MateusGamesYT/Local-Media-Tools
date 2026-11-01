@@ -49,12 +49,16 @@ data class HighlightSettings(
     val seed: Long = 1,
     /** The user's own song as the music (instead of [mood]). */
     val song: SongChoice? = null,
+    /** The language of the text in the video (title, dates, moments' names); null: the app's. */
+    val textLanguage: com.localmediatools.i18n.Language? = null,
 ) {
     /** What the music is, for summaries. */
     val musicLabel: String get() = song?.name ?: mood?.musicLabel ?: tr("no music")
 
     /** The plan for [items], all looked at already ([infos] in the same order). */
-    fun plan(items: List<MediaItem>, infos: List<ShotInfo>): Plan {
+    fun plan(items: List<MediaItem>, infos: List<ShotInfo>): Plan = com.localmediatools.i18n.I18n.inLanguage(textLanguage) { planHere(items, infos) }
+
+    private fun planHere(items: List<MediaItem>, infos: List<ShotInfo>): Plan {
         val shots: List<Shot> = infos.mapIndexed { i, s -> s.shot(i) }
         val ids = items.withIndex().associate { (i, it) -> it.key to i }
         val beat = song?.beatSeconds ?: mood?.let { 60.0 / it.bpm } ?: 0.5

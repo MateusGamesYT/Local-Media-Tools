@@ -78,21 +78,41 @@ enum class PluralRule(val forms: Int) {
 
 /** The current language and its translations. */
 object I18n {
-    @Volatile var language: Language = Language.ENGLISH
-        private set
-    @Volatile var catalog: Catalog = Catalog.EMPTY
-        private set
+    @Volatile private var appLanguage: Language = Language.ENGLISH
+    @Volatile private var appCatalog: Catalog = Catalog.EMPTY
+    /** A language for the work of one thread only ([with]): text made for a video in another language. */
+    private val local = ThreadLocal<Pair<Language, Catalog>?>()
+
+    val language: Language get() = local.get()?.first ?: appLanguage
+    val catalog: Catalog get() = local.get()?.second ?: appCatalog
+
+    /** Reads a language's catalog (asset path → text, or null), as the app last loaded its own with [load]. */
+    @Volatile var reader: ((String) -> String?)? = null
+
+    /**
+     * Runs [block] with [language] for everything it writes on this thread (texts, numbers, dates),
+     * leaving the app's own language as it is everywhere else: for a video whose text is in another
+     * language than the app's.
+     */
+    fun <T> inLanguage(language: Language?, block: () -> T): T {
+        if (language == null || language == this.language) return block()
+        val c = if (language == Language.ENGLISH) Catalog.EMPTY else reader?.invoke(path(language))?.let { Catalog.parse(it) } ?: Catalog.EMPTY
+        val prev = local.get()
+        local.set(language to c)
+        try { return block() } finally { local.set(prev) }
+    }
 
     /** For numbers, dates and letter case in the current language. */
     val locale: Locale get() = language.locale
 
     fun use(language: Language, catalog: Catalog) {
-        this.catalog = catalog
-        this.language = language
+        appCatalog = catalog
+        appLanguage = language
     }
 
     /** Switches language, reading its catalog with [read] (asset path → text, or null when missing). */
     fun load(language: Language, read: (String) -> String?) {
+        reader = read
         val c = if (language == Language.ENGLISH) Catalog.EMPTY else read(path(language))?.let { Catalog.parse(it) } ?: Catalog.EMPTY
         use(language, c)
     }

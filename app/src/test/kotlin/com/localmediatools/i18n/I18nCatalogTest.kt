@@ -266,6 +266,26 @@ class I18nCatalogTest {
         assertEquals(setOf("c:dog", "c:beach"), keys("해변에서 강아지"))
         assertEquals(setOf("c:dog", month(2023, Calendar.JUNE)), keys("2023년 6월 강아지"))
     }
+
+    /** A video's text in another language than the app's: only the thread making it sees that language. */
+    @Test fun anotherLanguageForOneThreadOnly() {
+        I18n.reader = { path -> File("app/src/main/assets/$path").takeIf { it.exists() }?.readText() }
+        use(Language.GERMAN)
+        val inside = I18n.inLanguage(Language.PORTUGUESE_BR) {
+            // Meanwhile, another thread still writes German.
+            var other = ""
+            val t = Thread { other = tr("Cancel") + "|" + I18n.language.tag }
+            t.start(); t.join()
+            Triple(tr("Cancel"), I18n.date(0, TimeZone.getTimeZone("UTC"), "MMMM"), other)
+        }
+        assertEquals("Cancelar", inside.first)
+        assertEquals("janeiro", inside.second.lowercase(Locale.ROOT))
+        assertEquals("Abbrechen|de", inside.third)
+        // Back to German afterwards; null or the same language changes nothing.
+        assertEquals(Language.GERMAN, I18n.language)
+        assertEquals("Abbrechen", tr("Cancel"))
+        assertEquals("Abbrechen", I18n.inLanguage(null) { tr("Cancel") })
+    }
 }
 
 /** Reading Kotlin source text as buildtools/i18n/catalog.py does. */

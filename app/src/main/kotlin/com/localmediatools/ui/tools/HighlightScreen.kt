@@ -72,11 +72,13 @@ object HighlightPrefs {
     val names = HashMap<Int, String>()
     /** The selection the shot choices were made for. */
     var forKeys: List<String> = emptyList()
+    /** The language of the text in the video; null: the app's. */
+    var textLanguage: com.localmediatools.i18n.Language? = null
 
-    fun settings() = HighlightSettings(mood, seconds, aspect, captions, clipSound, include.toSet(), exclude.toSet(), title, names.toMap(), seed, song.takeIf { useSong })
+    fun settings() = HighlightSettings(mood, seconds, aspect, captions, clipSound, include.toSet(), exclude.toSet(), title, names.toMap(), seed, song.takeIf { useSong }, textLanguage)
 
     fun reset() {
-        mood = Mood.UPBEAT; seconds = null; aspect = null; captions = true; clipSound = true; seed = 1L; song = null; useSong = false
+        mood = Mood.UPBEAT; seconds = null; aspect = null; captions = true; clipSound = true; seed = 1L; song = null; useSong = false; textLanguage = null
         include.clear(); exclude.clear(); title = null; names.clear(); forKeys = emptyList()
     }
 }
@@ -160,6 +162,9 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         container.addView(shapes, lp().apply { topMargin = ctx.dp(8) })
 
         container.addView(ToggleRow(ctx, tr("Captions"), tr("The title at the start and each moment's name"), HighlightPrefs.captions) { HighlightPrefs.captions = it; refresh() }, lp().apply { topMargin = ctx.dp(14) })
+        section(container, tr("Language of the captions"), tr("Dates and moments' names in the video can be in another language than the app's"))
+        container.addView(ChoiceGroup(ctx, listOf<com.localmediatools.i18n.Language?>(null) + com.localmediatools.i18n.Language.entries,
+            { it?.nativeName ?: tr("As the app") }, HighlightPrefs.textLanguage) { HighlightPrefs.textLanguage = it; refresh() }, lp().apply { topMargin = ctx.dp(8) })
         container.addView(ToggleRow(ctx, tr("Sound from your videos"), tr("The music gets quieter while they play"), HighlightPrefs.clipSound) { HighlightPrefs.clipSound = it; refresh() }, lp().apply { topMargin = ctx.dp(8) })
         titleField = TextField(ctx, tr("Title"), "", HighlightPrefs.title ?: "") { HighlightPrefs.title = it.ifBlank { null }; refresh() }
         container.addView(titleField, lp().apply { topMargin = ctx.dp(14) })
@@ -283,7 +288,7 @@ class HighlightScreen(a: MainActivity) : ToolScreen(a, ToolId.HIGHLIGHT_VIDEO) {
         val music = HighlightPrefs.settings().musicLabel
         summary.text = trn(p.moments.size, "{0} moment", "{0} moments") + " · " + trn(p.clips.size, "{0} clip", "{0} clips") + " · ${Format.duration(p.durationMs)} · $music · ${shapeLabel(p.aspect)}"
         shapes.relabel()
-        titleField.edit.hint = Planner.title(infos.mapIndexed { i, s -> s.shot(i) }, java.util.TimeZone.getDefault())
+        titleField.edit.hint = com.localmediatools.i18n.I18n.inLanguage(HighlightPrefs.textLanguage) { Planner.title(infos.mapIndexed { i, s -> s.shot(i) }, java.util.TimeZone.getDefault()) }
     }
 
     private fun clock(ms: Long): String = java.text.SimpleDateFormat("H:mm", Locale.UK).format(java.util.Date(ms))
