@@ -106,8 +106,11 @@ TOK = hf_hub_download(RID, 'tokenizer.json')
 bpe = BPE(TOK); V = bpe.vocab
 LANGS = ['en', 'pt_br', 'es', 'fr', 'de', 'it', 'ru', 'zh_cn', 'ja', 'ko']
 keep = {i for t, i in V.items() if len(t) == 1 or t.startswith('<0x')} | {V[t] for t in ('<pad>', '<eos>', '<bos>', '<unk>')}
+# Chinese, Japanese and Korean words split into more, rarer tokens: their whole lists (50,000 words) are kept
+# for 2,110 more rows (measured: Japanese class names mAP 0.290 → 0.296; the full vocabulary gives 0.306).
+CJK_WORDS = 50000
 for f in LANGS:
-    for line in list(open(os.path.join(work, 'freq', f'{f}_50k.txt'), encoding='utf-8'))[:NWORDS]:
+    for line in list(open(os.path.join(work, 'freq', f'{f}_50k.txt'), encoding='utf-8'))[:CJK_WORDS if f in ('zh_cn', 'ja', 'ko') else NWORDS]:
         w = line.split(' ')[0].lower()
         if w: keep |= {V[p] for p in bpe.pieces(w)} | {V[p] for p in bpe.pieces(' ' + w)}
 keep = sorted(keep)
