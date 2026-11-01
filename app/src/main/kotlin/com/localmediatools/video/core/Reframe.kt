@@ -43,7 +43,7 @@ class Found(val kind: SubjectKind, val box: Box, val score: Float)
 class ReframeSample(val ms: Long, val found: List<Found>, val cut: Boolean = false)
 
 /** Where the picture is cropped at a moment of shot [shot], in fractions of the displayed picture. */
-class Key(val ms: Long, val crop: Box, val shot: Int)
+data class Key(val ms: Long, val crop: Box, val shot: Int)
 
 /**
  * Auto reframe: a video turned into another shape (a landscape video into a portrait one) or zoomed
@@ -222,8 +222,11 @@ object Reframe {
         }
         // Moving: least squares with a pull towards each subject, then towards its range where it leaves it.
         val dt = DoubleArray(n) { i -> if (i == 0) 0.2 else ((samples[a + i].ms - samples[a + i - 1].ms) / 1000.0).coerceAtLeast(0.02) }
-        val wt = DoubleArray(n) { i -> if (want[i].isNaN()) 0.0 else 1.0 }
-        val target = DoubleArray(n) { i -> if (want[i].isNaN()) 0.5 else want[i].coerceIn(lo, hi) }
+        // Where nothing is followed, the camera waits where the nearest subject (in time) is, pulled
+        // there more lightly (left free, the smoothing would carry it on to an edge).
+        val near = nearest(want)
+        val wt = DoubleArray(n) { i -> if (want[i].isNaN()) (if (near[i].isNaN()) 0.0 else UNKNOWN_WEIGHT) else 1.0 }
+        val target = DoubleArray(n) { i -> (if (want[i].isNaN()) (if (near[i].isNaN()) 0.5 else near[i]) else want[i]).coerceIn(lo, hi) }
         var x = solve(target, wt, dt, p)
         repeat(6) {
             var changed = false
@@ -236,6 +239,30 @@ object Reframe {
             x = solve(target, wt, dt, p)
         }
         return x.map { it.coerceIn(lo, hi) }.toDoubleArray()
+    }
+
+    /** Weight of the pull towards the nearest subject where none is found. */
+    private const val UNKNOWN_WEIGHT = 0.25
+
+    /** For each position, the nearest known value (NaN where all are unknown). */
+    private fun nearest(v: DoubleArray): DoubleArray {
+        val n = v.size
+        val out = DoubleArray(n) { Double.NaN }
+        var last = Double.NaN; var lastAt = -1
+        val fwd = DoubleArray(n); val fwdAt = IntArray(n)
+        for (i in 0 until n) { if (!v[i].isNaN()) { last = v[i]; lastAt = i }; fwd[i] = last; fwdAt[i] = lastAt }
+        last = Double.NaN; lastAt = -1
+        for (i in n - 1 downTo 0) {
+            if (!v[i].isNaN()) { last = v[i]; lastAt = i }
+            out[i] = when {
+                !v[i].isNaN() -> v[i]
+                fwdAt[i] < 0 -> last
+                lastAt < 0 -> fwd[i]
+                i - fwdAt[i] <= lastAt - i -> fwd[i]
+                else -> last
+            }
+        }
+        return out
     }
 
     /**

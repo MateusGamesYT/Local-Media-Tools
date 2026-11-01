@@ -149,10 +149,10 @@ object EditDraft {
             val src = EditSource(s.getString("uri"), s.getString("name"), ShotKind.valueOf(s.getString("kind")), s.getInt("w"), s.getInt("h"), s.optLong("duration"), s.optBoolean("audio"))
             val keys = o.optJSONArray("reframe")?.let { a -> (0 until a.length()).map { k -> val r = a.getJSONArray(k); Key(r.getLong(0), Box(r.getDouble(1).toFloat(), r.getDouble(2).toFloat(), r.getDouble(3).toFloat(), r.getDouble(4).toFloat()), r.getInt(5)) } }
             val l = o.optJSONObject("look")
-            val look = if (l == null) Look() else Look(LookPreset.valueOf(l.optString("preset", "NONE")), l.optDouble("b").toFloat(), l.optDouble("c").toFloat(), l.optDouble("s").toFloat(), l.optDouble("w").toFloat())
+            val look = if (l == null) Look() else Look(LookPreset.valueOf(l.optString("preset", "NONE")), l.optDouble("b", 0.0).toFloat(), l.optDouble("c", 0.0).toFloat(), l.optDouble("s", 0.0).toFloat(), l.optDouble("w", 0.0).toFloat())
             clips.add(EditClip(o.getLong("id"), src, o.getLong("in"), o.getLong("out"), o.optDouble("speed", 1.0).toFloat(), o.optDouble("volume", 1.0).toFloat(),
-                o.optInt("rotation"), Framing.valueOf(o.optString("framing", "FIT")), o.optDouble("panX").toFloat(), o.optDouble("panY").toFloat(),
-                o.optDouble("scale", 1.0).toFloat(), o.optDouble("zoom").toFloat(), keys, o.optDouble("reframeFor").toFloat(), look,
+                o.optInt("rotation"), Framing.valueOf(o.optString("framing", "FIT")), o.optDouble("panX", 0.0).toFloat(), o.optDouble("panY", 0.0).toFloat(),
+                o.optDouble("scale", 1.0).toFloat(), o.optDouble("zoom", 0.0).toFloat(), keys, o.optDouble("reframeFor", 0.0).toFloat(), look,
                 TransitionKind.valueOf(o.optString("transition", "CUT")), o.optLong("transitionMs", 600)))
         }
         val texts = ArrayList<EditText>()

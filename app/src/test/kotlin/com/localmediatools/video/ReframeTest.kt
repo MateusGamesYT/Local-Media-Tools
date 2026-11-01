@@ -107,4 +107,13 @@ class ReframeTest {
         val s = (0 until 10).map { ReframeSample(it * 200L, emptyList()) }
         assertTrue(plan(s).all { abs(it.crop.cx - 0.5f) < 1e-4f })
     }
+
+    @Test fun beforeTheSubjectIsFoundTheCameraWaitsWhereItWillBe() {
+        // Nothing found for the first 3 s, then someone right of the middle walking left.
+        val s = (0 until 40).map { i -> ReframeSample(i * 200L, if (i < 15) emptyList() else listOf(person(0.7f - 0.01f * (i - 15)))) }
+        val keys = plan(s)
+        // From the start the crop is on them (not at an edge), and it never jumps.
+        assertTrue("${keys[0].crop.x}", keys[0].crop.x <= 0.7f && keys[0].crop.x + keys[0].crop.w >= 0.82f)
+        for (i in 1 until keys.size) assertTrue(abs(keys[i].crop.x - keys[i - 1].crop.x) < 0.05f)
+    }
 }

@@ -4,6 +4,7 @@ import com.localmediatools.highlight.core.ShotKind
 import com.localmediatools.video.core.EditClip
 import com.localmediatools.video.core.EditOps
 import com.localmediatools.video.core.EditProject
+import com.localmediatools.video.core.EditSound
 import com.localmediatools.video.core.EditSource
 import com.localmediatools.video.core.EditText
 import com.localmediatools.video.core.EditTimeline
@@ -115,5 +116,22 @@ class EditTimelineTest {
         assertEquals(1f, tl.at(2000.0).captions.single().alpha, 1e-6f)
         assertNotNull(tl.at(2900.0).captions.singleOrNull())
         assertEquals(1, tl.captionCount)
+    }
+
+    @Test fun soundFollowsThePictures() {
+        val silent = video.copy(hasAudio = false)
+        val p = EditProject(listOf(clip(1), clip(2, t = TransitionKind.CROSSFADE).copy(volume = 0.5f, speed = 2f, outMs = 8000),
+            clip(3, s = silent), clip(4, t = TransitionKind.FADE_BLACK).copy(volume = 0f), clip(5, s = photo, outMs = 2000)))
+        val tl = EditTimeline(p)
+        val parts = EditSound.parts(tl)
+        // Silent files, muted clips and photos make no sound.
+        assertEquals(listOf(0, 1), parts.map { it.clip })
+        // The first fades out under the cross-fade as the second fades in; the second plays twice as fast.
+        assertEquals(600L, parts[0].fadeOutMs); assertEquals(600L, parts[1].fadeInMs)
+        assertEquals(2f, parts[1].speed, 0f); assertEquals(0.5f, parts[1].gain, 0f)
+        assertEquals(3400L, parts[1].startMs)
+        // The music steps back while they play (unless asked not to).
+        assertEquals(2, EditSound.intervals(tl).size)
+        assertTrue(EditSound.intervals(EditTimeline(p.copy(duckMusic = false))).isEmpty())
     }
 }
