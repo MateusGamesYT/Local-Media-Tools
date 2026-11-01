@@ -55,7 +55,7 @@ def reference(clip):
             if bi is not None: tr[t] = by[t][bi]; used.add(bi)
         for k, b in enumerate(by[t]):
             if k not in used: tracks.append({t: b})
-    if not tracks: return {}, []
+    if not tracks: return {}, [], {}, {}
     main = max(tracks, key=lambda tr: sum(np.sqrt(b[2] * b[3]) for b in tr.values()))
     # The subject's head where the keypoint reference saw it (its person matching the subject's box).
     heads = {}; anyhead = {}
