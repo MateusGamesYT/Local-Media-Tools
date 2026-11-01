@@ -30,7 +30,7 @@ enum class ToolId(
     val videoArea: OutputArea? = null,
 ) {
     TOOL_STACK(ToolSection.STACKS, N_("Tool stack"), N_("Chain tools: each works on the last one's results"),
-        N_("Pick files once, add the tools you want in order — for example Blur faces → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved."),
+        N_("Pick files once, add the tools you want in order — for example Blur faces & private info → Video compressor → Video → GIF → GIF optimizer — and run them all with one tap. Each tool keeps all its settings; only the final results are saved."),
         OutputArea.EDITED),
     PHOTO_EDITOR(ToolSection.EDIT, N_("Photo editor"), N_("Crop, straighten, light, colour and looks"),
         N_("Crop and straighten, fine-tune light and colour, apply looks, then save a full-resolution copy. Your original stays untouched."),
@@ -50,8 +50,8 @@ enum class ToolId(
     DENOISE(ToolSection.EDIT, N_("Denoiser"), N_("Clean the grain from photos, RAW files and videos"),
         N_("Removes the grain of photos and videos taken in low light while keeping their detail: each file's noise is measured and only that much is removed. RAW files (DNG, CR2, NEF, ARW) stay RAW: the sensor data itself is cleaned and saved in the same format with all its metadata, ready for your RAW editor. Videos are cleaned on the phone's graphics chip, each frame together with the ones before it. Works on whole batches."),
         OutputArea.DENOISED, OutputArea.DENOISED_VIDEO),
-    FACE_BLUR(ToolSection.EDIT, N_("Blur faces"), N_("Find faces in photos and videos, pick who to hide"),
-        N_("On-device AI finds every face in your photos and videos and groups them by person. Choose who to blur or pixelate; faces are followed through the whole video."),
+    FACE_BLUR(ToolSection.EDIT, N_("Blur faces & private info"), N_("Hide faces, number plates, private text and codes"),
+        N_("On-device AI finds every face in your photos and videos and groups them by person; it can also find number plates, private details in text (names, phone numbers, addresses, passwords…) and QR codes. Choose what to blur or pixelate; everything is followed through the whole video."),
         OutputArea.BLURRED_IMAGES, OutputArea.BLURRED_VIDEO),
 
     HIGHLIGHT_VIDEO(ToolSection.VIDEO, N_("Highlight video"), N_("Your best moments, cut to music, automatically"),

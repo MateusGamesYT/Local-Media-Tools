@@ -41,6 +41,11 @@ import com.localmediatools.vision.core.FaceEngine
 import com.localmediatools.vision.core.FaceTrack
 import com.localmediatools.vision.core.FaceTracker
 import com.localmediatools.vision.core.Matting
+import com.localmediatools.vision.core.PrivacyOptions
+import com.localmediatools.vision.core.PrivacyShape
+import com.localmediatools.vision.core.PrivateTrack
+import com.localmediatools.vision.core.PrivateTracker
+import com.localmediatools.vision.core.Quad
 import java.io.File
 import java.io.RandomAccessFile
 import kotlin.math.max
@@ -175,9 +180,10 @@ class AutoEnhanceJob(inputs: List<MediaItem>, private val strength: EnhanceStren
 // =========================================================================== Face blur
 /**
  * What to hide. [tracks]: per file (by [MediaItem.key]), the face tracks of the people the user
- * picked in the face scan. With [scanOthers] (tool stacks, where the files are made by an earlier
- * step) files without an entry are scanned when the job runs: faces that look like a person in
- * [keep] stay visible and every other face is hidden.
+ * picked in the face scan; [privates]: the plates, private text and codes picked. With [scanOthers]
+ * (tool stacks, where the files are made by an earlier step) files without an entry are scanned when
+ * the job runs: faces that look like a person in [keep] stay visible and every other face is hidden,
+ * as is everything [privacy] asks for.
  */
 class FaceBlurPlan(
     val tracks: Map<String, List<FaceTrack>>,
@@ -186,41 +192,73 @@ class FaceBlurPlan(
     val scanOthers: Boolean = false,
     val keep: List<FloatArray> = emptyList(),
     val hide: List<FloatArray> = emptyList(),
+    val privates: Map<String, List<PrivateTrack>> = emptyMap(),
+    val privacy: PrivacyOptions = PrivacyOptions(),
 )
 
 class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : ExportJob(ToolId.FACE_BLUR, inputs) {
-    override val title = if (plan.pixelate) trn(inputs.size, "Pixelating faces in {0} file", "Pixelating faces in {0} files") else trn(inputs.size, "Blurring faces in {0} file", "Blurring faces in {0} files")
+    private val withPrivate = plan.privacy.any || plan.privates.isNotEmpty()
+    override val title = when {
+        withPrivate && plan.pixelate -> trn(inputs.size, "Pixelating faces and private details in {0} file", "Pixelating faces and private details in {0} files")
+        withPrivate -> trn(inputs.size, "Blurring faces and private details in {0} file", "Blurring faces and private details in {0} files")
+        plan.pixelate -> trn(inputs.size, "Pixelating faces in {0} file", "Pixelating faces in {0} files")
+        else -> trn(inputs.size, "Blurring faces in {0} file", "Blurring faces in {0} files")
+    }
 
     override suspend fun run(ctx: JobContext) {
         val rawFormat = RawFallback.format(tool, inputs)
         ctx.forEachItem(inputs, parallel = false) { index, item ->
-            val tracks = plan.tracks[item.key] ?: (if (plan.scanOthers) findNow(ctx, index, item) else null).orEmpty()
-            if (tracks.isEmpty()) throw SkipItemException(if (plan.scanOthers && plan.tracks[item.key] == null) tr("No faces to hide were found in this file.") else tr("None of the chosen people appear in this file, so it was left as it is."))
-            if (item.kind == MediaKind.VIDEO) video(ctx, index, item, tracks) else photo(ctx, index, item, tracks, rawFormat)
+            var faces = plan.tracks[item.key]
+            var privs = plan.privates[item.key]
+            val scanned = plan.scanOthers && (faces == null || (privs == null && plan.privacy.any))
+            if (scanned) {
+                val (f, p) = findNow(ctx, index, item)
+                if (faces == null) faces = f
+                if (privs == null) privs = p
+            }
+            val hideFaces = faces.orEmpty(); val hidePrivate = privs.orEmpty()
+            if (hideFaces.isEmpty() && hidePrivate.isEmpty()) throw SkipItemException(when {
+                scanned && plan.privacy.any -> tr("Nothing to hide was found in this file.")
+                scanned -> tr("No faces to hide were found in this file.")
+                withPrivate -> tr("Nothing chosen to hide is in this file, so it was left as it is.")
+                else -> tr("None of the chosen people appear in this file, so it was left as it is.")
+            })
+            if (item.kind == MediaKind.VIDEO) video(ctx, index, item, hideFaces, hidePrivate) else photo(ctx, index, item, hideFaces, hidePrivate, rawFormat)
         }
         Outputs.cleanTemp(ctx)
     }
 
-    /** Scans a file now and returns the tracks to hide (everyone except people to keep visible). */
-    private fun findNow(ctx: JobContext, index: Int, item: MediaItem): List<FaceTrack> {
-        ctx.status(tr("Finding faces"), item.name)
+    /** Scans a file now: the face tracks to hide (everyone except people to keep visible) and what [FaceBlurPlan.privacy] asks for. */
+    private fun findNow(ctx: JobContext, index: Int, item: MediaItem): Pair<List<FaceTrack>, List<PrivateTrack>> {
+        ctx.status(if (plan.privacy.any) tr("Finding faces and private details") else tr("Finding faces"), item.name)
         val res = try {
-            FaceScanner.scan(ctx.app, listOf(item), { ctx.cancelled }) { f, _ -> ctx.unitProgress(index, f * 0.3) }
+            FaceScanner.scan(ctx.app, listOf(item), { ctx.cancelled }, plan.privacy) { f, _ -> ctx.unitProgress(index, f * 0.3) }
         } catch (e: FaceScanner.Cancelled) { throw ExportCancelledException() }
         try {
             res.problems.firstOrNull()?.let { throw UserFacingException(tr("Faces couldn't be found: {0}", it.second)) }
-            return res.people.filter { p ->
+            val faces = res.people.filter { p ->
                 val f = FaceTrack(-1).apply { p.tracks.forEach { samples.addAll(it.samples) } }.meanFeature() ?: return@filter true
                 val k = plan.keep.maxOfOrNull { FaceEngine.cosine(it, f) } ?: -1f
                 val h = plan.hide.maxOfOrNull { FaceEngine.cosine(it, f) } ?: -1f
                 !(k >= FaceEngine.SAME_PERSON && k > h)
             }.flatMap { it.tracks }
+            return faces to res.privates
         } finally {
             res.release()
         }
     }
 
-    private fun photo(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>, rawFormat: ImageOutFormat): ItemResult {
+    private fun summary(faces: Int, privates: Int, video: Boolean): String = listOfNotNull(
+        if (faces == 0) null else if (video) {
+            if (plan.pixelate) trn(faces, "{0} face track pixelated", "{0} face tracks pixelated") else trn(faces, "{0} face track blurred", "{0} face tracks blurred")
+        } else {
+            if (plan.pixelate) trn(faces, "{0} face pixelated", "{0} faces pixelated") else trn(faces, "{0} face blurred", "{0} faces blurred")
+        },
+        if (privates == 0) null else if (plan.pixelate) trn(privates, "{0} private detail pixelated", "{0} private details pixelated")
+            else trn(privates, "{0} private detail blurred", "{0} private details blurred"),
+    ).joinToString(" · ")
+
+    private fun photo(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>, privates: List<PrivateTrack>, rawFormat: ImageOutFormat): ItemResult {
         val store = PatchStore.newSession(ctx.app)
         try {
             ImageSource.open(ctx.app, item).use { src ->
@@ -228,14 +266,24 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
                 val budget = ctx.memoryBudget()
                 val patches = ArrayList<RetouchPatch>()
                 val regions = FaceTracker.trackRegionsAt(tracks, 0)
+                val kind = if (plan.pixelate) PatchKind.PIXELATE else PatchKind.BLUR
+                val total = regions.size + privates.size
                 for ((k, r) in regions.withIndex()) {
                     val cx = r.cx * w; val cy = r.cy * h; val rx = r.rx * w; val ry = r.ry * h
                     // A capsule that covers the ellipse.
                     val stroke = if (ry >= rx) Stroke(floatArrayOf(cx, cy - (ry - rx), cx, cy + (ry - rx)), rx)
                         else Stroke(floatArrayOf(cx - (rx - ry), cy, cx + (rx - ry), cy), ry)
                     val rs = RetouchedSource(src, store, patches.toList())
-                    patches.add(Retouch.obscure(rs, listOf(stroke), if (plan.pixelate) PatchKind.PIXELATE else PatchKind.BLUR, plan.strength, store, budget, 2 * min(rx, ry) / 1.45f))
-                    ctx.unitProgress(index, 0.4 * (k + 1) / regions.size)
+                    patches.add(Retouch.obscure(rs, listOf(stroke), kind, plan.strength, store, budget, 2 * min(rx, ry) / 1.45f))
+                    ctx.unitProgress(index, 0.4 * (k + 1) / total)
+                }
+                for ((k, t) in privates.withIndex()) {
+                    val q = t.samples.first().quad
+                    val quad = Quad(FloatArray(8) { if (it % 2 == 0) q[it] * w else q[it] * h })
+                    val c = PrivacyShape.capsule(quad)
+                    val rs = RetouchedSource(src, store, patches.toList())
+                    patches.add(Retouch.obscure(rs, listOf(Stroke(floatArrayOf(c.x0, c.y0, c.x1, c.y1), c.radius)), kind, plan.strength, store, budget, c.featurePx))
+                    ctx.unitProgress(index, 0.4 * (regions.size + k + 1) / total)
                 }
                 val (format, spec) = photoOutput(tool, item, rawFormat)
                 var size = 0 to 0
@@ -246,14 +294,14 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
                     ImagePipeline.verify(ctx.app, pending, size.first, size.second)
                 }
                 return ItemResult(item.name, ItemOutcome.SUCCESS, listOfNotNull(if (item.format.isRaw) RawFallback.note(format, item) else null, tr("Photo metadata (location, camera, dates) is not copied.")).joinToString(" "), listOf(out),
-                    (if (plan.pixelate) trn(regions.size, "{0} face pixelated", "{0} faces pixelated") else trn(regions.size, "{0} face blurred", "{0} faces blurred")) + " · ${size.first}×${size.second} · ${Format.bytes(out.size)}")
+                    summary(regions.size, privates.size, false) + " · ${size.first}×${size.second} · ${Format.bytes(out.size)}")
             }
         } finally {
             store.deleteAll()
         }
     }
 
-    private fun video(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>): ItemResult {
+    private fun video(ctx: JobContext, index: Int, item: MediaItem, tracks: List<FaceTrack>, privates: List<PrivateTrack>): ItemResult {
         val info = VideoProbe.probe(ctx.app, item.uri)
         val v = info.video ?: throw SkipItemException(tr("This file has no video track."))
         val (w, h) = VideoTranscoder.outputSize(info.codedWidth, info.codedHeight, 0, info.frameRate)
@@ -261,9 +309,12 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
         OutputStore.ensureSpace((bitrate.toLong() + 192_000) * info.durationUs / 8_000_000 * 2)
         val tmp = File(Outputs.tempDir(ctx), "faces-$index.mp4")
         try {
-            ctx.status(tr("Blurring faces frame by frame"), item.name)
+            ctx.status(if (privates.isEmpty()) tr("Blurring faces frame by frame") else tr("Blurring faces and private details frame by frame"), item.name)
+            val hold = FaceScanner.privacyHoldUs(info.durationUs)
+            val aspect = info.displayWidth.coerceAtLeast(1).toFloat() / info.displayHeight.coerceAtLeast(1)
             val effect = VideoTranscoder.FrameEffect(plan.pixelate, plan.strength) { pts ->
-                FaceTracker.trackRegionsAt(tracks, pts).map { ObscureRegion(it.cx, it.cy, it.rx, it.ry) }
+                FaceTracker.trackRegionsAt(tracks, pts).map { ObscureRegion(it.cx, it.cy, it.rx, it.ry) } +
+                    PrivateTracker.regionsAt(privates, pts, hold, aspect).map { ObscureRegion(it.cx, it.cy, it.rx, it.ry, rect = true) }
             }
             val result = ParcelFileDescriptor.open(tmp, ParcelFileDescriptor.MODE_READ_WRITE or ParcelFileDescriptor.MODE_CREATE or ParcelFileDescriptor.MODE_TRUNCATE).use { pfd ->
                 VideoTranscoder(ctx.app, item.uri, info).run(pfd.fileDescriptor, VideoTranscoder.Params(w, h, bitrate, effect = effect),
@@ -273,9 +324,8 @@ class FaceBlurJob(inputs: List<MediaItem>, private val plan: FaceBlurPlan) : Exp
                 RandomAccessFile(tmp, "r").use { raf -> pending.openStream().buffered(1 shl 20).use { os -> Mp4FastStart.process(raf, os) } }
                 Outputs.verifyMedia(ctx.app, pending.uri, true, false)
             }.first
-            val people = tracks.size
             return ItemResult(item.name, ItemOutcome.SUCCESS, result.notes.joinToString(" ").ifBlank { null }, listOf(out),
-                (if (plan.pixelate) trn(people, "{0} face track pixelated", "{0} face tracks pixelated") else trn(people, "{0} face track blurred", "{0} face tracks blurred")) + " · ${info.displayWidth}×${info.displayHeight} · " + tr("H.264 from {0}", v.codecLabel) + " · ${Format.bytes(out.size)}")
+                summary(tracks.size, privates.size, true) + " · ${info.displayWidth}×${info.displayHeight} · " + tr("H.264 from {0}", v.codecLabel) + " · ${Format.bytes(out.size)}")
         } finally {
             tmp.delete()
         }

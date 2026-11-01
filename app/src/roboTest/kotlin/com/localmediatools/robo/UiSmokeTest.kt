@@ -55,7 +55,7 @@ class UiSmokeTest {
         shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         inDir = File(app.cacheDir, "ui-in").apply { deleteRecursively(); mkdirs() }
         outputs = FileOutputs(File(app.cacheDir, "ui-out").apply { deleteRecursively() }).also { it.install() }
-        com.localmediatools.vision.FaceScanner.override = { Robo.fakeFaces(it) }
+        com.localmediatools.vision.FaceScanner.override = { items, _ -> Robo.fakeFaces(items) }
     }
 
     @After fun tearDown() { outputs.uninstall(); com.localmediatools.vision.FaceScanner.override = null }

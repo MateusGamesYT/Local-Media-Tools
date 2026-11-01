@@ -310,13 +310,13 @@ class VideoTranscoder(
      */
     private fun placeRegion(r: ObscureRegion, rotationCw: Int, sx: Float, sy: Float): ObscureRegion {
         val c = when (rotationCw) {
-            90 -> ObscureRegion(r.cy, 1f - r.cx, r.ry, r.rx)
-            180 -> ObscureRegion(1f - r.cx, 1f - r.cy, r.rx, r.ry)
-            270 -> ObscureRegion(1f - r.cy, r.cx, r.ry, r.rx)
+            90 -> r.copy(cx = r.cy, cy = 1f - r.cx, rx = r.ry, ry = r.rx)
+            180 -> r.copy(cx = 1f - r.cx, cy = 1f - r.cy)
+            270 -> r.copy(cx = 1f - r.cy, cy = r.cx, rx = r.ry, ry = r.rx)
             else -> r
         }
         if (sx == 1f && sy == 1f) return c
-        return ObscureRegion(0.5f + (c.cx - 0.5f) * sx, 0.5f + (c.cy - 0.5f) * sy, c.rx * sx, c.ry * sy)
+        return c.copy(cx = 0.5f + (c.cx - 0.5f) * sx, cy = 0.5f + (c.cy - 0.5f) * sy, rx = c.rx * sx, ry = c.ry * sy)
     }
 
     private fun createEncoder(p: Params, workload: WorkloadProfile, speed: Double): Pair<MediaCodec, MediaFormat> {

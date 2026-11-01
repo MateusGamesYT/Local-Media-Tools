@@ -9,6 +9,8 @@ import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.FaceDetectorYN
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /** A detected face in pixel coordinates of the image it was found in. */
@@ -20,6 +22,35 @@ class Face(
 ) {
     val cx get() = x + w / 2
     val cy get() = y + h / 2
+}
+
+/** Merging face boxes found on several copies of one picture. */
+object FaceMerge {
+    /**
+     * Best score first; a box that overlaps a kept one (IoU above 0.3, or 60 % of the smaller box
+     * inside the other) is the same face and widens the kept box to cover both (the landmarks stay
+     * the kept box's). Merging into the best box alone hid 85.7 % of the faces instead of 86.8 %.
+     */
+    fun merge(faces: List<Face>): List<Face> {
+        val kept = ArrayList<Face>()
+        for (f in faces.sortedByDescending { it.score }) {
+            val i = kept.indexOfFirst { same(it, f) }
+            if (i < 0) { kept.add(f); continue }
+            val k = kept[i]
+            val x0 = min(k.x, f.x); val y0 = min(k.y, f.y)
+            val x1 = max(k.x + k.w, f.x + f.w); val y1 = max(k.y + k.h, f.y + f.h)
+            val row = k.row.copyOf().also { it[0] = x0; it[1] = y0; it[2] = x1 - x0; it[3] = y1 - y0 }
+            kept[i] = Face(x0, y0, x1 - x0, y1 - y0, k.score, row)
+        }
+        return kept
+    }
+
+    fun same(a: Face, b: Face): Boolean {
+        val ix = max(0f, min(a.x + a.w, b.x + b.w) - max(a.x, b.x))
+        val iy = max(0f, min(a.y + a.h, b.y + b.h) - max(a.y, b.y))
+        val i = ix * iy; val aa = a.w * a.h; val ab = b.w * b.h
+        return i > 0.3f * (aa + ab - i) || i > 0.6f * min(aa, ab)
+    }
 }
 
 /** Turns aligned 112×112 BGR faces ([FaceAlign]) into L2-normalised embeddings, one per face. */
@@ -74,11 +105,13 @@ class FaceEngine(yunetPath: String, private val recognizer: FaceEmbedder?, val m
     constructor(yunetPath: String, recognizerPath: String?, model: FaceModel = FaceModel.MBF) :
         this(yunetPath, recognizerPath?.let { OpenCvFaceEmbedder(it) }, model)
 
-    private val detector: FaceDetectorYN = FaceDetectorYN.create(yunetPath, "", Size(320.0, 320.0), minScore, 0.3f, 500)
+    // The detector keeps boxes down to the lowest score any caller asks for; [detect] filters. (Boxes
+    // below a score never suppress boxes above it, so the faces at [minScore] are the same either way.)
+    private val detector: FaceDetectorYN = FaceDetectorYN.create(yunetPath, "", Size(320.0, 320.0), min(minScore, HIDE_SCORE), 0.3f, 500)
     val canRecognize get() = recognizer != null
 
-    /** Faces in a BGR image, largest first. Faces smaller than [minSize] px are ignored. */
-    fun detect(bgr: Mat, minSize: Float = 12f): List<Face> = synchronized(this) {
+    /** Faces in a BGR image at [score] or more, largest first. Faces smaller than [minSize] px are ignored. */
+    fun detect(bgr: Mat, minSize: Float = 12f, score: Float = minScore): List<Face> = synchronized(this) {
         detector.inputSize = Size(bgr.cols().toDouble(), bgr.rows().toDouble())
         val out = Mat()
         try {
@@ -87,11 +120,36 @@ class FaceEngine(yunetPath: String, private val recognizer: FaceEmbedder?, val m
             for (r in 0 until out.rows()) {
                 val v = FloatArray(15)
                 out.get(r, 0, v)
-                if (v[14] < minScore || v[2] < minSize || v[3] < minSize) continue
+                if (v[14] < score || v[2] < minSize || v[3] < minSize) continue
                 faces.add(Face(v[0], v[1], v[2], v[3], v[14], v))
             }
             faces.sortedByDescending { it.w * it.h }
         } finally { out.release() }
+    }
+
+    /**
+     * Faces to hide (face blur): the image itself and smaller copies at the [sides] below its own size
+     * (YuNet misses many large faces at full size), at [HIDE_SCORE]. Boxes of one face from several
+     * copies are merged ([FaceMerge]). Coordinates are in [bgr]'s pixels, largest first.
+     */
+    fun detectToHide(bgr: Mat, sides: IntArray, minSize: Float = 12f): List<Face> {
+        val all = ArrayList(detect(bgr, minSize, HIDE_SCORE))
+        val long = max(bgr.cols(), bgr.rows())
+        for (side in sides) {
+            if (side >= long * 0.9) continue
+            val s = side.toDouble() / long
+            val small = Mat()
+            try {
+                Imgproc.resize(bgr, small, Size(max(1.0, Math.round(bgr.cols() * s).toDouble()), max(1.0, Math.round(bgr.rows() * s).toDouble())), 0.0, 0.0, Imgproc.INTER_AREA)
+                val sx = bgr.cols().toFloat() / small.cols(); val sy = bgr.rows().toFloat() / small.rows()
+                for (f in detect(small, minSize, HIDE_SCORE)) {
+                    val row = f.row.copyOf()
+                    for (k in 0 until 14) row[k] *= if (k % 2 == 0) sx else sy
+                    all.add(Face(row[0], row[1], row[2], row[3], f.score, row))
+                }
+            } finally { small.release() }
+        }
+        return FaceMerge.merge(all).sortedByDescending { it.w * it.h }
     }
 
     /** The face aligned to the recogniser's 112×112 crop (BGR). */
@@ -168,6 +226,20 @@ class FaceEngine(yunetPath: String, private val recognizer: FaceEmbedder?, val m
 
         /** Below this, two faces in consecutive video frames are not the same face (SFace's 0.20, carried over the same way). */
         const val TRACK_GATE = 0.10f
+
+        /**
+         * Detector score for faces to hide, with [PHOTO_SIDES]/[VIDEO_SIDES]: on 700 held-out Open
+         * Images photos (buildtools/privacy/eval_faces.py) 86.8 % of the labelled faces end up under the
+         * blur (77.0 % at the gallery's 0.62 on one copy), with 1.33 boxes per photo on no labelled face
+         * (0.97), most of them real faces the labels leave out.
+         */
+        const val HIDE_SCORE = 0.5f
+
+        /** Smaller copies looked at for faces to hide in a photo (worked on at up to 1600 px). */
+        val PHOTO_SIDES = intArrayOf(800, 400, 256)
+
+        /** Smaller copies looked at in a video frame (worked on at up to 960 px): 86.4 % (76.9 %). */
+        val VIDEO_SIDES = intArrayOf(640, 400, 256)
 
         /** Eye distance in pixels and how far the head is turned (0 = frontal) from YuNet's landmarks. */
         fun eyesAndYaw(row: FloatArray): Pair<Float, Float> {

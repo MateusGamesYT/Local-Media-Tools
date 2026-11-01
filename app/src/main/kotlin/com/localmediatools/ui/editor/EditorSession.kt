@@ -155,7 +155,7 @@ class EditorSession(val app: Context, val item: MediaItem) : Closeable {
      * history step. Returns how many faces were hidden.
      */
     fun obscureFaces(kind: PatchKind, strength: Float): Int {
-        val faces = com.localmediatools.vision.VisionOps.photoFaces(app, proxy, embed = false)
+        val faces = com.localmediatools.vision.VisionOps.photoFaces(app, proxy, embed = false, toHide = true)
         if (faces.isEmpty()) return 0
         val regions = faces.map { com.localmediatools.vision.core.BlurRegion(it.x + it.w / 2, it.y + it.h / 2 - it.h * 0.08f, it.w / 2 * 1.45f, it.h / 2 * 1.45f * 1.12f) }
         val added = ArrayList<RetouchPatch>()

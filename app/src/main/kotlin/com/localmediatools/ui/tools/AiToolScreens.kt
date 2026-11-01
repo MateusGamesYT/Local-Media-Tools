@@ -46,7 +46,11 @@ import com.localmediatools.ui.lp
 import com.localmediatools.vision.FaceScanResult
 import com.localmediatools.vision.FaceScanner
 import com.localmediatools.vision.VisionOps
+import com.localmediatools.vision.core.Detail
 import com.localmediatools.vision.core.FaceIdentity
+import com.localmediatools.vision.core.FindKind
+import com.localmediatools.vision.core.PrivacyOptions
+import com.localmediatools.vision.core.PrivateTrack
 import com.localmediatools.vision.core.Matting
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
@@ -232,12 +236,37 @@ class AutoEnhanceScreen(a: MainActivity) : ToolScreen(a, ToolId.AUTO_ENHANCE) {
 object FaceBlurPrefs {
     var pixelate = false
     var strength = 0.7f
+    /** What else to look for (off until chosen). */
+    var privacy = PrivacyOptions()
+}
+
+/** What a found private thing is, for its label. */
+fun privateLabel(t: PrivateTrack): String {
+    if (t.kind == FindKind.PLATE) return tr("Number plate")
+    if (t.kind == FindKind.CODE) return tr("QR code or barcode")
+    val d = t.details
+    return when {
+        Detail.PASSWORD in d -> tr("Password or code")
+        Detail.CARD in d -> tr("Card number")
+        Detail.ID_NUMBER in d -> tr("Document number")
+        Detail.BANK in d -> tr("Bank details")
+        Detail.EMAIL in d -> tr("E-mail address")
+        Detail.PHONE in d -> tr("Phone number")
+        Detail.ADDRESS in d -> tr("Address")
+        Detail.BIRTH_DATE in d -> tr("Date of birth")
+        Detail.NAME in d -> tr("Name")
+        Detail.USERNAME in d -> tr("User name")
+        Detail.NUMBER in d -> tr("Number")
+        else -> tr("Text")
+    }
 }
 
 class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
     private var result: FaceScanResult? = null
     private var scannedKeys: List<String>? = null
+    private var scannedPrivacy: PrivacyOptions? = null
     private val chosen = HashSet<Int>()
+    private val chosenPrivate = HashSet<Int>()
     private val round = HashMap<Int, Bitmap?>()
     private var scanJob: Job? = null
     private var scanning = false
@@ -247,8 +276,18 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
     private lateinit var people: FlowLayout
     private lateinit var findButton: ButtonView
     private lateinit var bulk: LinearLayout
+    private lateinit var privateHead: TextView
+    private lateinit var privates: FlowLayout
+    private lateinit var privateBulk: LinearLayout
 
-    override val startLabel: String get() = if (FaceBlurPrefs.pixelate) tr("Pixelate chosen faces") else tr("Blur chosen faces")
+    private val withPrivate get() = FaceBlurPrefs.privacy.any
+
+    override val startLabel: String get() = when {
+        withPrivate && FaceBlurPrefs.pixelate -> tr("Pixelate chosen faces and details")
+        withPrivate -> tr("Blur chosen faces and details")
+        FaceBlurPrefs.pixelate -> tr("Pixelate chosen faces")
+        else -> tr("Blur chosen faces")
+    }
 
     override fun buildOptions(container: LinearLayout) {
         val head = UI.horizontal(ctx)
@@ -268,21 +307,45 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         bulk.addView(UI.ghostButton(ctx, tr("Hide no one")) { chosen.clear(); showPeople(); refreshValidation() })
         container.addView(bulk, lp().apply { topMargin = ctx.dp(6) })
 
+        privateHead = UI.text(ctx, tr("Private details found"), TextStyle.SUBTITLE).apply { visibility = View.GONE }
+        container.addView(privateHead, lp().apply { topMargin = ctx.dp(16) })
+        privates = FlowLayout(ctx, 10, 12)
+        container.addView(privates, lp().apply { topMargin = ctx.dp(10) })
+        privateBulk = UI.horizontal(ctx).apply { visibility = View.GONE }
+        privateBulk.addView(UI.ghostButton(ctx, tr("Hide all details")) { result?.privates?.forEach { chosenPrivate.add(it.id) }; showPrivates(); refreshValidation() })
+        privateBulk.addView(UI.ghostButton(ctx, tr("Hide no details")) { chosenPrivate.clear(); showPrivates(); refreshValidation() })
+        container.addView(privateBulk, lp().apply { topMargin = ctx.dp(6) })
+
+        section(container, tr("Also hide"))
+        fun option(title: String, subtitle: String, on: Boolean, set: (Boolean) -> PrivacyOptions) =
+            container.addView(ToggleRow(ctx, title, subtitle, on) { v -> FaceBlurPrefs.privacy = set(v); privacyChanged() }, lp().apply { topMargin = ctx.dp(6) })
+        val p = FaceBlurPrefs.privacy
+        option(tr("Number plates"), tr("On cars, motorbikes, buses and lorries"), p.plates) { FaceBlurPrefs.privacy.copy(plates = it) }
+        option(tr("Private details in text"), tr("Names, phone numbers, e-mail and home addresses, passwords, card, account and document numbers"), p.privateText) { FaceBlurPrefs.privacy.copy(privateText = it) }
+        option(tr("All text"), tr("Every sign, label and line of writing"), p.allText) { FaceBlurPrefs.privacy.copy(allText = it) }
+        option(tr("QR codes and barcodes"), tr("They can hold links, tickets and Wi-Fi passwords"), p.codes) { FaceBlurPrefs.privacy.copy(codes = it) }
+
         section(container, tr("Style"))
         container.addView(ChoiceGroup(ctx, listOf(false, true), { if (it) tr("Pixelate") else tr("Blur") }, FaceBlurPrefs.pixelate) { FaceBlurPrefs.pixelate = it; refreshValidation() }, lp().apply { topMargin = ctx.dp(10) })
         val strengths = listOf(0.4f to trc("strength", "Light"), 0.7f to trc("strength", "Medium"), 1f to trc("strength", "Strong"))
         container.addView(ChoiceGroup(ctx, strengths, { it.second }, strengths.minByOrNull { kotlin.math.abs(it.first - FaceBlurPrefs.strength) }) { FaceBlurPrefs.strength = it.first }, lp().apply { topMargin = ctx.dp(10) })
         container.addView(UI.note(ctx, tr("Faces are followed from frame to frame and matched across all selected files, so each person is listed once. Videos are re-encoded as H.264 MP4 at close to their original quality; the sound is kept."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(12) })
+        container.addView(UI.note(ctx, tr("Private details are found by reading the text in your photos on this phone. Small, blurry or handwritten text can be missed, and plates of some countries are found less often: check the result before you share it."), UI.NoteKind.INFO), lp().apply { topMargin = ctx.dp(8) })
         onSelectionChanged()
     }
 
     private fun keys() = selection.usable.map { it.key }
 
-    private val emptyText get() = if (stack != null) tr("Every face found at this step will be hidden. To choose people, put photos or videos in the stack.") else tr("Select photos or videos; faces are found automatically.")
+    private val emptyText get() = when {
+        stack != null && withPrivate -> tr("Every face and private detail found at this step will be hidden. To choose, put photos or videos in the stack.")
+        stack != null -> tr("Every face found at this step will be hidden. To choose people, put photos or videos in the stack.")
+        withPrivate -> tr("Select photos or videos; faces and private details are found automatically.")
+        else -> tr("Select photos or videos; faces are found automatically.")
+    }
 
     override fun onSelectionChanged() {
         if (!::status.isInitialized) return
-        if (keys() == scannedKeys && result != null) return
+        if (keys() == scannedKeys && scannedPrivacy == FaceBlurPrefs.privacy && result != null) return
         if (scanning) stopScan()
         clearResult()
         if (selection.usable.isEmpty()) { status.text = emptyText; findButton.visibility = if (stack != null) View.GONE else View.VISIBLE; return }
@@ -294,9 +357,16 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         }
     }
 
+    /** What to look for changed: look again (after a moment, in case more is switched). */
+    private fun privacyChanged() {
+        refreshValidation()
+        onSelectionChanged()
+    }
+
     private fun clearResult() {
-        result?.release(); result = null; scannedKeys = null; chosen.clear(); round.clear()
+        result?.release(); result = null; scannedKeys = null; scannedPrivacy = null; chosen.clear(); chosenPrivate.clear(); round.clear()
         people.removeAllViews(); bulk.visibility = View.GONE
+        privates.removeAllViews(); privateBulk.visibility = View.GONE; privateHead.visibility = View.GONE
         refreshValidation()
     }
 
@@ -310,11 +380,12 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         findButton.label = tr("Stop")
         val videos = items.count { it.kind == MediaKind.VIDEO }
         status.text = if (videos > 0) trn(videos, "Watching the video for faces…", "Watching {0} videos for faces…") else tr("Looking for faces…")
+        val privacy = FaceBlurPrefs.privacy
         scanJob = scope.launch {
             val k = items.map { it.key }
             val r = withContext(Dispatchers.Default) {
                 try {
-                    Result.success(FaceScanner.scan(ctx, items, { cancelScan }) { f, text ->
+                    Result.success(FaceScanner.scan(ctx, items, { cancelScan }, privacy) { f, text ->
                         scope.launch { if (!cancelScan) { progress.setProgress(f.toFloat()); status.text = text } }
                     })
                 } catch (e: Throwable) { Result.failure(e) }
@@ -322,21 +393,25 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
             scanning = false
             progress.visibility = View.GONE
             findButton.label = tr("Find faces again")
-            if (k != keys()) {
-                // The selection changed meanwhile: look at the new one instead.
+            if (k != keys() || privacy != FaceBlurPrefs.privacy) {
+                // The selection or what to look for changed meanwhile: look at the new one instead.
                 r.onSuccess { it.release() }
                 if (selection.usable.isNotEmpty()) startScan() else status.text = emptyText
                 return@launch
             }
             r.onSuccess { res ->
-                result = res; scannedKeys = k
+                result = res; scannedKeys = k; scannedPrivacy = privacy
                 chosen.clear(); res.people.forEach { chosen.add(it.id) }
+                chosenPrivate.clear(); res.privates.forEach { chosenPrivate.add(it.id) }
                 val n = res.people.size
-                status.text = when {
-                    n == 0 -> tr("No faces were found.") + problems(res)
-                    else -> trn(n, "Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.", "Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.") + problems(res)
+                val found = when {
+                    n == 0 -> tr("No faces were found.")
+                    else -> trn(n, "Found {0} person. Tap a face to keep it visible; highlighted faces will be hidden.", "Found {0} different people. Tap a face to keep it visible; highlighted faces will be hidden.")
                 }
-                showPeople()
+                val details = if (!privacy.any) "" else " " + if (res.privates.isEmpty()) tr("No private details were found.")
+                    else trn(res.privates.size, "Found {0} private detail; tap it to keep it visible.", "Found {0} private details; tap one to keep it visible.")
+                status.text = found + details + problems(res)
+                showPeople(); showPrivates()
             }
             r.onFailure { e ->
                 status.text = if (e is FaceScanner.Cancelled) tr("Stopped. Tap Find faces to look again.") else tr("Faces couldn't be found: {0}", Errors.describe(e))
@@ -358,6 +433,16 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         val res = result ?: return
         bulk.visibility = if (res.people.size > 1) View.VISIBLE else View.GONE
         for (p in res.people) people.addView(personView(res, p))
+    }
+
+    private fun showPrivates() {
+        privates.removeAllViews()
+        val res = result
+        val show = res != null && scannedPrivacy?.any == true
+        privateHead.visibility = if (show) View.VISIBLE else View.GONE
+        privateBulk.visibility = if (show && res!!.privates.size > 1) View.VISIBLE else View.GONE
+        if (!show) return
+        for (t in res!!.privates) privates.addView(privateView(res, t))
     }
 
     private fun personView(res: FaceScanResult, p: FaceIdentity): View {
@@ -393,14 +478,40 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
         return col
     }
 
+    private fun privateView(res: FaceScanResult, t: PrivateTrack): View {
+        val on = t.id in chosenPrivate
+        val col = UI.vertical(ctx).apply { gravity = Gravity.CENTER_HORIZONTAL }
+        val img = ImageView(ctx).apply {
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            background = Shapes.rounded(ctx, Palette.SURFACE_3, 12f, if (on) Palette.ACCENT else Palette.STROKE_2, if (on) 3f else 1f)
+            clipToOutline = true
+            setPadding(ctx.dp(3), ctx.dp(3), ctx.dp(3), ctx.dp(3))
+            setImageBitmap(res.thumb(t)?.takeIf { !it.isRecycled })
+            alpha = if (on) 1f else 0.5f
+        }
+        col.addView(img, LinearLayout.LayoutParams(ctx.dp(128), ctx.dp(64)))
+        val label = privateLabel(t)
+        col.addView(UI.text(ctx, label, TextStyle.CAPTION, Palette.TEXT).apply { gravity = Gravity.CENTER; setPadding(0, ctx.dp(4), 0, 0); maxWidth = ctx.dp(128) })
+        col.addView(UI.text(ctx, if (on) tr("Hidden") else tr("Visible"), TextStyle.CAPTION, if (on) Palette.ACCENT else Palette.TEXT_2).apply { gravity = Gravity.CENTER; textSize = 11f })
+        col.isClickable = true; col.isFocusable = true
+        val where = res.items[t.source].name
+        col.contentDescription = if (on) tr("{0} in {1}, will be hidden", label, where) else tr("{0} in {1}, stays visible", label, where)
+        col.setOnClickListener {
+            if (!chosenPrivate.remove(t.id)) chosenPrivate.add(t.id)
+            showPrivates(); refreshValidation()
+        }
+        return col
+    }
+
     override fun validate(): String? {
         super.validate()?.let { return it }
-        if (scanning) return tr("Finding faces…")
-        if (stepMode) return if (result != null && chosen.isEmpty()) tr("Tap the people you want to hide") else null
+        if (scanning) return if (withPrivate) tr("Finding faces and private details…") else tr("Finding faces…")
+        val nothingChosen = chosen.isEmpty() && chosenPrivate.isEmpty()
+        if (stepMode) return if (result != null && nothingChosen) tr("Tap what you want to hide") else null
         val r = result
-        if (r == null || scannedKeys != keys()) return tr("Tap Find faces first")
-        if (r.people.isEmpty()) return tr("No faces to hide in these files")
-        if (chosen.isEmpty()) return tr("Tap the people you want to hide")
+        if (r == null || scannedKeys != keys() || scannedPrivacy != FaceBlurPrefs.privacy) return tr("Tap Find faces first")
+        if (r.people.isEmpty() && r.privates.isEmpty()) return if (withPrivate) tr("Nothing to hide in these files") else tr("No faces to hide in these files")
+        if (nothingChosen) return if (withPrivate) tr("Tap what you want to hide") else tr("Tap the people you want to hide")
         return null
     }
 
@@ -408,30 +519,40 @@ class FaceBlurScreen(a: MainActivity) : ToolScreen(a, ToolId.FACE_BLUR) {
 
     /**
      * In a stack the files are made by earlier steps, so people are recognised again when the step
-     * runs: faces like the people left visible here stay visible, every other face is hidden.
+     * runs: faces like the people left visible here stay visible, every other face is hidden, as is
+     * every private detail of the kinds chosen.
      */
     override fun createStepJob(): ExportJob {
-        val r = result?.takeIf { scannedKeys == keys() }
-        if (r == null) return FaceBlurJob(selection.usable, FaceBlurPlan(emptyMap(), FaceBlurPrefs.pixelate, FaceBlurPrefs.strength, scanOthers = true))
+        val r = result?.takeIf { scannedKeys == keys() && scannedPrivacy == FaceBlurPrefs.privacy }
+        val privacy = FaceBlurPrefs.privacy
+        if (r == null) return FaceBlurJob(selection.usable, FaceBlurPlan(emptyMap(), FaceBlurPrefs.pixelate, FaceBlurPrefs.strength, scanOthers = true, privacy = privacy))
         fun feature(p: FaceIdentity) = com.localmediatools.vision.core.FaceTrack(-1).apply { p.tracks.forEach { samples.addAll(it.samples) } }.meanFeature()
         val hidden = r.people.filter { it.id in chosen }
         val visible = r.people.filter { it.id !in chosen }
+        // The files looked at here keep the choice made for each detail (none chosen: none hidden).
+        val chosenDetails = r.planPrivate(r.privates.filter { it.id in chosenPrivate })
+        val details = if (privacy.any) r.items.associate { it.key to chosenDetails[it.key].orEmpty() } else emptyMap()
         return FaceBlurJob(selection.usable, FaceBlurPlan(r.plan(hidden), FaceBlurPrefs.pixelate, FaceBlurPrefs.strength, scanOthers = true,
-            keep = visible.mapNotNull { feature(it) }, hide = hidden.mapNotNull { feature(it) }))
+            keep = visible.mapNotNull { feature(it) }, hide = hidden.mapNotNull { feature(it) }, privates = details, privacy = privacy))
     }
 
     override fun stackSummary(): String {
         val r = result?.takeIf { scannedKeys == keys() }
         val who = if (r == null || chosen.size == r.people.size) tr("Hides every face") else trn(r.people.size, "Hides {1} of {0} person (others stay visible)", "Hides {1} of {0} people (others stay visible)", chosen.size)
-        return "$who · ${if (FaceBlurPrefs.pixelate) tr("Pixelate") else tr("Blur")} · ${when { FaceBlurPrefs.strength < 0.55f -> trc("strength", "Light"); FaceBlurPrefs.strength < 0.85f -> trc("strength", "Medium"); else -> trc("strength", "Strong") }}"
+        val p = FaceBlurPrefs.privacy
+        val also = listOfNotNull(if (p.plates) tr("number plates") else null, if (p.allText) tr("all text") else if (p.privateText) tr("private details in text") else null,
+            if (p.codes) tr("QR codes and barcodes") else null)
+        val alsoText = if (also.isEmpty()) "" else " · " + tr("also {0}", also.joinToString(", "))
+        return "$who$alsoText · ${if (FaceBlurPrefs.pixelate) tr("Pixelate") else tr("Blur")} · ${when { FaceBlurPrefs.strength < 0.55f -> trc("strength", "Light"); FaceBlurPrefs.strength < 0.85f -> trc("strength", "Medium"); else -> trc("strength", "Strong") }}"
     }
 
     override fun createJob(items: List<MediaItem>): ExportJob {
         val r = result ?: throw IllegalArgumentException(tr("Find faces first"))
         val plan = r.plan(r.people.filter { it.id in chosen })
-        val todo = items.filter { plan.containsKey(it.key) }
-        if (todo.isEmpty()) throw IllegalArgumentException(tr("The chosen people don't appear in these files"))
-        return FaceBlurJob(todo, FaceBlurPlan(plan, FaceBlurPrefs.pixelate, FaceBlurPrefs.strength))
+        val details = r.planPrivate(r.privates.filter { it.id in chosenPrivate })
+        val todo = items.filter { plan.containsKey(it.key) || details.containsKey(it.key) }
+        if (todo.isEmpty()) throw IllegalArgumentException(if (withPrivate) tr("Nothing chosen to hide is in these files") else tr("The chosen people don't appear in these files"))
+        return FaceBlurJob(todo, FaceBlurPlan(plan, FaceBlurPrefs.pixelate, FaceBlurPrefs.strength, privates = details))
     }
 
     override fun onDestroy() {

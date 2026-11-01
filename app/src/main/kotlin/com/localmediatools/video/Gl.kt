@@ -258,8 +258,12 @@ internal class GlTarget(val w: Int, val h: Int) {
     }
 }
 
-/** A region to hide: centre and radii as fractions of the output frame, y measured downwards. */
-data class ObscureRegion(val cx: Float, val cy: Float, val rx: Float, val ry: Float)
+/**
+ * A region to hide: centre and radii as fractions of the output frame, y measured downwards. An
+ * ellipse (faces) or, with [rect], a rectangle around text, a plate or a code, with a margin of
+ * [com.localmediatools.vision.core.PrivacyShape.MARGIN] of its thickness on every side.
+ */
+data class ObscureRegion(val cx: Float, val cy: Float, val rx: Float, val ry: Float, val rect: Boolean = false)
 
 /**
  * Hides regions (faces) of each video frame on the GPU. The frame is drawn into an offscreen
@@ -304,21 +308,23 @@ class RegionObscurer(private val w: Int, private val h: Int) {
         for (r in regions) {
             val cx = r.cx; val cy = 1f - r.cy   // GL textures are bottom-up
             val rpx = maxOf(r.rx * w, r.ry * h).coerceAtLeast(2f)
+            // Text: blocks and blur scale with the letters' height, so that even Light hides them.
+            val thick = (minOf(r.rx * w, r.ry * h) / (0.5f + com.localmediatools.vision.core.PrivacyShape.MARGIN)).coerceAtLeast(2f)
+            val block = if (r.rect) (8 * thick / (16f - 10f * st)).coerceAtLeast(4f) else (2 * rpx / (16f - 10f * st)).coerceAtLeast(4f)
             // Texel size (in output pixels) of the level to read from.
-            val want = if (pixelate) {
-                val blocks = 16f - 10f * st
-                (2 * rpx / blocks).coerceAtLeast(4f) / 2f
-            } else {
-                rpx * (0.15f + 0.3f * st) / 1.5f
-            }
+            val want = if (pixelate) block / 2f
+                else if (r.rect) thick * (0.45f + 0.6f * st)
+                else rpx * (0.15f + 0.3f * st) / 1.5f
             val li = (Math.round(ln2(want.toDouble())).toInt() - 1).coerceIn(-1, levels.size - 1)
             val lv = if (li < 0) full else levels[li]
             GLES20.glUseProgram(regionProgram)
             GLES20.glUniform2f(GLES20.glGetUniformLocation(regionProgram, "uCenter"), cx, cy)
             GLES20.glUniform2f(GLES20.glGetUniformLocation(regionProgram, "uRadius"), r.rx.coerceAtLeast(1e-4f), r.ry.coerceAtLeast(1e-4f))
             GLES20.glUniform2f(GLES20.glGetUniformLocation(regionProgram, "uTap"), 1.5f / lv.w, 1.5f / lv.h)
+            // Rectangles: a feather 0.2 of the text's height wide, inside the margin around it.
+            val feather = if (r.rect) 0.2f * thick else 0f
+            GLES20.glUniform2f(GLES20.glGetUniformLocation(regionProgram, "uFeather"), feather / w, feather / h)
             if (pixelate) {
-                val block = (2 * rpx / (16f - 10f * st)).coerceAtLeast(4f)
                 GLES20.glUniform2f(GLES20.glGetUniformLocation(regionProgram, "uBlock"), block / w, block / h)
             } else {
                 GLES20.glUniform2f(GLES20.glGetUniformLocation(regionProgram, "uBlock"), 0f, 0f)
@@ -387,9 +393,15 @@ class RegionObscurer(private val w: Int, private val h: Int) {
             uniform vec2 uRadius;
             uniform vec2 uTap;
             uniform vec2 uBlock;
+            uniform vec2 uFeather;
             void main() {
-                float r = length((vUv - uCenter) / uRadius);
-                float a = 1.0 - smoothstep(0.8, 1.0, r);
+                float a;
+                if (uFeather.x > 0.0) {
+                    vec2 q = abs(vUv - uCenter) - (uRadius - uFeather);
+                    a = 1.0 - smoothstep(0.0, 1.0, max(q.x / uFeather.x, q.y / uFeather.y));
+                } else {
+                    a = 1.0 - smoothstep(0.8, 1.0, length((vUv - uCenter) / uRadius));
+                }
                 if (a <= 0.0) discard;
                 vec3 c;
                 if (uBlock.x > 0.0) {

@@ -238,7 +238,7 @@ class ScreenshotTest {
 
         // Face blur: two people found in a photo and a video (stand-in for the face models).
         val faces = listOf(avatar(0xFFF1C27D.toInt(), 0xFF4A3426.toInt()), avatar(0xFFC68642.toInt(), 0xFF1E1E1E.toInt()), avatar(0xFFFFDBAC.toInt(), 0xFFB5651D.toInt()))
-        com.localmediatools.vision.FaceScanner.override = { items ->
+        com.localmediatools.vision.FaceScanner.override = { items, _ ->
             val fake = Robo.fakeFaces(items)
             val people = fake.people
             val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
@@ -309,7 +309,7 @@ class ScreenshotTest {
 
     /** Builds "Blur faces → Video compressor → Video → GIF → GIF optimizer" through the real screens. */
     private fun stackShots(a: MainActivity, app: android.app.Application, inDir: File, dir: File, faces: List<Bitmap>) {
-        com.localmediatools.vision.FaceScanner.override = { items ->
+        com.localmediatools.vision.FaceScanner.override = { items, _ ->
             val fake = Robo.fakeFaces(items)
             val thumbs = java.util.IdentityHashMap<com.localmediatools.vision.core.FaceTrack, Bitmap>()
             for ((k, p) in fake.people.withIndex()) for (t in p.tracks) thumbs[t] = faces[k % faces.size].copy(Bitmap.Config.ARGB_8888, false)

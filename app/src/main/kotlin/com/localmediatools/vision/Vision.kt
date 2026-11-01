@@ -123,15 +123,17 @@ object VisionOps {
 
     /**
      * Faces in a photo, as fractions of the picture, with identity embeddings. Detection runs on a
-     * copy of at most [detectSide] px, which finds faces down to about 1% of the picture's size.
+     * copy of at most [detectSide] px, which finds faces down to about 1% of the picture's size. With
+     * [toHide] (face blur), also on smaller copies and at a lower score ([FaceEngine.detectToHide]).
      */
-    fun photoFaces(ctx: Context, bmp: Bitmap, detectSide: Int = 1600, embed: Boolean = true): List<FaceSample> {
+    fun photoFaces(ctx: Context, bmp: Bitmap, detectSide: Int = 1600, embed: Boolean = true, toHide: Boolean = false): List<FaceSample> {
         val engine = VisionModels.faces(ctx)
         val small = fit(bmp, detectSide)
         val m = bgr(small)
         try {
             val w = small.width.toFloat(); val h = small.height.toFloat()
-            return engine.detect(m).map { f: Face ->
+            val found = if (toHide) engine.detectToHide(m, FaceEngine.PHOTO_SIDES) else engine.detect(m)
+            return found.map { f: Face ->
                 FaceSample(0, f.x / w, f.y / h, f.w / w, f.h / h, f.score, if (embed) engine.embed(m, f) else null)
             }
         } finally {
