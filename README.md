@@ -3,7 +3,7 @@
 # Local Media Tools (Android)
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
-photos and lets you search them in plain words, **highlight videos** cut to music the phone writes
+photos and lets you search them by describing what they show, in ten languages, **highlight videos** cut to music the phone writes
 itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **42
 tools** for photos, video, GIF, documents, PDF and audio, among them **audio tools** to trim, merge,
 convert, normalise, speed up and split sound files, a **file reader** for the PDF,
@@ -18,17 +18,21 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces & private info → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.14.0.apk`](release/LocalMediaTools-1.14.0.apk)
+**Install:** [`release/LocalMediaTools-1.15.0.apk`](release/LocalMediaTools-1.15.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
-| Gallery | Search | Faces with names | People | Things | A person | All faces |
-|---|---|---|---|---|---|---|
-| ![](docs/screenshots/gallery-photos.png) | ![](docs/screenshots/gallery-search.png) | ![](docs/screenshots/gallery-viewer.png) | ![](docs/screenshots/gallery-people.png) | ![](docs/screenshots/gallery-things.png) | ![](docs/screenshots/gallery-person.png) | ![](docs/screenshots/gallery-faces.png) |
+| Gallery | Search by description | Search | Faces with names | People | Things | A person | All faces |
+|---|---|---|---|---|---|---|---|
+| ![](docs/screenshots/gallery-photos.png) | ![](docs/screenshots/gallery-search-describe.png) | ![](docs/screenshots/gallery-search.png) | ![](docs/screenshots/gallery-viewer.png) | ![](docs/screenshots/gallery-people.png) | ![](docs/screenshots/gallery-things.png) | ![](docs/screenshots/gallery-person.png) | ![](docs/screenshots/gallery-faces.png) |
 
 Gallery screenshots show Creative Commons photos (CC BY 2.0) of Caroline Wozniacki, Ian Somerhalder and
 Kelly Clarkson by Andrew Campbell, karlnorling, cirodelia47, Jean & Nathalie and vagueonthehow (sources
 in [`CREDITS.tsv`](app/src/test/resources/people/CREDITS.tsv)), as the app found and grouped them.
+*Search by description* shows Open Images photos (CC BY 2.0, credits in
+[`CREDITS.tsv`](app/src/test/resources/search/CREDITS.tsv)) ranked by the app's search with the model's
+real descriptions of them, made by the converted model on the build computer (the model doesn't run in
+the screenshot test); the third photo is a wrong match.
 
 | Highlight video | Duplicate finder | One group at a time | Name people |
 |---|---|---|---|
@@ -75,7 +79,65 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.14.0: blur number plates, private details and QR codes, and find more faces
+## What's new in 1.15.0: search your photos by describing them
+
+**Gallery search understands descriptions**, in the app's ten languages: type what a photo shows,
+*someone playing the guitar*, *cachorro na praia*, *rotes Auto bei Nacht*, *雪の中の家*, and the photos
+that show it best come first. It finds things no category covers (a kite, a tie, smoke, a red
+umbrella), and it works together with everything search understood before: *Sophie at the beach 2024*
+takes Sophie's photos from 2024 and orders them by how well they show a beach. People, albums, dates
+and kinds (*videos*, *screenshots*) still narrow the search exactly as before.
+
+- **Best match first**, with a switch to see the same results newest first. Where the list ends depends
+  on how well the best photo matches, so short words in languages other than English keep their
+  matches too. When nothing matches surely, the closest photos are shown, and the app says so.
+- **More of the right photos for the categories**: a search for a category now finds a photo when the
+  category's recogniser *or* the new model says so. On Open Images that finds 83 % of the photos people
+  marked instead of 68 %, at 0.66 precision instead of 0.69 among the photos people checked.
+- **Videos** are described in the frames the Gallery already looks at (frames that look alike are kept once).
+- **Your library is described once, in the background**: photos and videos analysed by earlier versions
+  only get their description (faces, names and things found stay as they are) while the status bar says
+  *Preparing the new search*. A description takes 772 bytes in the index, about 23 MB for 30,000 photos.
+
+How well it works, measured with the app's own model files on real photos (scripts in
+[`buildtools/search/`](buildtools/search/)):
+
+- **Words**: 4,999 Open Images photos and the names of the 112 kinds of things with 15 or more photos
+  people confirmed (69 of them have no category in the app, so before 1.15 only file and album names
+  could find them), in each language. Mean average precision: English 0.389, Portuguese 0.340, Spanish
+  0.334, French 0.336, German 0.334, Italian 0.327, Russian 0.322, Chinese 0.340, Japanese 0.296, Korean
+  0.325 (the original, unconverted model: 0.391 in English). Where the app ends the list, it shows 41 %
+  of the photos people marked (35–48 % depending on the language), and about 62 % of what it shows was
+  confirmed among the photos people checked (photos nobody checked can't be counted as right, so the
+  real share is higher).
+- **Descriptions**: Crossmodal-3600 (photos described by people in many languages). With one caption of
+  600 photos, the described photo comes first among 3,600 in 53 % of searches in English, 55–67 % in
+  Portuguese, Spanish, French, German, Italian and Russian, 42–44 % in Chinese, Japanese and Korean, and
+  among the first ten in 73–93 %.
+- **On 60 real photos** in the tests (16 kinds of things, 30 searches in the ten languages), the best
+  match is right for every search; 85 % of the right photos are shown and 87 % of the shown photos are right.
+- **The model**: SigLIP 2 B/32 (Google DeepMind, Apache 2.0), converted to TensorFlow Lite with 8-bit
+  weights. Its text side keeps the token table rows for the 20,000 most common words of each language
+  (50,000 for Chinese, Japanese and Korean), every single character and every byte, at 8 bits (4 bits
+  cost up to 0.09 in mean average precision outside English, so they weren't used). The app's tokenizer
+  gives the original tokenizer's tokens for texts in all ten languages. Together about 270 MB: the APK
+  grows from 160 MB to 430 MB. On the build computer's processor a photo takes 32 ms on one core and a
+  search 22 ms; phones are slower (not measured).
+- **Checked on the phone**: each side of the model describes a fixed picture or text when it is first
+  loaded and must give what it gave when it was converted; otherwise search works as before (names,
+  things, dates).
+- **Tested** on the JVM and in the Android test runtime with real photos (CC BY 2.0, credits in
+  [`CREDITS.tsv`](app/src/test/resources/search/CREDITS.tsv)) and the model's real descriptions of them:
+  the tokenizer, stored descriptions, the index, where matches end, the order, a library indexed by 1.14
+  getting its descriptions without losing names or faces, and the search screen. The model itself only
+  runs in the build scripts, not in these tests, and the app has not been tried on a phone yet.
+- **Limits**: Japanese is the weakest language. Small things in a large scene, counting (*three dogs*),
+  text written in photos and "without" (*beach without people*) are not understood well, and the list is
+  ranked, so the first rows matter most. Describing a large library takes a while on the first run
+  (it pauses when the phone is warm or the battery low, like the rest of the Gallery).
+- **Translated** into all ten languages.
+
+## What was new in 1.14.0: blur number plates, private details and QR codes, and find more faces
 
 **Blur faces** is now **Blur faces & private info**. Besides faces it can hide, if you switch them on
 under *Also hide*:
