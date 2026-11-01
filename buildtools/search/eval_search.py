@@ -15,8 +15,8 @@ Hugging Face cache (HF_HOME).
 - The app's categories (baseline.npz, 1.14's search) on the same photos and the same relevance
   (a category's Open Images labels, buildtools/gallery/scripts/taxonomy.py): AP from the stored
   score, and precision / recall of the tagged photos (score 0.5 and up).
-- Long queries: Crossmodal-3600, each photo's first caption in each of the app's languages, finding
-  that photo among the 3,600: recall at 1, 5 and 10.
+- Long queries: Crossmodal-3600, the first caption of 600 photos (the same photos in every language)
+  in each of the app's languages, finding that photo among all 3,600: recall at 1, 5 and 10.
 Embeddings are cached in <work dir>/emb.
 """
 import argparse, json, os, sys, time
@@ -26,7 +26,7 @@ from PIL import Image
 ap = argparse.ArgumentParser()
 ap.add_argument('work'); ap.add_argument('model')
 ap.add_argument('--queries'); ap.add_argument('--template', action='store_true'); ap.add_argument('--min-pos', type=int, default=15)
-ap.add_argument('--skip-xm', action='store_true')
+ap.add_argument('--skip-xm', action='store_true'); ap.add_argument('--xm-n', type=int, default=600)
 a = ap.parse_args()
 torch.set_num_threads(4)
 os.makedirs(f'{a.work}/emb', exist_ok=True)
@@ -164,8 +164,10 @@ if not a.skip_xm and os.path.exists(f'{a.work}/xm3600.json'):
     xc = f'{a.work}/emb/{a.model}_xm.npy'
     if os.path.exists(xc): X = np.load(xc)
     else: X = M.images([f'{a.work}/{r["file"]}' for r in xm]); np.save(xc, X)
+    # The same photos' captions in every language (picked once, seeded), searched among all 3,600.
+    pick = set(np.random.default_rng(0).permutation(len(xm))[:a.xm_n].tolist())
     for lang in ['en', 'pt', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ja', 'ko']:
-        q = [(i, r['captions'][lang][0]) for i, r in enumerate(xm) if r['captions'].get(lang)]
+        q = [(i, r['captions'][lang][0]) for i, r in enumerate(xm) if i in pick and r['captions'].get(lang)]
         T = M.texts([t for _, t in q]); S3 = T @ X.T
         rank = np.array([(S3[j] > S3[j, i]).sum() for j, (i, _) in enumerate(q)])
         res[f'xm_{lang}'] = [float((rank < k).mean()) for k in (1, 5, 10)]
