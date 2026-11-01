@@ -14,7 +14,6 @@ import base64, json, os, struct, sys
 import numpy as np
 from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from bpe import BPE
 
 work = sys.argv[1]
 here = os.path.dirname(os.path.abspath(__file__))
@@ -22,7 +21,6 @@ root = os.path.join(here, '..', '..')
 assets = os.path.join(root, 'app', 'src', 'main', 'assets')
 out = os.path.join(root, 'app', 'src', 'test', 'resources', 'search')
 os.makedirs(os.path.join(out, 'photos'), exist_ok=True)
-from ai_edge_litert.interpreter import Interpreter
 
 KINDS = ['Dog', 'Cat', 'Car', 'Cake', 'Bicycle', 'Boat', 'Guitar', 'Snow', 'Airplane', 'Train', 'Balloon', 'Umbrella',
          'Pizza', 'Book', 'Horse', 'Bird']
@@ -40,11 +38,10 @@ def pack(e):
     m = float(np.abs(e).max()); s = m / 127 if m > 0 else 1.0
     return struct.pack('>f', s) + np.clip(np.round(e / s), -127, 127).astype(np.int8).tobytes()
 
-img = Interpreter(model_path=f'{assets}/models/search_image_siglip2_b32.tflite'); img.allocate_tensors()
-def embed_image(im):
-    x = (np.asarray(im.resize((256, 256), Image.BILINEAR), np.float32) / 127.5 - 1)[None]
-    img.set_tensor(img.get_input_details()[0]['index'], x); img.invoke()
-    e = img.get_tensor(img.get_output_details()[0]['index'])[0]; return e / np.linalg.norm(e)
+from huggingface_hub import hf_hub_download
+from appmodel import AppModel
+M = AppModel(hf_hub_download('google/siglip2-base-patch32-256', 'tokenizer.json'))
+embed_image = M.image
 
 credits = ['# file\tauthor\ttitle\tsource\tlicence\tchanges']
 lines = ['# file\tlabel (one of the sixteen kinds, or empty)\tthe app\'s description of it ([Embedding.pack], base64)']
@@ -67,39 +64,9 @@ sheet = Image.new('RGB', (160 * 10, 120 * ((len(thumbs) + 9) // 10)))
 for k, t in enumerate(thumbs): sheet.paste(t, (160 * (k % 10), 120 * (k // 10)))
 sheet.save(f'{work}/contact.jpg', quality=80)
 
-# Queries, through the app's text path: TextTokenizer's rows (bpe.py with the shipped tables) → TFLite.
-cfg = json.load(open(f'{assets}/search/model.json'))
-from huggingface_hub import hf_hub_download
-TOK = hf_hub_download('google/siglip2-base-patch32-256', 'tokenizer.json')
-bpe = BPE(TOK); V = bpe.vocab
-raw = open(f'{assets}/search/tokenizer.bin', 'rb').read()
-nv = struct.unpack_from('>i', raw, 8)[0]; nc = struct.unpack_from('>i', raw, 20)[0]
-o = 24 + nc * 8 + 256 * 4; nm = struct.unpack_from('>i', raw, o)[0]; o += 4
-merges = np.frombuffer(raw, '>i4', nm * 3, o).reshape(-1, 3); o += nm * 12
-row = np.frombuffer(raw, '>i4', nv, o)
-made = {}
-for a, b, c in merges: made.setdefault(int(c), (int(a), int(b)))
-t = open(f'{assets}/search/tokens.emb', 'rb').read()
-_, _, R, D, BITS = struct.unpack_from('>iiiii', t, 0)
-sc = np.frombuffer(t, '>f4', R, 20).astype(np.float32)
-if BITS == 8: Q = np.frombuffer(t, np.int8, R * D, 20 + R * 4).reshape(R, D).astype(np.float32)
-else:
-    u = np.frombuffer(t, np.uint8, R * D // 2, 20 + R * 4)
-    lo = (u & 15).astype(np.int8); hi = (u >> 4).astype(np.int8); lo[lo > 7] -= 16; hi[hi > 7] -= 16
-    Q = np.empty((R, D), np.float32); Q[:, 0::2] = lo; Q[:, 1::2] = hi
-W = Q * sc[:, None]
-def rows_of(text):
-    ids = []
-    def add(tk):
-        if row[tk] >= 0 or tk not in made: ids.append(row[tk] if row[tk] >= 0 else row[V['<pad>']]); return
-        add(made[tk][0]); add(made[tk][1])
-    for pc in bpe.pieces(text.lower()): add(V[pc])
-    ids = ids[:63] + [row[V['<eos>']]]
-    return ids + [row[V['<pad>']]] * (64 - len(ids))
-txt = Interpreter(model_path=f'{assets}/models/search_text_siglip2_b32.tflite'); txt.allocate_tensors()
-def embed_text(s):
-    txt.set_tensor(txt.get_input_details()[0]['index'], W[rows_of(s)][None].astype(np.float32)); txt.invoke()
-    e = txt.get_tensor(txt.get_output_details()[0]['index'])[0]; return e / np.linalg.norm(e)
+# Queries, through the app's text path (TextTokenizer's rows with the shipped tables → TFLite).
+cfg = M.cfg
+embed_text = M.text
 QUERIES = [('dog', 'en', 'Dog'), ('cachorro', 'pt', 'Dog'), ('a cat', 'en', 'Cat'), ('gato', 'es', 'Cat'), ('voiture', 'fr', 'Car'),
            ('birthday cake', 'en', 'Cake'), ('Kuchen', 'de', 'Cake'), ('bicicletta', 'it', 'Bicycle'), ('велосипед', 'ru', 'Bicycle'),
            ('boats on the water', 'en', 'Boat'), ('barco', 'pt', 'Boat'), ('someone playing the guitar', 'en', 'Guitar'), ('ギター', 'ja', 'Guitar'),

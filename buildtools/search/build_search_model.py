@@ -131,7 +131,8 @@ chars = sorted((ord(t), i) for t, i in V.items() if len(t) == 1)
 with open(os.path.join(assets, 'search', 'tokenizer.bin'), 'wb') as f:
     f.write(struct.pack('>iiiii', 0x4C4D544B, 1, len(V), V['<pad>'], V['<eos>']))
     f.write(struct.pack('>i', len(chars))); f.write(np.array(chars, '>i4').tobytes())
-    f.write(np.array([V[f'<0x{b:02X}>'] for b in range(256)], '>i4').tobytes())
+    # (Tab has no byte token, only its character's, which the tokenizer uses before any byte token.)
+    f.write(np.array([V.get(f'<0x{b:02X}>', V.get(chr(b))) for b in range(256)], '>i4').tobytes())
     f.write(struct.pack('>i', len(merges))); f.write(np.array(merges, '>i4').tobytes())
     f.write(row.astype('>i4').tobytes())
 
