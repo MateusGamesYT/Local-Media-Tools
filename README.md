@@ -3,8 +3,9 @@
 # Local Media Tools (Android)
 
 A private, fully on-device media toolbox: a **Gallery** that finds people and things in your
-photos and lets you search them by describing what they show, in ten languages, **highlight videos** cut to music the phone writes
-itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **42
+photos and lets you search them by describing what they show, in ten languages, a **video editor** whose
+auto reframe turns landscape videos into portrait ones while keeping people in the picture, **highlight videos** cut to music the phone writes
+itself (or to your own song), **printing** to Wi-Fi printers without the printer maker's app, and **43
 tools** for photos, video, GIF, documents, PDF and audio, among them **audio tools** to trim, merge,
 convert, normalise, speed up and split sound files, a **file reader** for the PDF,
 Word, Excel and PowerPoint files Android can't open by itself, a **metadata viewer** that shows what
@@ -18,7 +19,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces & private info → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.15.0.apk`](release/LocalMediaTools-1.15.0.apk)
+**Install:** [`release/LocalMediaTools-1.16.0.apk`](release/LocalMediaTools-1.16.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -79,7 +80,7 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
 
-## What's new in 1.15.0: search your photos by describing them
+## What was new in 1.15.0: search your photos by describing them
 
 **Gallery search understands descriptions**, in the app's ten languages: type what a photo shows,
 *someone playing the guitar*, *cachorro na praia*, *rotes Auto bei Nacht*, *雪の中の家*, and the photos
@@ -984,6 +985,7 @@ A review of the Gallery aimed at what only shows up on real phones, and the fixe
 | | Lossless video optimizer | Remux to a fast-start MP4 | `Movies/LocalMediaTools/Optimized` |
 | | Video compressor | H.264 re-encode, quality 20–100 | `Movies/LocalMediaTools/Compressed` |
 | | Merge videos | Join clips in your order; lossless when possible | `Movies/LocalMediaTools/Merged` |
+| | Video editor | Videos and photos in order: trim, split, speed, volume, transitions, looks, texts, music; landscape, portrait 9:16, square or 4:5, with auto reframe that follows the person or thing a clip is about | `Movies/LocalMediaTools/Edited` |
 | | Speed & timelapse | 0.25×–60×, natural-pitch sound | `Movies/LocalMediaTools/Speed` |
 | | Highlight video | Photos and videos of an event edited into a short film on the beat of on-device instrumental music or your own song; moments, best shots, captions | `Movies/LocalMediaTools/Highlights` |
 | | Remove video audio | Video stream copied, audio dropped | `Movies/LocalMediaTools/NoAudio` |
@@ -1102,7 +1104,15 @@ so updates install over each other; use your own key for a store release.
   documents, and 192 cut-off and damaged copies answering within 5 seconds; documents laid out on
   their own page, fonts and spacing (the widths of Calibri, Cambria, Arial, Times New Roman and
   Courier New), printing order (last page first, two-sided sheets kept together) and the paper
-  choice (remembered, else A4, else the printer's); and "me" in Gallery search.
+  choice (remembered, else A4, else the printer's); and "me" in Gallery search. New in 1.16: the video
+  editor's timeline (clips following each other with their transitions, speed playing more or less of
+  the file, splitting keeping every moment in place, whole picture, fill and auto reframe, looks as one
+  colour matrix, texts fading in and out, which clips' sound plays when and the music stepping back),
+  and auto reframe's camera planning (the banded solver against a dense one, a still camera on a still
+  subject, a walking one followed smoothly, the subject followed rather than whoever is biggest, cuts,
+  zoom within its limits, the centre when nothing is found, waiting where the subject will appear, and
+  a person too wide for a portrait picture keeping their head in); highlight captions in another
+  language than the app's.
 * `app/src/roboTest` — 95 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
@@ -1146,13 +1156,17 @@ so updates install over each other; use your own key for a store release.
   every field, search, handing the photo to Remove metadata, a video's place, a Word file's e-mail
   and save history, a locked PDF saying so), printing Word, Excel and PowerPoint files to the
   simulated printer, and choosing "Me" and favourites in the Gallery (search, regrouping, merges,
-  and upgrading an older gallery).
+  and upgrading an older gallery); new in 1.16, the video editor on a real recording and a real photo,
+  from adding them to saving (splitting, undo and redo, speed, a look, portrait 9:16 with auto reframe
+  planned from what the app's detectors found in the recording, the man the clip is about inside the
+  crop, a title, the preview drawn, the project kept and coming back when the editor opens again).
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
 tested against), MediaCodec/MediaExtractor video paths (including the GPU face blur, the GPU video
 denoiser, merging and speed changes, the highlight video's analysis of videos, decoding your song, GPU
-drawing, H.264 and AAC encoding, and the Gallery's video frames), PdfRenderer (also used to print PDF
+drawing, H.264 and AAC encoding, the Gallery's video frames, and the video editor's saving and the
+frames auto reframe reads), PdfRenderer (also used to print PDF
 pages and to show them in the file reader; the tests draw PDFs with the PDFBox fallback), BitmapRegionDecoder, the camera intent,
 the photo-library scan and trash request, MediaStore and the background indexing service on a real
 phone, and the native OpenCV/TFLite code on a device (the face and cut-out models are tested on the
