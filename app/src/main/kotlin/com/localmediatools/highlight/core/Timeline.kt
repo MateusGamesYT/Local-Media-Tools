@@ -6,10 +6,12 @@ import kotlin.math.min
 
 /**
  * One picture drawn into an output frame: the part [src] of the clip's picture (fractions of its
- * displayed size) goes to [dst] (fractions of the output, y down) at [alpha]. With [backdrop] a
- * blurred, darkened copy of [backdropSrc] fills the whole frame behind it first.
+ * displayed size, after [CompClip.rotation]) goes to [dst] (fractions of the output, y down) at
+ * [alpha]. With [backdrop] a blurred, darkened copy of [backdropSrc] fills the whole frame behind it
+ * first. [color]: a colour matrix (column-major 4×4 on (r, g, b, 1)) applied to the picture, or none.
  */
-class Layer(val clip: Int, val src: Frame, val dst: Frame, val alpha: Float, val backdrop: Boolean, val backdropSrc: Frame, val sourceMs: Long)
+class Layer(val clip: Int, val src: Frame, val dst: Frame, val alpha: Float, val backdrop: Boolean, val backdropSrc: Frame, val sourceMs: Long,
+            val color: FloatArray? = null)
 
 class CaptionLayer(val caption: Int, val alpha: Float)
 
@@ -61,10 +63,22 @@ object Timeline {
     // The renderer draws each layer as a quad whose corners q run 0..1 (x right, y up, as GL draws).
     // These matrices (column-major 4×4, as GLES expects) take q to the texture coordinates to sample.
 
-    /** For a bitmap uploaded with GLUtils (its first row at t = 0): q → the [src] part of the picture. */
-    fun bitmapMatrix(src: Frame): FloatArray {
-        // s = src.x + q.x·src.w; t = src.y + (1 − q.y)·src.h
-        return affine(src.w, 0f, src.x, 0f, -src.h, src.y + src.h)
+    /**
+     * For a bitmap uploaded with GLUtils (its first row at t = 0): q → the [src] part of the picture,
+     * shown turned [rotationCw] degrees clockwise.
+     */
+    fun bitmapMatrix(src: Frame, rotationCw: Int = 0): FloatArray {
+        // s = src.x + q.x·src.w; t = src.y + (1 − q.y)·src.h (in the turned picture), then back to the bitmap.
+        val display = affine(src.w, 0f, src.x, 0f, -src.h, src.y + src.h)
+        return if (((rotationCw % 360) + 360) % 360 == 0) display else mul(unrotate(rotationCw), display)
+    }
+
+    /** From a point of a picture shown turned [rotationCw] degrees (y down) to the stored picture's. */
+    fun unrotate(rotationCw: Int): FloatArray = when (((rotationCw % 360) + 360) % 360) {
+        90 -> affine(0f, 1f, 0f, -1f, 0f, 1f)     // x = v, y = 1 − u
+        180 -> affine(-1f, 0f, 1f, 0f, -1f, 1f)   // x = 1 − u, y = 1 − v
+        270 -> affine(0f, -1f, 1f, 1f, 0f, 0f)    // x = 1 − v, y = u
+        else -> affine(1f, 0f, 0f, 0f, 1f, 0f)
     }
 
     /**
@@ -75,16 +89,9 @@ object Timeline {
     fun videoMatrix(src: Frame, rotationCw: Int, st: FloatArray): FloatArray {
         // Displayed point (u, v) (v down) from q.
         val display = affine(src.w, 0f, src.x, 0f, -src.h, src.y + src.h)
-        // Stored point (x, y) (y down) from the displayed one.
-        val unrotate = when (((rotationCw % 360) + 360) % 360) {
-            90 -> affine(0f, 1f, 0f, -1f, 0f, 1f)     // x = v, y = 1 − u
-            180 -> affine(-1f, 0f, 1f, 0f, -1f, 1f)   // x = 1 − u, y = 1 − v
-            270 -> affine(0f, -1f, 1f, 1f, 0f, 0f)    // x = 1 − v, y = u
-            else -> affine(1f, 0f, 0f, 0f, 1f, 0f)
-        }
         // Texture coordinates with the origin at the bottom.
         val flip = affine(1f, 0f, 0f, 0f, -1f, 1f)
-        return mul(st, mul(flip, mul(unrotate, display)))
+        return mul(st, mul(flip, mul(unrotate(rotationCw), display)))
     }
 
     /** A 2-D affine map (x' = a·x + b·y + c, y' = d·x + e·y + f) as a column-major 4×4 matrix. */
