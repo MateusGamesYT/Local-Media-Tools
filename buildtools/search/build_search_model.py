@@ -68,7 +68,7 @@ class Text(torch.nn.Module):
         h = s.t.final_layer_norm(h)[:, -1:]
         return torch.nn.functional.normalize(s.t.head(h)[:, 0], dim=-1)
 
-def export(mod, x, name):
+def export(mod, x, name, keep_input=False):
     # Converted before (the towers don't depend on the vocabulary): reused unless REBUILD is set.
     done = os.path.join(conv, 'tf_' + name, name + '_dynamic_range_quant.tflite')
     if os.path.exists(done) and not os.environ.get('REBUILD'): return done
@@ -78,7 +78,8 @@ def export(mod, x, name):
     np.save(os.path.join(conv, 'calibration_image_sample_data_20x128x128x3_float32.npy'),
             np.random.default_rng(0).uniform(0, 1, (20, 128, 128, 3)).astype(np.float32))
     out = os.path.join(conv, 'tf_' + name)
-    subprocess.run([os.path.join(work, 'venv312', 'bin', 'onnx2tf'), '-i', path, '-o', out, '-odrqt', '-nuo', '-n'],
+    # keep_input: the converter would read a [1, 64, 768] input as channels-first and transpose it; keep it as it is.
+    subprocess.run([os.path.join(work, 'venv312', 'bin', 'onnx2tf'), '-i', path, '-o', out, '-odrqt', '-nuo', '-n'] + (['-kat', 'input'] if keep_input else []),
                    check=True, cwd=conv, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return os.path.join(out, name + '_dynamic_range_quant.tflite')
 
@@ -137,7 +138,7 @@ with open(os.path.join(assets, 'search', 'tokenizer.bin'), 'wb') as f:
     f.write(row.astype('>i4').tobytes())
 
 # Text tower, checked through the reduced vocabulary as the app runs it.
-tt = export(Text().eval(), torch.randn(1, 64, D), 'search_text')
+tt = export(Text().eval(), torch.randn(1, 64, D), 'search_text', keep_input=True)
 Wd = Qt.astype(np.float32) * scale[:, None]
 made = {}
 for a, b, c in merges: made.setdefault(c, (a, b))
