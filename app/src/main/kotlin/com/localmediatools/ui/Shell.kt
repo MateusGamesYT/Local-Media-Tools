@@ -243,7 +243,7 @@ class HomeTab(private val shell: MainShell) {
         }, LinearLayout.LayoutParams(ctx.dp(44), ctx.dp(44)))
         header.addView(UI.vertical(ctx).apply {
             setPadding(ctx.dp(12), 0, ctx.dp(8), 0)
-            addView(UI.text(ctx, "Local Media Tools", TextStyle.TITLE).apply { isAccessibilityHeading = true; maxLines = 1 })
+            addView(UI.text(ctx, "Local Media Tools", TextStyle.TITLE).apply { isAccessibilityHeading = true; maxLines = 2 })
             addView(UI.text(ctx, trn(ToolId.toolCount, "{0} tool, all on this phone", "{0} tools, all on this phone"), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(2), 0, 0) })
         }, lp(0, WRAP, 1f))
         header.addView(UI.horizontal(ctx).apply {

@@ -76,7 +76,8 @@ class PagesView(ctx: Context, private val source: PageSource, private val search
     private val main = Handler(Looper.getMainLooper())
 
     init {
-        setBackgroundColor(0xFF2B2F36.toInt())
+        // Pages lie on a backdrop of the theme's (darker grey in the dark theme, lighter in the light one).
+        setBackgroundColor(if (Palette.isDark) 0xFF2B2F36.toInt() else Palette.SURFACE_3)
         addView(column, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         addView(indicator, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL).apply { bottomMargin = ctx.dp(20) })
     }

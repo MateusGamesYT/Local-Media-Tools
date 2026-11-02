@@ -102,10 +102,11 @@ object UI {
     fun iconButton(ctx: Context, res: Int, description: String, tint: Int = Palette.TEXT, onClick: () -> Unit): ImageView = ImageView(ctx).apply {
         setImageDrawable(ctx.icon(res, tint))
         contentDescription = description
-        val p = ctx.dp(11)
+        // 48 dp: the size Android's accessibility guidelines ask for anything tappable.
+        val p = ctx.dp(12)
         setPadding(p, p, p, p)
         background = Shapes.clickable(ctx, Palette.withAlpha(Palette.SURFACE_2, 0), 100f)
-        layoutParams = LinearLayout.LayoutParams(ctx.dp(46), ctx.dp(46))
+        layoutParams = LinearLayout.LayoutParams(ctx.dp(48), ctx.dp(48))
         isClickable = true; isFocusable = true
         setOnClickListener { onClick() }
     }
@@ -241,8 +242,8 @@ class ChoiceGroup<T>(
             val badge = badgeOf?.invoke(o)
             val tv = UI.text(ctx, if (badge != null) "${labelOf(o)}  ·  $badge" else labelOf(o), TextStyle.BODY).apply {
                 gravity = Gravity.CENTER
-                minHeight = ctx.dp(42)
-                setPadding(ctx.dp(16), ctx.dp(9), ctx.dp(16), ctx.dp(9))
+                minHeight = ctx.dp(44)
+                setPadding(ctx.dp(16), ctx.dp(10), ctx.dp(16), ctx.dp(10))
                 isClickable = true; isFocusable = true
                 setOnClickListener { if (enabledMap[i] != false) select(o, notify = true) }
             }
@@ -376,8 +377,11 @@ class ToggleRow(ctx: Context, val title: String, subtitle: String?, checked: Boo
         minimumHeight = ctx.dp(56)
         addView(UI.titled(ctx, title, subtitle), lp(0, WRAP, 1f))
         switch.isChecked = checked
-        switch.thumbTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(Palette.ACCENT, Palette.TEXT_2))
-        switch.trackTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(Palette.withAlpha(Palette.ACCENT, 0x66), Palette.SURFACE_3))
+        // Off: a light thumb on a grey track in the light theme, a grey thumb on a dark track in the dark one.
+        val offThumb = if (Palette.isDark) Palette.TEXT_2 else Color.WHITE
+        val offTrack = if (Palette.isDark) Palette.SURFACE_3 else Palette.withAlpha(Palette.TEXT_3, 0x80)
+        switch.thumbTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(Palette.ACCENT, offThumb))
+        switch.trackTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()), intArrayOf(Palette.withAlpha(Palette.ACCENT, 0x66), offTrack))
         switch.contentDescription = title
         switch.setOnCheckedChangeListener { _, c -> onChange(c) }
         addView(switch)

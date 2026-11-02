@@ -103,6 +103,39 @@ class ThemeTest {
     @Test fun screensAreReadableInTheLightTheme() = checkScreens(Appearance.LIGHT)
     @Test fun screensAreReadableInTheDarkTheme() = checkScreens(Appearance.DARK)
 
+    /** With the phone's text 30 % larger, no text that is limited to a few lines loses words without "…". */
+    @Test fun largeTextIsNotCutOff() {
+        RuntimeEnvironment.setFontScale(1.3f)
+        try {
+            val a = Robolectric.buildActivity(MainActivity::class.java).setup().get(); idle()
+            val problems = ArrayList<String>()
+            fun scan(where: String) {
+                val root = a.window.decorView
+                val w = a.resources.displayMetrics.widthPixels; val h = a.resources.displayMetrics.heightPixels
+                root.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY))
+                root.layout(0, 0, w, h)
+                for (t in all(a.navigator.top!!.view).filterIsInstance<TextView>()) {
+                    if (t.visibility != View.VISIBLE || t.ellipsize != null || t.maxLines > 4 || t.text.isNullOrEmpty()) continue
+                    val l = t.layout ?: continue
+                    if (l.getLineEnd(l.lineCount - 1) < t.text.length) problems.add("$where: \"${t.text}\" shows ${l.lineCount} lines")
+                }
+            }
+            scan("home")
+            val shell = a.navigator.top as MainShell
+            for (t in ToolId.entries) {
+                if (t == ToolId.PHOTO_EDITOR || t == ToolId.MAGIC_ERASER || t == ToolId.BLUR_REDACT) continue
+                ToolLauncher.open(a, t); idle(400)
+                scan(t.name)
+                while (a.navigator.depth > 1) a.navigator.pop()
+                idle(400)
+            }
+            for (tab in listOf(MainShell.TAB_GALLERY, MainShell.TAB_ACTIVITY, MainShell.TAB_SETTINGS)) { shell.show(tab); idle(500); scan("tab $tab") }
+            assertTrue(problems.distinct().joinToString("\n"), problems.isEmpty())
+        } finally {
+            RuntimeEnvironment.setFontScale(1f)
+        }
+    }
+
     /** Home, every tool's screen (the photo editors open the system picker first), the tabs and Settings. */
     private fun checkScreens(appearance: Appearance) {
         AppTheme.setAppearance(app, appearance)
