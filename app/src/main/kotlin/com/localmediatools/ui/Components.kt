@@ -131,52 +131,89 @@ class ChipRow<T>(
     }
 }
 
-/** Big gradient card for featured tools on the home screen. */
+/**
+ * A featured tool on the home screen: a wide gradient card with the tool's icon, name and what it
+ * does (white text; the gradients keep 4.5:1 for it, ThemeTest checks).
+ */
 class FeatureCard(ctx: Context, t: ToolId, colors: IntArray, badge: String?, onClick: () -> Unit) : FrameLayout(ctx) {
     init {
-        background = Shapes.clickableGradient(ctx, colors, 26f)
+        background = Shapes.clickableGradient(ctx, colors, 24f)
         isClickable = true; isFocusable = true
         contentDescription = "${t.title}. ${t.shortDescription}"
         setOnClickListener { onClick() }
         clipToOutline = true
         // Large faint glyph in the corner for depth.
         addView(ImageView(ctx).apply {
-            setImageDrawable(ctx.icon(Icons.tool(t), Palette.withAlpha(Color.WHITE, 0x2A)))
+            setImageDrawable(ctx.icon(Icons.tool(t), Palette.withAlpha(Color.WHITE, 0x24)))
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-        }, LayoutParams(ctx.dp(110), ctx.dp(110), Gravity.END or Gravity.BOTTOM).apply { rightMargin = -ctx.dp(18); bottomMargin = -ctx.dp(18) })
+        }, LayoutParams(ctx.dp(104), ctx.dp(104), Gravity.END or Gravity.BOTTOM).apply { rightMargin = -ctx.dp(16); bottomMargin = -ctx.dp(16) })
         val col = UI.vertical(ctx, 16, 16)
         val top = UI.horizontal(ctx)
         top.addView(FrameLayout(ctx).apply {
-            background = Shapes.rounded(ctx, Palette.withAlpha(Color.WHITE, 0x33), 14f)
-            addView(ImageView(ctx).apply { setImageDrawable(ctx.icon(Icons.tool(t), Color.WHITE)) }, LayoutParams(ctx.dp(24), ctx.dp(24), Gravity.CENTER))
-        }, LinearLayout.LayoutParams(ctx.dp(44), ctx.dp(44)))
+            background = Shapes.rounded(ctx, Palette.withAlpha(Color.WHITE, 0x33), 12f)
+            addView(ImageView(ctx).apply { setImageDrawable(ctx.icon(Icons.tool(t), Color.WHITE)) }, LayoutParams(ctx.dp(22), ctx.dp(22), Gravity.CENTER))
+        }, LinearLayout.LayoutParams(ctx.dp(40), ctx.dp(40)))
         top.addView(UI.flex(ctx))
         if (badge != null) top.addView(UI.text(ctx, badge, TextStyle.LABEL, Color.WHITE).apply {
             maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END
-            background = Shapes.pill(ctx, Palette.withAlpha(Color.BLACK, 0x38))
+            background = Shapes.pill(ctx, Palette.withAlpha(Color.BLACK, 0x40))
             setPadding(ctx.dp(10), ctx.dp(5), ctx.dp(10), ctx.dp(5))
             letterSpacing = 0.06f
         })
         col.addView(top)
         col.addView(UI.flex(ctx), LinearLayout.LayoutParams(0, 0, 1f))
-        col.addView(UI.text(ctx, t.title, TextStyle.TITLE, Color.WHITE).apply { textSize = 18f })
-        col.addView(UI.text(ctx, t.shortDescription, TextStyle.CAPTION, Palette.withAlpha(Color.WHITE, 0xD9)).apply { setPadding(0, ctx.dp(4), ctx.dp(8), 0) })
+        col.addView(UI.text(ctx, t.title, TextStyle.TITLE, Color.WHITE).apply { textSize = 18f; maxLines = 2 })
+        col.addView(UI.text(ctx, t.shortDescription, TextStyle.CAPTION, Color.WHITE).apply { setPadding(0, ctx.dp(4), ctx.dp(8), 0); maxLines = 3 })
         addView(col, LayoutParams(MATCH, MATCH))
     }
 }
 
-/** Tool tile used in the home grid. */
-class ToolTile(ctx: Context, t: ToolId, onClick: () -> Unit) : LinearLayout(ctx) {
+/**
+ * A tool in the home screen's grids: its icon above its name. Touch and hold for what it does and to
+ * pin it ([onHold]).
+ */
+class ToolTile(ctx: Context, t: ToolId, pinned: Boolean, onHold: (() -> Unit)?, onClick: () -> Unit) : LinearLayout(ctx) {
     init {
         orientation = VERTICAL
-        setPadding(ctx.dp(14), ctx.dp(14), ctx.dp(14), ctx.dp(14))
-        background = Shapes.clickable(ctx, Palette.SURFACE, 22f, Palette.STROKE)
-        minimumHeight = ctx.dp(132)
-        addView(UI.toolTile(ctx, t, 40, 22))
-        addView(UI.text(ctx, t.title, TextStyle.SUBTITLE).apply { setPadding(0, ctx.dp(12), 0, 0) })
-        addView(UI.text(ctx, t.shortDescription, TextStyle.CAPTION).apply { setPadding(0, ctx.dp(4), 0, 0); maxLines = 3 })
+        gravity = Gravity.CENTER_HORIZONTAL
+        setPadding(ctx.dp(4), ctx.dp(10), ctx.dp(4), ctx.dp(8))
+        background = Shapes.clickable(ctx, 0, 16f, ripple = Palette.withAlpha(Palette.ACCENT, 0x24))
+        minimumHeight = ctx.dp(92)
+        addView(UI.toolTile(ctx, t, 48, 24).apply { (layoutParams as LayoutParams).gravity = Gravity.CENTER_HORIZONTAL })
+        addView(UI.text(ctx, t.title, TextStyle.CAPTION, Palette.TEXT).apply {
+            gravity = Gravity.CENTER; textSize = 12.5f; typeface = typeface(560); maxLines = 3
+            setPadding(ctx.dp(2), ctx.dp(6), ctx.dp(2), 0)
+        }, LayoutParams(MATCH, WRAP))
         isClickable = true; isFocusable = true
-        contentDescription = "${t.title}. ${t.shortDescription}"
+        contentDescription = "${t.title}. ${t.shortDescription}" + if (pinned) tr(", pinned") else ""
+        setOnClickListener { onClick() }
+        if (onHold != null) setOnLongClickListener { performHapticFeedback(HapticFeedbackConstants.LONG_PRESS); onHold(); true }
+    }
+}
+
+/** Tools in rows of [columns] (the last row padded so every tile keeps the same width). */
+fun toolGrid(ctx: Context, tools: List<ToolId>, columns: Int, tile: (ToolId) -> View): LinearLayout = UI.vertical(ctx).apply {
+    for (row in tools.chunked(columns)) {
+        val r = UI.horizontal(ctx, Gravity.TOP)
+        for (t in row) r.addView(tile(t), lp(0, MATCH, 1f))
+        // Fillers must be MATCH_PARENT too: a WRAP child makes LinearLayout collapse the row.
+        repeat(columns - row.size) { r.addView(View(ctx), lp(0, MATCH, 1f)) }
+        addView(r, lp())
+    }
+}
+
+/** A recently used tool: a small pill with its icon and name. */
+class RecentChip(ctx: Context, t: ToolId, onClick: () -> Unit) : LinearLayout(ctx) {
+    init {
+        orientation = HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        background = Shapes.clickable(ctx, Palette.SURFACE, 100f, Palette.STROKE)
+        setPadding(ctx.dp(6), ctx.dp(6), ctx.dp(14), ctx.dp(6))
+        minimumHeight = ctx.dp(48)
+        addView(UI.toolTile(ctx, t, 32, 18).apply { elevation = 0f })
+        addView(UI.text(ctx, t.title, TextStyle.SUBTITLE).apply { textSize = 14f; maxLines = 1; setPadding(ctx.dp(10), 0, 0, 0) })
+        isClickable = true; isFocusable = true
+        contentDescription = t.title
         setOnClickListener { onClick() }
     }
 }

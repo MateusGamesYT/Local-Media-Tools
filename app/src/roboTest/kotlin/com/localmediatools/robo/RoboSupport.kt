@@ -104,6 +104,8 @@ object Robo {
         com.localmediatools.ui.tools.WatermarkState.perGroup.clear()
         com.localmediatools.ui.tools.FaceBlurPrefs.privacy = com.localmediatools.vision.core.PrivacyOptions()
         com.localmediatools.gallery.SearchModels.resetForTests()
+        com.localmediatools.ui.ToolStackState.steps.clear()
+        com.localmediatools.ui.ToolStackState.keepInBetween = false
     }
 
     /** Runs [job] to completion; [budget] is the memory budget each parallel item gets. */

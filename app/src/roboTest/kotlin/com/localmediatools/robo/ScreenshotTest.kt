@@ -74,6 +74,7 @@ class ScreenshotTest {
         val dir = File(dirName!!).apply { mkdirs() }
         val app = RuntimeEnvironment.getApplication()
         Robo.resetUiState()
+        homeWithHistory(app)
         val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
         idle()
         shot(a, dir, "00_home")
@@ -125,6 +126,35 @@ class ScreenshotTest {
         bmp.eraseColor(0xFF000000.toInt())
         dv.draw(Canvas(bmp))
         File(dir, "99_workload.png").outputStream().use { Bitmap.createScaledBitmap(bmp, w / 2, bmp.height / 2, true).compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    /** Two pinned tools and a few used lately, as after using the app for a while. */
+    private fun homeWithHistory(app: android.app.Application) {
+        for (t in listOf(ToolId.VIDEO_EDITOR, ToolId.COMPRESS_IMAGES)) com.localmediatools.ui.ToolPrefs.setPinned(app, t, true)
+        for (t in listOf(ToolId.MERGE_PDFS, ToolId.METADATA, ToolId.TRIM_AUDIO)) com.localmediatools.ui.ToolPrefs.used(app, t)
+    }
+
+    /** The main screens in the dark theme. */
+    @Test fun darkScreenshots() {
+        val dirName = System.getenv("LMT_SHOTS")
+        assumeTrue(dirName != null)
+        val dir = File(dirName!!).apply { mkdirs() }
+        val app = RuntimeEnvironment.getApplication()
+        Robo.resetUiState()
+        com.localmediatools.ui.AppTheme.setAppearance(app, com.localmediatools.ui.Appearance.DARK)
+        try {
+            homeWithHistory(app)
+            val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
+            idle()
+            shot(a, dir, "dark_00_home")
+            val shell = a.navigator.top as MainShell
+            shell.show(MainShell.TAB_SETTINGS); idle(); shot(a, dir, "dark_02_settings")
+            shell.show(0); idle()
+            a.navigator.push(ToolScreens.create(a, ToolId.VIDEO_SPEED)); idle(1500)
+            shot(a, dir, "dark_35_video_speed")
+        } finally {
+            com.localmediatools.ui.AppTheme.setAppearance(app, com.localmediatools.ui.Appearance.SYSTEM)
+        }
     }
 
     /** The home screen and Settings in a few of the app's languages. */

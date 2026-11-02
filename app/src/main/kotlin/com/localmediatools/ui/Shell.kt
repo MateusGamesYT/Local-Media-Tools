@@ -1,7 +1,6 @@
 package com.localmediatools.ui
 
 import android.app.AlertDialog
-import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.view.Gravity
 import android.view.View
@@ -40,6 +39,7 @@ import kotlinx.coroutines.withContext
 /** Opens a tool: batch tools get their screen, editing tools ask for one photo first. */
 object ToolLauncher {
     fun open(activity: MainActivity, t: ToolId) {
+        ToolPrefs.used(activity, t)
         val mode = when (t) {
             ToolId.PHOTO_EDITOR -> EditorMode.ADJUST
             ToolId.MAGIC_ERASER -> EditorMode.ERASE
@@ -113,12 +113,33 @@ object ToolLauncher {
     }
 }
 
+/** The tools pinned to the top of the home screen, and the ones used lately (kept on the phone). */
+object ToolPrefs {
+    private const val PINNED = "pinned_tools"
+    private const val RECENT = "recent_tools"
+    const val MAX_RECENT = 8
+
+    private fun prefs(ctx: android.content.Context) = ctx.getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+    private fun read(ctx: android.content.Context, key: String): List<ToolId> =
+        (prefs(ctx).getString(key, "") ?: "").split(',').mapNotNull { n -> ToolId.entries.firstOrNull { it.name == n } }.distinct()
+    private fun write(ctx: android.content.Context, key: String, l: List<ToolId>) { prefs(ctx).edit().putString(key, l.joinToString(",") { it.name }).apply() }
+
+    fun pinned(ctx: android.content.Context): List<ToolId> = read(ctx, PINNED)
+    fun isPinned(ctx: android.content.Context, t: ToolId) = t in pinned(ctx)
+    fun setPinned(ctx: android.content.Context, t: ToolId, on: Boolean) = write(ctx, PINNED, if (on) (pinned(ctx) - t) + t else pinned(ctx) - t)
+
+    /** Most recent first. */
+    fun recent(ctx: android.content.Context): List<ToolId> = read(ctx, RECENT)
+    fun used(ctx: android.content.Context, t: ToolId) = write(ctx, RECENT, (listOf(t) + (recent(ctx) - t)).take(MAX_RECENT))
+}
+
 /** App root: Tools / Gallery / Activity / Settings with a floating bottom bar. Tool screens open on top of it. */
 class MainShell(activity: MainActivity) : Screen(activity) {
     private lateinit var content: FrameLayout
     private lateinit var nav: BottomNav
     private val tabViews = HashMap<Int, View>()
     private var gallery: GalleryTab? = null
+    private var home: HomeTab? = null
     var tab = 0; private set
 
     override fun createView(): View {
@@ -146,7 +167,7 @@ class MainShell(activity: MainActivity) : Screen(activity) {
                 TAB_GALLERY -> GalleryTab(this).also { gallery = it }.build()
                 TAB_ACTIVITY -> ActivityTab(this).build()
                 TAB_SETTINGS -> SettingsTab(this).build()
-                else -> HomeTab(this).build()
+                else -> HomeTab(this).also { home = it }.build()
             }
         }
         (v.parent as? FrameLayout)?.removeView(v)
@@ -159,6 +180,8 @@ class MainShell(activity: MainActivity) : Screen(activity) {
     override fun onShow() {
         // Back from a pushed screen, or from the system's permission settings.
         if (tab == TAB_GALLERY) gallery?.onShow()
+        // A tool was just used: it is first among the recent ones now.
+        home?.refreshTop()
     }
 
     override fun onBack(): Boolean {
@@ -188,28 +211,40 @@ private fun tabPage(s: Screen): Pair<ScrollView, LinearLayout> {
     return scroll to col
 }
 
+/**
+ * The Tools tab: search and section chips; the tools you pinned and used lately; a few featured
+ * tools; then every section as a card with a grid of its tools. Touch and hold a tool for what it
+ * does and to pin it.
+ */
 class HomeTab(private val shell: MainShell) {
     private val ctx = shell.ctx
-    private lateinit var results: LinearLayout
+    private lateinit var top: LinearLayout
     private lateinit var featured: View
+    private lateinit var results: LinearLayout
     private var query = ""
     private var category: ToolSection? = null
 
+    /** Featured tools and their gradients (white text on them keeps 4.5:1). */
+    private val features = listOf(
+        Triple(ToolId.VIDEO_EDITOR, intArrayOf(0xFFC2410C.toInt(), 0xFF9A2F0A.toInt()), true),
+        Triple(ToolId.HIGHLIGHT_VIDEO, intArrayOf(0xFF7357FF.toInt(), 0xFF3B6CF0.toInt()), false),
+        Triple(ToolId.MAGIC_ERASER, intArrayOf(0xFF8E3BE0.toInt(), 0xFFC2276A.toInt()), false),
+        Triple(ToolId.FACE_BLUR, intArrayOf(0xFF0E7C6B.toInt(), 0xFF1F57A8.toInt()), false),
+        Triple(ToolId.TOOL_STACK, intArrayOf(0xFF17739A.toInt(), 0xFF2C4FC4.toInt()), false),
+        Triple(ToolId.BACKGROUND_REMOVER, intArrayOf(0xFF5B4BE0.toInt(), 0xFF2F5BD0.toInt()), false),
+    )
+
     fun build(): View {
         val (scroll, col) = tabPage(shell)
-        // Soft brand glow behind the header.
-        scroll.background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(Palette.mix(Palette.BG, Palette.BRAND[0], 0.16f), Palette.BG, Palette.BG))
-
         val header = UI.horizontal(ctx)
         header.addView(ImageView(ctx).apply {
             setImageResource(R.mipmap.ic_launcher)
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         }, LinearLayout.LayoutParams(ctx.dp(44), ctx.dp(44)))
         header.addView(UI.vertical(ctx).apply {
-            setPadding(ctx.dp(12), 0, 0, 0)
-            addView(UI.text(ctx, "Local Media Tools", TextStyle.SUBTITLE).apply { isAccessibilityHeading = true })
-            addView(UI.text(ctx, tr("Private · offline · on-device"), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(2), 0, 0) })
+            setPadding(ctx.dp(12), 0, ctx.dp(8), 0)
+            addView(UI.text(ctx, "Local Media Tools", TextStyle.TITLE).apply { isAccessibilityHeading = true; maxLines = 1 })
+            addView(UI.text(ctx, trn(ToolId.toolCount, "{0} tool, all on this phone", "{0} tools, all on this phone"), TextStyle.CAPTION).apply { setPadding(0, ctx.dp(2), 0, 0) })
         }, lp(0, WRAP, 1f))
         header.addView(UI.horizontal(ctx).apply {
             background = Shapes.pill(ctx, Palette.withAlpha(Palette.SUCCESS, 0x1F))
@@ -217,66 +252,96 @@ class HomeTab(private val shell: MainShell) {
             addView(UI.iconView(ctx, R.drawable.ic_shield, Palette.SUCCESS, 15))
             addView(UI.text(ctx, tr("No uploads"), TextStyle.CAPTION, Palette.TEXT).apply { setPadding(ctx.dp(6), 0, 0, 0) })
         })
-        col.addView(header)
+        col.addView(header, lp().apply { topMargin = ctx.dp(8) })
 
-        col.addView(UI.text(ctx, tr("Edit, convert and\nclean up — privately."), TextStyle.HERO), lp().apply { topMargin = ctx.dp(26) })
-        col.addView(UI.text(ctx, trn(ToolId.toolCount, "{0} tool that runs entirely on this phone. No account, no cloud, no limits.", "{0} tools that run entirely on this phone. No account, no cloud, no limits."), TextStyle.BODY_2), lp().apply { topMargin = ctx.dp(10) })
-
-        col.addView(SearchField(ctx, trn(ToolId.toolCount, "Search {0} tool", "Search {0} tools")) { query = it.trim(); refresh() }, lp().apply { topMargin = ctx.dp(22) })
+        col.addView(SearchField(ctx, trn(ToolId.toolCount, "Search {0} tool", "Search {0} tools")) { query = it.trim(); refresh() }, lp().apply { topMargin = ctx.dp(20) })
         val cats: List<ToolSection?> = listOf(null) + ToolSection.entries
         // Chips scroll edge to edge.
         col.addView(ChipRow(ctx, cats, { it?.title ?: tr("All") }, null) { category = it; refresh() }.apply {
             setPadding(ctx.dp(18), 0, ctx.dp(18), 0)
-        }, lp().apply { topMargin = ctx.dp(14); leftMargin = -ctx.dp(18); rightMargin = -ctx.dp(18) })
+        }, lp().apply { topMargin = ctx.dp(12); leftMargin = -ctx.dp(18); rightMargin = -ctx.dp(18) })
 
         col.addView(ExportStatusCard(shell, null), lp().apply { topMargin = ctx.dp(16) })
 
-        // "Edit & AI" block: two big cards plus a wide one (shown instead of that section in the full list).
-        val block = UI.vertical(ctx)
-        block.addView(sectionHeader(ctx, ToolSection.STACKS.title, ToolSection.STACKS.subtitle, Palette.section(ToolSection.STACKS)), lp().apply { bottomMargin = ctx.dp(12) })
-        // Cards are at least their design height and grow when a language needs more lines.
-        block.addView(FeatureCard(ctx, ToolId.TOOL_STACK, Palette.sectionGradient(ToolSection.STACKS), Badges.newTool) { ToolLauncher.open(shell.activity, ToolId.TOOL_STACK) }
-            .apply { minimumHeight = ctx.dp(150) }, LinearLayout.LayoutParams(MATCH, WRAP).apply { bottomMargin = ctx.dp(28) })
-        block.addView(sectionHeader(ctx, ToolSection.EDIT.title, ToolSection.EDIT.subtitle, Palette.section(ToolSection.EDIT)), lp().apply { bottomMargin = ctx.dp(12) })
-        fun cards(a: Triple<ToolId, IntArray, String?>, b: Triple<ToolId, IntArray, String?>): View = UI.horizontal(ctx, Gravity.TOP).apply {
-            // Both cards of a row take the taller one's height (match parent in a wrap-content row).
-            addView(FeatureCard(ctx, a.first, a.second, a.third) { ToolLauncher.open(shell.activity, a.first) }.apply { minimumHeight = ctx.dp(176) },
-                LinearLayout.LayoutParams(0, MATCH, 1f).apply { rightMargin = ctx.dp(6) })
-            addView(FeatureCard(ctx, b.first, b.second, b.third) { ToolLauncher.open(shell.activity, b.first) }.apply { minimumHeight = ctx.dp(176) },
-                LinearLayout.LayoutParams(0, MATCH, 1f).apply { leftMargin = ctx.dp(6) })
+        // Pinned and recent tools, then the featured ones (hidden while searching or filtering).
+        top = UI.vertical(ctx)
+        col.addView(top, lp())
+        featured = UI.vertical(ctx).apply {
+            addView(UI.label(ctx, tr("Featured")), lp().apply { topMargin = ctx.dp(24); bottomMargin = ctx.dp(10) })
+            val row = UI.horizontal(ctx, Gravity.TOP).apply { setPadding(ctx.dp(18), 0, ctx.dp(6), 0) }
+            for ((t, colors, isNew) in features) {
+                row.addView(FeatureCard(ctx, t, colors, if (isNew) Badges.newTool else null) { ToolLauncher.open(shell.activity, t) },
+                    LinearLayout.LayoutParams(ctx.dp(232), MATCH).apply { rightMargin = ctx.dp(12) })
+            }
+            addView(android.widget.HorizontalScrollView(ctx).apply {
+                isHorizontalScrollBarEnabled = false; overScrollMode = View.OVER_SCROLL_NEVER; clipToPadding = false
+                addView(row, android.widget.FrameLayout.LayoutParams(WRAP, ctx.dp(156)))
+            }, lp().apply { leftMargin = -ctx.dp(18); rightMargin = -ctx.dp(18) })
         }
-        block.addView(cards(Triple(ToolId.MAGIC_ERASER, Palette.AI, Badges.ai), Triple(ToolId.BACKGROUND_REMOVER, Palette.BRAND, Badges.newTool)))
-        block.addView(cards(Triple(ToolId.FACE_BLUR, Palette.TEAL, Badges.newTool), Triple(ToolId.AUTO_ENHANCE, Palette.SUNSET, Badges.newTool)), lp().apply { topMargin = ctx.dp(12) })
-        block.addView(wideTile(ToolId.PHOTO_EDITOR), lp().apply { topMargin = ctx.dp(12) })
-        block.addView(wideTile(ToolId.BLUR_REDACT), lp().apply { topMargin = ctx.dp(12) })
-        block.addView(wideTile(ToolId.DENOISE), lp().apply { topMargin = ctx.dp(12) })
-        featured = block
-        col.addView(block, lp().apply { topMargin = ctx.dp(26) })
+        col.addView(featured, lp())
 
         results = UI.vertical(ctx)
         col.addView(results, lp())
+        refreshTop()
         refresh()
 
         col.addView(UI.note(ctx, tr("Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents."), UI.NoteKind.PRIVACY), lp().apply { topMargin = ctx.dp(26) })
         return scroll
     }
 
-    /** Full-width compact tile (icon, text, chevron). */
-    private fun wideTile(t: ToolId): View = UI.horizontal(ctx).apply {
-        background = Shapes.clickable(ctx, Palette.SURFACE, 22f, Palette.STROKE)
-        setPadding(ctx.dp(14), ctx.dp(14), ctx.dp(12), ctx.dp(14))
-        addView(UI.toolTile(ctx, t, 44, 24))
-        addView(UI.titled(ctx, t.title, t.shortDescription).apply { setPadding(ctx.dp(12), 0, ctx.dp(8), 0) }, lp(0, WRAP, 1f))
-        addView(UI.iconView(ctx, R.drawable.ic_chevron, Palette.TEXT_3, 18))
-        isClickable = true; isFocusable = true
-        contentDescription = "${t.title}. ${t.shortDescription}"
-        setOnClickListener { ToolLauncher.open(shell.activity, t) }
+    private fun open(t: ToolId) = ToolLauncher.open(shell.activity, t)
+
+    private fun tile(t: ToolId): View = ToolTile(ctx, t, ToolPrefs.isPinned(ctx, t), { details(t) }) { open(t) }
+
+    /** What a tool does, with a button to open it and one to pin or unpin it. */
+    private fun details(t: ToolId) {
+        val pinned = ToolPrefs.isPinned(ctx, t)
+        AlertDialog.Builder(shell.activity).setTitle(t.title).setMessage(t.longDescription)
+            .setPositiveButton(tr("Open")) { _, _ -> open(t) }
+            .setNeutralButton(if (pinned) tr("Unpin") else tr("Pin to the top")) { _, _ ->
+                ToolPrefs.setPinned(ctx, t, !pinned)
+                refreshTop(); refresh()
+            }
+            .setNegativeButton(tr("Cancel"), null).show()
+    }
+
+    /** A card holding a grid of tools under a heading. */
+    private fun gridCard(title: String, color: Int?, count: String?, tools: List<ToolId>): View = UI.vertical(ctx).apply {
+        background = Shapes.rounded(ctx, Palette.SURFACE, 22f, Palette.STROKE)
+        setPadding(ctx.dp(8), ctx.dp(14), ctx.dp(8), ctx.dp(6))
+        addView(UI.horizontal(ctx).apply {
+            setPadding(ctx.dp(8), 0, ctx.dp(8), ctx.dp(2))
+            if (color != null) addView(View(ctx).apply { background = Shapes.circle(color) }, LinearLayout.LayoutParams(ctx.dp(8), ctx.dp(8)).apply { rightMargin = ctx.dp(10) })
+            addView(UI.text(ctx, title, TextStyle.SUBTITLE).apply { isAccessibilityHeading = true }, lp(0, WRAP, 1f))
+            if (count != null) addView(UI.text(ctx, count, TextStyle.CAPTION))
+        })
+        addView(toolGrid(ctx, tools, COLUMNS) { tile(it) }, lp().apply { topMargin = ctx.dp(4) })
+    }
+
+    /** Pinned and recent tools (again when coming back from a tool). */
+    fun refreshTop() {
+        if (!::top.isInitialized) return
+        top.removeAllViews()
+        if (query.isNotEmpty() || category != null) return
+        val pinned = ToolPrefs.pinned(ctx)
+        if (pinned.isNotEmpty()) top.addView(gridCard(tr("Pinned"), null, null, pinned), lp().apply { topMargin = ctx.dp(18) })
+        val recent = ToolPrefs.recent(ctx).filter { it !in pinned }.take(6)
+        if (recent.isNotEmpty()) {
+            top.addView(UI.label(ctx, tr("Recently used")), lp().apply { topMargin = ctx.dp(22); bottomMargin = ctx.dp(10) })
+            val row = UI.horizontal(ctx).apply { setPadding(ctx.dp(18), 0, ctx.dp(10), 0) }
+            for (t in recent) row.addView(RecentChip(ctx, t) { open(t) }, LinearLayout.LayoutParams(WRAP, WRAP).apply { rightMargin = ctx.dp(8) })
+            top.addView(android.widget.HorizontalScrollView(ctx).apply {
+                isHorizontalScrollBarEnabled = false; overScrollMode = View.OVER_SCROLL_NEVER; clipToPadding = false
+                addView(row)
+            }, lp().apply { leftMargin = -ctx.dp(18); rightMargin = -ctx.dp(18) })
+        }
     }
 
     private fun refresh() {
         results.removeAllViews()
         val filtering = query.isNotEmpty() || category != null
         featured.visibility = if (filtering) View.GONE else View.VISIBLE
+        refreshTop()
         val tools = ToolId.entries.filter { (category == null || it.section == category) && (query.isEmpty() || ToolLauncher.matches(it, query)) }
         if (tools.isEmpty()) {
             results.addView(UI.vertical(ctx).apply {
@@ -288,23 +353,21 @@ class HomeTab(private val shell: MainShell) {
             }, lp().apply { topMargin = ctx.dp(12) })
             return
         }
-        val groups: List<ToolSection?> = if (query.isNotEmpty()) listOf(null)
-            else tools.map { it.section }.distinct().filter { filtering || (it != ToolSection.EDIT && it != ToolSection.STACKS) }
-        for (sec in groups) {
-            val list = if (sec == null) tools else tools.filter { it.section == sec }
-            if (sec != null) results.addView(sectionHeader(ctx, sec.title, sec.subtitle, Palette.section(sec)), lp().apply { topMargin = ctx.dp(28); bottomMargin = ctx.dp(12) })
-            else results.addView(UI.label(ctx, trn(list.size, "{0} result", "{0} results")), lp().apply { topMargin = ctx.dp(22); bottomMargin = ctx.dp(10) })
-            for (pair in list.chunked(2)) {
-                val row = UI.horizontal(ctx, Gravity.TOP)
-                for ((k, t) in pair.withIndex()) {
-                    row.addView(ToolTile(ctx, t) { ToolLauncher.open(shell.activity, t) }, lp(0, MATCH, 1f).apply { if (k == 0) rightMargin = ctx.dp(6) else leftMargin = ctx.dp(6) })
-                }
-                // The filler must also be MATCH_PARENT: a WRAP child makes LinearLayout collapse the row to 0 height.
-                if (pair.size == 1) row.addView(View(ctx), lp(0, MATCH, 1f).apply { leftMargin = ctx.dp(6) })
-                results.addView(row, lp().apply { bottomMargin = ctx.dp(12) })
-            }
+        if (query.isNotEmpty()) {
+            results.addView(gridCard(trn(tools.size, "{0} result", "{0} results"), null, null, tools), lp().apply { topMargin = ctx.dp(18) })
+            return
+        }
+        if (!filtering) results.addView(UI.horizontal(ctx).apply {
+            addView(UI.label(ctx, tr("All tools")), lp(0, WRAP, 1f))
+            addView(UI.text(ctx, tr("Touch and hold a tool to pin it"), TextStyle.CAPTION, Palette.TEXT_3))
+        }, lp().apply { topMargin = ctx.dp(26) })
+        for (sec in tools.map { it.section }.distinct()) {
+            val list = tools.filter { it.section == sec }
+            results.addView(gridCard(sec.title, Palette.section(sec), trn(list.size, "{0} tool", "{0} tools"), list), lp().apply { topMargin = ctx.dp(12) })
         }
     }
+
+    private companion object { const val COLUMNS = 3 }
 }
 
 class ActivityTab(private val shell: MainShell) {
