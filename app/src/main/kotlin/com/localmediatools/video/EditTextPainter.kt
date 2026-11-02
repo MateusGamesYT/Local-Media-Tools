@@ -31,7 +31,11 @@ object EditTextPainter {
         }
         val maxW = (outW * 0.86f).toInt().coerceAtLeast(1)
         val text = t.text.ifBlank { " " }
-        val layout = StaticLayout.Builder.obtain(text, 0, text.length, paint, maxW).setAlignment(Layout.Alignment.ALIGN_CENTER).setLineSpacing(0f, 1.05f).build()
+        fun build() = StaticLayout.Builder.obtain(text, 0, text.length, paint, maxW).setAlignment(Layout.Alignment.ALIGN_CENTER).setLineSpacing(0f, 1.05f).build()
+        var layout = build()
+        // A long text is made smaller until it fits in the picture (with room around it).
+        var tries = 0
+        while (layout.height > outH * 0.86f && tries++ < 12) { paint.textSize *= 0.85f; layout = build() }
         var lw = 0f
         for (i in 0 until layout.lineCount) lw = max(lw, layout.getLineWidth(i))
         val pad = (short * if (t.box) 0.025f else 0.012f).toInt()
@@ -44,6 +48,6 @@ object EditTextPainter {
         val fw = w.toFloat() / outW; val fh = h.toFloat() / outH
         val margin = short * 0.07f / outH
         val y = when (t.place) { TextPlace.TOP -> margin; TextPlace.MIDDLE -> (1 - fh) / 2; TextPlace.BOTTOM -> 1 - fh - margin }
-        return bmp to Frame((1 - fw) / 2, y.coerceIn(0f, 1f - fh), fw, fh)
+        return bmp to Frame((1 - fw) / 2, y.coerceIn(0f, max(0f, 1f - fh)), fw, fh)
     }
 }

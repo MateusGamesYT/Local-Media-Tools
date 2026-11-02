@@ -38,8 +38,10 @@ class EditPreview(ctx: Context, private val scope: CoroutineScope) : View(ctx) {
 
     /** The output's rectangle inside the view (where the video is). */
     val box = RectF()
-    private val frames = HashMap<Int, Pair<Long, Bitmap>>()
-    private val loading = HashMap<Int, Job>()
+    /** The last frame read for each clip (by its id, not its place: clips move and are removed): its file, time and picture. */
+    private class Shown(val uri: String, val ms: Long, val bmp: Bitmap)
+    private val frames = HashMap<Long, Shown>()
+    private val loading = HashMap<Long, Job>()
     private val textCache = HashMap<String, Pair<Bitmap, Frame>>()
     private val paint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
     private val black = Paint().apply { color = Color.BLACK }
@@ -67,16 +69,19 @@ class EditPreview(ctx: Context, private val scope: CoroutineScope) : View(ctx) {
         val side = (max(width, height) * 0.9f).toInt().coerceIn(320, 1280)
         for (l in desc.layers) {
             val c = tl.project.clips.getOrNull(l.clip) ?: continue
-            val have = frames[l.clip]
-            if (have != null && (c.isPhoto || kotlin.math.abs(have.first - l.sourceMs) < 40)) continue
-            loading[l.clip]?.cancel()
+            val have = frames[c.id]
+            if (have != null && have.uri == c.source.uri && (c.isPhoto || kotlin.math.abs(have.ms - l.sourceMs) < 40)) continue
+            loading[c.id]?.cancel()
             val ms = l.sourceMs
-            loading[l.clip] = scope.launch {
+            loading[c.id] = scope.launch {
                 val b = withContext(Dispatchers.IO) { EditMedia.frame(context, c.source, ms, side) } ?: return@launch
-                frames[l.clip] = ms to b
+                frames[c.id] = Shown(c.source.uri, ms, b)
                 invalidate()
             }
         }
+        // Clips no longer in the project.
+        val ids = tl.project.clips.mapTo(HashSet()) { it.id }
+        frames.keys.retainAll(ids)
     }
 
     /** Frames of clips that changed (trimmed, replaced) are read again. */
@@ -91,7 +96,7 @@ class EditPreview(ctx: Context, private val scope: CoroutineScope) : View(ctx) {
             canvas.drawRect(box, black)
             for (l in desc.layers) {
                 val c = tl.project.clips.getOrNull(l.clip) ?: continue
-                val bmp = frames[l.clip]?.second ?: continue
+                val bmp = frames[c.id]?.takeIf { it.uri == c.source.uri }?.bmp ?: continue
                 val cf = l.color?.let { ColorMatrixColorFilter(colorMatrix(it)) }
                 if (l.backdrop) {
                     // A blurred, darkened copy behind: the frame drawn tiny and stretched.

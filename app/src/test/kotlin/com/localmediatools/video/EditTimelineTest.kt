@@ -134,4 +134,26 @@ class EditTimelineTest {
         assertEquals(2, EditSound.intervals(tl).size)
         assertTrue(EditSound.intervals(EditTimeline(p.copy(duckMusic = false))).isEmpty())
     }
+
+    /** A video shorter than the shortest part can be trimmed without failing (it stays whole). */
+    @Test fun trimmingAVeryShortVideoKeepsIt() {
+        val short = video.copy(durationMs = 300)
+        val p = EditProject(listOf(clip(1, s = short, outMs = EditOps.MIN_PART_MS)))
+        for ((a, b) in listOf(0L to 100L, 100L to 300L, 0L to 900L)) {
+            val q = EditOps.trim(p, 0, a, b)
+            assertEquals(0L, q.clips[0].inMs); assertEquals(EditOps.MIN_PART_MS, q.clips[0].outMs)
+        }
+    }
+
+    /** A plan is used only for its shape and while it covers what the clip plays. */
+    @Test fun autoReframeIsPlannedAgainWhenTheClipChanges() {
+        val keys = (0..20).map { com.localmediatools.video.core.Key(1000L + it * 200L, com.localmediatools.video.core.Box(0.3f, 0f, 0.316f, 1f), 0) }
+        val c = clip(1, inMs = 1000, outMs = 5000).copy(framing = Framing.AUTO, reframe = keys, reframeFor = 0.5625f)
+        assertTrue(c.reframeReady(0.5625f))
+        assertTrue(!c.reframeReady(1f))
+        assertTrue(!c.copy(outMs = 9000).reframeReady(0.5625f))
+        assertTrue(!c.copy(inMs = 0).reframeReady(0.5625f))
+        assertTrue(c.copy(inMs = 2000, outMs = 4000).reframeReady(0.5625f))
+        assertTrue(!c.copy(reframe = null).reframeReady(0.5625f))
+    }
 }

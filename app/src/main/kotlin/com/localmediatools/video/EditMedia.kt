@@ -49,13 +49,29 @@ object EditMedia {
                     val info = VideoProbe.probe(ctx, uri)
                     val v = info.video ?: return null
                     val turned = info.rotation % 180 != 0
+                    // Some files don't say how long they are in their header: ask the system's reader then.
+                    val ms = if (info.durationUs > 0) info.durationUs / 1000 else retrievedDuration(ctx, uri)
                     EditSource(uri.toString(), item.name, ShotKind.VIDEO, if (turned) v.height else v.width, if (turned) v.width else v.height,
-                        max(0L, info.durationUs / 1000), info.audio.isNotEmpty())
+                        max(0L, ms), info.audio.isNotEmpty())
                 }
                 MediaKind.IMAGE -> ImageSource.open(ctx, item).use { s -> EditSource(uri.toString(), item.name, ShotKind.PHOTO, s.width, s.height) }
                 else -> null
             }
         } catch (e: Exception) { android.util.Log.w("LMT", "editor: can't use $uri", e); null }
+    }
+
+    private fun retrievedDuration(ctx: Context, uri: Uri): Long {
+        val r = MediaMetadataRetriever()
+        return try {
+            r.setDataSource(ctx, uri)
+            r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
+        } catch (_: Exception) { 0L } finally { try { r.release() } catch (_: Exception) { } }
+    }
+
+    /** Whether the file can still be read (a draft's files may have been moved or deleted since). */
+    fun readable(ctx: Context, uri: Uri): Boolean {
+        describeOverride?.let { return it(uri) != null }
+        return try { ctx.contentResolver.openAssetFileDescriptor(uri, "r")?.use { true } ?: false } catch (_: Exception) { false }
     }
 
     private val cache = object : LruCache<String, Bitmap>(24 * 1024) {
@@ -99,11 +115,15 @@ object EditDraft {
 
     private fun file(ctx: Context) = File(ctx.filesDir, "editor/draft.json")
 
+    /** Saves and clears run one at a time, in the order asked (a later save never lands before an earlier one). */
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val io = kotlinx.coroutines.Dispatchers.IO.limitedParallelism(1)
+
     fun save(ctx: Context, s: Saved) {
         val f = file(ctx); f.parentFile?.mkdirs()
         val tmp = File(f.parentFile, "draft.json.tmp")
         tmp.writeText(toJson(s).toString())
-        tmp.renameTo(f)
+        if (!tmp.renameTo(f)) { f.delete(); tmp.renameTo(f) }
     }
 
     fun clear(ctx: Context) { file(ctx).delete() }

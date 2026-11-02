@@ -544,7 +544,7 @@ class LicensesScreen(activity: MainActivity) : Screen(activity) {
         }
         for (f in listOf("licenses/MI-GAN-MIT.txt", "licenses/YuNet-MIT.txt", "licenses/LPD-YuNet-Apache-2.0.txt", "licenses/PaddleOCR-Apache-2.0.txt", "licenses/Name-lists.txt", "licenses/InsightFace-models.txt", "licenses/U2Net-Apache-2.0.txt", "licenses/rembg-MIT.txt",
                 "licenses/EfficientDet-Apache-2.0.txt", "licenses/EfficientNetV2-Apache-2.0.txt", "licenses/SigLIP2-Apache-2.0.txt", "licenses/MusicVAE-Apache-2.0.txt", "licenses/WordNet.txt", "licenses/OpenImages-CC-BY-4.0.txt", "licenses/Inter-OFL.txt", "licenses/Document-fonts-OFL.txt")) {
-            val text = try { ctx.assets.open(f).bufferedReader().readText() } catch (_: Exception) { continue }
+            val text = try { ctx.assets.open(f).use { it.bufferedReader().readText() } } catch (_: Exception) { continue }
             body.addView(UI.label(ctx, f.substringAfter('/').removeSuffix(".txt")), lp().apply { topMargin = ctx.dp(16); bottomMargin = ctx.dp(6) })
             body.addView(UI.text(ctx, text, TextStyle.CAPTION).apply { setTextIsSelectable(true) })
         }

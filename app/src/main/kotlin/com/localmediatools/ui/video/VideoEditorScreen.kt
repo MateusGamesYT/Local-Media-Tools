@@ -65,8 +65,8 @@ import com.localmediatools.video.core.TransitionKind
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -199,6 +199,7 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
         if (initial.isEmpty()) EditDraft.load(ctx)?.let { d ->
             project = d.project; mood = d.mood; song = d.song; seed = d.seed
             nextId = (project.clips.maxOfOrNull { it.id } ?: 0L).coerceAtLeast(project.texts.maxOfOrNull { it.id } ?: 0L) + 1
+            dropUnreadable()
         } else addUris(initial, replace = true)
         refreshAll()
         return root
@@ -227,7 +228,22 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
 
     private fun saveDraft() {
         val s = EditDraft.Saved(project, mood, song, seed)
-        scope.launch(Dispatchers.IO) { try { EditDraft.save(ctx, s) } catch (_: Exception) { } }
+        scope.launch(EditDraft.io) { try { EditDraft.save(ctx, s) } catch (_: Exception) { } }
+    }
+
+    /** A draft's files moved or deleted since: left out, and said so (they would only be black and silent). */
+    private fun dropUnreadable() {
+        val uris = project.clips.map { it.source.uri }.distinct()
+        scope.launch {
+            val gone = withContext(Dispatchers.IO) { uris.filter { !EditMedia.readable(ctx, Uri.parse(it)) }.toSet() }
+            if (gone.isEmpty()) return@launch
+            val n = project.clips.count { it.source.uri in gone }
+            // Not a step to undo: the files aren't there to go back to.
+            project = project.copy(clips = project.clips.filter { it.source.uri !in gone })
+            undo.clear(); redo.clear()
+            afterChange()
+            Toast.makeText(ctx, trn(n, "{0} clip's file can no longer be read and was left out.", "{0} clips' files can no longer be read and were left out."), Toast.LENGTH_LONG).show()
+        }
     }
 
     private val clip: EditClip? get() = project.clips.getOrNull(selected)
@@ -396,6 +412,8 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
                     val ms = dur * s.progress / 1000
                     change(if (isStart) EditOps.trim(project, i, ms, c.outMs) else EditOps.trim(project, i, c.inMs, ms))
                     preview.forget()
+                    // Auto reframe follows the new part of the file (planned again if it reaches beyond the plan).
+                    reframe()
                 }
             })
             hook(start, true); hook(end, false)
@@ -416,7 +434,7 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
         panel.addView(row(
             UI.secondaryButton(ctx, tr("Move left")) { if (i > 0) { change(EditOps.move(project, i, i - 1)); selected = i - 1; refreshAll() } },
             UI.secondaryButton(ctx, tr("Move right")) { if (i < project.clips.size - 1) { change(EditOps.move(project, i, i + 1)); selected = i + 1; refreshAll() } },
-            UI.secondaryButton(ctx, tr("Turn")) { updateClip { it.copy(rotation = (it.rotation + 90) % 360, reframe = null) }; preview.forget() },
+            UI.secondaryButton(ctx, tr("Turn")) { updateClip { it.copy(rotation = (it.rotation + 90) % 360, reframe = null) }; preview.forget(); reframe() },
         ).apply { setPadding(0, ctx.dp(8), 0, 0) })
         if (!c.isPhoto) {
             panel.addView(label(tr("Speed")))
@@ -443,7 +461,7 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
                 panel.addView(BipolarSlider(ctx, 100f) { v, done -> if (done) updateClip { it.copy(panY = v / 100f) } }.apply { set(c.panY * 100f) })
             }
             Framing.AUTO -> {
-                val ready = c.reframe != null && abs(c.reframeFor - project.outAspect) < 1e-3f
+                val ready = c.reframeReady(project.outAspect)
                 panel.addView(UI.text(ctx, when {
                     c.isPhoto -> tr("Photos are filled from the middle; auto reframe follows people and things in videos.")
                     ready -> tr("Follows the person or thing the clip is about, found by on-device AI.")
@@ -463,20 +481,25 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
     fun reframe() {
         val c = clip ?: return
         if (c.framing != Framing.AUTO || c.isPhoto) return
-        if (c.reframe != null && abs(c.reframeFor - project.outAspect) < 1e-3f) return
+        if (c.reframeReady(project.outAspect)) return
         reframeJob?.cancel()
         val id = c.id; val aspect = project.outAspect
+        // What the plan is made for: it is only kept if the clip is still the same when it is ready.
+        fun same(x: EditClip) = x.framing == Framing.AUTO && x.inMs == c.inMs && x.outMs == c.outMs && x.rotation == c.rotation && x.zoom == c.zoom && project.outAspect == aspect
         reframeJob = scope.launch {
             showBusy(tr("Finding the subject…"))
             val keys = try {
-                withContext(Dispatchers.Default) { ReframeAnalyzer.analyze(ctx, Uri.parse(c.source.uri), c.inMs, c.outMs, aspect, c.zoom, c.rotation) }
+                withContext(Dispatchers.Default) {
+                    // Stops reading the clip as soon as it isn't wanted any more (another plan, the editor closed).
+                    ReframeAnalyzer.analyze(ctx, Uri.parse(c.source.uri), c.inMs, c.outMs, aspect, c.zoom, c.rotation, { !isActive })
+                }
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) throw e
                 Toast.makeText(ctx, tr("The subject couldn't be found in this clip; it is filled from the middle."), Toast.LENGTH_LONG).show(); null
             }
             showBusy(null)
             val i = project.clips.indexOfFirst { it.id == id }
-            if (i < 0 || keys == null) return@launch
+            if (i < 0 || keys == null || !same(project.clips[i])) return@launch
             // Not a step of its own: it belongs to choosing auto reframe.
             project = EditOps.replace(project, i, project.clips[i].copy(reframe = keys, reframeFor = aspect))
             saveDraft(); refreshAll()
@@ -610,9 +633,10 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
             .setNegativeButton(tr("Cancel"), null).show()
     }
 
-    fun startExport(short: Int) {
-        val items = project.clips.map { MediaProbe.describe(ctx, Uri.parse(it.source.uri)) }.distinctBy { it.key }
-        val job = VideoEditJob(items, project, VideoEditSettings(shortSide = short, mood = mood, song = song, seed = seed))
+    fun startExport(short: Int) = scope.launch {
+        val p = project
+        val items = withContext(Dispatchers.IO) { p.clips.map { MediaProbe.describe(ctx, Uri.parse(it.source.uri)) }.distinctBy { it.key } }
+        val job = VideoEditJob(items, p, VideoEditSettings(shortSide = short, mood = mood, song = song, seed = seed))
         activity.ensureNotificationPermission {
             val wasBusy = ExportManager.state.value.busy
             ExportManager.enqueue(job)
@@ -623,7 +647,11 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
     private fun more() {
         AlertDialog.Builder(activity).setItems(arrayOf(tr("Start over"))) { _, _ ->
             AlertDialog.Builder(activity).setMessage(tr("Remove every clip, text and setting of this video? The files themselves stay."))
-                .setPositiveButton(tr("Start over")) { _, _ -> player.stop(); change(EditProject(), keepPlayhead = false); mood = null; song = null; EditDraft.clear(ctx) }
+                .setPositiveButton(tr("Start over")) { _, _ ->
+                    player.stop(); mood = null; song = null
+                    change(EditProject(), keepPlayhead = false)
+                    scope.launch(EditDraft.io) { EditDraft.clear(ctx) }
+                }
                 .setNegativeButton(tr("Cancel"), null).show()
         }.show()
     }

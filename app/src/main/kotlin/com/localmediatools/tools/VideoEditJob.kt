@@ -29,7 +29,6 @@ import java.io.RandomAccessFile
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -71,7 +70,7 @@ class VideoEditJob(inputs: List<MediaItem>, private val project: EditProject, pr
         // 1. Auto reframe where it isn't planned for this shape yet.
         var p = project
         val aspect = p.outAspect
-        val pending = p.clips.withIndex().filter { (_, c) -> c.framing == Framing.AUTO && !c.isPhoto && (c.reframe == null || abs(c.reframeFor - aspect) > 1e-3f) }
+        val pending = p.clips.withIndex().filter { (_, c) -> c.framing == Framing.AUTO && !c.isPhoto && !c.reframeReady(aspect) }
         for ((k, ic) in pending.withIndex()) {
             val (i, c) = ic
             ctx.checkCancelled()

@@ -100,6 +100,21 @@ data class EditClip(
     /** The picture's shape as shown (after [rotation]). */
     val aspect: Float get() = if (rotation % 180 != 0) source.height.toFloat() / max(1, source.width) else source.width.toFloat() / max(1, source.height)
     val hasSound get() = !isPhoto && source.hasAudio && volume > 0f
+
+    /**
+     * Whether [reframe] can be used for an output of [aspect]: planned for that shape and covering
+     * the part of the file the clip plays (after a trim beyond it, or a turn, it is planned again).
+     */
+    fun reframeReady(aspect: Float): Boolean {
+        val keys = reframe ?: return false
+        if (keys.isEmpty() || kotlin.math.abs(reframeFor - aspect) >= 1e-3f) return false
+        return keys.first().ms <= inMs + REFRAME_SLACK_MS && keys.last().ms >= outMs - REFRAME_SLACK_MS
+    }
+
+    companion object {
+        /** Samples are 0.2 s apart: the first and last may sit this far inside the clip. */
+        const val REFRAME_SLACK_MS = 400L
+    }
 }
 
 /** Where a text sits. */
@@ -163,6 +178,8 @@ object EditOps {
         val c = p.clips.getOrNull(index) ?: return p
         if (c.isPhoto) return replace(p, index, c.copy(inMs = 0, outMs = max(MIN_PART_MS, outMs - inMs)))
         val end = if (c.source.durationMs > 0) c.source.durationMs else Long.MAX_VALUE
+        // A file shorter than the shortest part: all of it (as when it was added).
+        if (end < MIN_PART_MS) return replace(p, index, c.copy(inMs = 0, outMs = MIN_PART_MS))
         val a = inMs.coerceIn(0, max(0, end - MIN_PART_MS))
         val b = outMs.coerceIn(a + MIN_PART_MS, end)
         return replace(p, index, c.copy(inMs = a, outMs = b))

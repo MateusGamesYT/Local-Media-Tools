@@ -200,6 +200,30 @@ class VideoEditorTest {
         assertNotNull(texts(a.navigator.top!!.view).firstOrNull { it.contains("clip02.mp4") })
     }
 
+    /** A very long text is made smaller to fit inside the picture instead of failing. */
+    @Test fun aLongTextFitsInThePicture() {
+        val long = com.localmediatools.video.core.EditText(1, (1..60).joinToString(" ") { "word$it" }, 0, 3000, com.localmediatools.video.core.TextPlace.BOTTOM, 2.5f, true)
+        for ((w, h) in listOf(1920 to 1080, 1080 to 1920, 1080 to 1080)) {
+            val (bmp, f) = com.localmediatools.video.EditTextPainter.paint(long, w, h)
+            assertTrue("$w×$h: $f", f.y >= 0f && f.y + f.h <= 1f + 1e-4f && f.x >= 0f && f.x + f.w <= 1f + 1e-4f)
+            assertTrue(bmp.height <= h)
+        }
+    }
+
+    /** A draft whose file was moved or deleted since: that clip is left out when the editor opens. */
+    @Test fun aDraftsMissingFilesAreLeftOut() {
+        val gone = Uri.parse("content://test/deleted.mp4")
+        val missing = EditDraft.clipFor(EditSource(gone.toString(), "deleted.mp4", ShotKind.VIDEO, 640, 360, 10_000, true), 1)
+        val kept = EditDraft.clipFor(EditSource(clipUri.toString(), "clip02.mp4", ShotKind.VIDEO, 640, 360, 30_030, true), 2)
+        EditDraft.save(app, EditDraft.Saved(com.localmediatools.video.core.EditProject(listOf(missing, kept)), null, null, 1))
+        val a = Robolectric.buildActivity(MainActivity::class.java).setup().get()
+        idle()
+        val s = VideoEditorScreen(a)
+        a.navigator.push(s); idle(500)
+        waitFor("missing file left out") { s.project.clips.size == 1 }
+        assertEquals(clipUri.toString(), s.project.clips.single().source.uri)
+    }
+
     /** Draws the screen (catching drawing errors); with LMT_SHOTS set, also saves it there. */
     private fun render(a: MainActivity, name: String?) {
         val dir = if (name == null) null else System.getenv("LMT_SHOTS")?.let { java.io.File(it).apply { mkdirs() } }
