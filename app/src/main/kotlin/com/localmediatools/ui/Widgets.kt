@@ -114,9 +114,15 @@ object UI {
     fun secondaryButton(ctx: Context, label: String, iconRes: Int? = null, onClick: () -> Unit) = ButtonView(ctx, label, ButtonView.Kind.SECONDARY, iconRes, onClick)
     fun ghostButton(ctx: Context, label: String, iconRes: Int? = null, onClick: () -> Unit) = ButtonView(ctx, label, ButtonView.Kind.GHOST, iconRes, onClick)
 
-    enum class NoteKind(val color: Int, val icon: Int) {
-        INFO(Palette.ACCENT, R.drawable.ic_info), WARN(Palette.WARNING, R.drawable.ic_warning),
-        SUCCESS(Palette.SUCCESS, R.drawable.ic_check), PRIVACY(Palette.SUCCESS, R.drawable.ic_shield), TIP(0xFFA78BFA.toInt(), R.drawable.ic_sparkle),
+    enum class NoteKind(val icon: Int) {
+        INFO(R.drawable.ic_info), WARN(R.drawable.ic_warning), SUCCESS(R.drawable.ic_check), PRIVACY(R.drawable.ic_shield), TIP(R.drawable.ic_sparkle);
+
+        /** The note's colour in the current theme. */
+        val color: Int get() = when (this) {
+            INFO, TIP -> Palette.ACCENT
+            WARN -> Palette.WARNING
+            SUCCESS, PRIVACY -> Palette.SUCCESS
+        }
     }
 
     fun note(ctx: Context, s: CharSequence, kind: NoteKind = NoteKind.INFO): LinearLayout = horizontal(ctx, Gravity.TOP).apply {

@@ -25,6 +25,8 @@ abstract class Screen(val activity: MainActivity) {
     open fun onDestroy() { scope.cancel() }
     /** Return true if the screen handled Back itself. */
     open fun onBack(): Boolean = false
+    /** Screens showing photos and videos full size are dark in the light theme too. */
+    open val alwaysDark: Boolean get() = false
     open fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {}
 
     fun push(s: Screen) = activity.navigator.push(s)
@@ -40,10 +42,13 @@ class Navigator(private val container: FrameLayout) {
     val rootScreen: Screen? get() = stack.firstOrNull()
     val depth get() = stack.size
 
+    private val activity get() = container.context as android.app.Activity
+
     fun root(s: Screen) {
         stack.forEach { it.onHide(); it.onDestroy() }
         stack.clear()
         container.removeAllViews()
+        AppTheme.enter(activity, s)
         stack.add(s)
         container.addView(s.view)
         s.onShow()
@@ -51,6 +56,8 @@ class Navigator(private val container: FrameLayout) {
 
     fun push(s: Screen) {
         val prev = stack.lastOrNull()
+        // The new screen is built (and later refreshed) in its own colours.
+        AppTheme.enter(activity, s)
         stack.add(s)
         val v = s.view
         if (v.parent != null) (v.parent as FrameLayout).removeView(v)
@@ -78,6 +85,7 @@ class Navigator(private val container: FrameLayout) {
             container.removeView(s.view)
             s.onDestroy()
         }.start()
+        AppTheme.enter(activity, prev)
         prev.view.visibility = View.VISIBLE
         prev.view.translationX = -w * 0.08f
         prev.view.alpha = 0f

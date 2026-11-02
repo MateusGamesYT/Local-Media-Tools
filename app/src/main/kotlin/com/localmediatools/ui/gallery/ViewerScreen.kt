@@ -73,6 +73,9 @@ class ViewerScreen(activity: MainActivity, items: List<GMedia>, start: Int, priv
     private var names: Map<Long, String> = emptyMap()
     private var facesJob: Job? = null
 
+    /** Photos and videos are judged against a dark surround, in either theme. */
+    override val alwaysDark: Boolean get() = true
+
     override fun createView(): View {
         val root = FrameLayout(ctx).apply { setBackgroundColor(Color.BLACK) }
         pager = Pager(ctx)

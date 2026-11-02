@@ -1,28 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.LocalMediaTools" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@color/bg</item>
-        <item name="android:colorBackground">@color/bg</item>
-        <item name="android:colorPrimary">@color/surface</item>
-        <item name="android:colorPrimaryDark">@color/bg</item>
-        <item name="android:colorAccent">@color/accent</item>
-        <item name="android:colorControlActivated">@color/accent</item>
-        <item name="android:colorControlNormal">#8B96A8</item>
-        <item name="android:textColorPrimary">#EEF2F7</item>
-        <item name="android:textColorSecondary">#A3ADBD</item>
+    <!-- The app follows the phone's light or dark setting (values-night picks the dark one); Settings can
+         fix either (AppTheme sets Theme.LocalMediaTools.Light or .Dark before the screen is built). -->
+    <style name="Theme.LocalMediaTools" parent="Theme.LocalMediaTools.Light" />
+
+    <style name="Theme.LocalMediaTools.Dark" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/bg_dark</item>
+        <item name="android:colorBackground">@color/bg_dark</item>
+        <item name="android:colorPrimary">@color/surface_dark</item>
+        <item name="android:colorPrimaryDark">@color/bg_dark</item>
+        <item name="android:colorAccent">@color/accent_dark</item>
+        <item name="android:colorControlActivated">@color/accent_dark</item>
+        <item name="android:colorControlNormal">#8C94A6</item>
+        <item name="android:textColorPrimary">#F2F4F8</item>
+        <item name="android:textColorSecondary">#B0B7C4</item>
+        <item name="android:textColorHint">#8C94A6</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:enforceNavigationBarContrast">false</item>
         <item name="android:enforceStatusBarContrast">false</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-        <item name="android:alertDialogTheme">@style/Theme.LocalMediaTools.Dialog</item>
+        <item name="android:alertDialogTheme">@style/Theme.LocalMediaTools.Dark.Dialog</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Activity</item>
     </style>
 
-    <style name="Theme.LocalMediaTools.Dialog" parent="android:Theme.Material.Dialog.Alert">
-        <item name="android:colorAccent">@color/accent</item>
+    <style name="Theme.LocalMediaTools.Dark.Dialog" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">@color/accent_dark</item>
         <item name="android:windowBackground">@drawable/dialog_bg</item>
-        <item name="android:textColorPrimary">#EEF2F7</item>
+        <item name="android:textColorPrimary">#F2F4F8</item>
+        <item name="android:textColorSecondary">#B0B7C4</item>
+    </style>
+
+    <style name="Theme.LocalMediaTools.Light" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/bg_light</item>
+        <item name="android:colorBackground">@color/bg_light</item>
+        <item name="android:colorPrimary">@color/surface_light</item>
+        <item name="android:colorPrimaryDark">@color/bg_light</item>
+        <item name="android:colorAccent">@color/accent_light</item>
+        <item name="android:colorControlActivated">@color/accent_light</item>
+        <item name="android:colorControlNormal">#5D6577</item>
+        <item name="android:textColorPrimary">#12141A</item>
+        <item name="android:textColorSecondary">#464D5C</item>
+        <item name="android:textColorHint">#5D6577</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:alertDialogTheme">@style/Theme.LocalMediaTools.Light.Dialog</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Activity</item>
+    </style>
+
+    <style name="Theme.LocalMediaTools.Light.Dialog" parent="android:Theme.Material.Light.Dialog.Alert">
+        <item name="android:colorAccent">@color/accent_light</item>
+        <item name="android:windowBackground">@drawable/dialog_bg_light</item>
+        <item name="android:textColorPrimary">#12141A</item>
+        <item name="android:textColorSecondary">#464D5C</item>
     </style>
 </resources>

@@ -43,6 +43,8 @@ class MainActivity : Activity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Light or dark, before anything is drawn.
+        com.localmediatools.ui.AppTheme.apply(this)
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= 30) {
             window.setDecorFitsSystemWindows(false)
@@ -89,6 +91,15 @@ class MainActivity : Activity() {
         super.onSaveInstanceState(outState)
         (navigator.rootScreen as? MainShell)?.let { outState.putInt(STATE_TAB, it.tab) }
     }
+
+    /** The phone switched between light and dark: the app follows when it is set to (Settings). */
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (com.localmediatools.ui.AppTheme.wantsDark(this) != com.localmediatools.ui.AppTheme.chosen.dark) recreate()
+    }
+
+    /** Shows the app again in the light or dark theme just chosen in Settings. */
+    fun restartForAppearance() = recreate()
 
     /** Shows the app again in the language just chosen in Settings (notification channels too). */
     fun restartForLanguage() {

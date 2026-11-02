@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#08090D</color>
-    <color name="surface">#11141B</color>
-    <color name="accent">#8C8CFF</color>
+    <color name="bg_dark">#0B0C10</color>
+    <color name="surface_dark">#14161D</color>
+    <color name="accent_dark">#9C96FF</color>
+    <color name="bg_light">#F5F6FA</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="accent_light">#5144E0</color>
     <color name="launcher_bg">#5E5BFF</color>
 </resources>

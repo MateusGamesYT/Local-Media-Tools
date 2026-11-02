@@ -14,55 +14,93 @@ import com.localmediatools.app.R
 import com.localmediatools.tools.ToolId
 import com.localmediatools.tools.ToolSection
 
+/**
+ * One set of the app's colours: the light or the dark theme. Text colours meet WCAG AA (4.5:1) on the
+ * backgrounds and surfaces they are used on (ThemeContrastTest checks every pair).
+ */
+class Scheme(
+    val dark: Boolean,
+    val bg: Int, val bg2: Int, val surface: Int, val surface2: Int, val surface3: Int,
+    val stroke: Int, val stroke2: Int,
+    val text: Int, val text2: Int, val text3: Int,
+    val accent: Int, val accentContainer: Int, val onAccent: Int,
+    val success: Int, val warning: Int, val danger: Int,
+    /** Brand gradient (violet → blue): primary buttons, progress, the app icon. */
+    val brand: IntArray,
+    /** Each tool section's colour (markers, tinted icons). */
+    val sections: IntArray,
+)
+
 object Palette {
-    const val BG = 0xFF08090D.toInt()
-    const val BG_2 = 0xFF0C0E14.toInt()
-    const val SURFACE = 0xFF11141B.toInt()
-    const val SURFACE_2 = 0xFF181C25.toInt()
-    const val SURFACE_3 = 0xFF222733.toInt()
-    const val STROKE = 0xFF20252F.toInt()
-    const val STROKE_2 = 0xFF2C3240.toInt()
-    const val TEXT = 0xFFF3F5F9.toInt()
-    const val TEXT_2 = 0xFFA8B0BF.toInt()
-    const val TEXT_3 = 0xFF6C7486.toInt()
-    const val ACCENT = 0xFF8C8CFF.toInt()
-    const val ACCENT_DARK = 0xFF1F2147.toInt()
-    const val ON_ACCENT = 0xFFFFFFFF.toInt()
-    const val SUCCESS = 0xFF34D399.toInt()
-    const val WARNING = 0xFFFBBF24.toInt()
-    const val DANGER = 0xFFF87171.toInt()
+    val DARK = Scheme(
+        dark = true,
+        bg = 0xFF0B0C10.toInt(), bg2 = 0xFF101218.toInt(), surface = 0xFF14161D.toInt(), surface2 = 0xFF1B1E27.toInt(), surface3 = 0xFF262A35.toInt(),
+        stroke = 0xFF22262F.toInt(), stroke2 = 0xFF2F3441.toInt(),
+        text = 0xFFF2F4F8.toInt(), text2 = 0xFFB0B7C4.toInt(), text3 = 0xFF8C94A6.toInt(),
+        accent = 0xFF9C96FF.toInt(), accentContainer = 0xFF27245A.toInt(), onAccent = 0xFFFFFFFF.toInt(),
+        success = 0xFF3DD9A0.toInt(), warning = 0xFFFBC02D.toInt(), danger = 0xFFFF8080.toInt(),
+        brand = intArrayOf(0xFF7357FF.toInt(), 0xFF3B6CF0.toInt()),
+        sections = intArrayOf(0xFF60D5FA.toInt(), 0xFFC084FC.toInt(), 0xFF2DD4BF.toInt(), 0xFFFB923C.toInt(), 0xFFFACC15.toInt(),
+            0xFF60A5FA.toInt(), 0xFFA78BFA.toInt(), 0xFFF472B6.toInt(), 0xFF34D399.toInt()),
+    )
+    val LIGHT = Scheme(
+        dark = false,
+        bg = 0xFFF5F6FA.toInt(), bg2 = 0xFFFFFFFF.toInt(), surface = 0xFFFFFFFF.toInt(), surface2 = 0xFFEEF0F5.toInt(), surface3 = 0xFFE3E6EE.toInt(),
+        stroke = 0xFFE4E7EE.toInt(), stroke2 = 0xFFD2D7E1.toInt(),
+        text = 0xFF12141A.toInt(), text2 = 0xFF464D5C.toInt(), text3 = 0xFF5D6577.toInt(),
+        accent = 0xFF5144E0.toInt(), accentContainer = 0xFFE8E6FF.toInt(), onAccent = 0xFFFFFFFF.toInt(),
+        success = 0xFF0B7A54.toInt(), warning = 0xFF9A5B00.toInt(), danger = 0xFFC42B3F.toInt(),
+        brand = intArrayOf(0xFF7357FF.toInt(), 0xFF3B6CF0.toInt()),
+        sections = intArrayOf(0xFF0891B2.toInt(), 0xFF9333EA.toInt(), 0xFF0D9488.toInt(), 0xFFEA580C.toInt(), 0xFFA16207.toInt(),
+            0xFF2563EB.toInt(), 0xFF7C3AED.toInt(), 0xFFDB2777.toInt(), 0xFF059669.toInt()),
+    )
+
+    /** The theme in use (set by [AppTheme] before any screen is built). */
+    @Volatile var scheme: Scheme = DARK
+    val isDark: Boolean get() = scheme.dark
+
+    val BG get() = scheme.bg
+    val BG_2 get() = scheme.bg2
+    val SURFACE get() = scheme.surface
+    val SURFACE_2 get() = scheme.surface2
+    val SURFACE_3 get() = scheme.surface3
+    val STROKE get() = scheme.stroke
+    val STROKE_2 get() = scheme.stroke2
+    val TEXT get() = scheme.text
+    val TEXT_2 get() = scheme.text2
+    val TEXT_3 get() = scheme.text3
+    val ACCENT get() = scheme.accent
+    /** A soft accent background (selected chips, the current tab), with [TEXT] or [ACCENT] on it. */
+    val ACCENT_DARK get() = scheme.accentContainer
+    val ON_ACCENT get() = scheme.onAccent
+    val SUCCESS get() = scheme.success
+    val WARNING get() = scheme.warning
+    val DANGER get() = scheme.danger
 
     /** Brand gradient (violet → blue), also used by the app icon and primary buttons. */
-    val BRAND = intArrayOf(0xFF7C5CFF.toInt(), 0xFF3D7BFF.toInt())
+    val BRAND: IntArray get() = scheme.brand
     /** On-device AI features. */
-    val AI = intArrayOf(0xFFB15CFF.toInt(), 0xFFFF5C93.toInt())
+    val AI = intArrayOf(0xFF9C45EB.toInt(), 0xFFD8336F.toInt())
     /** Secondary feature-card gradients. */
-    val TEAL = intArrayOf(0xFF22C3A6.toInt(), 0xFF2D7DD2.toInt())
-    val SUNSET = intArrayOf(0xFFFF8A4C.toInt(), 0xFFE5487A.toInt())
+    val TEAL = intArrayOf(0xFF118C79.toInt(), 0xFF2560B8.toInt())
+    val SUNSET = intArrayOf(0xFFD95A20.toInt(), 0xFFC22E5E.toInt())
 
-    fun section(s: ToolSection): Int = when (s) {
-        ToolSection.STACKS -> 0xFF60D5FA.toInt()
-        ToolSection.EDIT -> 0xFFC084FC.toInt()
-        ToolSection.IMAGES -> 0xFF2DD4BF.toInt()
-        ToolSection.VIDEO -> 0xFFFB923C.toInt()
-        ToolSection.GIF -> 0xFFFACC15.toInt()
-        ToolSection.DOCUMENTS -> 0xFF60A5FA.toInt()
-        ToolSection.AUDIO -> 0xFFA78BFA.toInt()
-        ToolSection.PRINT -> 0xFFF472B6.toInt()
-        ToolSection.PRIVACY -> 0xFF34D399.toInt()
-    }
+    fun section(s: ToolSection): Int = scheme.sections[s.ordinal]
 
-    /** Two-stop gradient for a section's icon tiles: a lighter top-left and a deeper bottom-right. */
+    /**
+     * Two-stop gradient for a section's icon tiles: a lighter top-left and a deeper bottom-right, both
+     * dark enough for the white glyph on them (3:1, WCAG's measure for icons).
+     */
     fun sectionGradient(s: ToolSection): IntArray = when (s) {
-        ToolSection.STACKS -> intArrayOf(0xFF5EEAD4.toInt(), 0xFF3D7BFF.toInt())
-        ToolSection.EDIT -> AI
-        ToolSection.IMAGES -> intArrayOf(0xFF34E3C5.toInt(), 0xFF0E9F8E.toInt())
-        ToolSection.VIDEO -> intArrayOf(0xFFFFA65C.toInt(), 0xFFF0592C.toInt())
-        ToolSection.GIF -> intArrayOf(0xFFFFD84A.toInt(), 0xFFF29A0C.toInt())
-        ToolSection.DOCUMENTS -> intArrayOf(0xFF7DB8FF.toInt(), 0xFF3D6BFF.toInt())
-        ToolSection.AUDIO -> intArrayOf(0xFFC4B5FD.toInt(), 0xFF7C3AED.toInt())
-        ToolSection.PRINT -> intArrayOf(0xFFF9A8D4.toInt(), 0xFFDB2777.toInt())
-        ToolSection.PRIVACY -> intArrayOf(0xFF4BE3A6.toInt(), 0xFF119E6E.toInt())
+        ToolSection.STACKS -> intArrayOf(0xFF1A9BC4.toInt(), 0xFF3157D6.toInt())
+        ToolSection.EDIT -> intArrayOf(0xFF9B47F0.toInt(), 0xFFD63B6E.toInt())
+        ToolSection.IMAGES -> intArrayOf(0xFF12998A.toInt(), 0xFF0B7568.toInt())
+        ToolSection.VIDEO -> intArrayOf(0xFFE8642A.toInt(), 0xFFC73E1A.toInt())
+        ToolSection.GIF -> intArrayOf(0xFFCF7A00.toInt(), 0xFFB85F00.toInt())
+        ToolSection.DOCUMENTS -> intArrayOf(0xFF3E7BF2.toInt(), 0xFF2A4FD6.toInt())
+        ToolSection.AUDIO -> intArrayOf(0xFF8B63F5.toInt(), 0xFF6328D9.toInt())
+        ToolSection.PRINT -> intArrayOf(0xFFDB3D8A.toInt(), 0xFFB51C5E.toInt())
+        ToolSection.PRIVACY -> intArrayOf(0xFF13916A.toInt(), 0xFF0A7553.toInt())
     }
 
     fun withAlpha(c: Int, a: Int) = (c and 0x00FFFFFF) or (a.coerceIn(0, 255) shl 24)
@@ -71,6 +109,14 @@ object Palette {
         fun ch(x: Int, sh: Int) = (x shr sh) and 255
         fun m(sh: Int) = (ch(a, sh) + (ch(b, sh) - ch(a, sh)) * t).toInt().coerceIn(0, 255)
         return (m(24) shl 24) or (m(16) shl 16) or (m(8) shl 8) or m(0)
+    }
+
+    /** WCAG contrast ratio of two opaque colours (1–21). */
+    fun contrast(a: Int, b: Int): Double {
+        fun lin(c: Int): Double { val x = c / 255.0; return if (x <= 0.03928) x / 12.92 else Math.pow((x + 0.055) / 1.055, 2.4) }
+        fun lum(c: Int) = 0.2126 * lin((c shr 16) and 255) + 0.7152 * lin((c shr 8) and 255) + 0.0722 * lin(c and 255)
+        val la = lum(a); val lb = lum(b)
+        return (maxOf(la, lb) + 0.05) / (minOf(la, lb) + 0.05)
     }
 }
 
@@ -158,16 +204,19 @@ object Shapes {
     fun circle(color: Int) = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(color) }
 }
 
-enum class TextStyle(val sp: Float, val weight: Int, val color: Int, val letterSpacing: Float = 0f, val lineMult: Float = 1.2f) {
-    HERO(32f, 760, Palette.TEXT, -0.025f, 1.08f),
-    DISPLAY(26f, 720, Palette.TEXT, -0.02f, 1.12f),
-    TITLE(20f, 680, Palette.TEXT, -0.012f, 1.15f),
-    SUBTITLE(15.5f, 620, Palette.TEXT, -0.005f),
-    BODY(15f, 430, Palette.TEXT),
-    BODY_2(14f, 430, Palette.TEXT_2, 0f, 1.28f),
-    CAPTION(12.5f, 450, Palette.TEXT_2, 0f, 1.25f),
-    LABEL(11.5f, 680, Palette.TEXT_3, 0.09f),
-    BUTTON(15f, 640, Palette.TEXT, 0f),
+enum class TextStyle(val sp: Float, val weight: Int, private val tone: Int, val letterSpacing: Float = 0f, val lineMult: Float = 1.2f) {
+    HERO(32f, 760, 1, -0.025f, 1.08f),
+    DISPLAY(26f, 720, 1, -0.02f, 1.12f),
+    TITLE(20f, 680, 1, -0.012f, 1.15f),
+    SUBTITLE(15.5f, 620, 1, -0.005f),
+    BODY(15f, 430, 1),
+    BODY_2(14f, 430, 2, 0f, 1.28f),
+    CAPTION(12.5f, 450, 2, 0f, 1.25f),
+    LABEL(11.5f, 680, 3, 0.09f),
+    BUTTON(15f, 640, 1, 0f);
+
+    /** The style's text colour in the current theme. */
+    val color: Int get() = when (tone) { 1 -> Palette.TEXT; 2 -> Palette.TEXT_2; else -> Palette.TEXT_3 }
 }
 
 /** The bundled Inter variable font, falling back to the system sans-serif. */

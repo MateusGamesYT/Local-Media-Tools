@@ -347,8 +347,9 @@ class SettingsTab(private val shell: MainShell) {
         val (scroll, col) = tabPage(shell)
         col.addView(UI.text(ctx, tr("Settings"), TextStyle.DISPLAY).apply { isAccessibilityHeading = true }, lp().apply { topMargin = ctx.dp(18) })
 
-        val language = group(col, tr("Language"))
-        language.addView(listRow(ctx, R.drawable.ic_language, Palette.ACCENT, tr("App language"), languageName(AppLanguage.chosen(ctx))) { pickLanguage() })
+        val look = group(col, tr("Appearance and language"))
+        look.addView(listRow(ctx, R.drawable.ic_contrast, Palette.ACCENT, tr("Theme"), appearanceName(AppTheme.appearance(ctx))) { pickAppearance() })
+        look.addView(listRow(ctx, R.drawable.ic_language, Palette.ACCENT, tr("App language"), languageName(AppLanguage.chosen(ctx))) { pickLanguage() })
 
         val perf = group(col, tr("Performance"))
         perf.addView(UI.vertical(ctx, 14, 12).apply {
@@ -391,6 +392,25 @@ class SettingsTab(private val shell: MainShell) {
         about.addView(listRow(ctx, R.drawable.ic_info, Palette.ACCENT, "Local Media Tools $version", trn(ToolId.toolCount, "{0} tool", "{0} tools") + " · Android ${android.os.Build.VERSION.RELEASE}"))
         about.addView(listRow(ctx, R.drawable.ic_file, Palette.ACCENT, tr("Open-source licences"), "OpenCV, TensorFlow Lite, MI-GAN, YuNet, InsightFace, EfficientDet, EfficientNetV2…") { shell.push(LicensesScreen(shell.activity)) })
         return scroll
+    }
+
+    private fun appearanceName(a: Appearance): String = when (a) {
+        Appearance.SYSTEM -> if (AppTheme.systemDark(ctx)) tr("Like the phone (dark now)") else tr("Like the phone (light now)")
+        Appearance.LIGHT -> tr("Light")
+        Appearance.DARK -> tr("Dark")
+    }
+
+    private fun pickAppearance() {
+        val chosen = AppTheme.appearance(ctx)
+        val options = Appearance.entries
+        AlertDialog.Builder(shell.activity).setTitle(tr("Theme"))
+            .setSingleChoiceItems(options.map { appearanceName(it) }.toTypedArray(), options.indexOf(chosen)) { d, which ->
+                d.dismiss()
+                if (options[which] == chosen) return@setSingleChoiceItems
+                AppTheme.setAppearance(ctx, options[which])
+                shell.activity.restartForAppearance()
+            }
+            .setNegativeButton(tr("Cancel"), null).show()
     }
 
     private fun languageName(l: Language?): String = l?.nativeName ?: tr("Phone's language ({0})", AppLanguage.phoneLanguage().nativeName)

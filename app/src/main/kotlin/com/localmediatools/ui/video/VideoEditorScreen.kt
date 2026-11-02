@@ -118,6 +118,9 @@ class VideoEditorScreen(activity: MainActivity, private val initial: List<Uri> =
 
     val timeline get() = EditTimeline(project)
 
+    /** Photos and videos are judged against a dark surround, in either theme. */
+    override val alwaysDark: Boolean get() = true
+
     override fun createView(): View {
         val root = FrameLayout(ctx).apply { setBackgroundColor(Color.BLACK) }
         val col = UI.vertical(ctx)
