@@ -19,7 +19,7 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces & private info → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-2.0.0.apk`](release/LocalMediaTools-2.0.0.apk)
+**Install:** [`release/LocalMediaTools-2.0.1.apk`](release/LocalMediaTools-2.0.1.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
 
@@ -94,7 +94,32 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|
 | ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) |
 
-## What's new in 2.0.0: a new look, in light and dark
+## What's new in 2.0.1: video editor fixes
+
+Eleven bugs found by reading through the newest code, each checked against it before being fixed:
+
+- **A very long text** (a pasted paragraph) closed the video editor when it was drawn, and its video
+  couldn't be saved. Texts too long for the picture are now made smaller until they fit.
+- **Trimming a clip of a video shorter than half a second** closed the editor.
+- **Auto reframe after Turn or a trim**: a plan still being made when the clip was turned was kept for
+  the turned clip, and the saved video was framed wrongly. A plan is now kept only for the clip it was
+  made for; turning a clip, or trimming it beyond what was planned, plans it again. A plan no longer
+  wanted (another one started, the editor closed) also stops reading the clip, instead of going on in
+  the background.
+- **The preview showed the wrong photo** after a clip was deleted or moved (the saved video was right).
+- **A saved project's moved or deleted files** were kept as black, silent clips; they are now left out
+  when the editor opens, and it says how many.
+- **Saving the project after each change** could overlap and lose it, and *Start over* could bring back
+  the old music next time; saves now happen one at a time, in order.
+- **Saving a video** read every clip's file on the main thread (a pause, longer from slow storage).
+- **Videos whose file doesn't state their length** became half-second clips; the length is now asked
+  from Android's own media reader.
+- **The open-source licences screen** left its text files open.
+
+Tests were added for the long text, the short video, when a plan is used, and a project with a deleted
+file. **Not tried on a phone yet**, like 2.0.0.
+
+## What was new in 2.0.0: a new look, in light and dark
 
 - **Light and dark themes.** The app follows the phone's light or dark setting, switching with it, or
   stays light or dark (Settings → *Theme*). The photo viewer and the photo and video editors stay dark
