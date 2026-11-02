@@ -404,6 +404,9 @@
 < , changed
 > , изменено
 
+< , pinned
+> , закреплено
+
 < Value {0}
 > Значение {0}
 
@@ -1277,20 +1280,14 @@
 < Settings
 > Настройки
 
-< Private · offline · on-device
-> Приватно · офлайн · на устройстве
+< {0} tool, all on this phone
+< {0} tools, all on this phone
+> {0} инструмент, всё на этом телефоне
+> {0} инструмента, всё на этом телефоне
+> {0} инструментов, всё на этом телефоне
 
 < No uploads
 > Без загрузки в сеть
-
-< Edit, convert and\nclean up — privately.
-> Редактируйте, конвертируйте и\nочищайте — приватно.
-
-< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
-< {0} tools that run entirely on this phone. No account, no cloud, no limits.
-> {0} инструмент работает полностью на этом телефоне. Без аккаунта, без облака, без ограничений.
-> {0} инструмента работают полностью на этом телефоне. Без аккаунта, без облака, без ограничений.
-> {0} инструментов работают полностью на этом телефоне. Без аккаунта, без облака, без ограничений.
 
 < Search {0} tool
 < Search {0} tools
@@ -1298,8 +1295,23 @@
 > Поиск по {0} инструментам
 > Поиск по {0} инструментам
 
+< Featured
+> Рекомендуемые
+
 < Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
 > Ваши фото, видео и документы обрабатываются на этом телефоне и никогда не загружаются — приложение никогда не подключается к серверам в интернете (печать общается только с вашим принтером в вашей собственной сети). Результаты сохраняются в папках LocalMediaTools внутри Pictures, Movies, Music и Documents.
+
+< Unpin
+> Открепить
+
+< Pin to the top
+> Закрепить сверху
+
+< Pinned
+> Закреплённые
+
+< Recently used
+> Недавно использованные
 
 < No tool matches "{0}"
 > Нет инструментов, подходящих под «{0}»
@@ -1313,14 +1325,29 @@
 > {0} результата
 > {0} результатов
 
+< All tools
+> Все инструменты
+
+< Touch and hold a tool to pin it
+> Нажмите и удерживайте инструмент, чтобы закрепить его
+
+< {0} tool
+< {0} tools
+> {0} инструмент
+> {0} инструмента
+> {0} инструментов
+
 < Exports keep running when you leave the app.
 > Экспорт продолжается, когда вы выходите из приложения.
 
 < Start a tool and its results will be listed here, with files you can open or share.
 > Запустите инструмент, и его результаты появятся здесь вместе с файлами, которые можно открыть или отправить.
 
-< Language
-> Язык
+< Appearance and language
+> Оформление и язык
+
+< Theme
+> Тема
 
 < App language
 > Язык приложения
@@ -1394,14 +1421,20 @@
 < About
 > О приложении
 
-< {0} tool
-< {0} tools
-> {0} инструмент
-> {0} инструмента
-> {0} инструментов
-
 < Open-source licences
 > Лицензии открытого ПО
+
+< Like the phone (dark now)
+> Как на телефоне (сейчас тёмная)
+
+< Like the phone (light now)
+> Как на телефоне (сейчас светлая)
+
+< Light
+> Светлая
+
+< Dark
+> Тёмная
 
 < Phone's language ({0})
 > Язык телефона ({0})
@@ -3337,6 +3370,9 @@
 
 < Colour space
 > Цветовое пространство
+
+< Language
+> Язык
 
 < First author
 > Первый автор

@@ -404,6 +404,9 @@
 < , changed
 > , alterado
 
+< , pinned
+> , fixado
+
 < Value {0}
 > Valor {0}
 
@@ -1239,27 +1242,36 @@
 < Settings
 > Configurações
 
-< Private · offline · on-device
-> Privado · offline · no aparelho
+< {0} tool, all on this phone
+< {0} tools, all on this phone
+> {0} ferramenta, tudo no celular
+> {0} ferramentas, tudo no celular
 
 < No uploads
 > Sem uploads
-
-< Edit, convert and\nclean up — privately.
-> Edite, converta e\norganize — com privacidade.
-
-< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
-< {0} tools that run entirely on this phone. No account, no cloud, no limits.
-> {0} ferramenta que funciona inteiramente neste celular. Sem conta, sem nuvem, sem limites.
-> {0} ferramentas que funcionam inteiramente neste celular. Sem conta, sem nuvem, sem limites.
 
 < Search {0} tool
 < Search {0} tools
 > Pesquisar em {0} ferramenta
 > Pesquisar em {0} ferramentas
 
+< Featured
+> Em destaque
+
 < Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
 > Suas fotos, vídeos e documentos são processados neste celular e nunca enviados — o app nunca se conecta a servidores na internet (a impressão fala só com a sua impressora, na sua própria rede). Os resultados são salvos em pastas LocalMediaTools dentro de Pictures, Movies, Music e Documents.
+
+< Unpin
+> Desafixar
+
+< Pin to the top
+> Fixar no topo
+
+< Pinned
+> Fixados
+
+< Recently used
+> Usados recentemente
 
 < No tool matches "{0}"
 > Nenhuma ferramenta corresponde a "{0}"
@@ -1272,14 +1284,28 @@
 > {0} resultado
 > {0} resultados
 
+< All tools
+> Todas as ferramentas
+
+< Touch and hold a tool to pin it
+> Toque e segure uma ferramenta para fixá-la
+
+< {0} tool
+< {0} tools
+> {0} ferramenta
+> {0} ferramentas
+
 < Exports keep running when you leave the app.
 > As exportações continuam rodando quando você sai do app.
 
 < Start a tool and its results will be listed here, with files you can open or share.
 > Use uma ferramenta e os resultados aparecerão aqui, com arquivos que você pode abrir ou compartilhar.
 
-< Language
-> Idioma
+< Appearance and language
+> Aparência e idioma
+
+< Theme
+> Tema
 
 < App language
 > Idioma do app
@@ -1353,13 +1379,20 @@
 < About
 > Sobre
 
-< {0} tool
-< {0} tools
-> {0} ferramenta
-> {0} ferramentas
-
 < Open-source licences
 > Licenças de código aberto
+
+< Like the phone (dark now)
+> Igual ao celular (agora escuro)
+
+< Like the phone (light now)
+> Igual ao celular (agora claro)
+
+< Light
+> Claro
+
+< Dark
+> Escuro
 
 < Phone's language ({0})
 > Idioma do celular ({0})
@@ -3258,6 +3291,9 @@
 
 < Colour space
 > Espaço de cor
+
+< Language
+> Idioma
 
 < First author
 > Primeiro autor

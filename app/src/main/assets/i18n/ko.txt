@@ -404,6 +404,9 @@
 < , changed
 > , 변경됨
 
+< , pinned
+> , 고정됨
+
 < Value {0}
 > 값 {0}
 
@@ -1201,25 +1204,34 @@
 < Settings
 > 설정
 
-< Private · offline · on-device
-> 비공개 · 오프라인 · 기기 내 처리
+< {0} tool, all on this phone
+< {0} tools, all on this phone
+> {0}개 도구, 모두 이 휴대폰에서
 
 < No uploads
 > 업로드 없음
-
-< Edit, convert and\nclean up — privately.
-> 편집, 변환, 정리를\n비공개로 해결하세요.
-
-< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
-< {0} tools that run entirely on this phone. No account, no cloud, no limits.
-> 모두 이 휴대전화에서 실행되는 도구 {0}개. 계정도, 클라우드도, 제한도 없어요.
 
 < Search {0} tool
 < Search {0} tools
 > 도구 {0}개 검색
 
+< Featured
+> 추천
+
 < Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
 > 사진, 동영상, 문서는 이 휴대전화에서 처리되며 업로드되지 않아요. 이 앱은 인터넷의 서버에 연결하지 않아요(인쇄할 때도 같은 네트워크에 있는 프린터와만 통신해요). 결과는 Pictures, Movies, Music, Documents 안의 LocalMediaTools 폴더에 저장돼요.
+
+< Unpin
+> 고정 해제
+
+< Pin to the top
+> 상단에 고정
+
+< Pinned
+> 고정된 도구
+
+< Recently used
+> 최근 사용
 
 < No tool matches "{0}"
 > "{0}"에 해당하는 도구가 없어요
@@ -1231,14 +1243,27 @@
 < {0} results
 > 결과 {0}개
 
+< All tools
+> 모든 도구
+
+< Touch and hold a tool to pin it
+> 도구를 길게 누르면 고정할 수 있습니다
+
+< {0} tool
+< {0} tools
+> 도구 {0}개
+
 < Exports keep running when you leave the app.
 > 앱을 나가도 내보내기는 계속 실행돼요.
 
 < Start a tool and its results will be listed here, with files you can open or share.
 > 도구를 실행하면 결과가 여기에 표시되고, 파일을 열거나 공유할 수 있어요.
 
-< Language
-> 언어
+< Appearance and language
+> 모양 및 언어
+
+< Theme
+> 테마
 
 < App language
 > 앱 언어
@@ -1312,12 +1337,20 @@
 < About
 > 앱 정보
 
-< {0} tool
-< {0} tools
-> 도구 {0}개
-
 < Open-source licences
 > 오픈소스 라이선스
+
+< Like the phone (dark now)
+> 휴대폰 설정 따르기 (현재 다크)
+
+< Like the phone (light now)
+> 휴대폰 설정 따르기 (현재 라이트)
+
+< Light
+> 라이트
+
+< Dark
+> 다크
 
 < Phone's language ({0})
 > 휴대전화 언어({0})
@@ -3179,6 +3212,9 @@
 
 < Colour space
 > 색 공간
+
+< Language
+> 언어
 
 < First author
 > 첫 작성자

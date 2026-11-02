@@ -404,6 +404,9 @@
 < , changed
 > , geändert
 
+< , pinned
+> , angeheftet
+
 < Value {0}
 > Wert {0}
 
@@ -1239,27 +1242,36 @@
 < Settings
 > Einstellungen
 
-< Private · offline · on-device
-> Privat · offline · auf dem Gerät
+< {0} tool, all on this phone
+< {0} tools, all on this phone
+> {0} Werkzeug, alles auf diesem Handy
+> {0} Werkzeuge, alles auf diesem Handy
 
 < No uploads
 > Kein Upload
-
-< Edit, convert and\nclean up — privately.
-> Bearbeiten, konvertieren und\naufräumen – privat.
-
-< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
-< {0} tools that run entirely on this phone. No account, no cloud, no limits.
-> {0} Werkzeug, das komplett auf diesem Smartphone läuft. Ohne Konto, ohne Cloud, ohne Limits.
-> {0} Werkzeuge, die komplett auf diesem Smartphone laufen. Ohne Konto, ohne Cloud, ohne Limits.
 
 < Search {0} tool
 < Search {0} tools
 > {0} Werkzeug durchsuchen
 > {0} Werkzeuge durchsuchen
 
+< Featured
+> Empfohlen
+
 < Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
 > Deine Fotos, Videos und Dokumente werden auf diesem Smartphone verarbeitet und nie hochgeladen – die App verbindet sich nie mit Servern im Internet (das Drucken spricht nur mit deinem Drucker in deinem eigenen Netzwerk). Ergebnisse werden in LocalMediaTools-Ordnern innerhalb von Pictures, Movies, Music und Documents gespeichert.
+
+< Unpin
+> Nicht mehr anheften
+
+< Pin to the top
+> Oben anheften
+
+< Pinned
+> Angeheftet
+
+< Recently used
+> Zuletzt verwendet
 
 < No tool matches "{0}"
 > Kein Werkzeug passt zu „{0}“
@@ -1272,14 +1284,28 @@
 > {0} Ergebnis
 > {0} Ergebnisse
 
+< All tools
+> Alle Werkzeuge
+
+< Touch and hold a tool to pin it
+> Halte ein Werkzeug gedrückt, um es anzuheften
+
+< {0} tool
+< {0} tools
+> {0} Werkzeug
+> {0} Werkzeuge
+
 < Exports keep running when you leave the app.
 > Exporte laufen weiter, wenn du die App verlässt.
 
 < Start a tool and its results will be listed here, with files you can open or share.
 > Starte ein Werkzeug, und seine Ergebnisse erscheinen hier, mit Dateien, die du öffnen oder teilen kannst.
 
-< Language
-> Sprache
+< Appearance and language
+> Darstellung und Sprache
+
+< Theme
+> Design
 
 < App language
 > App-Sprache
@@ -1353,13 +1379,20 @@
 < About
 > Über
 
-< {0} tool
-< {0} tools
-> {0} Werkzeug
-> {0} Werkzeuge
-
 < Open-source licences
 > Open-Source-Lizenzen
+
+< Like the phone (dark now)
+> Wie das Handy (jetzt dunkel)
+
+< Like the phone (light now)
+> Wie das Handy (jetzt hell)
+
+< Light
+> Hell
+
+< Dark
+> Dunkel
 
 < Phone's language ({0})
 > Sprache des Smartphones ({0})
@@ -3258,6 +3291,9 @@
 
 < Colour space
 > Farbraum
+
+< Language
+> Sprache
 
 < First author
 > Erster Autor

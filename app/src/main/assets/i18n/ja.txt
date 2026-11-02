@@ -404,6 +404,9 @@
 < , changed
 > 、変更済み
 
+< , pinned
+> , ピン留め済み
+
 < Value {0}
 > 値 {0}
 
@@ -1201,25 +1204,34 @@
 < Settings
 > 設定
 
-< Private · offline · on-device
-> プライベート · オフライン · 端末内処理
+< {0} tool, all on this phone
+< {0} tools, all on this phone
+> {0}個のツール、すべてこのスマホで完結
 
 < No uploads
 > アップロードなし
-
-< Edit, convert and\nclean up — privately.
-> 編集・変換・クリーンアップを、\nプライベートに。
-
-< {0} tool that runs entirely on this phone. No account, no cloud, no limits.
-< {0} tools that run entirely on this phone. No account, no cloud, no limits.
-> {0}個のツールすべてが、この端末内で動作します。アカウント不要、クラウド不要、制限なし。
 
 < Search {0} tool
 < Search {0} tools
 > {0}個のツールを検索
 
+< Featured
+> 注目
+
 < Your photos, videos and documents are processed on this phone and never uploaded — the app never connects to servers on the internet (printing talks only to your printer, on your own network). Results are saved in LocalMediaTools folders inside Pictures, Movies, Music and Documents.
 > 写真、動画、ドキュメントはこの端末内で処理され、アップロードされることはありません。アプリがインターネット上のサーバーに接続することはありません（印刷は、同じネットワーク内のプリンターとのみ通信します）。結果は、Pictures、Movies、Music、Documents内のLocalMediaToolsフォルダに保存されます。
+
+< Unpin
+> ピン留めを解除
+
+< Pin to the top
+> 上部にピン留め
+
+< Pinned
+> ピン留め
+
+< Recently used
+> 最近使用
 
 < No tool matches "{0}"
 > 「{0}」に一致するツールはありません
@@ -1231,14 +1243,27 @@
 < {0} results
 > {0}件の結果
 
+< All tools
+> すべてのツール
+
+< Touch and hold a tool to pin it
+> ツールを長押しするとピン留めできます
+
+< {0} tool
+< {0} tools
+> {0}個のツール
+
 < Exports keep running when you leave the app.
 > アプリを閉じても、エクスポートは続行されます。
 
 < Start a tool and its results will be listed here, with files you can open or share.
 > ツールを実行すると、結果がここに一覧表示され、ファイルを開いたり共有したりできます。
 
-< Language
-> 言語
+< Appearance and language
+> 外観と言語
+
+< Theme
+> テーマ
 
 < App language
 > アプリの言語
@@ -1312,12 +1337,20 @@
 < About
 > アプリについて
 
-< {0} tool
-< {0} tools
-> {0}個のツール
-
 < Open-source licences
 > オープンソースライセンス
+
+< Like the phone (dark now)
+> 端末に合わせる（現在ダーク）
+
+< Like the phone (light now)
+> 端末に合わせる（現在ライト）
+
+< Light
+> ライト
+
+< Dark
+> ダーク
 
 < Phone's language ({0})
 > 端末の言語（{0}）
@@ -3179,6 +3212,9 @@
 
 < Colour space
 > 色空間
+
+< Language
+> 言語
 
 < First author
 > 最初の作成者
