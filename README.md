@@ -101,8 +101,8 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
   in both, so pictures are judged against a dark surround.
 - **A new home screen.** Search and the section chips first, then the tools you **pinned** (touch and
   hold any tool to see what it does and pin it), the ones you **used lately**, a row of featured tools,
-  and every section as a card with a grid of its tools. All HOME_TOOLS tools fit in HOME_NEW dp of scrolling instead of
-  HOME_OLD dp (on a 412 dp wide phone).
+  and every section as a card with a grid of its tools. All 43 tools fit in 3,250 dp of scrolling instead
+  of 5,000 dp, 35 % less, with two pinned tools and a row of recent ones on top (on a 412 dp wide phone).
 - **Easier to read.** Every text colour now has at least WCAG AA contrast (4.5:1) on what it is drawn
   on, in both themes. Before, the faintest text had 3.6:1 on cards and the white text on the main
   buttons 3.8:1; the white icons on some tool tiles had as little as 1.7:1 (now at least 3:1, the
@@ -1222,7 +1222,7 @@ so updates install over each other; use your own key for a store release.
   zoom within its limits, the centre when nothing is found, waiting where the subject will appear, and
   a person too wide for a portrait picture keeping their head in); highlight captions in another
   language than the app's.
-* `app/src/roboTest` — 106 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+* `app/src/roboTest` — 114 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
@@ -1268,7 +1268,11 @@ so updates install over each other; use your own key for a store release.
   and upgrading an older gallery); new in 1.16, the video editor on a real recording and a real photo,
   from adding them to saving (splitting, undo and redo, speed, a look, portrait 9:16 with auto reframe
   planned from what the app's detectors found in the recording, the man the clip is about inside the
-  crop, a title, the preview drawn, the project kept and coming back when the editor opens again).
+  crop, a title, the preview drawn, the project kept and coming back when the editor opens again); new
+  in 2.0, the light and dark themes: every visible text's contrast against the colour it is drawn on
+  (home, every tool, the tabs and Settings, in both themes), the colour pairs themselves, the Theme
+  setting and following the phone, the photo and video screens staying dark, and text at 130 % not cut
+  off; every other test runs in the light theme.
   `LMT_SHOTS=<dir>` also renders the screenshots above.
 
 Not covered by automated tests (no emulator here): a real printer (see above for what printing is
