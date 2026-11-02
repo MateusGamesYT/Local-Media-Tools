@@ -1182,7 +1182,7 @@ so updates install over each other; use your own key for a store release.
 
 ## Tests
 
-* `app/src/test` — 225 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
+* `app/src/test` — 227 JVM tests: codecs, orientation, layouts, MP4 fast start, stitching, editor
   geometry and colour pipeline, masks and mosaics, the metadata stripper (JPEG/PNG/WebP/GIF), the
   real vision models (face detection and recognition, tracking and grouping people across photos
   and videos, cut-out masks, auto enhance, duplicate grouping), the sound pipeline (resampling,
@@ -1247,7 +1247,7 @@ so updates install over each other; use your own key for a store release.
   zoom within its limits, the centre when nothing is found, waiting where the subject will appear, and
   a person too wide for a portrait picture keeping their head in); highlight captions in another
   language than the app's.
-* `app/src/roboTest` — 114 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
+* `app/src/roboTest` — 116 Robolectric tests (Android 15 runtime, native graphics): EXIF orientation
   through decoding and export; every image, GIF and PDF tool end to end; the editor at full
   resolution (rotation, flip, crop, straighten, colours equal to the preview pipeline, eraser and
   privacy brushes); the editor UI (brush stroke → erase → undo/redo → rotate → save); metadata
