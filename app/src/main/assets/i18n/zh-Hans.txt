@@ -4855,6 +4855,10 @@
 < Play
 > 播放
 
+< {0} clip's file can no longer be read and was left out.
+< {0} clips' files can no longer be read and were left out.
+> {0}个片段的文件已无法读取，已从项目中移除。
+
 < Adding {0} file…
 < Adding {0} files…
 > 正在添加 {0} 个文件…

@@ -4955,6 +4955,11 @@
 < Play
 > Reproducir
 
+< {0} clip's file can no longer be read and was left out.
+< {0} clips' files can no longer be read and were left out.
+> Ya no se puede leer el archivo de {0} clip, así que se ha quitado.
+> Ya no se pueden leer los archivos de {0} clips, así que se han quitado.
+
 < Adding {0} file…
 < Adding {0} files…
 > Añadiendo {0} archivo…

@@ -4855,6 +4855,10 @@
 < Play
 > 재생
 
+< {0} clip's file can no longer be read and was left out.
+< {0} clips' files can no longer be read and were left out.
+> {0}개 클립의 파일을 더 이상 읽을 수 없어 제외되었습니다.
+
 < Adding {0} file…
 < Adding {0} files…
 > 파일 {0}개 추가 중…

@@ -4855,6 +4855,10 @@
 < Play
 > 再生
 
+< {0} clip's file can no longer be read and was left out.
+< {0} clips' files can no longer be read and were left out.
+> {0}件のクリップのファイルは読み込めなくなったため、除外されました。
+
 < Adding {0} file…
 < Adding {0} files…
 > {0} 件のファイルを追加中…
