@@ -165,6 +165,14 @@ class UiSmokeTest {
                 assertTrue("back to home after $t", visibleTop(a) is MainShell)
                 continue
             }
+            if (t == ToolId.VIDEO_EDITOR) {
+                assertTrue(visibleTop(a) is com.localmediatools.ui.video.VideoEditorScreen)
+                render(a)
+                assertTrue(texts(a).any { it == "Add videos and photos to start" })
+                @Suppress("DEPRECATION") a.onBackPressed(); idle()
+                assertTrue("back to home after $t", visibleTop(a) is MainShell)
+                continue
+            }
             if (t == ToolId.DUPLICATES) {
                 assertTrue(visibleTop(a) is com.localmediatools.ui.DuplicatesScreen)
                 render(a)
