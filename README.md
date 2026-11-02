@@ -19,9 +19,13 @@ after it has been completely written and checked.
 **Tool stacks** chain any of them: pick files once, add steps (for example Blur faces & private info → Video
 compressor → Video → GIF → GIF optimizer) and run them all with one tap.
 
-**Install:** [`release/LocalMediaTools-1.16.0.apk`](release/LocalMediaTools-1.16.0.apk)
+**Install:** [`release/LocalMediaTools-2.0.0.apk`](release/LocalMediaTools-2.0.0.apk)
 (Android 10 or newer, arm64 / armv7; allow "install unknown apps" for your file manager or browser).
 It installs over earlier versions (same signing key).
+
+| Home | Home, dark | Settings |
+|---|---|---|
+| ![](docs/screenshots/home.png) | ![](docs/screenshots/home-dark.png) | ![](docs/screenshots/settings.png) |
 
 | Gallery | Search by description | Search | Faces with names | People | Things | A person | All faces |
 |---|---|---|---|---|---|---|---|
@@ -75,9 +79,9 @@ The audio screenshots show *Vibe Ace* by Kevin MacLeod (CC BY 3.0) and a LibriSp
 |---|---|---|
 | ![](docs/screenshots/tool-stack.png) | ![](docs/screenshots/stack-step.png) | ![](docs/screenshots/stack-picker.png) |
 
-| Home | Denoiser | Blur faces & private info | Background remover | Auto enhance | Speed & timelapse |
-|---|---|---|---|---|---|
-| ![](docs/screenshots/home.png) | ![](docs/screenshots/denoiser.png) | ![](docs/screenshots/face-blur.png) | ![](docs/screenshots/background-remover.png) | ![](docs/screenshots/auto-enhance.png) | ![](docs/screenshots/speed.png) |
+| Denoiser | Blur faces & private info | Background remover | Auto enhance | Speed & timelapse |
+|---|---|---|---|---|
+| ![](docs/screenshots/denoiser.png) | ![](docs/screenshots/face-blur.png) | ![](docs/screenshots/background-remover.png) | ![](docs/screenshots/auto-enhance.png) | ![](docs/screenshots/speed.png) |
 
 *Blur faces & private info* shows two Creative Commons photos (CC BY 2.0), "Mini Wannita" by Bernard Goldbach and an advert photographed by Entressen kirjasto (sources in [`CREDITS.tsv`](app/src/test/resources/privacy/CREDITS.tsv)), with the woman's face, the car's number plate and the advert's e-mail addresses and phone number listed as the app lists what it finds (the boxes come from the photos' markings and, for the face, were set by hand; the app's models don't run in the screenshot test).
 The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`CREDITS.tsv`](app/src/test/resources/denoise/CREDITS.tsv)) and what the app's photo denoiser made of it.
@@ -86,11 +90,33 @@ The Denoiser's preview shows a real noisy phone photo from SIDD (MIT licence; [`
 |---|---|---|---|
 | ![](docs/screenshots/home-pt-BR.png) | ![](docs/screenshots/home-zh-Hans.png) | ![](docs/screenshots/home-ja.png) | ![](docs/screenshots/home-ru.png) |
 
-| Magic eraser | Looks | Crop & straighten | Settings |
-|---|---|---|---|
-| ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) | ![](docs/screenshots/settings.png) |
+| Magic eraser | Looks | Crop & straighten |
+|---|---|---|
+| ![](docs/screenshots/editor-erase.png) | ![](docs/screenshots/editor-looks.png) | ![](docs/screenshots/editor-crop.png) |
 
-## What's new in 1.16.0: a video editor that keeps people in the picture
+## What's new in 2.0.0: a new look, in light and dark
+
+- **Light and dark themes.** The app follows the phone's light or dark setting, switching with it, or
+  stays light or dark (Settings → *Theme*). The photo viewer and the photo and video editors stay dark
+  in both, so pictures are judged against a dark surround.
+- **A new home screen.** Search and the section chips first, then the tools you **pinned** (touch and
+  hold any tool to see what it does and pin it), the ones you **used lately**, a row of featured tools,
+  and every section as a card with a grid of its tools. All HOME_TOOLS tools fit in HOME_NEW dp of scrolling instead of
+  HOME_OLD dp (on a 412 dp wide phone).
+- **Easier to read.** Every text colour now has at least WCAG AA contrast (4.5:1) on what it is drawn
+  on, in both themes. Before, the faintest text had 3.6:1 on cards and the white text on the main
+  buttons 3.8:1; the white icons on some tool tiles had as little as 1.7:1 (now at least 3:1, the
+  measure for icons). A test opens home, every tool, the tabs and Settings in both themes and checks
+  every visible text against the colour it is actually drawn on.
+- **Larger text and bigger targets.** With the phone's text 30 % larger, no text on those screens is
+  cut off (also tested). Icon buttons are 48 dp (Android's guideline for anything tappable) and choice
+  chips 44 dp tall.
+- **Tested** in the Android test runtime in both themes (contrast on every screen listed above, the
+  theme setting, following the phone, the dark media screens, large text), and every earlier test
+  passes in the light theme. **Not tried on a phone yet.**
+- **Translated** into all ten languages.
+
+## What was new in 1.16.0: a video editor that keeps people in the picture
 
 **Video editor** (new, in Video): put videos and photos in order and make one video of them.
 
